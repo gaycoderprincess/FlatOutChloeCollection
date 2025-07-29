@@ -1,4 +1,5 @@
 void HookLoop() {
+	SkinSelector::OnTick();
 	CommonMain();
 }
 

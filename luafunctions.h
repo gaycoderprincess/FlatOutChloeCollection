@@ -13,14 +13,6 @@ int ChloeSkins_GetNumSkinsForCar(void* a1) {
 	return 1;
 }
 
-int ChloeSkins_GetSkinAuthor(void* a1) {
-	static auto config = toml::parse_file("Config/CarSkins.toml");
-	std::wstring author = config["car_" + std::to_string((int)luaL_checknumber(a1, 1))]["skin" + std::to_string((int)luaL_checknumber(a1, 2))].value_or(L"");
-	if (!author.empty()) author = L"Skin Author: " + author;
-	lua_pushlstring(a1, author.c_str(), (author.length() + 1) * 2);
-	return 1;
-}
-
 int ChloeSkins_IsSkinCustom(void* a1) {
 	static auto config = toml::parse_file("Config/CarSkins.toml");
 	int carId = (int)luaL_checknumber(a1, 1);
@@ -40,33 +32,6 @@ int ChloeSkins_IsSkinCustom(void* a1) {
 	}
 	std::wstring author = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId)].value_or(L"");
 	lua_pushboolean(a1, !author.empty());
-	return 1;
-}
-
-int ChloeSkins_GetSkinName(void* a1) {
-	static auto config = toml::parse_file("Config/CarSkins.toml");
-	int carId = (int)luaL_checknumber(a1, 1);
-	int skinId = (int)luaL_checknumber(a1, 2);
-	bool wrapAround = luaL_checknumber(a1, 3);
-	int numSkins = GetNumSkinsForCar(carId);
-	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
-		std::wstring string = L"---";
-		lua_pushlstring(a1, string.c_str(), (string.length() + 1) * 2);
-		return 1;
-	}
-	// wrap around
-	while (skinId < 1) {
-		skinId += numSkins;
-	}
-	while (skinId > numSkins) {
-		skinId -= numSkins;
-	}
-	std::wstring string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId) + "name"].value_or(L"");
-	if (string.empty()) string = L"Skin " + std::to_wstring(skinId);
-	//std::wstring author = config["car_" + std::to_string(GetCarDataID(carId))]["skin" + std::to_string(skinId)].value_or(L"");
-	//if (!author.empty()) string += L" - " + author;
-	//if (!author.empty()) string = L"© " + string;
-	lua_pushlstring(a1, string.c_str(), (string.length() + 1) * 2);
 	return 1;
 }
 
@@ -102,8 +67,6 @@ void CustomLUAFunctions(void* a1) {
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_HasSafeZone, "ChloeWidescreen_HasSafeZone");
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_WasWidescreenToggled, "ChloeWidescreen_WasWidescreenToggled");
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_GetNumSkinsForCar, "ChloeSkins_GetNumSkinsForCar");
-	RegisterLUAFunction(a1, (void*)&ChloeSkins_GetSkinAuthor, "ChloeSkins_GetSkinAuthor");
-	RegisterLUAFunction(a1, (void*)&ChloeSkins_GetSkinName, "ChloeSkins_GetSkinName");
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_IsSkinCustom, "ChloeSkins_IsSkinCustom");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetRandom, "ChloeCollection_GetRandom");
 	//RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarCustomMenuBG, "ChloeCollection_GetCarCustomMenuBG");
