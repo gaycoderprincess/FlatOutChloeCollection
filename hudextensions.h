@@ -1,8 +1,14 @@
+namespace MenuHudState {
+	bool bInCarDealer = false;
+}
+
 namespace SkinSelector {
 	float fPosX = 0.1;
 	float fPosY = 0.42;
 	float fSize = 0.02;
 	float fSpacing = 0.04;
+
+	bool bMenuUp = false;
 
 	std::string GetSkinName(int carId, int skinId, bool wrapAround) {
 		static auto config = toml::parse_file("Config/CarSkins.toml");
@@ -41,6 +47,8 @@ namespace SkinSelector {
 	}
 
 	void OnTick() {
+		if (!bMenuUp) return;
+
 		auto menu = pGameFlow->pMenuInterface;
 		if (!menu) return;
 		if (!menu->pMenuScene) return;
