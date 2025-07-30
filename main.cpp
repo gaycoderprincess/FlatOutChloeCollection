@@ -37,8 +37,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 		case DLL_PROCESS_ATTACH: {
 			DoFlatOutVersionCheck(FO2Version::FO1_1_1);
 
-			NyaAudio::Init(ghWnd);
-
 			srand(time(0));
 
 			NyaFO2Hooks::PlaceD3DHooks();
