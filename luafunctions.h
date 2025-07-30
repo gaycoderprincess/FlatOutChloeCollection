@@ -47,7 +47,19 @@ int ChloeSkins_ShowSkinSelector(void* a1) {
 }
 
 int ChloeHUD_SetInCarDealer(void* a1) {
-	MenuHudState::bInCarDealer = luaL_checknumber(a1, 1);
+	NewMenuHud::bInCarDealer = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeHUD_SetCarStats(void* a1) {
+	NewMenuHud::nCarHorsepower = luaL_checknumber(a1, 1);
+	NewMenuHud::nCarWeight = luaL_checknumber(a1, 2);
+	NewMenuHud::nCarPrice = luaL_checknumber(a1, 3);
+	return 0;
+}
+
+int ChloeHUD_SetCarDescription(void* a1) {
+	NewMenuHud::sCarDescription = (const char*)lua_tolstring(a1, 1);
 	return 0;
 }
 
@@ -64,6 +76,8 @@ void RegisterLUAEnum(void* a1, int id, const char* name) {
 }
 
 void CustomLUAFunctions(void* a1) {
+	NewMusicPlayer::Init();
+
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_GetAspect, "ChloeWidescreen_GetAspect");
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_LeftJustify, "ChloeWidescreen_LeftJustify");
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_SafeLeftJustify, "ChloeWidescreen_SafeLeftJustify");
@@ -82,6 +96,8 @@ void CustomLUAFunctions(void* a1) {
 	//RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarCustomMenuBG, "ChloeCollection_GetCarCustomMenuBG");
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_ShowSkinSelector, "ChloeSkins_ShowSkinSelector");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCarDealer, "ChloeHUD_SetInCarDealer");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 
 	static auto sVersionString = "Chloe's Collection v1.73 - Achievements Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");

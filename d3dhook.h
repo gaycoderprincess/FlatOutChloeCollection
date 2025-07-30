@@ -1,4 +1,5 @@
 void HookLoop() {
+	NewMenuHud::OnTick();
 	SkinSelector::OnTick();
 	CommonMain();
 }

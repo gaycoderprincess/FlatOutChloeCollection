@@ -53,8 +53,10 @@ DevTexture* __thiscall CreateTextureFromFileNew(DeviceD3d* pThis, DevTexture* pT
 	auto data = new uint8_t[dataSize];
 	file.pFileCodec->ReadBytes(data, dataSize);
 	if (CreateCustomTexture(pTexture, data, dataSize, flags)) {
+		delete[] data;
 		return pTexture;
 	}
+	delete[] data;
 	return nullptr;
 }
 

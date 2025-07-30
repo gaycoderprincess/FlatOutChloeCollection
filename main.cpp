@@ -19,9 +19,11 @@ void WriteLog(const std::string& str) {
 }
 
 #include "bfsload.h"
+#include "filereader.h"
 #include "hudextensions.h"
 #include "d3dhook.h"
 #include "windowedmode.h"
+#include "musicplayer.h"
 #include "luafunctions.h"
 #include "ddsparser.h"
 #include "debugmenu.h"
@@ -52,6 +54,8 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::Patch(0x4658C9 + 3, 2097152); // menucar model memory
 			NyaHookLib::Patch(0x4658D8 + 1, 16777216); // menucar skin memory
 			NyaHookLib::Patch(0x4658DD + 3, 16777216); // menucar skin memory
+
+			// 004E3CDD disable menu ui
 		} break;
 		default:
 			break;

@@ -63,18 +63,26 @@ void PaletteEditorMenu(uint8_t& value) {
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
-	if (DrawMenuOption(std::format("fPosX - {}", SkinSelector::fPosX))) {
-		ValueEditorMenu(SkinSelector::fPosX);
-	}
-	if (DrawMenuOption(std::format("fPosY - {}", SkinSelector::fPosY))) {
-		ValueEditorMenu(SkinSelector::fPosY);
-	}
-	if (DrawMenuOption(std::format("fSize - {}", SkinSelector::fSize))) {
-		ValueEditorMenu(SkinSelector::fSize);
-	}
-	if (DrawMenuOption(std::format("fSpacing - {}", SkinSelector::fSpacing))) {
-		ValueEditorMenu(SkinSelector::fSpacing);
-	}
+	if (DrawMenuOption(std::format("fPosX - {}", SkinSelector::fPosX))) { ValueEditorMenu(SkinSelector::fPosX); }
+	if (DrawMenuOption(std::format("fPosY - {}", SkinSelector::fPosY))) { ValueEditorMenu(SkinSelector::fPosY); }
+	if (DrawMenuOption(std::format("fSize - {}", SkinSelector::fSize))) { ValueEditorMenu(SkinSelector::fSize); }
+	if (DrawMenuOption(std::format("fSpacing - {}", SkinSelector::fSpacing))) { ValueEditorMenu(SkinSelector::fSpacing); }
+	//if (DrawMenuOption(std::format("nPowerY - {}", NewMenuHud::nPowerY))) { ValueEditorMenu(NewMenuHud::nPowerY); }
+	//if (DrawMenuOption(std::format("nPriceY - {}", NewMenuHud::nPriceY))) { ValueEditorMenu(NewMenuHud::nPriceY); }
+	//if (DrawMenuOption(std::format("nWeightY - {}", NewMenuHud::nWeightY))) { ValueEditorMenu(NewMenuHud::nWeightY); }
+	//if (DrawMenuOption(std::format("nOffsetY - {}", NewMenuHud::nOffsetY))) { ValueEditorMenu(NewMenuHud::nOffsetY); }
+	//if (DrawMenuOption(std::format("nBaseX - {}", NewMenuHud::nBaseX))) { ValueEditorMenu(NewMenuHud::nBaseX); }
+	//if (DrawMenuOption(std::format("nOffsetX - {}", NewMenuHud::nOffsetX))) { ValueEditorMenu(NewMenuHud::nOffsetX); }
+	//if (DrawMenuOption(std::format("fBaseSize - {}", NewMenuHud::fBaseSize))) { ValueEditorMenu(NewMenuHud::fBaseSize); }
+	//if (DrawMenuOption(std::format("fOffsetSize - {}", NewMenuHud::fOffsetSize))) { ValueEditorMenu(NewMenuHud::fOffsetSize); }
+	//if (DrawMenuOption(std::format("nOffsetPriceY - {}", NewMenuHud::nOffsetPriceY))) { ValueEditorMenu(NewMenuHud::nOffsetPriceY); }
+	//if (DrawMenuOption(std::format("fOffsetPriceSize - {}", NewMenuHud::fOffsetPriceSize))) { ValueEditorMenu(NewMenuHud::fOffsetPriceSize); }
+	//if (DrawMenuOption(std::format("nDescriptionX - {}", NewMenuHud::nDescriptionX))) { ValueEditorMenu(NewMenuHud::nDescriptionX); }
+	//if (DrawMenuOption(std::format("nDescriptionY - {}", NewMenuHud::nDescriptionY))) { ValueEditorMenu(NewMenuHud::nDescriptionY); }
+	//if (DrawMenuOption(std::format("fDescriptionSize - {}", NewMenuHud::fDescriptionSize))) { ValueEditorMenu(NewMenuHud::fDescriptionSize); }
+	if (DrawMenuOption(std::format("nSkinSelectTitleX - {}", NewMenuHud::nSkinSelectTitleX))) { ValueEditorMenu(NewMenuHud::nSkinSelectTitleX); }
+	if (DrawMenuOption(std::format("nSkinSelectTitleY - {}", NewMenuHud::nSkinSelectTitleY))) { ValueEditorMenu(NewMenuHud::nSkinSelectTitleY); }
+	if (DrawMenuOption(std::format("fSkinSelectSize - {}", NewMenuHud::fSkinSelectSize))) { ValueEditorMenu(NewMenuHud::fSkinSelectSize); }
 
 	if (DrawMenuOption("Palette Editor")) {
 		ChloeMenuLib::BeginMenu();
