@@ -1,6 +1,7 @@
 void HookLoop() {
 	NewMenuHud::OnTick();
 	SkinSelector::OnTick();
+	NewMusicPlayer::OnTick();
 	CommonMain();
 }
 

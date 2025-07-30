@@ -134,9 +134,9 @@ namespace NewMenuHud {
 
 namespace SkinSelector {
 	float fPosX = 0.1;
-	float fPosY = 0.37;
+	float fPosY = 0.372;
 	float fSize = 0.035;
-	float fSpacing = 0.05;
+	float fSpacing = 0.0495;
 
 	bool bMenuUp = false;
 

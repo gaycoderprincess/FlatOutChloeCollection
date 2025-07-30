@@ -21,9 +21,9 @@ void WriteLog(const std::string& str) {
 #include "bfsload.h"
 #include "filereader.h"
 #include "hudextensions.h"
+#include "musicplayer.h"
 #include "d3dhook.h"
 #include "windowedmode.h"
-#include "musicplayer.h"
 #include "luafunctions.h"
 #include "ddsparser.h"
 #include "debugmenu.h"
@@ -36,6 +36,10 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
 			DoFlatOutVersionCheck(FO2Version::FO1_1_1);
+
+			NyaAudio::Init(ghWnd);
+
+			srand(time(0));
 
 			NyaFO2Hooks::PlaceD3DHooks();
 			NyaFO2Hooks::aEndSceneFuncs.push_back(CustomSetterThread);
