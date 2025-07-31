@@ -128,7 +128,7 @@ namespace NewMusicPlayer {
 				pCurrentSong = nullptr;
 			}
 		}
-		if (!pCurrentSong) {
+		if (!pCurrentSong && GetMusicVolume() > 0) {
 			pCurrentSong = pCurrentPlaylist->GetNextSong();
 			while (pCurrentPlaylist->aSongs.size() > 1 && pCurrentSong == pLastSong) {
 				pCurrentSong = pCurrentPlaylist->GetNextSong();

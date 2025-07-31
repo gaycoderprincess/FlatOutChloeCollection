@@ -42,7 +42,7 @@ int ChloeCollection_GetRandom(void* a1) {
 }
 
 int ChloeSkins_ShowSkinSelector(void* a1) {
-	SkinSelector::bMenuUp = luaL_checknumber(a1, 1);
+	NewMenuHud::bInSkinSelector = luaL_checknumber(a1, 1);
 	return 0;
 }
 

@@ -1,5 +1,6 @@
 namespace NewMenuHud {
 	bool bInCarDealer = false;
+	bool bInSkinSelector = false;
 	int nCarHorsepower = 0;
 	int nCarWeight = 0;
 	int nCarPrice = 0;
@@ -145,70 +146,60 @@ namespace NewMenuHud {
 		return nullptr;
 	}
 
-	float fCarNameX = 0.23;
+	float fCarNameX = 0.225;
 	float fCarNameY = 0.17;
 	float fCarNameSize = 0.06;
 	float fCarNameAspect = 5;
 
-	void OnTick() {
-		if (bInCarDealer) {
-			static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
-			static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
-			static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
-			static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
-			static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/car_logos.bed", "car_logos");
+	void DrawCarDealer() {
+		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
+		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
+		static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
+		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/car_logos.bed", "car_logos");
 
-			Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
-			Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
-			if (GetNumSkinsForCar(pGameFlow->pMenuInterface->pMenuScene->nCar) > 6) {
-				Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255, 255, 255, 255}, textureArrows);
-			}
-
-			if (auto logo = GetHUDData(gCarLogos, std::format("car{}", pGameFlow->pMenuInterface->pMenuScene->nCar))) {
-				DrawRectangle(fCarNameX * GetAspectRatioInv(),
-							  (fCarNameX + fCarNameSize * fCarNameAspect) * GetAspectRatioInv(), fCarNameY,
-							  fCarNameY + fCarNameSize, {255, 255, 255, 255}, 0, textureCarLogos, 0, logo->min,
-							  logo->max);
-			}
-
-			tNyaStringData data;
-			data.x = nBaseX;
-			data.y = nPowerY;
-			data.size = fBaseSize;
-			Draw1080pString(JUSTIFY_LEFT, data, "POWER", &DrawStringFO2_Ingame12);
-			data.y = nWeightY;
-			Draw1080pString(JUSTIFY_LEFT, data, "WEIGHT", &DrawStringFO2_Ingame12);
-			data.y = nPriceY;
-			Draw1080pString(JUSTIFY_LEFT, data, "PRICE", &DrawStringFO2_Ingame12);
-			data.x = nOffsetX;
-			data.y = nPowerY + nOffsetY;
-			data.size = fOffsetSize;
-			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}hp", nCarHorsepower), &DrawStringFO2_Ingame12);
-			data.y = nWeightY + nOffsetY;
-			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}kg", nCarWeight), &DrawStringFO2_Ingame12);
-			data.y = nPriceY + nOffsetPriceY;
-			data.size = fOffsetPriceSize;
-			Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", nCarPrice), &DrawStringFO2_Small);
-			data.x = nDescriptionX;
-			data.y = nDescriptionY;
-			data.size = fDescriptionSize;
-			Draw1080pString(JUSTIFY_LEFT, data, sCarDescription, &DrawStringFO2_Ingame12);
-			data.x = nSkinSelectTitleX;
-			data.y = nSkinSelectTitleY;
-			data.size = fSkinSelectSize;
-			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Small);
+		if (!bInCarDealer) return;
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+		if (GetNumSkinsForCar(pGameFlow->pMenuInterface->pMenuScene->nCar) > 6) {
+			Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255, 255, 255, 255}, textureArrows);
 		}
+
+		if (auto logo = GetHUDData(gCarLogos, std::format("car{}", pGameFlow->pMenuInterface->pMenuScene->nCar))) {
+			DrawRectangle(fCarNameX * GetAspectRatioInv(),
+						  (fCarNameX + fCarNameSize * fCarNameAspect) * GetAspectRatioInv(), fCarNameY,
+						  fCarNameY + fCarNameSize, {255, 255, 255, 255}, 0, textureCarLogos, 0, logo->min,
+						  logo->max);
+		}
+
+		tNyaStringData data;
+		data.x = nBaseX;
+		data.y = nPowerY;
+		data.size = fBaseSize;
+		Draw1080pString(JUSTIFY_LEFT, data, "POWER", &DrawStringFO2_Ingame12);
+		data.y = nWeightY;
+		Draw1080pString(JUSTIFY_LEFT, data, "WEIGHT", &DrawStringFO2_Ingame12);
+		data.y = nPriceY;
+		Draw1080pString(JUSTIFY_LEFT, data, "PRICE", &DrawStringFO2_Ingame12);
+		data.x = nOffsetX;
+		data.y = nPowerY + nOffsetY;
+		data.size = fOffsetSize;
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("{}hp", nCarHorsepower), &DrawStringFO2_Ingame12);
+		data.y = nWeightY + nOffsetY;
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("{}kg", nCarWeight), &DrawStringFO2_Ingame12);
+		data.y = nPriceY + nOffsetPriceY;
+		data.size = fOffsetPriceSize;
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", nCarPrice), &DrawStringFO2_Small);
+		data.x = nDescriptionX;
+		data.y = nDescriptionY;
+		data.size = fDescriptionSize;
+		Draw1080pString(JUSTIFY_LEFT, data, sCarDescription, &DrawStringFO2_Ingame12);
+		data.x = nSkinSelectTitleX;
+		data.y = nSkinSelectTitleY;
+		data.size = fSkinSelectSize;
+		data.XCenterAlign = true;
+		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Small);
 	}
-}
-
-namespace SkinSelector {
-	float fPosX = 0.1;
-	float fPosY = 0.372;
-	float fSize = 0.035;
-	float fSpacing = 0.0495;
-
-	bool bMenuUp = false;
 
 	std::string GetSkinName(int carId, int skinId, bool wrapAround) {
 		static auto config = toml::parse_file("Config/CarSkins.toml");
@@ -246,8 +237,8 @@ namespace SkinSelector {
 		return string;
 	}
 
-	void OnTick() {
-		if (!bMenuUp) return;
+	void DrawSkinSelector() {
+		if (!bInSkinSelector) return;
 
 		auto menu = pGameFlow->pMenuInterface;
 		if (!menu) return;
@@ -265,7 +256,10 @@ namespace SkinSelector {
 			skinLoop = false;
 		}
 
-		auto func = &DrawStringFO2_Ingame12;
+		float fPosX = 0.1;
+		float fPosY = 0.372;
+		float fSize = 0.035;
+		float fSpacing = 0.0495;
 
 		tNyaStringData data;
 		data.x = 1.0 - (fPosX * GetAspectRatio());
@@ -287,8 +281,13 @@ namespace SkinSelector {
 				data.SetColor(127, 127, 127, 255);
 			}
 
-			DrawString(data, GetSkinName(car, skinId, skinLoop), func);
+			DrawString(data, GetSkinName(car, skinId, skinLoop), &DrawStringFO2_Ingame12);
 			data.y += fSpacing;
 		}
+	}
+
+	void OnTick() {
+		DrawCarDealer();
+		DrawSkinSelector();
 	}
 }
