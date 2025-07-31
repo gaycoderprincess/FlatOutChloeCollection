@@ -4,6 +4,13 @@ namespace NewMusicPlayer {
 		NyaHookLib::Patch(0x464D7E + 1, title);
 	}
 
+	int GetMusicVolume() {
+		if (GetGameState() == GAME_STATE_RACE) {
+			return nIngameMusicVolume;
+		}
+		return nInterfaceMusicVolume;
+	}
+
 	struct tSong {
 		std::string sPath;
 		std::string sArtist;
@@ -26,7 +33,7 @@ namespace NewMusicPlayer {
 		}
 
 		void Play() {
-			nStreamVolume = nIngameMusicVolume;
+			nStreamVolume = GetMusicVolume();
 			bFinished = true;
 
 			if (pStream) {
@@ -54,8 +61,8 @@ namespace NewMusicPlayer {
 		}
 
 		void Update() {
-			if (nStreamVolume != nIngameMusicVolume) {
-				nStreamVolume = nIngameMusicVolume;
+			if (nStreamVolume != GetMusicVolume()) {
+				nStreamVolume = GetMusicVolume();
 				NyaAudio::SetVolume(pStream, nStreamVolume / 100.0);
 			}
 
