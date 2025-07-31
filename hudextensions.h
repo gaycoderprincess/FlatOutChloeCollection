@@ -69,7 +69,7 @@ namespace NewMenuHud {
 
 	int nPowerY = 392;
 	int nPriceY = 320;
-	int nWeightY = 464;
+	int nWeightY = 466;
 	int nOffsetY = 38;
 	int nBaseX = 160;
 	int nOffsetX = 385;
@@ -89,16 +89,86 @@ namespace NewMenuHud {
 	//float fSkinSelectSize = 0.04;
 	float fSkinSelectSize = 0.035;
 
+	struct tHUDData {
+		std::string name;
+		ImVec2 min;
+		ImVec2 max;
+	};
+
+	std::vector<tHUDData> LoadHUDData(const char* path, const char* name) {
+		size_t size;
+		auto file = (char*)ReadFileFromBfs(path, size);
+		if (!file) return {};
+
+		std::vector<tHUDData> vec;
+
+		auto ss = std::stringstream(file);
+
+		int sizes[2] = {1,1};
+
+		for (std::string line; std::getline(ss, line); ) {
+			while (line[0] == '\t') line.erase(line.begin());
+			if (line.starts_with("--")) continue;
+			if (line.length() > 64) continue;
+
+			if (line.starts_with(std::format("{}_size = ", name))) {
+				sscanf(line.c_str(), std::format("{}_size = {{ %d, %d }}", name).c_str(), &sizes[0], &sizes[1]);
+			}
+			else if (!line.empty() && !line.starts_with(std::format("{} = {{", name))) {
+				tHUDData data;
+				int x = 0, y = 0, sizex = 0, sizey = 0;
+
+				char varName[64] = "";
+				sscanf(line.c_str(), "%s = {  %d, %d, %d, %d, },", varName, &x, &y, &sizex, &sizey);
+				if (!varName[0]) continue;
+				if (x == 0 && y == 0 && sizex == 0 && sizey == 0) continue;
+
+				data.name = varName;
+				data.min.x = x / (double)sizes[0];
+				data.min.y = y / (double)sizes[1];
+				data.max.x = data.min.x + (sizex / (double)sizes[0]);
+				data.max.y = data.min.y + (sizey / (double)sizes[1]);
+
+				WriteLog(std::format("{} - {} {} {} {}", data.name, data.min.x, data.min.y, data.max.x, data.max.y));
+
+				vec.push_back(data);
+			}
+		}
+
+		return vec;
+	}
+
+	tHUDData* GetHUDData(std::vector<tHUDData>& hud, const std::string& name) {
+		for (auto& data : hud) {
+			if (data.name == name) return &data;
+		}
+		return nullptr;
+	}
+
+	float fCarNameX = 0.23;
+	float fCarNameY = 0.17;
+	float fCarNameSize = 0.06;
+	float fCarNameAspect = 5;
+
 	void OnTick() {
 		if (bInCarDealer) {
 			static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
 			static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
 			static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
+			static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
+			static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/car_logos.bed", "car_logos");
 
 			Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 			Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 			if (GetNumSkinsForCar(pGameFlow->pMenuInterface->pMenuScene->nCar) > 6) {
 				Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255, 255, 255, 255}, textureArrows);
+			}
+
+			if (auto logo = GetHUDData(gCarLogos, std::format("car{}", pGameFlow->pMenuInterface->pMenuScene->nCar))) {
+				DrawRectangle(fCarNameX * GetAspectRatioInv(),
+							  (fCarNameX + fCarNameSize * fCarNameAspect) * GetAspectRatioInv(), fCarNameY,
+							  fCarNameY + fCarNameSize, {255, 255, 255, 255}, 0, textureCarLogos, 0, logo->min,
+							  logo->max);
 			}
 
 			tNyaStringData data;

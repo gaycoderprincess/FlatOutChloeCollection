@@ -29,7 +29,6 @@ namespace NewMusicPlayer {
 			if (!data) return;
 
 			pStream = NyaAudio::LoadMemory(data, size);
-			WriteLog(std::format("pStream {} size {}", sPath, size));
 		}
 
 		void Play() {
@@ -206,7 +205,7 @@ namespace NewMusicPlayer {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
 
-		aPlaylists.push_back(LoadPlaylist("data/music/playlist_menu.toml"));
+		aPlaylists.push_back(LoadPlaylist("data/music/playlist_title.toml"));
 		pPlaylistMenu = &aPlaylists[aPlaylists.size()-1];
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingame.toml"));
 		pPlaylistIngame = &aPlaylists[aPlaylists.size()-1];
