@@ -36,10 +36,9 @@ namespace NewMusicPlayer {
 				NyaAudio::Play(pStream);
 				bAlreadyPlayed = true;
 
-				// todo this seems borked
 				if (GetGameState() == GAME_STATE_MENU) {
 					pGameFlow->pMenuInterface->bMusicPopupFinished = false;
-					pGameFlow->pMenuInterface->bMusicPopupActive = false;
+					pGameFlow->pMenuInterface->bMusicPopupActive = true;
 					pGameFlow->pMenuInterface->nMusicPopupTimer = pGameFlow->pMenuInterface->fMenuTimer * 1000;
 				}
 
@@ -94,6 +93,7 @@ namespace NewMusicPlayer {
 
 	tPlaylist* pCurrentPlaylist = nullptr;
 	tSong* pCurrentSong = nullptr;
+	tSong* pLastSong = nullptr;
 
 	void StopPlayback() {
 		if (!pCurrentSong) return;
@@ -124,7 +124,11 @@ namespace NewMusicPlayer {
 		}
 		if (!pCurrentSong) {
 			pCurrentSong = pCurrentPlaylist->GetNextSong();
+			while (pCurrentPlaylist->aSongs.size() > 1 && pCurrentSong == pLastSong) {
+				pCurrentSong = pCurrentPlaylist->GetNextSong();
+			}
 			pCurrentSong->Play();
+			pLastSong = pCurrentSong;
 
 			if (pPlayerHost) {
 				nMusicPopupTimeOffset = pPlayerHost->nRaceTime;
