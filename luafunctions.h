@@ -63,6 +63,18 @@ int ChloeHUD_SetCarDescription(void* a1) {
 	return 0;
 }
 
+int ChloeSave_LoadCustomData(void* a1) {
+	gCustomSave.Load();
+	gCustomSave.ApplyPlayerSettings();
+	gCustomSave.Save();
+	return 0;
+}
+
+int ChloeSave_SaveCustomData(void* a1) {
+	gCustomSave.Save();
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -98,6 +110,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCarDealer, "ChloeHUD_SetInCarDealer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
+	RegisterLUAFunction(a1, (void*)&ChloeSave_LoadCustomData, "ChloeSave_LoadCustomData");
+	RegisterLUAFunction(a1, (void*)&ChloeSave_SaveCustomData, "ChloeSave_SaveCustomData");
 
 	static auto sVersionString = "Chloe's Collection v1.73 - Achievements Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");

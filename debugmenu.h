@@ -102,6 +102,9 @@ void ProcessDebugMenu() {
 				if (DrawMenuOption(std::format("Blue - {}", col.r))) {
 					PaletteEditorMenu(col.r);
 				}
+
+				DrawRectangle(0.4, 0.6, 0.4, 0.6, GetPaletteColor(i));
+
 				ChloeMenuLib::EndMenu();
 			}
 		}

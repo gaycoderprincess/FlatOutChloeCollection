@@ -130,8 +130,6 @@ namespace NewMenuHud {
 				data.max.x = data.min.x + (sizex / (double)sizes[0]);
 				data.max.y = data.min.y + (sizey / (double)sizes[1]);
 
-				WriteLog(std::format("{} - {} {} {} {}", data.name, data.min.x, data.min.y, data.max.x, data.max.y));
-
 				vec.push_back(data);
 			}
 		}
@@ -275,10 +273,10 @@ namespace NewMenuHud {
 			}
 
 			if (skinId == skin) {
-				data.SetColor(255, 255, 255, 255);
+				data.SetColor(GetPaletteColor(18));
 			}
 			else {
-				data.SetColor(127, 127, 127, 255);
+				data.SetColor(GetPaletteColor(17));
 			}
 
 			DrawString(data, GetSkinName(car, skinId, skinLoop), &DrawStringFO2_Ingame12);

@@ -20,6 +20,8 @@ void WriteLog(const std::string& str) {
 
 #include "bfsload.h"
 #include "filereader.h"
+#include "customsave.h"
+#include "customsettings.h"
 #include "hudextensions.h"
 #include "musicplayer.h"
 #include "d3dhook.h"
@@ -51,6 +53,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyLUAPatches();
 			ApplyDDSParserPatches();
 			ApplyDebugMenuPatches();
+			ApplyCustomSettingsPatches();
 
 			NyaHookLib::Patch(0x4658C4 + 1, 2097152); // menucar model memory
 			NyaHookLib::Patch(0x4658C9 + 3, 2097152); // menucar model memory
