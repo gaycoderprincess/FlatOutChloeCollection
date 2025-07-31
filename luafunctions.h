@@ -63,6 +63,31 @@ int ChloeHUD_SetCarDescription(void* a1) {
 	return 0;
 }
 
+int ChloeGarage_IsCarPurchased(void* a1) {
+	lua_pushboolean(a1, gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)].bIsPurchased);
+	return 1;
+}
+
+int ChloeGarage_GetCarSkin(void* a1) {
+	lua_pushnumber(a1, gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)].nSkinId);
+	return 1;
+}
+
+int ChloeGarage_PurchaseCar(void* a1) {
+	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
+	car->bIsPurchased = true;
+	car->nSkinId = luaL_checknumber(a1, 2);
+	memset(car->nUpgrades, 0, sizeof(car->nUpgrades));
+	car->nUpgradesValue = 0;
+	return 0;
+}
+
+int ChloeGarage_SellCar(void* a1) {
+	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
+	car->bIsPurchased = false;
+	return 0;
+}
+
 int ChloeSave_LoadCustomData(void* a1) {
 	gCustomSave.Load();
 	gCustomSave.ApplyPlayerSettings();
@@ -112,6 +137,10 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_LoadCustomData, "ChloeSave_LoadCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_SaveCustomData, "ChloeSave_SaveCustomData");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_IsCarPurchased, "ChloeGarage_IsCarPurchased");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetCarSkin, "ChloeGarage_GetCarSkin");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_PurchaseCar, "ChloeGarage_PurchaseCar");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_SellCar, "ChloeGarage_SellCar");
 
 	static auto sVersionString = "Chloe's Collection v1.73 - Achievements Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
