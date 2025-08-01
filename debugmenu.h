@@ -97,13 +97,19 @@ void ProcessDebugMenu() {
 	//if (DrawMenuOption(std::format("nCarNameTextX - {}", NewMenuHud::nCarNameTextX))) { ValueEditorMenu(NewMenuHud::nCarNameTextX); }
 	//if (DrawMenuOption(std::format("nCarNameTextY - {}", NewMenuHud::nCarNameTextY))) { ValueEditorMenu(NewMenuHud::nCarNameTextY); }
 	//if (DrawMenuOption(std::format("fCarNameTextSize - {}", NewMenuHud::fCarNameTextSize))) { ValueEditorMenu(NewMenuHud::fCarNameTextSize); }
-	QuickValueEditor("fLoadingSpriteX", NewMenuHud::fLoadingSpriteX);
-	QuickValueEditor("fLoadingSpriteY", NewMenuHud::fLoadingSpriteY);
-	QuickValueEditor("fLoadingSpriteSize", NewMenuHud::fLoadingSpriteSize);
-	QuickValueEditor("nLoadingLogoY", NewMenuHud::nLoadingLogoY);
-	QuickValueEditor("nLoadingTextX", NewMenuHud::nLoadingTextX);
-	QuickValueEditor("nLoadingTextY", NewMenuHud::nLoadingTextY);
-	QuickValueEditor("fLoadingTextSize", NewMenuHud::fLoadingTextSize);
+	//QuickValueEditor("fLoadingSpriteX", NewMenuHud::fLoadingSpriteX);
+	//QuickValueEditor("fLoadingSpriteY", NewMenuHud::fLoadingSpriteY);
+	//QuickValueEditor("fLoadingSpriteSize", NewMenuHud::fLoadingSpriteSize);
+	//QuickValueEditor("nLoadingLogoY", NewMenuHud::nLoadingLogoY);
+	//QuickValueEditor("nLoadingTextX", NewMenuHud::nLoadingTextX);
+	//QuickValueEditor("nLoadingTextY", NewMenuHud::nLoadingTextY);
+	//QuickValueEditor("fLoadingTextSize", NewMenuHud::fLoadingTextSize);
+	QuickValueEditor("fPlayerListX", NewGameHud::fPlayerListX);
+	QuickValueEditor("fPlayerListY", NewGameHud::fPlayerListY);
+	QuickValueEditor("fPlayerListSize", NewGameHud::fPlayerListSize);
+	QuickValueEditor("fPlayerListSpacing", NewGameHud::fPlayerListSpacing);
+	QuickValueEditor("fWreckedNotifY", fWreckedNotifY);
+	QuickValueEditor("fWreckedNotifSize", fWreckedNotifSize);
 
 	if (DrawMenuOption("Palette Editor")) {
 		ChloeMenuLib::BeginMenu();
@@ -132,8 +138,9 @@ void ProcessDebugMenu() {
 	DrawMenuOption("Game State:", "", true);
 
 	if (auto ply = GetPlayer(0)) {
-		DrawDebugMenuViewerOption(std::format("Player Pointer - {:X}", (uintptr_t) ply));
-		DrawDebugMenuViewerOption(std::format("Player Car Pointer - {:X}", (uintptr_t) ply->pCar));
+		DrawDebugMenuViewerOption(std::format("Player Pointer - {:X}", (uintptr_t)ply));
+		DrawDebugMenuViewerOption(std::format("Player Car Pointer - {:X}", (uintptr_t)ply->pCar));
+		DrawDebugMenuViewerOption(std::format("Player Score Pointer - {:X}", (uintptr_t)GetPlayerScore<PlayerScoreRace>(1)));
 	}
 
 	ChloeMenuLib::EndMenu();
