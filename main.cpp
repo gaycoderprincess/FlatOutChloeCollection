@@ -23,6 +23,8 @@ void WriteLog(const std::string& str) {
 #include "config.h"
 #include "customsave.h"
 #include "customsettings.h"
+#include "cardealer.h"
+#include "carlimitadjuster.h"
 #include "hudextensions.h"
 #include "musicplayer.h"
 #include "d3dhook.h"
@@ -58,11 +60,17 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyDDSParserPatches();
 			ApplyDebugMenuPatches();
 			ApplyCustomSettingsPatches();
+			ApplyCarLimitAdjusterPatches();
+			ApplyCarDealerPatches();
 
 			NyaHookLib::Patch(0x4658C4 + 1, 2097152); // menucar model memory
 			NyaHookLib::Patch(0x4658C9 + 3, 2097152); // menucar model memory
 			NyaHookLib::Patch(0x4658D8 + 1, 16777216); // menucar skin memory
 			NyaHookLib::Patch(0x4658DD + 3, 16777216); // menucar skin memory
+
+			// remove car id bitwise operations
+			NyaHookLib::Patch<uint16_t>(0x43F50D, 0x9090);
+			NyaHookLib::Patch<uint16_t>(0x43F52F, 0x9090);
 
 			// 004E3CDD disable menu ui
 		} break;

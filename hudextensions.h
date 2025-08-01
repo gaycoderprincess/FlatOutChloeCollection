@@ -4,6 +4,7 @@ namespace NewMenuHud {
 	int nCarHorsepower = 0;
 	int nCarWeight = 0;
 	int nCarPrice = 0;
+	std::string sCarName;
 	std::string sCarDescription;
 
 	IDirect3DTexture9* LoadTextureFromBFS(const char* path) {
@@ -150,6 +151,10 @@ namespace NewMenuHud {
 	float fCarNameSize = 0.06;
 	float fCarNameAspect = 5;
 
+	int nCarNameTextX = 405;
+	int nCarNameTextY = 200;
+	float fCarNameTextSize = 0.05;
+
 	void DrawCarDealer() {
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
@@ -163,6 +168,14 @@ namespace NewMenuHud {
 						  (fCarNameX + fCarNameSize * fCarNameAspect) * GetAspectRatioInv(), fCarNameY,
 						  fCarNameY + fCarNameSize, {255, 255, 255, 255}, 0, textureCarLogos, 0, logo->min,
 						  logo->max);
+		}
+		else {
+			tNyaStringData data;
+			data.x = nCarNameTextX;
+			data.y = nCarNameTextY;
+			data.size = fCarNameTextSize;
+			data.XCenterAlign = true;
+			Draw1080pString(JUSTIFY_LEFT, data, sCarName, &DrawStringFO2_Small);
 		}
 
 		tNyaStringData data;

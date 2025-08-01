@@ -86,6 +86,9 @@ void ProcessDebugMenu() {
 	//if (DrawMenuOption(std::format("fCarNameX - {}", NewMenuHud::fCarNameX))) { ValueEditorMenu(NewMenuHud::fCarNameX); }
 	//if (DrawMenuOption(std::format("fCarNameY - {}", NewMenuHud::fCarNameY))) { ValueEditorMenu(NewMenuHud::fCarNameY); }
 	//if (DrawMenuOption(std::format("fCarNameSize - {}", NewMenuHud::fCarNameSize))) { ValueEditorMenu(NewMenuHud::fCarNameSize); }
+	if (DrawMenuOption(std::format("nCarNameTextX - {}", NewMenuHud::nCarNameTextX))) { ValueEditorMenu(NewMenuHud::nCarNameTextX); }
+	if (DrawMenuOption(std::format("nCarNameTextY - {}", NewMenuHud::nCarNameTextY))) { ValueEditorMenu(NewMenuHud::nCarNameTextY); }
+	if (DrawMenuOption(std::format("fCarNameTextSize - {}", NewMenuHud::fCarNameTextSize))) { ValueEditorMenu(NewMenuHud::fCarNameTextSize); }
 
 	if (DrawMenuOption("Palette Editor")) {
 		ChloeMenuLib::BeginMenu();
@@ -109,6 +112,13 @@ void ProcessDebugMenu() {
 			}
 		}
 		ChloeMenuLib::EndMenu();
+	}
+
+	DrawMenuOption("Game State:", "", true);
+
+	if (auto ply = GetPlayer(0)) {
+		DrawDebugMenuViewerOption(std::format("Player Pointer - {:X}", (uintptr_t) ply));
+		DrawDebugMenuViewerOption(std::format("Player Car Pointer - {:X}", (uintptr_t) ply->pCar));
 	}
 
 	ChloeMenuLib::EndMenu();
