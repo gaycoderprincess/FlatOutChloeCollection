@@ -7,8 +7,20 @@ namespace NewMenuHud {
 	std::string sCarName;
 	std::string sCarDescription;
 
+	struct tLoadedTexture {
+		std::string path;
+		DevTexture* devTexture;
+		IDirect3DTexture9* texture;
+	};
+	std::vector<tLoadedTexture> aLoadedTextures;
+
 	IDirect3DTexture9* LoadTextureFromBFS(const char* path) {
+		for (auto& tex : aLoadedTextures) {
+			if (tex.path == path) return tex.texture;
+		}
+
 		if (auto tex = pDeviceD3d->_vf_CreateTextureFromFile(nullptr, path, 9)) {
+			aLoadedTextures.push_back({path, tex, tex->pD3DTexture});
 			return tex->pD3DTexture;
 		}
 		return nullptr;
@@ -300,8 +312,54 @@ namespace NewMenuHud {
 		}
 	}
 
+	std::string sLoadingScreenTextureName = "data/menu/loading.tga";
+	void SetLoadingScreenTexture(const char* path) {
+		sLoadingScreenTextureName = path;
+	}
+
+	float fLoadingSpriteX = 0.07;
+	float fLoadingSpriteY = 0.8;
+	float fLoadingSpriteSize = 0.15;
+
+	void DrawLoadingScreen() {
+		if (!pLoadingScreen && GetGameState() == GAME_STATE_RACE) {
+			sLoadingScreenTextureName = "data/menu/loading.tga";
+		}
+
+		if (!pLoadingScreen) return;
+		if (sLoadingScreenTextureName.empty()) return;
+
+		auto tex = LoadTextureFromBFS(sLoadingScreenTextureName.c_str());
+		if (!tex) return;
+
+		static auto loadingAnim = LoadTextureFromBFS("data/menu/loading_anim.tga");
+		static std::vector<tHUDData> loadingAnims = LoadHUDData("data/menu/loading_anim.bed", "loading_anim");
+
+		// assuming a size of 640x480
+		// todo re-add this after the track select menu background is fixed up
+		//float aspectModifier = (GetAspectRatio() / (4.0 / 3.0)) - 1.0;
+		float aspectModifier = 0;
+		DrawRectangle(0, 1, 0 - (aspectModifier * 0.5), 1 + (aspectModifier * 0.5), {255,255,255,255}, 0, tex);
+
+		const float fLoadingTimerSpeed = 0.4;
+
+		static CNyaTimer gTimer;
+
+		static int nLoadingSprite = 0;
+		static double fLoadingTimer = 0;
+		fLoadingTimer += gTimer.Process();
+		while (fLoadingTimer > fLoadingTimerSpeed) {
+			nLoadingSprite++;
+			if (nLoadingSprite > 3) nLoadingSprite = 0;
+			fLoadingTimer -= fLoadingTimerSpeed;
+		}
+
+		DrawRectangle(1.0 - ((fLoadingSpriteX + fLoadingSpriteSize) * GetAspectRatioInv()), 1.0 - (fLoadingSpriteX * GetAspectRatioInv()), fLoadingSpriteY, fLoadingSpriteY + fLoadingSpriteSize, {255,255,255,255}, 0, loadingAnim, 0, loadingAnims[nLoadingSprite].min, loadingAnims[nLoadingSprite].max);
+	}
+
 	void OnTick() {
 		DrawCarDealer();
 		DrawSkinSelector();
+		DrawLoadingScreen();
 	}
 }

@@ -60,6 +60,14 @@ void PaletteEditorMenu(uint8_t& value) {
 	ChloeMenuLib::EndMenu();
 }
 
+void QuickValueEditor(const char* name, float& value) {
+	if (DrawMenuOption(std::format("{} - {}", name, value))) { ValueEditorMenu(value); }
+}
+
+void QuickValueEditor(const char* name, int& value) {
+	if (DrawMenuOption(std::format("{} - {}", name, value))) { ValueEditorMenu(value); }
+}
+
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
@@ -86,9 +94,12 @@ void ProcessDebugMenu() {
 	//if (DrawMenuOption(std::format("fCarNameX - {}", NewMenuHud::fCarNameX))) { ValueEditorMenu(NewMenuHud::fCarNameX); }
 	//if (DrawMenuOption(std::format("fCarNameY - {}", NewMenuHud::fCarNameY))) { ValueEditorMenu(NewMenuHud::fCarNameY); }
 	//if (DrawMenuOption(std::format("fCarNameSize - {}", NewMenuHud::fCarNameSize))) { ValueEditorMenu(NewMenuHud::fCarNameSize); }
-	if (DrawMenuOption(std::format("nCarNameTextX - {}", NewMenuHud::nCarNameTextX))) { ValueEditorMenu(NewMenuHud::nCarNameTextX); }
-	if (DrawMenuOption(std::format("nCarNameTextY - {}", NewMenuHud::nCarNameTextY))) { ValueEditorMenu(NewMenuHud::nCarNameTextY); }
-	if (DrawMenuOption(std::format("fCarNameTextSize - {}", NewMenuHud::fCarNameTextSize))) { ValueEditorMenu(NewMenuHud::fCarNameTextSize); }
+	//if (DrawMenuOption(std::format("nCarNameTextX - {}", NewMenuHud::nCarNameTextX))) { ValueEditorMenu(NewMenuHud::nCarNameTextX); }
+	//if (DrawMenuOption(std::format("nCarNameTextY - {}", NewMenuHud::nCarNameTextY))) { ValueEditorMenu(NewMenuHud::nCarNameTextY); }
+	//if (DrawMenuOption(std::format("fCarNameTextSize - {}", NewMenuHud::fCarNameTextSize))) { ValueEditorMenu(NewMenuHud::fCarNameTextSize); }
+	QuickValueEditor("fLoadingSpriteX", NewMenuHud::fLoadingSpriteX);
+	QuickValueEditor("fLoadingSpriteY", NewMenuHud::fLoadingSpriteY);
+	QuickValueEditor("fLoadingSpriteSize", NewMenuHud::fLoadingSpriteSize);
 
 	if (DrawMenuOption("Palette Editor")) {
 		ChloeMenuLib::BeginMenu();

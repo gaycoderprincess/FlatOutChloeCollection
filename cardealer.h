@@ -6,9 +6,16 @@ struct tDealerCar {
 };
 std::vector<tDealerCar> aDealerCars;
 
-std::string GetCarName(int carId) {
+tDealerCar* GetDealerCar(int carId) {
 	for (auto& car : aDealerCars) {
-		if (car.carId == carId) return car.name;
+		if (car.carId == carId) return &car;
+	}
+	return nullptr;
+}
+
+std::string GetCarName(int carId) {
+	if (auto car = GetDealerCar(carId)) {
+		return car->name;
 	}
 	return "NULL";
 }

@@ -173,6 +173,17 @@ int ChloeCollection_GetDealerCarCamera(void* a1) {
 	return 1;
 }
 
+int ChloeCollection_GetCarClass(void* a1) {
+	auto car = GetDealerCar(luaL_checknumber(a1, 1));
+	lua_pushnumber(a1, car->classId);
+	return 1;
+}
+
+int ChloeCollection_SetLoadingScreenTexture(void* a1) {
+	NewMenuHud::SetLoadingScreenTexture((const char*)lua_tolstring(a1, 1));
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -224,6 +235,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetDealerCarName, "ChloeCollection_GetDealerCarName");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetDealerCarClass, "ChloeCollection_GetDealerCarClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetDealerCarCamera, "ChloeCollection_GetDealerCarCamera");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarClass, "ChloeCollection_GetCarClass");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetLoadingScreenTexture, "ChloeCollection_SetLoadingScreenTexture");
 
 	static auto sVersionString = "Chloe's Collection v1.73 - Achievements Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
