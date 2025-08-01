@@ -77,5 +77,5 @@ void ApplyCustomSettingsPatches() {
 	for (auto& addr : aNameAddresses) {
 		NyaHookLib::Patch(addr, &aNewGameSettings[0].name);
 	}
-	NyaHookLib::Patch(0x68B7FC, &aNewGameSettings[0].maxValue);
+	NyaHookLib::Patch(0x4399ED, &aNewGameSettings[0].maxValue);
 }

@@ -321,6 +321,12 @@ namespace NewMenuHud {
 	float fLoadingSpriteY = 0.8;
 	float fLoadingSpriteSize = 0.15;
 
+	float nLoadingLogoY = 64;
+
+	int nLoadingTextX = 1650;
+	int nLoadingTextY = 980;
+	float fLoadingTextSize = 0.04;
+
 	void DrawLoadingScreen() {
 		if (!pLoadingScreen && GetGameState() == GAME_STATE_RACE) {
 			sLoadingScreenTextureName = "data/menu/loading.tga";
@@ -334,6 +340,7 @@ namespace NewMenuHud {
 		if (!tex) return;
 
 		static auto loadingAnim = LoadTextureFromBFS("data/menu/loading_anim.tga");
+		static auto gameLogo = LoadTextureFromBFS("data/menu/flatout_logo.png");
 		static std::vector<tHUDData> loadingAnims = LoadHUDData("data/menu/loading_anim.bed", "loading_anim");
 
 		// assuming a size of 640x480
@@ -356,6 +363,15 @@ namespace NewMenuHud {
 		}
 
 		DrawRectangle(1.0 - ((fLoadingSpriteX + fLoadingSpriteSize) * GetAspectRatioInv()), 1.0 - (fLoadingSpriteX * GetAspectRatioInv()), fLoadingSpriteY, fLoadingSpriteY + fLoadingSpriteSize, {255,255,255,255}, 0, loadingAnim, 0, loadingAnims[nLoadingSprite].min, loadingAnims[nLoadingSprite].max);
+
+		Draw1080pSprite(JUSTIFY_CENTER, 960 - 256, 960 + 256, nLoadingLogoY, nLoadingLogoY + 166, {255,255,255,255}, gameLogo);
+
+		tNyaStringData data;
+		data.x = nLoadingTextX;
+		data.y = nLoadingTextY;
+		data.size = fLoadingTextSize;
+		data.XRightAlign = true;
+		Draw1080pString(JUSTIFY_RIGHT, data, "LOADING", &DrawStringFO2_Small);
 	}
 
 	void OnTick() {

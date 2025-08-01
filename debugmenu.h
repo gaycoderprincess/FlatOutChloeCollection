@@ -100,6 +100,10 @@ void ProcessDebugMenu() {
 	QuickValueEditor("fLoadingSpriteX", NewMenuHud::fLoadingSpriteX);
 	QuickValueEditor("fLoadingSpriteY", NewMenuHud::fLoadingSpriteY);
 	QuickValueEditor("fLoadingSpriteSize", NewMenuHud::fLoadingSpriteSize);
+	QuickValueEditor("nLoadingLogoY", NewMenuHud::nLoadingLogoY);
+	QuickValueEditor("nLoadingTextX", NewMenuHud::nLoadingTextX);
+	QuickValueEditor("nLoadingTextY", NewMenuHud::nLoadingTextY);
+	QuickValueEditor("fLoadingTextSize", NewMenuHud::fLoadingTextSize);
 
 	if (DrawMenuOption("Palette Editor")) {
 		ChloeMenuLib::BeginMenu();
