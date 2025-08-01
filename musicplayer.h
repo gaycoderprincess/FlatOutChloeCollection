@@ -111,12 +111,12 @@ namespace NewMusicPlayer {
 		if (!pPlaylistIngame || !pPlaylistMenu) return;
 		if (GetGameState() == GAME_STATE_NONE) return;
 
-		pCurrentPlaylist = GetGameState() == GAME_STATE_RACE ? pPlaylistIngame : pPlaylistMenu;
-
 		if (pLoadingScreen || IsKeyJustPressed(VK_END)) {
 			StopPlayback();
 			return;
 		}
+
+		pCurrentPlaylist = GetGameState() == GAME_STATE_RACE ? pPlaylistIngame : pPlaylistMenu;
 
 		if (GetGameState() == GAME_STATE_MENU) {
 			nMusicPopupTimeOffset = 0;
