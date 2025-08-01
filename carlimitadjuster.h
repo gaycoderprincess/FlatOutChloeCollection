@@ -20,6 +20,34 @@ void __attribute__((naked)) LoadMenuTexturesASM() {
 	);
 }
 
+void __fastcall OnCarModelLoad(Car* pCar) {
+	static std::string path, folderPath, name;
+	path = std::format("{}tire.bgm", pCar->sFolderPath.Get());
+	folderPath = pCar->sFolderPath.Get();
+	name = "tire.bgm";
+
+	NyaHookLib::Patch(0x426174 + 1, path.c_str());
+	NyaHookLib::Patch(0x426B9B + 1, path.c_str());
+	NyaHookLib::Patch(0x423D41 + 1, folderPath.c_str());
+	NyaHookLib::Patch<uint8_t>(0x423D3F + 1, folderPath.length());
+	NyaHookLib::Patch(0x426BAB + 1, name.c_str());
+	NyaHookLib::Patch(0x426BCD + 1, name.c_str());
+}
+
+uintptr_t LoadCarModelASM_jmp = 0x460E9E;
+void __attribute__((naked)) LoadCarModelASM() {
+	__asm__ (
+		"pushad\n\t"
+		"mov ecx, ebp\n\t"
+		"call %1\n\t"
+		"popad\n\t"
+
+		"jmp %0\n\t"
+			:
+			:  "m" (LoadCarModelASM_jmp), "i" (OnCarModelLoad)
+	);
+}
+
 DevTexture* __stdcall LoadMenucarTextureNew(void* a1, const char* path, int a3, int a4) {
 	bool bIsFO2Car = false;
 	if (pGameFlow->pMenuInterface->pMenuScene->nCar >= 200 && pGameFlow->pMenuInterface->pMenuScene->nCar <= 250) bIsFO2Car = true;
@@ -55,6 +83,7 @@ void ApplyCarLimitAdjusterPatches() {
 	NyaHookLib::Patch(0x4658DD + 3, 16777216); // menucar skin memory
 
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x460E8E, &LoadMenucarTextureNew);
+	LoadCarModelASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41D765, &LoadCarModelASM);
 
 	// remove car id bitwise operations
 	NyaHookLib::Patch<uint16_t>(0x43F50D, 0x9090);

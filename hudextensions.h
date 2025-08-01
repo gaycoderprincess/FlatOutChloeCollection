@@ -326,6 +326,7 @@ namespace NewMenuHud {
 			sLoadingScreenTextureName = "data/menu/loading.tga";
 		}
 
+		if (!nUseNewLoadingScreen) return;
 		if (!pLoadingScreen) return;
 		if (sLoadingScreenTextureName.empty()) return;
 

@@ -33,11 +33,21 @@ void WriteLog(const std::string& str) {
 #include "ddsparser.h"
 #include "debugmenu.h"
 
+void SetHandlingDamage() {
+	static int nLast = -1;
+	if (nLast != nHandlingDamage) {
+		NyaHookLib::Patch<uint64_t>(0x416312, nHandlingDamage ? 0x9F8D000001B2850F : 0x9F8D90000001B3E9);
+		nLast = nHandlingDamage;
+	}
+}
+
 void CustomSetterThread() {
 	pGameFlow->nAutoTransmission = !nTransmission;
 	if (gCustomSave.bInitialized) {
 		gCustomSave.aCareerGarage[pGameFlow->Profile.nCarType+1].ApplyUpgradesToCar();
 	}
+
+	SetHandlingDamage();
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {

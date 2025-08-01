@@ -6,6 +6,8 @@ tGameSetting aNewGameSettings[] = {
 		{ "Game", "Ragdoll", (void*)0x6C0288, 1, 0, 0 },
 		{ "Game", "DefaultPlayerName", (void*)0x6C02B0, 3, 0, 0 },
 		{ "Game", "Camera", (void*)0x6C029C, 0, 0, 9 },
+		{ "Game", "UseNewLoadingScreen", &nUseNewLoadingScreen, 1, 0, 0 },
+		{ "Game", "HandlingDamage", &nHandlingDamage, 1, 0, 0 },
 		{ "Control", "ControllerGuid", (void*)0x6BEDD8, 3, 0, 0 },
 		{ "Control", "Controller", (void*)0x6BEDFC, 0, 0, 2 },
 		{ "Control", "ForceFeedback", (void*)0x6BEE00, 1, 0, 0 },
