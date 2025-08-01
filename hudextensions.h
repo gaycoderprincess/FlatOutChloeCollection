@@ -68,6 +68,7 @@ namespace NewMenuHud {
 		return DrawString(data, text, drawFunc);
 	}
 
+	// todo add interpolation with upgrades
 	int nPowerY = 392;
 	int nPriceY = 320;
 	int nWeightY = 466;
@@ -151,17 +152,11 @@ namespace NewMenuHud {
 
 	void DrawCarDealer() {
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
-		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
-		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
 		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/car_logos.bed", "car_logos");
 
 		if (!bInCarDealer) return;
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
-		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
-		if (GetNumSkinsForCar(pGameFlow->pMenuInterface->pMenuScene->nCar) > 6) {
-			Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255, 255, 255, 255}, textureArrows);
-		}
 
 		if (auto logo = GetHUDData(gCarLogos, std::format("car{}", pGameFlow->pMenuInterface->pMenuScene->nCar))) {
 			DrawRectangle(fCarNameX * GetAspectRatioInv(),
@@ -192,11 +187,6 @@ namespace NewMenuHud {
 		data.y = nDescriptionY;
 		data.size = fDescriptionSize;
 		Draw1080pString(JUSTIFY_LEFT, data, sCarDescription, &DrawStringFO2_Ingame12);
-		data.x = nSkinSelectTitleX;
-		data.y = nSkinSelectTitleY;
-		data.size = fSkinSelectSize;
-		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Small);
 	}
 
 	std::string GetSkinName(int carId, int skinId, bool wrapAround) {
@@ -236,6 +226,9 @@ namespace NewMenuHud {
 	}
 
 	void DrawSkinSelector() {
+		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
+		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
+
 		if (!bInSkinSelector) return;
 
 		auto menu = pGameFlow->pMenuInterface;
@@ -246,20 +239,30 @@ namespace NewMenuHud {
 		int skin = menu->pMenuScene->nCarSkin;
 		int numSkins = GetNumSkinsForCar(car);
 
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+
 		bool skinLoop = false;
 		if (numSkins > 6) {
+			Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255, 255, 255, 255}, textureArrows);
 			skinLoop = true;
 		}
 		else {
 			skinLoop = false;
 		}
 
+		tNyaStringData data;
+		data.x = nSkinSelectTitleX;
+		data.y = nSkinSelectTitleY;
+		data.size = fSkinSelectSize;
+		data.XCenterAlign = true;
+		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Small);
+
 		float fPosX = 0.1;
 		float fPosY = 0.372;
 		float fSize = 0.035;
 		float fSpacing = 0.0495;
 
-		tNyaStringData data;
+		data.XCenterAlign = false;
 		data.x = 1.0 - (fPosX * GetAspectRatio());
 		data.y = fPosY;
 		data.size = fSize;

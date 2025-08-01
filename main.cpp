@@ -20,6 +20,7 @@ void WriteLog(const std::string& str) {
 
 #include "bfsload.h"
 #include "filereader.h"
+#include "config.h"
 #include "customsave.h"
 #include "customsettings.h"
 #include "hudextensions.h"
@@ -31,7 +32,10 @@ void WriteLog(const std::string& str) {
 #include "debugmenu.h"
 
 void CustomSetterThread() {
-
+	pGameFlow->nAutoTransmission = !nTransmission;
+	if (gCustomSave.bInitialized) {
+		gCustomSave.aCareerGarage[pGameFlow->Profile.nCarType+1].ApplyUpgradesToCar();
+	}
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {

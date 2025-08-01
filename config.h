@@ -1,0 +1,8 @@
+enum eHandlingMode {
+	HANDLING_NORMAL,
+	HANDLING_PROFESSIONAL,
+	HANDLING_SIMCADE,
+	NUM_HANDLING_MODES
+};
+
+uint32_t nTransmission = 0;

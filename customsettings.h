@@ -17,6 +17,7 @@ tGameSetting aNewGameSettings[] = {
 		{ "Control", "DigitalCenteringSpeed", (void*)0x6BEE18, 2, 0, 100 },
 		{ "Control", "DigitalSteeringMaxSpeed", (void*)0x6BEE1C, 2, 0, 100 },
 		{ "Control", "DigitalSteeringMinSpeed", (void*)0x6BEE20, 2, 0, 100 },
+		{ "Control", "Transmission", &nTransmission, 1, 0, 0 },
 		{ "Visual", "AlphaBlend", (void*)0x6C02C4, 1, 0, 0 },
 		{ "Visual", "SunFlare", (void*)0x6C02CC, 1, 0, 0 },
 		{ "Visual", "TextureQuality", (void*)0x6C02D0, 0, 0, 4 },

@@ -69,7 +69,9 @@ int ChloeGarage_IsCarPurchased(void* a1) {
 }
 
 int ChloeGarage_GetCarSkin(void* a1) {
-	lua_pushnumber(a1, gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)].nSkinId);
+	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
+	if (car->nSkinId == 0) car->nSkinId = 1;
+	lua_pushnumber(a1, car->nSkinId);
 	return 1;
 }
 
@@ -88,6 +90,42 @@ int ChloeGarage_SellCar(void* a1) {
 	return 0;
 }
 
+int ChloeGarage_GetFirstOwnedCar(void* a1) {
+	for (int i = 0; i < 255; i++) {
+		auto car = &gCustomSave.aCareerGarage[i];
+		if (car->bIsPurchased) {
+			lua_pushnumber(a1, i);
+			return 1;
+		}
+	}
+	lua_pushnumber(a1, 1);
+	return 1;
+}
+
+int ChloeGarage_GetNumCarsOwned(void* a1) {
+	int numCarsOwned = 0;
+	for (int i = 0; i < 255; i++) {
+		auto car = &gCustomSave.aCareerGarage[i];
+		if (car->bIsPurchased) {
+			numCarsOwned++;
+		}
+	}
+	lua_pushnumber(a1, numCarsOwned);
+	return 1;
+}
+
+int ChloeGarage_AddUpgrade(void* a1) {
+	auto car = &gCustomSave.aCareerGarage[pGameFlow->Profile.nCarType+1];
+	car->SetUpgradePurchased(luaL_checknumber(a1, 1), true);
+	return 0;
+}
+
+int ChloeGarage_IsCarUpgraded(void* a1) {
+	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
+	lua_pushboolean(a1, car->IsUpgradePurchased(luaL_checknumber(a1, 2)));
+	return 1;
+}
+
 int ChloeSave_LoadCustomData(void* a1) {
 	gCustomSave.Load();
 	gCustomSave.ApplyPlayerSettings();
@@ -97,6 +135,11 @@ int ChloeSave_LoadCustomData(void* a1) {
 
 int ChloeSave_SaveCustomData(void* a1) {
 	gCustomSave.Save();
+	return 0;
+}
+
+int ChloeCollection_WriteLog(void* a1) {
+	WriteLog((const char*)lua_tolstring(a1, 1));
 	return 0;
 }
 
@@ -141,6 +184,11 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetCarSkin, "ChloeGarage_GetCarSkin");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_PurchaseCar, "ChloeGarage_PurchaseCar");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_SellCar, "ChloeGarage_SellCar");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetFirstOwnedCar, "ChloeGarage_GetFirstOwnedCar");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetNumCarsOwned, "ChloeGarage_GetNumCarsOwned");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_AddUpgrade, "ChloeGarage_AddUpgrade");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_IsCarUpgraded, "ChloeGarage_IsCarUpgraded");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_WriteLog, "ChloeCollection_WriteLog");
 
 	static auto sVersionString = "Chloe's Collection v1.73 - Achievements Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
