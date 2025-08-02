@@ -76,6 +76,8 @@ namespace NewMusicPlayer {
 		std::vector<tSong> aSongs;
 
 		tSong* GetNextSong() {
+			if (aSongs.empty()) return nullptr;
+
 			std::vector<tSong*> songs;
 			for (auto& song : aSongs) {
 				if (song.bAlreadyPlayed) continue;
@@ -111,12 +113,13 @@ namespace NewMusicPlayer {
 		if (!pPlaylistIngame || !pPlaylistMenu) return;
 		if (GetGameState() == GAME_STATE_NONE) return;
 
-		pCurrentPlaylist = GetGameState() == GAME_STATE_RACE ? pPlaylistIngame : pPlaylistMenu;
-
 		if (pLoadingScreen || IsKeyJustPressed(VK_END)) {
 			StopPlayback();
 			return;
 		}
+
+		pCurrentPlaylist = GetGameState() == GAME_STATE_RACE ? pPlaylistIngame : pPlaylistMenu;
+		if (pCurrentPlaylist->aSongs.empty()) return;
 
 		if (GetGameState() == GAME_STATE_MENU) {
 			nMusicPopupTimeOffset = 0;
@@ -156,16 +159,12 @@ namespace NewMusicPlayer {
 		size_t size;
 		auto file = (char*)ReadFileFromBfs(path, size);
 
-		// this is fucking stupid, but tomlplusplus crashes trying to read from memory
-		std::ofstream outFile("cctemp_playlist.toml", std::ios::out | std::ios::binary );
-		if (!outFile.is_open()) return {};
-		outFile.write(file, size);
-		outFile.close();
-		delete[] file;
+		std::stringstream ss;
+		ss << file;
 
 		try {
 			tPlaylist playlist;
-			auto config = toml::parse_file("cctemp_playlist.toml");
+			auto config = toml::parse(ss);
 			playlist.sName = config["Playlist"]["Name"].value_or("");
 			int count = config["Playlist"]["Count"].value_or(0);
 			for (int i = 0; i < count; i++) {
@@ -181,13 +180,11 @@ namespace NewMusicPlayer {
 				if (song.sTitle.empty()) continue;
 				playlist.aSongs.push_back(song);
 			}
-			remove("cctemp_playlist.toml");
 			return playlist;
 		}
 		catch (const toml::parse_error& err) {
 			MessageBoxA(0, std::format("Parsing failed: {}", err.what()).c_str(), "Fatal error", MB_ICONERROR);
 		}
-		remove("cctemp_playlist.toml");
 
 		return {};
 	}
@@ -206,8 +203,8 @@ namespace NewMusicPlayer {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
 
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_title.toml"));
-		pPlaylistMenu = &aPlaylists[aPlaylists.size()-1];
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingame.toml"));
+		pPlaylistMenu = &aPlaylists[aPlaylists.size()-2];
 		pPlaylistIngame = &aPlaylists[aPlaylists.size()-1];
 
 		for (auto& playlist : aPlaylists) {

@@ -1,7 +1,7 @@
 std::string sWreckedNotif;
 double fWreckedNotifTimer = 0;
 
-float fWreckedNotifY = 0.15;
+float fWreckedNotifY = 0.1;
 float fWreckedNotifSize = 0.05;
 
 void DrawWreckedNotif() {

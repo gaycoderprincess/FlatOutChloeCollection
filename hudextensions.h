@@ -282,13 +282,13 @@ namespace NewMenuHud {
 		data.XCenterAlign = true;
 		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Small);
 
-		float fPosX = 0.1;
+		float fPosX = 0.316;
 		float fPosY = 0.372;
 		float fSize = 0.035;
 		float fSpacing = 0.0495;
 
 		data.XCenterAlign = false;
-		data.x = 1.0 - (fPosX * GetAspectRatio());
+		data.x = 1.0 - (fPosX * GetAspectRatioInv());
 		data.y = fPosY;
 		data.size = fSize;
 		for (int i = 1; i <= 6; i++) {

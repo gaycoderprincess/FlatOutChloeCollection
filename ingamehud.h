@@ -68,7 +68,7 @@ namespace NewGameHud {
 	void OnTick() {
 		if (pLoadingScreen) return;
 		if (GetGameState() != GAME_STATE_RACE) {
-			bPlayerListUp = true;
+			bPlayerListUp = nPlayerListDefaultState;
 			return;
 		}
 		DrawPlayerList();
