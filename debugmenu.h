@@ -117,13 +117,13 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nCareerListStartY", NewMenuHud::nCareerListStartY);
 	//QuickValueEditor("nCareerListSpacing", NewMenuHud::nCareerListSpacing);
 	//QuickValueEditor("fCareerListSize", NewMenuHud::fCareerListSize);
-	QuickValueEditor("nCareerEventNameX", NewMenuHud::nCareerEventNameX);
-	QuickValueEditor("nCareerEventNameY", NewMenuHud::nCareerEventNameY);
-	QuickValueEditor("nCareerEventDescY", NewMenuHud::nCareerEventDescY);
-	QuickValueEditor("fCareerEventSize", NewMenuHud::fCareerEventSize);
-	QuickValueEditor("fCareerEventDescSize", NewMenuHud::fCareerEventDescSize);
-	QuickValueEditor("fNitroAirtimeTolerance", fNitroAirtimeTolerance);
-	QuickValueEditor("fNitroAirtimeRate", fNitroAirtimeRate);
+	//QuickValueEditor("nCareerEventNameX", NewMenuHud::nCareerEventNameX);
+	//QuickValueEditor("nCareerEventNameY", NewMenuHud::nCareerEventNameY);
+	//QuickValueEditor("nCareerEventDescY", NewMenuHud::nCareerEventDescY);
+	//QuickValueEditor("fCareerEventSize", NewMenuHud::fCareerEventSize);
+	//QuickValueEditor("fCareerEventDescSize", NewMenuHud::fCareerEventDescSize);
+	//QuickValueEditor("fNitroAirtimeTolerance", fNitroAirtimeTolerance);
+	//QuickValueEditor("fNitroAirtimeRate", fNitroAirtimeRate);
 
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();
@@ -175,6 +175,17 @@ void ProcessDebugMenu() {
 	}
 
 	DrawMenuOption("Game State:", "", true);
+
+	if (DrawMenuOption("Cup Info")) {
+		ChloeMenuLib::BeginMenu();
+
+		DrawDebugMenuViewerOption(std::format("Class - {:X}", gCustomSave.nCareerClass));
+		DrawDebugMenuViewerOption(std::format("Cup - {:X}", gCustomSave.nCareerCup));
+		DrawDebugMenuViewerOption(std::format("Next Event - {:X}", gCustomSave.nCareerCupNextEvent));
+		DrawDebugMenuViewerOption(std::format("Event - {:X}", gCustomSave.nCareerEvent));
+
+		ChloeMenuLib::EndMenu();
+	}
 
 	if (auto ply = GetPlayer(0)) {
 		DrawDebugMenuViewerOption(std::format("Player Pointer - {:X}", (uintptr_t)ply));

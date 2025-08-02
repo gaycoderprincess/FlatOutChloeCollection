@@ -97,6 +97,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarLimitAdjusterPatches();
 			ApplyCarDealerPatches();
 			ApplyCarDamagePatches();
+			CareerMode::Init();
 
 			// 004E3CDD disable menu ui
 		} break;

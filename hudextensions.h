@@ -1,5 +1,6 @@
 namespace NewMenuHud {
 	bool bInCareer = false;
+	bool bInCareerCupSelect = false;
 	bool bInCarDealer = false;
 	bool bInSkinSelector = false;
 	int nCarHorsepower = 0;
@@ -80,6 +81,10 @@ namespace NewMenuHud {
 	void Draw1080pString(eJustify justify, tNyaStringData data, const std::string& text, void(*drawFunc)(const tNyaStringData&, const std::string&)) {
 		DoJustify(justify, data.x, data.y);
 		return DrawString(data, text, drawFunc);
+	}
+
+	float GetFlashingAlpha(float timer) {
+		return (0.75 + 0.25 * (std::cos(timer * 3.141592 * 2) + 1.0) / 2) * 255;
 	}
 
 	// todo add interpolation with upgrades
@@ -397,7 +402,7 @@ namespace NewMenuHud {
 	int nCareerEventNameY = 230;
 	int nCareerEventDescY = 295;
 	float fCareerEventSize = 0.035;
-	float fCareerEventDescSize = 0.035;
+	float fCareerEventDescSize = 0.036;
 
 	std::string GetCareerPlayerName(int i) {
 		return i == 0 ? GetStringNarrow(pGameFlow->Profile.wsPlayerName) : aAIPlayerNames[i-1];
@@ -446,16 +451,23 @@ namespace NewMenuHud {
 		data.y = nCareerEventNameY;
 		data.size = fCareerEventSize;
 		data.XCenterAlign = false;
-		Draw1080pString(JUSTIFY_RIGHT, data, "FOREST WRECK CUP", DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::GetCurrentCup()->sName, DrawStringFO2_Small);
 		data.y = nCareerEventDescY;
 		data.size = fCareerEventDescSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, "EVENT 2/3", DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_RIGHT, data, std::format("EVENT {}/{}", gCustomSave.nCareerCupNextEvent+1, CareerMode::GetCurrentCup()->aRaces.size()), DrawStringFO2_Ingame12);
+	}
+
+	void DrawCareerCupSelect() {
+		if (!bInCareerCupSelect) return;
+
+
 	}
 
 	void OnTick() {
 		DrawCarDealer();
 		DrawSkinSelector();
 		DrawCareerMenu();
+		DrawCareerCupSelect();
 		DrawLoadingScreen();
 	}
 }

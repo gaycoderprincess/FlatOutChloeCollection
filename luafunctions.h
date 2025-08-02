@@ -56,6 +56,16 @@ int ChloeHUD_SetInCareer(void* a1) {
 	return 0;
 }
 
+int ChloeCareer_SetIsCareerRace(void* a1) {
+	CareerMode::SetIsCareerMode((int)luaL_checknumber(a1, 1));
+	return 0;
+}
+
+int ChloeCareer_WasCareerRace(void* a1) {
+	lua_pushboolean(a1, CareerMode::bLastRaceCareerRace);
+	return 1;
+}
+
 int ChloeHUD_SetCarStats(void* a1) {
 	NewMenuHud::nCarHorsepower = luaL_checknumber(a1, 1);
 	NewMenuHud::nCarWeight = luaL_checknumber(a1, 2);
@@ -214,6 +224,99 @@ int ChloeCareer_IsCupActive(void* a1) {
 	return 1;
 }
 
+int ChloeCareer_GetCurrentClass(void* a1) {
+	lua_pushnumber(a1, gCustomSave.nCareerClass);
+	return 1;
+}
+
+int ChloeCareer_GetCurrentCup(void* a1) {
+	lua_pushnumber(a1, gCustomSave.nCareerCup);
+	return 1;
+}
+
+int ChloeCareer_GetCurrentCupNextEvent(void* a1) {
+	lua_pushnumber(a1, gCustomSave.nCareerCupNextEvent+1);
+	return 1;
+}
+
+int ChloeCareer_StartCup(void* a1) {
+	gCustomSave.nCareerClass = luaL_checknumber(a1, 1);
+	gCustomSave.nCareerCup = luaL_checknumber(a1, 2);
+	gCustomSave.nCareerCupNextEvent = 0;
+	return 0;
+}
+
+int ChloeCareer_StartEvent(void* a1) {
+	gCustomSave.nCareerClass = luaL_checknumber(a1, 1);
+	gCustomSave.nCareerEvent = luaL_checknumber(a1, 2);
+	return 0;
+}
+
+int ChloeCareerDefs_BeginCareerDefs(void* a1) {
+	for (auto& luaClass : CareerMode::aLUACareerClasses) {
+		luaClass.nMoneyAward = 0;
+		luaClass.aCarUnlocks.clear();
+		luaClass.aCups.clear();
+		luaClass.aEvents.clear();
+	}
+	return 0;
+}
+
+int ChloeCareerDefs_BeginClass(void* a1) {
+	CareerMode::luaDefs_currentClass = &CareerMode::aLUACareerClasses[(int)luaL_checknumber(a1, 1)-1];
+	return 0;
+}
+
+int ChloeCareerDefs_BeginCup(void* a1) {
+	auto& vec = CareerMode::luaDefs_currentClass->aCups;
+	vec.push_back({});
+	CareerMode::luaDefs_currentCup = &vec[vec.size()-1];
+	return 0;
+}
+
+int ChloeCareerDefs_BeginEvent(void* a1) {
+	auto& vec = CareerMode::luaDefs_currentClass->aEvents;
+	vec.push_back({});
+	CareerMode::luaDefs_currentCup = &vec[vec.size()-1];
+	return 0;
+}
+
+int ChloeCareerDefs_AddCarUnlock(void* a1) {
+	CareerMode::luaDefs_currentClass->aCarUnlocks.push_back(luaL_checknumber(a1, 1));
+	return 0;
+}
+
+int ChloeCareerDefs_SetMoneyAward(void* a1) {
+	CareerMode::luaDefs_currentClass->nMoneyAward = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCareerDefs_SetCupName(void* a1) {
+	CareerMode::luaDefs_currentCup->sName = (const char*)lua_tolstring(a1, 1);
+	return 0;
+}
+
+int ChloeCareerDefs_SetAIUpgradeLevel(void* a1) {
+	CareerMode::luaDefs_currentCup->nAIUpgradeLevel = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCareerDefs_SetCupWinnings(void* a1) {
+	CareerMode::luaDefs_currentCup->aCupWinnings[0] = luaL_checknumber(a1, 1);
+	CareerMode::luaDefs_currentCup->aCupWinnings[1] = luaL_checknumber(a1, 2);
+	CareerMode::luaDefs_currentCup->aCupWinnings[2] = luaL_checknumber(a1, 3);
+	return 0;
+}
+
+int ChloeCareerDefs_AddRace(void* a1) {
+	CareerMode::tLUAClass::tCup::tRace race;
+	race.nLevel = luaL_checknumber(a1, 1);
+	race.nLaps = luaL_checknumber(a1, 2);
+	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
+	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -273,6 +376,23 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarClass, "ChloeCollection_GetCarClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetLoadingScreenTexture, "ChloeCollection_SetLoadingScreenTexture");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_IsCupActive, "ChloeCareer_IsCupActive");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetCurrentClass, "ChloeCareer_GetCurrentClass");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetCurrentCup, "ChloeCareer_GetCurrentCup");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetCurrentCupNextEvent, "ChloeCareer_GetCurrentCupNextEvent");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_StartCup, "ChloeCareer_StartCup");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_StartEvent, "ChloeCareer_StartEvent");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_SetIsCareerRace, "ChloeCareer_SetIsCareerRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerRace, "ChloeCareer_WasCareerRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCareerDefs, "ChloeCareerDefs_BeginCareerDefs");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginClass, "ChloeCareerDefs_BeginClass");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCup, "ChloeCareerDefs_BeginCup");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginEvent, "ChloeCareerDefs_BeginEvent");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddCarUnlock, "ChloeCareerDefs_AddCarUnlock");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetMoneyAward, "ChloeCareerDefs_SetMoneyAward");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetCupName, "ChloeCareerDefs_SetCupName");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetAIUpgradeLevel, "ChloeCareerDefs_SetAIUpgradeLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetCupWinnings, "ChloeCareerDefs_SetCupWinnings");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddRace, "ChloeCareerDefs_AddRace");
 
 	RegisterLUAEnum(a1, HANDLING_NORMAL, "HANDLING_NORMAL");
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");
