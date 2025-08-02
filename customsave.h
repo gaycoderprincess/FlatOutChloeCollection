@@ -96,6 +96,7 @@ struct tCustomSaveStructure {
 		SetDefaultPlayerSettings();
 	}
 	void SetDefaultPlayerSettings() {
+		bCareerClassUnlocked[0] = true;
 		for (auto& data : aCareerClasses) {
 			data.aCups[0].bUnlocked = true;
 		}

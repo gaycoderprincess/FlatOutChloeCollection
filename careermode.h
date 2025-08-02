@@ -53,11 +53,12 @@ namespace CareerMode {
 	}
 
 	auto GetCurrentCup() {
+		if (gCustomSave.nCareerEvent > 0) return &aLUACareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerEvent-1];
 		return &aLUACareerClasses[gCustomSave.nCareerClass-1].aCups[gCustomSave.nCareerCup-1];
 	}
 
 	auto GetCurrentRace() {
-		return &aLUACareerClasses[gCustomSave.nCareerClass-1].aCups[gCustomSave.nCareerCup-1].aRaces[gCustomSave.nCareerCupNextEvent];
+		return &GetCurrentCup()->aRaces[gCustomSave.nCareerCupNextEvent];
 	}
 
 	void OnCupFinished() {
@@ -66,10 +67,11 @@ namespace CareerMode {
 	}
 
 	void ProcessResultsFromLastRace() {
+		SetIsCareerMode(false);
+
 		// don't proceed if we quit the race
 		if (!aPlayerResults[0].bDNF && !aPlayerResults[0].bFinished) return;
 
-		// todo change these checks after adding single events
 		int eventNumber = gCustomSave.nCareerCupNextEvent++;
 		for (int i = 0; i < nNumCareerMaxPlayers; i++) {
 			auto results = &aPlayerResults[i];
@@ -87,8 +89,6 @@ namespace CareerMode {
 		if (gCustomSave.nCareerCupNextEvent >= GetCurrentCup()->aRaces.size()) {
 			OnCupFinished();
 		}
-
-		SetIsCareerMode(false);
 	}
 
 	bool IsCupActive() {

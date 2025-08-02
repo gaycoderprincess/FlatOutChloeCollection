@@ -66,6 +66,11 @@ int ChloeCareer_WasCareerRace(void* a1) {
 	return 1;
 }
 
+int ChloeCareer_ClearWasCareerRace(void* a1) {
+	CareerMode::bLastRaceCareerRace = false;
+	return 0;
+}
+
 int ChloeHUD_SetCarStats(void* a1) {
 	NewMenuHud::nCarHorsepower = luaL_checknumber(a1, 1);
 	NewMenuHud::nCarWeight = luaL_checknumber(a1, 2);
@@ -243,6 +248,7 @@ int ChloeCareer_StartCup(void* a1) {
 	gCustomSave.nCareerClass = luaL_checknumber(a1, 1);
 	gCustomSave.nCareerCup = luaL_checknumber(a1, 2);
 	gCustomSave.nCareerCupNextEvent = 0;
+	memset(gCustomSave.aCareerCupPlayers, 0, sizeof(gCustomSave.aCareerCupPlayers));
 	return 0;
 }
 
@@ -383,6 +389,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_StartEvent, "ChloeCareer_StartEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_SetIsCareerRace, "ChloeCareer_SetIsCareerRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerRace, "ChloeCareer_WasCareerRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_ClearWasCareerRace, "ChloeCareer_ClearWasCareerRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCareerDefs, "ChloeCareerDefs_BeginCareerDefs");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginClass, "ChloeCareerDefs_BeginClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCup, "ChloeCareerDefs_BeginCup");
