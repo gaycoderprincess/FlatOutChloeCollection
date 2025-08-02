@@ -111,6 +111,31 @@ void ProcessDebugMenu() {
 	QuickValueEditor("fWreckedNotifY", fWreckedNotifY);
 	QuickValueEditor("fWreckedNotifSize", fWreckedNotifSize);
 
+	if (DrawMenuOption("Car Helpers")) {
+		ChloeMenuLib::BeginMenu();
+		if (DrawMenuOption("Driver Location")) {
+			ChloeMenuLib::BeginMenu();
+
+			if (auto ply = GetPlayer(0)) {
+				if (DrawMenuOption(std::format("X - {}", ply->pCar->vDriverLoc[0]))) {
+					ValueEditorMenu(ply->pCar->vDriverLoc[0]);
+				}
+				if (DrawMenuOption(std::format("Y - {}", ply->pCar->vDriverLoc[1]))) {
+					ValueEditorMenu(ply->pCar->vDriverLoc[1]);
+				}
+				if (DrawMenuOption(std::format("Z - {}", ply->pCar->vDriverLoc[2]))) {
+					ValueEditorMenu(ply->pCar->vDriverLoc[2]);
+				}
+			}
+			else {
+				DrawDebugMenuViewerOption("Not in a race");
+			}
+
+			ChloeMenuLib::EndMenu();
+		}
+		ChloeMenuLib::EndMenu();
+	}
+
 	if (DrawMenuOption("Palette Editor")) {
 		ChloeMenuLib::BeginMenu();
 		for (int i = 0; i < 256; i++) {

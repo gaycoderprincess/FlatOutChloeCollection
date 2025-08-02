@@ -50,6 +50,10 @@ struct tCustomSaveStructure {
 	void ReadPlayerSettings() {
 
 	}
+	void Clear() {
+		memset(this,0,sizeof(*this));
+		SetDefaultPlayerSettings();
+	}
 	void Load() {
 		int saveSlot = pGameFlow->nSaveSlot;
 		if (saveSlot < 0) {

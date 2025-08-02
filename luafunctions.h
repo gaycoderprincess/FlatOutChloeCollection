@@ -133,14 +133,20 @@ int ChloeSave_SuspendCustomData(void* a1) {
 }
 
 int ChloeSave_ResumeCustomData(void* a1) {
+	if (!gCustomSave.bInitialized) {
+		gCustomSave.ApplyPlayerSettings();
+	}
 	gCustomSave.bInitialized = true;
+	return 0;
+}
+
+int ChloeSave_ClearCustomData(void* a1) {
+	gCustomSave.Clear();
 	return 0;
 }
 
 int ChloeSave_LoadCustomData(void* a1) {
 	gCustomSave.Load();
-	gCustomSave.ApplyPlayerSettings();
-	gCustomSave.Save();
 	return 0;
 }
 
@@ -234,6 +240,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCarDealer, "ChloeHUD_SetInCarDealer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
+	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_LoadCustomData, "ChloeSave_LoadCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_SaveCustomData, "ChloeSave_SaveCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_DeleteCustomData, "ChloeSave_DeleteCustomData");

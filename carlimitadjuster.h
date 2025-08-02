@@ -64,6 +64,33 @@ DevTexture* __stdcall LoadMenucarTextureNew(void* a1, const char* path, int a3, 
 	return LoadTextureFromFile(a1, str.c_str(), a3, a4);
 }
 
+// fo2 roamer driverloc:
+// -0.307, 0.484, 0.025 in fo2
+// -0.299, 0.04, 0.09 in fo1
+float fFO1DriverLocOffset[3] = { (-0.307) - (-0.299), (0.484 - 0.04) - 0.27727438, (0.025 - 0.09) - 0.09 };
+
+void __fastcall OnCarCreated(Car* car) {
+	if (car->pPlayer->nCarId >= 200 && car->pPlayer->nCarId <= 250) {
+		for (int i = 0; i < 3; i++) {
+			car->vDriverLoc[i] -= fFO1DriverLocOffset[i];
+		}
+	}
+}
+
+uintptr_t OnCarCreatedASM_jmp = 0x50E080;
+void __attribute__((naked)) OnCarCreatedASM() {
+	__asm__ (
+		"pushad\n\t"
+		"mov ecx, ebx\n\t"
+		"call %1\n\t"
+		"popad\n\t"
+
+		"jmp %0\n\t"
+			:
+			:  "m" (OnCarCreatedASM_jmp), "i" (OnCarCreated)
+	);
+}
+
 void ApplyCarLimitAdjusterPatches() {
 	// remove hardcoded shared path from lights_damaged
 	static const char lightsDamagedPath[] = "lights_damaged.tga";
@@ -84,6 +111,8 @@ void ApplyCarLimitAdjusterPatches() {
 
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x460E8E, &LoadMenucarTextureNew);
 	LoadCarModelASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41D765, &LoadCarModelASM);
+
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x42280A, &OnCarCreatedASM);
 
 	// remove car id bitwise operations
 	NyaHookLib::Patch<uint16_t>(0x43F50D, 0x9090);
