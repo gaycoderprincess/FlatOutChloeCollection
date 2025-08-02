@@ -104,12 +104,26 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nLoadingTextX", NewMenuHud::nLoadingTextX);
 	//QuickValueEditor("nLoadingTextY", NewMenuHud::nLoadingTextY);
 	//QuickValueEditor("fLoadingTextSize", NewMenuHud::fLoadingTextSize);
-	QuickValueEditor("fPlayerListX", NewGameHud::fPlayerListX);
-	QuickValueEditor("fPlayerListY", NewGameHud::fPlayerListY);
-	QuickValueEditor("fPlayerListSize", NewGameHud::fPlayerListSize);
-	QuickValueEditor("fPlayerListSpacing", NewGameHud::fPlayerListSpacing);
-	QuickValueEditor("fWreckedNotifY", fWreckedNotifY);
-	QuickValueEditor("fWreckedNotifSize", fWreckedNotifSize);
+	//QuickValueEditor("fPlayerListX", NewGameHud::fPlayerListX);
+	//QuickValueEditor("fPlayerListY", NewGameHud::fPlayerListY);
+	//QuickValueEditor("fPlayerListSize", NewGameHud::fPlayerListSize);
+	//QuickValueEditor("fPlayerListSpacing", NewGameHud::fPlayerListSpacing);
+	//QuickValueEditor("fWreckedNotifY", fWreckedNotifY);
+	//QuickValueEditor("fWreckedNotifSize", fWreckedNotifSize);
+	//QuickValueEditor("nCareerListPositionX", NewMenuHud::nCareerListPositionX);
+	//QuickValueEditor("nCareerListNameX", NewMenuHud::nCareerListNameX);
+	//QuickValueEditor("nCareerListPointsX", NewMenuHud::nCareerListPointsX);
+	//QuickValueEditor("nCareerListTopY", NewMenuHud::nCareerListTopY);
+	//QuickValueEditor("nCareerListStartY", NewMenuHud::nCareerListStartY);
+	//QuickValueEditor("nCareerListSpacing", NewMenuHud::nCareerListSpacing);
+	//QuickValueEditor("fCareerListSize", NewMenuHud::fCareerListSize);
+	QuickValueEditor("nCareerEventNameX", NewMenuHud::nCareerEventNameX);
+	QuickValueEditor("nCareerEventNameY", NewMenuHud::nCareerEventNameY);
+	QuickValueEditor("nCareerEventDescY", NewMenuHud::nCareerEventDescY);
+	QuickValueEditor("fCareerEventSize", NewMenuHud::fCareerEventSize);
+	QuickValueEditor("fCareerEventDescSize", NewMenuHud::fCareerEventDescSize);
+	QuickValueEditor("fNitroAirtimeTolerance", fNitroAirtimeTolerance);
+	QuickValueEditor("fNitroAirtimeRate", fNitroAirtimeRate);
 
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();

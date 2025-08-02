@@ -51,6 +51,11 @@ int ChloeHUD_SetInCarDealer(void* a1) {
 	return 0;
 }
 
+int ChloeHUD_SetInCareer(void* a1) {
+	NewMenuHud::bInCareer = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int ChloeHUD_SetCarStats(void* a1) {
 	NewMenuHud::nCarHorsepower = luaL_checknumber(a1, 1);
 	NewMenuHud::nCarWeight = luaL_checknumber(a1, 2);
@@ -78,16 +83,15 @@ int ChloeGarage_GetCarSkin(void* a1) {
 
 int ChloeGarage_PurchaseCar(void* a1) {
 	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
+	car->Clear();
 	car->bIsPurchased = true;
 	car->nSkinId = luaL_checknumber(a1, 2);
-	memset(car->nUpgrades, 0, sizeof(car->nUpgrades));
-	car->nUpgradesValue = 0;
 	return 0;
 }
 
 int ChloeGarage_SellCar(void* a1) {
 	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
-	car->bIsPurchased = false;
+	car->Clear();
 	return 0;
 }
 
@@ -205,6 +209,11 @@ int ChloeCollection_SetLoadingScreenTexture(void* a1) {
 	return 0;
 }
 
+int ChloeCareer_IsCupActive(void* a1) {
+	lua_pushboolean(a1, CareerMode::IsCupActive());
+	return 1;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -237,6 +246,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetRandom, "ChloeCollection_GetRandom");
 	//RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarCustomMenuBG, "ChloeCollection_GetCarCustomMenuBG");
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_ShowSkinSelector, "ChloeSkins_ShowSkinSelector");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareer, "ChloeHUD_SetInCareer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCarDealer, "ChloeHUD_SetInCarDealer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
@@ -262,6 +272,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetDealerCarCamera, "ChloeCollection_GetDealerCarCamera");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarClass, "ChloeCollection_GetCarClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetLoadingScreenTexture, "ChloeCollection_SetLoadingScreenTexture");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_IsCupActive, "ChloeCareer_IsCupActive");
 
 	RegisterLUAEnum(a1, HANDLING_NORMAL, "HANDLING_NORMAL");
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");

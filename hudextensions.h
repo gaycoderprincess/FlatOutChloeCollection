@@ -1,4 +1,5 @@
 namespace NewMenuHud {
+	bool bInCareer = false;
 	bool bInCarDealer = false;
 	bool bInSkinSelector = false;
 	int nCarHorsepower = 0;
@@ -374,9 +375,87 @@ namespace NewMenuHud {
 		Draw1080pString(JUSTIFY_RIGHT, data, "LOADING", &DrawStringFO2_Small);
 	}
 
+	const char* aAIPlayerNames[] = {
+		"FRANK BENTON",
+		"SUE O'NEILL",
+		"TANIA GRAHAM",
+		"KATIE DAGGERT",
+		"RAY SMITH",
+		"PAUL MCGUIRE",
+		"SETH BELLINGER",
+	};
+
+	int nCareerListPositionX = 27;
+	int nCareerListNameX = 80;
+	int nCareerListPointsX = 760;
+	int nCareerListTopY = 200;
+	int nCareerListStartY = 263;
+	int nCareerListSpacing = 82;
+	float fCareerListSize = 0.045;
+
+	int nCareerEventNameX = 1275;
+	int nCareerEventNameY = 230;
+	int nCareerEventDescY = 295;
+	float fCareerEventSize = 0.035;
+	float fCareerEventDescSize = 0.035;
+
+	std::string GetCareerPlayerName(int i) {
+		return i == 0 ? GetStringNarrow(pGameFlow->Profile.wsPlayerName) : aAIPlayerNames[i-1];
+	}
+
+	void DrawCareerMenu() {
+		static auto textureLeft = LoadTextureFromBFS("data/menu/cupresultscreenbg_left.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/cupresultscreenbg_right.png");
+
+		if (!bInCareer) return;
+		if (!CareerMode::IsCupActive()) return;
+
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+
+		tNyaStringData data;
+		data.SetColor(GetPaletteColor(18));
+		data.x = nCareerListPositionX;
+		data.y = nCareerListTopY;
+		data.size = fCareerListSize;
+		Draw1080pString(JUSTIFY_LEFT, data, "#", &DrawStringFO2_Ingame12);
+		data.x = nCareerListNameX;
+		Draw1080pString(JUSTIFY_LEFT, data, "NAME", &DrawStringFO2_Ingame12);
+		data.x = nCareerListPointsX;
+		data.XCenterAlign = true;
+		Draw1080pString(JUSTIFY_LEFT, data, "POINTS", &DrawStringFO2_Ingame12);
+		data.y = nCareerListStartY;
+		data.SetColor(GetPaletteColor(17));
+		for (int i = 0; i < 8; i++) {
+			gCustomSave.CalculateCupPlayersByPosition();
+			int playerId = gCustomSave.aCupPlayersByPosition[i];
+			auto player = &gCustomSave.aCareerCupPlayers[playerId];
+			std::string playerName = GetCareerPlayerName(playerId);
+			data.XCenterAlign = false;
+			data.x = nCareerListPositionX;
+			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}.", i+1), &DrawStringFO2_Ingame12);
+			data.x = nCareerListNameX;
+			Draw1080pString(JUSTIFY_LEFT, data, playerName, &DrawStringFO2_Ingame12);
+			data.x = nCareerListPointsX;
+			data.XCenterAlign = true;
+			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(player->points), &DrawStringFO2_Ingame12);
+			data.y += nCareerListSpacing;
+		}
+
+		data.x = nCareerEventNameX;
+		data.y = nCareerEventNameY;
+		data.size = fCareerEventSize;
+		data.XCenterAlign = false;
+		Draw1080pString(JUSTIFY_RIGHT, data, "FOREST WRECK CUP", DrawStringFO2_Small);
+		data.y = nCareerEventDescY;
+		data.size = fCareerEventDescSize;
+		Draw1080pString(JUSTIFY_RIGHT, data, "EVENT 2/3", DrawStringFO2_Ingame12);
+	}
+
 	void OnTick() {
 		DrawCarDealer();
 		DrawSkinSelector();
+		DrawCareerMenu();
 		DrawLoadingScreen();
 	}
 }

@@ -117,4 +117,12 @@ void ApplyCarLimitAdjusterPatches() {
 	// remove car id bitwise operations
 	NyaHookLib::Patch<uint16_t>(0x43F50D, 0x9090);
 	NyaHookLib::Patch<uint16_t>(0x43F52F, 0x9090);
+
+	// make all cars load all engine models as engine_1
+	NyaHookLib::Patch(0x42ADC5 + 1, "UpgradeLevel");
+	NyaHookLib::Patch(0x42AEB8 + 1, "UpgradeLevel");
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x424FD0, 0x424F5A); // engine_2
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x42503D, 0x424F5A); // engine_3
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x425117, 0x4250AA); // coolingfan_2
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x425184, 0x4250AA); // coolingfan_3
 }

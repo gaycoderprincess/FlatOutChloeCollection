@@ -31,6 +31,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "cardamage.h"
 #include "cardealer.h"
 #include "carlimitadjuster.h"
+#include "careermode.h"
 #include "hudextensions.h"
 #include "ingamehud.h"
 #include "musicplayer.h"
@@ -38,6 +39,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "windowedmode.h"
 #include "luafunctions.h"
 #include "ddsparser.h"
+#include "nitrogain.h"
 #include "debugmenu.h"
 
 void SetHandlingDamage() {
@@ -68,6 +70,8 @@ void CustomSetterThread() {
 	SetHandlingDamage();
 	SetHandlingMode();
 	ProcessCarDamage();
+	CareerMode::OnTick();
+	ProcessNitroGain();
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {

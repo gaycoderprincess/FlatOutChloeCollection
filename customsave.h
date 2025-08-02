@@ -1,3 +1,8 @@
+const int nNumCareerClasses = 4;
+const int nNumCareerEvents = 16;
+const int nNumCareerEventsPerCup = 16;
+const int nNumCareerMaxPlayers = 12;
+
 std::string GetCustomSavePath(int id) {
 	return std::format("Savegame/customsave{:03}.sav", id);
 }
@@ -33,16 +38,67 @@ struct tCustomSaveStructure {
 				if (pGameFlow->Profile.nNumCarUpgrades >= 40) break;
 			}
 		}
+		void Clear() {
+			memset(this,0,sizeof(*this));
+		}
 	} aCareerGarage[256];
+	bool tracksWon[256];
+	struct tCareerClass {
+		struct tCareerCup {
+			bool bUnlocked : 1;
+			uint8_t nPosition : 4;
+		} aCups[nNumCareerEvents];
+		struct tCareerEvent {
+			bool bUnlocked : 1;
+			uint8_t nPosition : 4;
+			uint32_t nTimeOrScore;
+		} aEvents[nNumCareerEvents];
+	} aCareerClasses[nNumCareerClasses];
+	int8_t nCareerClass;
+	bool bCareerClassUnlocked[nNumCareerClasses];
+	int8_t nCareerCup;
+	uint8_t nCareerCupNextEvent;
+	int8_t nCareerEvent;
+	struct tCareerCupPlayer {
+		int points;
+		int eventPosition[nNumCareerEventsPerCup];
+		int eventPoints[nNumCareerEventsPerCup];
+	} aCareerCupPlayers[nNumCareerMaxPlayers];
 
 	static inline bool bInitialized = false;
+	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
+	static inline uint8_t aCupPlayerPosition[nNumCareerMaxPlayers];
+
+	void CalculateCupPlayersByPosition() {
+		struct tLeaderboardEntry {
+			int playerId;
+			int score;
+
+			static bool compFunction(tLeaderboardEntry a, tLeaderboardEntry b) {
+				if (a.score == b.score) return a.playerId < b.playerId;
+				return a.score > b.score;
+			}
+		};
+		std::vector<tLeaderboardEntry> players;
+
+		for (int i = 0; i < nNumCareerMaxPlayers; i++) {
+			players.push_back({i, aCareerCupPlayers[i].points});
+		}
+		sort(players.begin(), players.end(), tLeaderboardEntry::compFunction);
+		for (int i = 0; i < nNumCareerMaxPlayers; i++) {
+			aCupPlayersByPosition[i] = players[i].playerId;
+			aCupPlayerPosition[players[i].playerId] = i;
+		}
+	}
 
 	tCustomSaveStructure() {
 		memset(this,0,sizeof(*this));
 		SetDefaultPlayerSettings();
 	}
 	void SetDefaultPlayerSettings() {
-
+		for (auto& data : aCareerClasses) {
+			data.aCups[0].bUnlocked = true;
+		}
 	}
 	void ApplyPlayerSettings() const {
 
@@ -94,3 +150,36 @@ struct tCustomSaveStructure {
 		}
 	}
 } gCustomSave;
+
+void ProcessPlayStats() {
+	static CNyaTimer gTimer;
+	gTimer.Process();
+
+	if (pLoadingScreen) return;
+
+	if (GetGameState() == GAME_STATE_RACE && GetPlayerScore<PlayerScoreRace>(1)->bHasFinished && pPlayerHost->GetNumPlayers() > 1) {
+		bool changed = false;
+		int track = pGameFlow->nLevel;
+
+		// time trials should count for this
+		if (pGameFlow->nSubEventType != eSubEventType::RACE_TIMETRIAL) {
+			auto ply = GetPlayerScore<PlayerScoreRace>(1);
+			if (ply->bHasFinished) {
+				if (ply->nPosition == 1 && !gCustomSave.tracksWon[track]) {
+					gCustomSave.tracksWon[track] = true;
+					changed = true;
+				}
+			}
+		}
+
+		if (changed) {
+			gCustomSave.Save();
+		}
+	}
+
+	static auto lastGameState = GetGameState();
+	if (lastGameState == GAME_STATE_RACE && GetGameState() == GAME_STATE_MENU) {
+		gCustomSave.Save();
+	}
+	lastGameState = GetGameState();
+}
