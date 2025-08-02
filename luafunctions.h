@@ -127,6 +127,16 @@ int ChloeGarage_IsCarUpgraded(void* a1) {
 	return 1;
 }
 
+int ChloeSave_SuspendCustomData(void* a1) {
+	gCustomSave.bInitialized = false;
+	return 0;
+}
+
+int ChloeSave_ResumeCustomData(void* a1) {
+	gCustomSave.bInitialized = true;
+	return 0;
+}
+
 int ChloeSave_LoadCustomData(void* a1) {
 	gCustomSave.Load();
 	gCustomSave.ApplyPlayerSettings();
@@ -136,6 +146,11 @@ int ChloeSave_LoadCustomData(void* a1) {
 
 int ChloeSave_SaveCustomData(void* a1) {
 	gCustomSave.Save();
+	return 0;
+}
+
+int ChloeSave_DeleteCustomData(void* a1) {
+	gCustomSave.Delete(luaL_checknumber(a1, 1));
 	return 0;
 }
 
@@ -221,6 +236,9 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_LoadCustomData, "ChloeSave_LoadCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_SaveCustomData, "ChloeSave_SaveCustomData");
+	RegisterLUAFunction(a1, (void*)&ChloeSave_DeleteCustomData, "ChloeSave_DeleteCustomData");
+	RegisterLUAFunction(a1, (void*)&ChloeSave_SuspendCustomData, "ChloeSave_SuspendCustomData");
+	RegisterLUAFunction(a1, (void*)&ChloeSave_ResumeCustomData, "ChloeSave_ResumeCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_IsCarPurchased, "ChloeGarage_IsCarPurchased");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetCarSkin, "ChloeGarage_GetCarSkin");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_PurchaseCar, "ChloeGarage_PurchaseCar");

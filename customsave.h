@@ -51,12 +51,15 @@ struct tCustomSaveStructure {
 
 	}
 	void Load() {
-		bInitialized = true;
+		int saveSlot = pGameFlow->nSaveSlot;
+		if (saveSlot < 0) {
+			saveSlot = pGameFlow->Profile.nAutosaveSlot;
+		}
 
 		memset(this,0,sizeof(*this));
 		SetDefaultPlayerSettings();
 
-		auto file = std::ifstream(GetCustomSavePath(pGameFlow->nSaveSlot+1), std::ios::in | std::ios::binary);
+		auto file = std::ifstream(GetCustomSavePath(saveSlot+1), std::ios::in | std::ios::binary);
 		if (!file.is_open()) return;
 
 		file.read((char*)this, sizeof(*this));
@@ -64,11 +67,26 @@ struct tCustomSaveStructure {
 	void Save() {
 		if (!bInitialized) return;
 
+		int saveSlot = pGameFlow->nSaveSlot;
+		if (saveSlot < 0) {
+			saveSlot = pGameFlow->Profile.nAutosaveSlot;
+		}
+
+		if (saveSlot < 0) {
+			MessageBoxA(0, "Trying to save to slot 0, this is a bug", "nya?!~", MB_ICONWARNING);
+		}
+
 		ReadPlayerSettings();
 
-		auto file = std::ofstream(GetCustomSavePath(pGameFlow->nSaveSlot+1), std::ios::out | std::ios::binary);
+		auto file = std::ofstream(GetCustomSavePath(saveSlot+1), std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
 
 		file.write((char*)this, sizeof(*this));
+	}
+	void Delete(int slot) {
+		auto save = GetCustomSavePath(slot+1);
+		if (std::filesystem::exists(save)) {
+			std::filesystem::remove(save);
+		}
 	}
 } gCustomSave;
