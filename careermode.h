@@ -61,9 +61,41 @@ namespace CareerMode {
 		return &GetCurrentCup()->aRaces[gCustomSave.nCareerCupNextEvent];
 	}
 
+	tCustomSaveStructure::tCareerClass::tCareerCup* GetCurrentSaveCup() {
+		if (gCustomSave.nCareerEvent > 0) return nullptr;
+		return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].aCups[gCustomSave.nCareerCup-1];
+	}
+
+	tCustomSaveStructure::tCareerClass::tCareerEvent* GetCurrentSaveCupAssociatedEvent() {
+		return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerCup-1];
+	}
+
+	tCustomSaveStructure::tCareerClass::tCareerEvent* GetCurrentSaveEvent() {
+		if (gCustomSave.nCareerEvent == 0) return nullptr;
+		return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerEvent-1];
+	}
+
 	void OnCupFinished() {
+		if (auto cup = GetCurrentSaveCup()) {
+			cup->nPosition = gCustomSave.aCupPlayerPosition[0]+1;
+
+			// unlock the next cup if finished 3rd or higher
+			if (cup->nPosition >= 1 && cup->nPosition <= 3) {
+				auto nextCup = cup += 1;
+				nextCup->bUnlocked = true;
+
+				// unlock associated event with this cup
+				GetCurrentSaveCupAssociatedEvent()->bUnlocked = true;
+			}
+		}
+		else if (auto cup = GetCurrentSaveEvent()) {
+			cup->nPosition = gCustomSave.aCupPlayerPosition[0]+1;
+			cup->nTimeOrScore = aPlayerResults[0].nFinishTime;
+		}
+
 		gCustomSave.nCareerCup = 0;
 		gCustomSave.nCareerCupNextEvent = 0;
+		gCustomSave.nCareerEvent = 0;
 	}
 
 	void ProcessResultsFromLastRace() {

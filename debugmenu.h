@@ -124,6 +124,9 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fCareerEventDescSize", NewMenuHud::fCareerEventDescSize);
 	//QuickValueEditor("fNitroAirtimeTolerance", fNitroAirtimeTolerance);
 	//QuickValueEditor("fNitroAirtimeRate", fNitroAirtimeRate);
+	QuickValueEditor("nClassX", NewMenuHud::nClassX);
+	QuickValueEditor("nClassY", NewMenuHud::nClassY);
+	QuickValueEditor("fClassSize", NewMenuHud::fClassSize);
 
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();

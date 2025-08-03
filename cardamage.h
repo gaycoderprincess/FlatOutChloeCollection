@@ -11,6 +11,9 @@ void DrawWreckedNotif() {
 	data.size = fWreckedNotifSize;
 	data.XCenterAlign = true;
 	int a = 255;
+	if (fWreckedNotifTimer >= 2.5) {
+		a = (3 - fWreckedNotifTimer) * 2 * 255;
+	}
 	if (fWreckedNotifTimer <= 0.5) {
 		a = fWreckedNotifTimer * 2 * 255;
 	}

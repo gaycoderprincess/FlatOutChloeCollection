@@ -99,6 +99,10 @@ namespace NewMenuHud {
 	int nOffsetPriceY = 30;
 	float fOffsetPriceSize = 0.04;
 
+	int nClassX = 160;
+	int nClassY = 805;
+	float fClassSize = 0.04;
+
 	int nDescriptionX = 160;
 	int nDescriptionY = 593;
 	float fDescriptionSize = 0.035;
@@ -218,6 +222,22 @@ namespace NewMenuHud {
 		data.y = nDescriptionY;
 		data.size = fDescriptionSize;
 		Draw1080pString(JUSTIFY_LEFT, data, sCarDescription, &DrawStringFO2_Ingame12);
+		data.x = nClassX;
+		data.y = nClassY;
+		data.size = fClassSize;
+		std::string className = "BONUS";
+		switch (GetDealerCar(pGameFlow->pMenuInterface->pMenuScene->nCar)->classId) {
+			case 1:
+				className = "BRONZE CLASS";
+				break;
+			case 2:
+				className = "SILVER CLASS";
+				break;
+			case 3:
+				className = "GOLD CLASS";
+				break;
+		}
+		Draw1080pString(JUSTIFY_LEFT, data, className, &DrawStringFO2_Ingame12);
 	}
 
 	std::string GetSkinName(int carId, int skinId, bool wrapAround) {
