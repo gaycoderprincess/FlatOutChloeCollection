@@ -124,9 +124,32 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fCareerEventDescSize", NewMenuHud::fCareerEventDescSize);
 	//QuickValueEditor("fNitroAirtimeTolerance", fNitroAirtimeTolerance);
 	//QuickValueEditor("fNitroAirtimeRate", fNitroAirtimeRate);
-	QuickValueEditor("nClassX", NewMenuHud::nClassX);
-	QuickValueEditor("nClassY", NewMenuHud::nClassY);
-	QuickValueEditor("fClassSize", NewMenuHud::fClassSize);
+	//QuickValueEditor("nClassX", NewMenuHud::nClassX);
+	//QuickValueEditor("nClassY", NewMenuHud::nClassY);
+	//QuickValueEditor("fClassSize", NewMenuHud::fClassSize);
+	//QuickValueEditor("fPlayerHealthTextX", NewGameHud::fPlayerHealthTextX);
+	//QuickValueEditor("fPlayerHealthTextY", NewGameHud::fPlayerHealthTextY);
+	//QuickValueEditor("fPlayerHealthTextSize", NewGameHud::fPlayerHealthTextSize);
+	//QuickValueEditor("fPlayerHealthBarX", NewGameHud::fPlayerHealthBarX);
+	//QuickValueEditor("fPlayerHealthBarY", NewGameHud::fPlayerHealthBarY);
+	//QuickValueEditor("fPlayerHealthBarSizeX", NewGameHud::fPlayerHealthBarSizeX);
+	//QuickValueEditor("fPlayerHealthBarSizeY", NewGameHud::fPlayerHealthBarSizeY);
+	//QuickValueEditor("fCareerCupSelectEventX", NewMenuHud::fCareerCupSelectEventX);
+	//QuickValueEditor("fCareerCupSelectEventY", NewMenuHud::fCareerCupSelectEventY);
+	//QuickValueEditor("fCareerCupSelectEventSpacingX", NewMenuHud::fCareerCupSelectEventSpacingX);
+	//QuickValueEditor("fCareerCupSelectEventSpacingY", NewMenuHud::fCareerCupSelectEventSpacingY);
+	//QuickValueEditor("fCareerCupSelectEventSize", NewMenuHud::fCareerCupSelectEventSize);
+	QuickValueEditor("fCareerCupSelectEventHighlightSize", NewMenuHud::fCareerCupSelectEventHighlightSize);
+	QuickValueEditor("nCareerCupSelectCupNameX", NewMenuHud::nCareerCupSelectCupNameX);
+	QuickValueEditor("nCareerCupSelectCupNameY", NewMenuHud::nCareerCupSelectCupNameY);
+	QuickValueEditor("fCareerCupSelectCupNameSize", NewMenuHud::fCareerCupSelectCupNameSize);
+	QuickValueEditor("nCareerCupSelectLapsX", NewMenuHud::nCareerCupSelectLapsX);
+	QuickValueEditor("nCareerCupSelectLapsY", NewMenuHud::nCareerCupSelectLapsY);
+	QuickValueEditor("fCareerCupSelectLapsSize", NewMenuHud::fCareerCupSelectLapsSize);
+	QuickValueEditor("nCareerCupSelectEventsX", NewMenuHud::nCareerCupSelectEventsX);
+	QuickValueEditor("nCareerCupSelectEventsY", NewMenuHud::nCareerCupSelectEventsY);
+	QuickValueEditor("fCareerCupSelectEventsSize", NewMenuHud::fCareerCupSelectEventsSize);
+	QuickValueEditor("nCareerCupSelectEventsSpacing", NewMenuHud::nCareerCupSelectEventsSpacing);
 
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();

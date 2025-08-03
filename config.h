@@ -10,3 +10,4 @@ uint32_t nUseNewLoadingScreen = 1;
 uint32_t nHandlingDamage = 1;
 uint32_t nHandlingMode = HANDLING_NORMAL;
 uint32_t nPlayerListDefaultState = 1;
+uint32_t nFO2CarsEnabled = 1;

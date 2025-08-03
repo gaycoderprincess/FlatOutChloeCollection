@@ -1,5 +1,6 @@
 namespace CareerMode {
 	bool bIsCareerRace = false;
+	bool bNextRaceCareerRace = false;
 	bool bLastRaceCareerRace = false;
 
 	struct tLUAClass {
@@ -46,7 +47,7 @@ namespace CareerMode {
 	bool bPlayerResultsApplied = false;
 
 	void SetIsCareerMode(bool apply) {
-		bIsCareerRace = apply;
+		bNextRaceCareerRace = apply;
 		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
 		NyaHookLib::Patch<uint8_t>(0x431B08, apply ? 0xEB : 0x75); // don't null upgrades
 		// todo what does 0043BD71 do?
@@ -130,6 +131,10 @@ namespace CareerMode {
 	void OnTick() {
 		if (pLoadingScreen) return;
 		if (GetGameState() == GAME_STATE_RACE) {
+			if (bNextRaceCareerRace) {
+				bIsCareerRace = true;
+				bNextRaceCareerRace = false;
+			}
 			bLastRaceCareerRace = bIsCareerRace;
 		}
 
@@ -155,7 +160,7 @@ namespace CareerMode {
 	}
 
 	int __stdcall GetAIHandicapLevelNew(GameFlow* gameFlow) {
-		if (bIsCareerRace) {
+		if (bNextRaceCareerRace) {
 			int handicap = GetCurrentRace()->nAIHandicapLevel;
 			if (handicap >= 1) return handicap;
 		}
@@ -181,7 +186,7 @@ namespace CareerMode {
 	}
 
 	int __stdcall GetAIUpgradeLevelNew(GameFlow* gameFlow) {
-		if (bIsCareerRace) {
+		if (bNextRaceCareerRace) {
 			return GetCurrentCup()->nAIUpgradeLevel;
 		}
 
@@ -193,7 +198,7 @@ namespace CareerMode {
 	}
 
 	int __stdcall GetNumLapsNew(GameFlow* gameFlow) {
-		if (bIsCareerRace) {
+		if (bNextRaceCareerRace) {
 			return GetCurrentRace()->nLaps;
 		}
 

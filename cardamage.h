@@ -54,7 +54,7 @@ void ProcessCarDamage() {
 		if (!score->bIsDNF) {
 			Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
 			//score->bHasFinished = true;
-			score->bIsDNF = true;
+			if (!score->bHasFinished) score->bIsDNF = true;
 
 			AddWreckedNotif(GetStringNarrow(ply->sPlayerName.Get()));
 		}
@@ -79,4 +79,8 @@ void ApplyCarDamagePatches() {
 	for (auto& addr : addresses) {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, addr, &CarDamageResetNew);
 	}
+
+	// vanilla game uses 50.0, higher is less damage
+	static float fDamageMultiplier = 100.0;
+	NyaHookLib::Patch(0x4161BF + 2, &fDamageMultiplier);
 }

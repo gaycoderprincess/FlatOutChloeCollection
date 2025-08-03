@@ -10,6 +10,7 @@ tGameSetting aNewGameSettings[] = {
 		{ "Game", "HandlingDamage", &nHandlingDamage, 1, 0, 0 },
 		{ "Game", "HandlingMode", &nHandlingMode, 0, 0, 2 },
 		{ "Game", "PlayerListDefaultState", &nPlayerListDefaultState, 0, 0, 1 },
+		{ "Game", "FO2CarsEnabled", &nFO2CarsEnabled, 1, 0, 0 },
 		{ "Control", "ControllerGuid", (void*)0x6BEDD8, 3, 0, 0 },
 		{ "Control", "Controller", (void*)0x6BEDFC, 0, 0, 2 },
 		{ "Control", "ForceFeedback", (void*)0x6BEE00, 1, 0, 0 },

@@ -51,6 +51,41 @@ int ChloeHUD_SetInCarDealer(void* a1) {
 	return 0;
 }
 
+int ChloeHUD_SetInCareerCupSelect(void* a1) {
+	NewMenuHud::bInCareerCupSelect = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeHUD_CareerCupSelect_Left(void* a1) {
+	NewMenuHud::CareerCupSelect_MoveLeft();
+	return 0;
+}
+
+int ChloeHUD_CareerCupSelect_Right(void* a1) {
+	NewMenuHud::CareerCupSelect_MoveRight();
+	return 0;
+}
+
+int ChloeHUD_CareerCupSelect_Up(void* a1) {
+	NewMenuHud::CareerCupSelect_MoveUp();
+	return 0;
+}
+
+int ChloeHUD_CareerCupSelect_Down(void* a1) {
+	NewMenuHud::CareerCupSelect_MoveDown();
+	return 0;
+}
+
+int ChloeHUD_CareerCupSelect_GetCursorX(void* a1) {
+	lua_pushnumber(a1, NewMenuHud::nCareerCupSelectCursorX+1);
+	return 1;
+}
+
+int ChloeHUD_CareerCupSelect_GetCursorY(void* a1) {
+	lua_pushnumber(a1, NewMenuHud::nCareerCupSelectCursorY+1);
+	return 1;
+}
+
 int ChloeHUD_SetInCareer(void* a1) {
 	NewMenuHud::bInCareer = luaL_checknumber(a1, 1);
 	return 0;
@@ -357,6 +392,13 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_ShowSkinSelector, "ChloeSkins_ShowSkinSelector");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareer, "ChloeHUD_SetInCareer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCarDealer, "ChloeHUD_SetInCarDealer");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerCupSelect, "ChloeHUD_SetInCareerCupSelect");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Left, "ChloeHUD_CareerCupSelect_Left");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Right, "ChloeHUD_CareerCupSelect_Right");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Up, "ChloeHUD_CareerCupSelect_Up");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Down, "ChloeHUD_CareerCupSelect_Down");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorX, "ChloeHUD_CareerCupSelect_GetCursorX");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorY, "ChloeHUD_CareerCupSelect_GetCursorY");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");

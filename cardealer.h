@@ -32,6 +32,7 @@ void ApplyCarDealerPatches() {
 		car.classId = config["CarDealer"][category]["Class"].value_or(0);
 		car.cameraId = config["CarDealer"][category]["Camera"].value_or(0);
 		if (car.carId <= 0) continue;
+		if (!nFO2CarsEnabled && car.carId >= 200 && car.carId <= 250) continue;
 		if (car.classId <= 0) continue;
 		if (car.cameraId <= 0) {
 			car.cameraId = i+1;
