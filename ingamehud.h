@@ -76,6 +76,7 @@ namespace NewGameHud {
 		auto playerPos = GetPlayer(0)->pCar->GetMatrix()->p;
 		for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetPlayer(i);
+			if (GetPlayerScore<PlayerScoreRace>(i+1)->bIsDNF) continue;
 			auto dist = (ply->pCar->GetMatrix()->p - playerPos).length();
 			if (dist < closestPlayerDist) {
 				closestPlayerDist = dist;
@@ -91,7 +92,10 @@ namespace NewGameHud {
 				fHealthBarAlpha[i] += gTimer.fDeltaTime;
 				if (closestPlayerDist < 3) fHealthBarAlpha[i] = 1;
 			}
-			else fHealthBarAlpha[i] -= gTimer.fDeltaTime;
+			else {
+				fHealthBarAlpha[i] -= gTimer.fDeltaTime;
+				if (closestPlayerDist < 3) fHealthBarAlpha[i] = 0;
+			}
 
 			if (fHealthBarAlpha[i] < 0) fHealthBarAlpha[i] = 0;
 			if (fHealthBarAlpha[i] > 1) fHealthBarAlpha[i] = 1;

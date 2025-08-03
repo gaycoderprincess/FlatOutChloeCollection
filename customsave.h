@@ -124,6 +124,12 @@ struct tCustomSaveStructure {
 		if (!file.is_open()) return;
 
 		file.read((char*)this, sizeof(*this));
+
+		// force unlock first career bits in case of save corruption
+		bCareerClassUnlocked[0] = true;
+		for (auto& data : aCareerClasses) {
+			data.aCups[0].bUnlocked = true;
+		}
 	}
 	void Save() {
 		if (!bInitialized) return;

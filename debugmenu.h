@@ -143,7 +143,7 @@ void ProcessDebugMenu() {
 	QuickValueEditor("nCareerCupSelectCupNameX", NewMenuHud::nCareerCupSelectCupNameX);
 	QuickValueEditor("nCareerCupSelectCupNameY", NewMenuHud::nCareerCupSelectCupNameY);
 	QuickValueEditor("fCareerCupSelectCupNameSize", NewMenuHud::fCareerCupSelectCupNameSize);
-	QuickValueEditor("nCareerCupSelectLapsX", NewMenuHud::nCareerCupSelectLapsX);
+	//QuickValueEditor("nCareerCupSelectLapsX", NewMenuHud::nCareerCupSelectLapsX);
 	QuickValueEditor("nCareerCupSelectLapsY", NewMenuHud::nCareerCupSelectLapsY);
 	QuickValueEditor("fCareerCupSelectLapsSize", NewMenuHud::fCareerCupSelectLapsSize);
 	QuickValueEditor("nCareerCupSelectEventsX", NewMenuHud::nCareerCupSelectEventsX);

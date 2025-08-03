@@ -484,11 +484,22 @@ namespace NewMenuHud {
 	float fCareerCupSelectEventSize = 0.1;
 	float fCareerCupSelectEventHighlightSize = 0.094;
 
-	int nCareerCupSelectCupNameX = 1450;
+	int nCareerCupSelectCupNameX = 1320;
 	int nCareerCupSelectCupNameY = 193;
 	float fCareerCupSelectCupNameSize = 0.03;
-	int nCareerCupSelectLapsX = 0;
-	int nCareerCupSelectLapsY = 0;
+	int nCareerCupSelectLapsX[10] = {
+			1766, // 0
+			1769, // 1
+			1766, // 2
+			1766, // 3
+			1761, // 4
+			1763, // 5
+			1766, // 6
+			1766, // 7
+			1766, // 8
+			1766, // 9
+	};
+	int nCareerCupSelectLapsY = 323;
 	float fCareerCupSelectLapsSize = 0.03;
 	int nCareerCupSelectEventsX = 1530;
 	int nCareerCupSelectEventsY = 435;
@@ -500,11 +511,11 @@ namespace NewMenuHud {
 	int nCareerCupSelectCursorY = 0;
 	void CareerCupSelect_MoveLeft() {
 		nCareerCupSelectCursorX--;
-		if (nCareerCupSelectCursorX < 0) nCareerCupSelectCursorY = CareerMode::aLUACareerClasses[nCareerCupSelectClass].aCups.size()-1;
+		if (nCareerCupSelectCursorX < 0) nCareerCupSelectCursorX = CareerMode::aLUACareerClasses[nCareerCupSelectClass].aCups.size()-1;
 	}
 	void CareerCupSelect_MoveRight() {
 		nCareerCupSelectCursorX++;
-		if (nCareerCupSelectCursorX >= CareerMode::aLUACareerClasses[nCareerCupSelectClass].aCups.size()) nCareerCupSelectCursorY = 0;
+		if (nCareerCupSelectCursorX >= CareerMode::aLUACareerClasses[nCareerCupSelectClass].aCups.size()) nCareerCupSelectCursorX = 0;
 	}
 	void CareerCupSelect_MoveUp() {
 		nCareerCupSelectCursorY--;
@@ -526,6 +537,7 @@ namespace NewMenuHud {
 		};
 		static auto textureRight = LoadTextureFromBFS("data/menu/cupselect_bg_right.png");
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
+		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
 
 		if (!bInCareerCupSelect) return;
@@ -534,13 +546,18 @@ namespace NewMenuHud {
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 
 		auto careerClass = &CareerMode::aLUACareerClasses[nCareerCupSelectClass];
-		auto trackIcon = GetHUDData(trackIcons, "forestI_A");
 		for (int i = 0; i < careerClass->aCups.size(); i++) {
+			auto cup = &careerClass->aCups[i];
+			auto cupSave = &gCustomSave.aCareerClasses[nCareerCupSelectClass].aCups[i];
+			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
+			if (!trackIcon) {
+				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
+			}
 			float x1 = fCareerCupSelectEventX + fCareerCupSelectEventSpacingX * i;
 			float y1 = fCareerCupSelectEventY;
 			float x2 = x1 + fCareerCupSelectEventSize * 1.5;
 			float y2 = y1 + fCareerCupSelectEventSize;
-			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, textureTracks, 0, trackIcon->min, trackIcon->max);
+			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (i == nCareerCupSelectCursorX && nCareerCupSelectCursorY == 0) {
 				auto rgb = GetPaletteColor(18);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
@@ -550,11 +567,17 @@ namespace NewMenuHud {
 			}
 		}
 		for (int i = 0; i < careerClass->aEvents.size(); i++) {
+			auto cup = &careerClass->aEvents[i];
+			auto cupSave = &gCustomSave.aCareerClasses[nCareerCupSelectClass].aEvents[i];
+			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
+			if (!trackIcon) {
+				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
+			}
 			float x1 = fCareerCupSelectEventX + fCareerCupSelectEventSpacingX * i;
 			float y1 = fCareerCupSelectEventY + fCareerCupSelectEventSpacingY * 2;
 			float x2 = x1 + fCareerCupSelectEventSize * 1.5;
 			float y2 = y1 + fCareerCupSelectEventSize;
-			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, textureTracks, 0, trackIcon->min, trackIcon->max);
+			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (i == nCareerCupSelectCursorX && nCareerCupSelectCursorY == 2) {
 				auto rgb = GetPaletteColor(18);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
@@ -570,27 +593,27 @@ namespace NewMenuHud {
 		data.size = fCareerCupSelectCupNameSize;
 		if (nCareerCupSelectCursorY == 0) {
 			auto cup = &careerClass->aCups[nCareerCupSelectCursorX];
-			Draw1080pString(JUSTIFY_LEFT, data, cup->sName, &DrawStringFO2_Small);
-			data.x = nCareerCupSelectLapsX;
-			data.y = nCareerCupSelectLapsX;
+			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
+			data.x = nCareerCupSelectLapsX[cup->aRaces.size()];
+			data.y = nCareerCupSelectLapsY;
 			data.size = fCareerCupSelectLapsSize;
-			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
 			data.x = nCareerCupSelectEventsX;
 			data.y = nCareerCupSelectEventsY;
 			data.size = fCareerCupSelectEventsSize;
 			for (auto& race : cup->aRaces) {
-				Draw1080pString(JUSTIFY_LEFT, data, GetTrackName(race.nLevel), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_RIGHT, data, GetTrackName(race.nLevel), &DrawStringFO2_Ingame12);
 				data.y += nCareerCupSelectEventsSpacing;
 			}
 		}
 		else if (nCareerCupSelectCursorY == 2) {
 			if (nCareerCupSelectCursorX >= careerClass->aEvents.size()) return;
 			auto cup = &careerClass->aEvents[nCareerCupSelectCursorX];
-			Draw1080pString(JUSTIFY_LEFT, data, cup->sName, &DrawStringFO2_Small);
-			data.x = nCareerCupSelectLapsX;
-			data.y = nCareerCupSelectLapsX;
+			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
+			data.x = nCareerCupSelectLapsX[cup->aRaces.size()];
+			data.y = nCareerCupSelectLapsY;
 			data.size = fCareerCupSelectLapsSize;
-			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
 		}
 	}
 

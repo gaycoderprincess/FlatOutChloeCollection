@@ -86,6 +86,26 @@ int ChloeHUD_CareerCupSelect_GetCursorY(void* a1) {
 	return 1;
 }
 
+int ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked(void* a1) {
+	if (NewMenuHud::nCareerCupSelectCursorY == 0) {
+		auto cup = &gCustomSave.aCareerClasses[NewMenuHud::nCareerCupSelectClass].aCups[NewMenuHud::nCareerCupSelectCursorX];
+		lua_pushboolean(a1, cup->bUnlocked);
+		return 1;
+	}
+	else if (NewMenuHud::nCareerCupSelectCursorY == 2) {
+		if (NewMenuHud::nCareerCupSelectCursorX >= CareerMode::aLUACareerClasses[NewMenuHud::nCareerCupSelectClass].aEvents.size()) {
+			lua_pushboolean(a1, false);
+			return 1;
+		}
+
+		auto cup = &gCustomSave.aCareerClasses[NewMenuHud::nCareerCupSelectClass].aEvents[NewMenuHud::nCareerCupSelectCursorX];
+		lua_pushboolean(a1, cup->bUnlocked);
+		return 1;
+	}
+	lua_pushboolean(a1, false);
+	return 1;
+}
+
 int ChloeHUD_SetInCareer(void* a1) {
 	NewMenuHud::bInCareer = luaL_checknumber(a1, 1);
 	return 0;
@@ -290,6 +310,8 @@ int ChloeCareer_StartCup(void* a1) {
 int ChloeCareer_StartEvent(void* a1) {
 	gCustomSave.nCareerClass = luaL_checknumber(a1, 1);
 	gCustomSave.nCareerEvent = luaL_checknumber(a1, 2);
+	gCustomSave.nCareerCupNextEvent = 0;
+	memset(gCustomSave.aCareerCupPlayers, 0, sizeof(gCustomSave.aCareerCupPlayers));
 	return 0;
 }
 
@@ -354,6 +376,30 @@ int ChloeCareerDefs_AddRace(void* a1) {
 	race.nLevel = luaL_checknumber(a1, 1);
 	race.nLaps = luaL_checknumber(a1, 2);
 	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
+	race.bIsDerby = false;
+	race.bIsTimeTrial = false;
+	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
+	return 0;
+}
+
+int ChloeCareerDefs_AddDerby(void* a1) {
+	CareerMode::tLUAClass::tCup::tRace race;
+	race.nLevel = luaL_checknumber(a1, 1);
+	race.nLaps = luaL_checknumber(a1, 2);
+	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
+	race.bIsDerby = true;
+	race.bIsTimeTrial = false;
+	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
+	return 0;
+}
+
+int ChloeCareerDefs_AddTimeTrial(void* a1) {
+	CareerMode::tLUAClass::tCup::tRace race;
+	race.nLevel = luaL_checknumber(a1, 1);
+	race.nLaps = luaL_checknumber(a1, 2);
+	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
+	race.bIsDerby = false;
+	race.bIsTimeTrial = true;
 	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
 	return 0;
 }
@@ -399,6 +445,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Down, "ChloeHUD_CareerCupSelect_Down");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorX, "ChloeHUD_CareerCupSelect_GetCursorX");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorY, "ChloeHUD_CareerCupSelect_GetCursorY");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked, "ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");
@@ -442,6 +489,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetAIUpgradeLevel, "ChloeCareerDefs_SetAIUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetCupWinnings, "ChloeCareerDefs_SetCupWinnings");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddRace, "ChloeCareerDefs_AddRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddDerby, "ChloeCareerDefs_AddDerby");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddTimeTrial, "ChloeCareerDefs_AddTimeTrial");
 
 	RegisterLUAEnum(a1, HANDLING_NORMAL, "HANDLING_NORMAL");
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");

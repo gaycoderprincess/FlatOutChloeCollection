@@ -26,12 +26,17 @@ void AddWreckedNotif(std::string player) {
 	fWreckedNotifTimer = 3;
 }
 
+// vanilla game uses 50.0, higher is less damage
+float fDamageMultiplier = 100.0;
+
 void ProcessCarDamage() {
 	static CNyaTimer gTimer;
 	gTimer.Process();
 	if (fWreckedNotifTimer > 0) {
 		fWreckedNotifTimer -= gTimer.fDeltaTime;
 	}
+
+	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 50.0 : 100.0;
 
 	if (GetGameState() != GAME_STATE_RACE) return;
 	if (pLoadingScreen) return;
@@ -80,7 +85,5 @@ void ApplyCarDamagePatches() {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, addr, &CarDamageResetNew);
 	}
 
-	// vanilla game uses 50.0, higher is less damage
-	static float fDamageMultiplier = 100.0;
 	NyaHookLib::Patch(0x4161BF + 2, &fDamageMultiplier);
 }
