@@ -1,4 +1,20 @@
 namespace NewMenuHud {
+	struct tDrawPositions {
+		float fPosX;
+		float fPosY;
+		float fSize;
+		float fSpacingX;
+		float fSpacingY;
+	};
+
+	struct tDrawPositions1080p {
+		int nPosX;
+		int nPosY;
+		float fSize;
+		int nSpacingX;
+		int nSpacingY;
+	};
+
 	bool bInCareer = false;
 	bool bInCareerCupSelect = false;
 	bool bInCarDealer = false;
@@ -99,20 +115,9 @@ namespace NewMenuHud {
 	int nOffsetPriceY = 30;
 	float fOffsetPriceSize = 0.04;
 
-	int nClassX = 160;
-	int nClassY = 805;
-	float fClassSize = 0.04;
-
-	int nDescriptionX = 160;
-	int nDescriptionY = 593;
-	float fDescriptionSize = 0.035;
-
-	int nSkinSelectTitleX = 1720;
-	//int nSkinSelectTitleY = 255;
-	//int nSkinSelectTitleY = 335;
-	int nSkinSelectTitleY = 328;
-	//float fSkinSelectSize = 0.04;
-	float fSkinSelectSize = 0.035;
+	tDrawPositions1080p gCarClass = {160, 805, 0.04};
+	tDrawPositions1080p gCarDescription = {160, 593, 0.035};
+	tDrawPositions1080p gCarSkinSelectTitle = {1720, 328, 0.035};
 
 	struct tHUDData {
 		std::string name;
@@ -168,14 +173,10 @@ namespace NewMenuHud {
 		return nullptr;
 	}
 
-	float fCarNameX = 0.225;
-	float fCarNameY = 0.17;
-	float fCarNameSize = 0.06;
+	tDrawPositions gCarName = {0.225, 0.17, 0.06};
 	float fCarNameAspect = 5;
 
-	int nCarNameTextX = 405;
-	int nCarNameTextY = 200;
-	float fCarNameTextSize = 0.05;
+	tDrawPositions1080p gCarNameText = {405, 200, 0.05};
 
 	void DrawCarDealer() {
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
@@ -186,16 +187,16 @@ namespace NewMenuHud {
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 
 		if (auto logo = GetHUDData(gCarLogos, std::format("car{}", pGameFlow->pMenuInterface->pMenuScene->nCar))) {
-			DrawRectangle(fCarNameX * GetAspectRatioInv(),
-						  (fCarNameX + fCarNameSize * fCarNameAspect) * GetAspectRatioInv(), fCarNameY,
-						  fCarNameY + fCarNameSize, {255, 255, 255, 255}, 0, textureCarLogos, 0, logo->min,
+			DrawRectangle(gCarName.fPosX * GetAspectRatioInv(),
+						  (gCarName.fPosX + gCarName.fSize * fCarNameAspect) * GetAspectRatioInv(), gCarName.fPosY,
+						  gCarName.fPosY + gCarName.fSize, {255, 255, 255, 255}, 0, textureCarLogos, 0, logo->min,
 						  logo->max);
 		}
 		else {
 			tNyaStringData data;
-			data.x = nCarNameTextX;
-			data.y = nCarNameTextY;
-			data.size = fCarNameTextSize;
+			data.x = gCarNameText.nPosX;
+			data.y = gCarNameText.nPosY;
+			data.size = gCarNameText.fSize;
 			data.XCenterAlign = true;
 			Draw1080pString(JUSTIFY_LEFT, data, sCarName, &DrawStringFO2_Small);
 		}
@@ -218,13 +219,13 @@ namespace NewMenuHud {
 		data.y = nPriceY + nOffsetPriceY;
 		data.size = fOffsetPriceSize;
 		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", nCarPrice), &DrawStringFO2_Small);
-		data.x = nDescriptionX;
-		data.y = nDescriptionY;
-		data.size = fDescriptionSize;
+		data.x = gCarDescription.nPosX;
+		data.y = gCarDescription.nPosY;
+		data.size = gCarDescription.fSize;
 		Draw1080pString(JUSTIFY_LEFT, data, sCarDescription, &DrawStringFO2_Ingame12);
-		data.x = nClassX;
-		data.y = nClassY;
-		data.size = fClassSize;
+		data.x = gCarClass.nPosX;
+		data.y = gCarClass.nPosY;
+		data.size = gCarClass.fSize;
 		std::string className = "BONUS";
 		switch (GetDealerCar(pGameFlow->pMenuInterface->pMenuScene->nCar)->classId) {
 			case 1:
@@ -302,9 +303,9 @@ namespace NewMenuHud {
 		}
 
 		tNyaStringData data;
-		data.x = nSkinSelectTitleX;
-		data.y = nSkinSelectTitleY;
-		data.size = fSkinSelectSize;
+		data.x = gCarSkinSelectTitle.nPosX;
+		data.y = gCarSkinSelectTitle.nPosY;
+		data.size = gCarSkinSelectTitle.fSize;
 		data.XCenterAlign = true;
 		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Small);
 
@@ -477,16 +478,10 @@ namespace NewMenuHud {
 		Draw1080pString(JUSTIFY_RIGHT, data, std::format("EVENT {}/{}", gCustomSave.nCareerCupNextEvent+1, CareerMode::GetCurrentCup()->aRaces.size()), DrawStringFO2_Ingame12);
 	}
 
-	float fCareerCupSelectEventX = 0.15;
-	float fCareerCupSelectEventY = 0.29;
-	float fCareerCupSelectEventSpacingX = 0.19;
-	float fCareerCupSelectEventSpacingY = 0.135;
-	float fCareerCupSelectEventSize = 0.1;
+	tDrawPositions gCareerCupSelectEvent = {0.15, 0.29, 0.1, 0.19, 0.135};
 	float fCareerCupSelectEventHighlightSize = 0.094;
 
-	int nCareerCupSelectCupNameX = 1320;
-	int nCareerCupSelectCupNameY = 193;
-	float fCareerCupSelectCupNameSize = 0.03;
+	tDrawPositions1080p gCareerCupSelectCupName = {1320, 193, 0.03};
 	int nCareerCupSelectLapsX[10] = {
 			1766, // 0
 			1769, // 1
@@ -494,17 +489,15 @@ namespace NewMenuHud {
 			1766, // 3
 			1761, // 4
 			1763, // 5
-			1766, // 6
+			1764, // 6
 			1766, // 7
 			1766, // 8
 			1766, // 9
 	};
 	int nCareerCupSelectLapsY = 323;
 	float fCareerCupSelectLapsSize = 0.03;
-	int nCareerCupSelectEventsX = 1530;
-	int nCareerCupSelectEventsY = 435;
-	float fCareerCupSelectEventsSize = 0.04;
-	int nCareerCupSelectEventsSpacing = 45;
+	tDrawPositions1080p gCareerCupSelectEvents = {1530, 435, 0.04, 0, 45};
+	tDrawPositions1080p gCareerCupSelectEventsTitle = {1505, 285, 0.04};
 
 	int nCareerCupSelectClass = 0;
 	int nCareerCupSelectCursorX = 0;
@@ -553,12 +546,34 @@ namespace NewMenuHud {
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
 			}
-			float x1 = fCareerCupSelectEventX + fCareerCupSelectEventSpacingX * i;
-			float y1 = fCareerCupSelectEventY;
-			float x2 = x1 + fCareerCupSelectEventSize * 1.5;
-			float y2 = y1 + fCareerCupSelectEventSize;
+			auto data = gCareerCupSelectEvent;
+			float x1 = data.fPosX + data.fSpacingX * i;
+			float y1 = data.fPosY;
+			float x2 = x1 + data.fSize * 1.5;
+			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (i == nCareerCupSelectCursorX && nCareerCupSelectCursorY == 0) {
+				auto rgb = GetPaletteColor(18);
+				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
+				x2 = x1 + fCareerCupSelectEventHighlightSize * 1.5;
+				y2 = y1 + fCareerCupSelectEventHighlightSize;
+				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
+			}
+		}
+		{
+			auto cup = &careerClass->Finals;
+			auto cupSave = &gCustomSave.aCareerClasses[nCareerCupSelectClass].Finals;
+			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
+			if (!trackIcon) {
+				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
+			}
+			auto data = gCareerCupSelectEvent;
+			float x1 = data.fPosX + data.fSpacingX * 0.5;
+			float y1 = data.fPosY + data.fSpacingY;
+			float x2 = x1 + data.fSize * 1.5;
+			float y2 = y1 + data.fSize;
+			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
+			if (nCareerCupSelectCursorY == 1) {
 				auto rgb = GetPaletteColor(18);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
 				x2 = x1 + fCareerCupSelectEventHighlightSize * 1.5;
@@ -573,10 +588,11 @@ namespace NewMenuHud {
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
 			}
-			float x1 = fCareerCupSelectEventX + fCareerCupSelectEventSpacingX * i;
-			float y1 = fCareerCupSelectEventY + fCareerCupSelectEventSpacingY * 2;
-			float x2 = x1 + fCareerCupSelectEventSize * 1.5;
-			float y2 = y1 + fCareerCupSelectEventSize;
+			auto data = gCareerCupSelectEvent;
+			float x1 = data.fPosX + data.fSpacingX * i;
+			float y1 = data.fPosY + data.fSpacingY * 2;
+			float x2 = x1 + data.fSize * 1.5;
+			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (i == nCareerCupSelectCursorX && nCareerCupSelectCursorY == 2) {
 				auto rgb = GetPaletteColor(18);
@@ -588,9 +604,9 @@ namespace NewMenuHud {
 		}
 
 		tNyaStringData data;
-		data.x = nCareerCupSelectCupNameX;
-		data.y = nCareerCupSelectCupNameY;
-		data.size = fCareerCupSelectCupNameSize;
+		data.x = gCareerCupSelectCupName.nPosX;
+		data.y = gCareerCupSelectCupName.nPosY;
+		data.size = gCareerCupSelectCupName.fSize;
 		if (nCareerCupSelectCursorY == 0) {
 			auto cup = &careerClass->aCups[nCareerCupSelectCursorX];
 			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
@@ -598,12 +614,29 @@ namespace NewMenuHud {
 			data.y = nCareerCupSelectLapsY;
 			data.size = fCareerCupSelectLapsSize;
 			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
-			data.x = nCareerCupSelectEventsX;
-			data.y = nCareerCupSelectEventsY;
-			data.size = fCareerCupSelectEventsSize;
+			auto hud = gCareerCupSelectEvents;
+			data.x = hud.nPosX;
+			data.y = hud.nPosY;
+			data.size = hud.fSize;
 			for (auto& race : cup->aRaces) {
 				Draw1080pString(JUSTIFY_RIGHT, data, GetTrackName(race.nLevel), &DrawStringFO2_Ingame12);
-				data.y += nCareerCupSelectEventsSpacing;
+				data.y += hud.nSpacingY;
+			}
+		}
+		else if (nCareerCupSelectCursorY == 1) {
+			auto cup = &careerClass->Finals;
+			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
+			data.x = nCareerCupSelectLapsX[cup->aRaces.size()];
+			data.y = nCareerCupSelectLapsY;
+			data.size = fCareerCupSelectLapsSize;
+			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
+			auto hud = gCareerCupSelectEvents;
+			data.x = hud.nPosX;
+			data.y = hud.nPosY;
+			data.size = hud.fSize;
+			for (auto& race : cup->aRaces) {
+				Draw1080pString(JUSTIFY_RIGHT, data, GetTrackName(race.nLevel), &DrawStringFO2_Ingame12);
+				data.y += hud.nSpacingY;
 			}
 		}
 		else if (nCareerCupSelectCursorY == 2) {
@@ -615,6 +648,11 @@ namespace NewMenuHud {
 			data.size = fCareerCupSelectLapsSize;
 			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
 		}
+		data.x = gCareerCupSelectEventsTitle.nPosX;
+		data.y = gCareerCupSelectEventsTitle.nPosY;
+		data.size = gCareerCupSelectEventsTitle.fSize;
+		data.SetColor(GetPaletteColor(18));
+		Draw1080pString(JUSTIFY_RIGHT, data, "EVENTS", &DrawStringFO2_Ingame12);
 	}
 
 	void OnTick() {

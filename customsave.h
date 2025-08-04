@@ -53,6 +53,7 @@ struct tCustomSaveStructure {
 			uint8_t nPosition : 4;
 			uint32_t nTimeOrScore;
 		} aEvents[nNumCareerEvents];
+		tCareerCup Finals;
 	} aCareerClasses[nNumCareerClasses];
 	int8_t nCareerClass;
 	bool bCareerClassUnlocked[nNumCareerClasses];

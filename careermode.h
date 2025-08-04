@@ -23,6 +23,7 @@ namespace CareerMode {
 		int nMoneyAward;
 		std::vector<tCup> aCups;
 		std::vector<tCup> aEvents;
+		tCup Finals;
 	} aLUACareerClasses[4];
 
 	tLUAClass* luaDefs_currentClass = nullptr;
@@ -57,6 +58,7 @@ namespace CareerMode {
 
 	auto GetCurrentCup() {
 		if (gCustomSave.nCareerEvent > 0) return &aLUACareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerEvent-1];
+		if (gCustomSave.nCareerCup == 64) return &aLUACareerClasses[gCustomSave.nCareerClass-1].Finals;
 		return &aLUACareerClasses[gCustomSave.nCareerClass-1].aCups[gCustomSave.nCareerCup-1];
 	}
 
@@ -66,10 +68,12 @@ namespace CareerMode {
 
 	tCustomSaveStructure::tCareerClass::tCareerCup* GetCurrentSaveCup() {
 		if (gCustomSave.nCareerEvent > 0) return nullptr;
+		if (gCustomSave.nCareerCup == 64) return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].Finals;
 		return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].aCups[gCustomSave.nCareerCup-1];
 	}
 
 	tCustomSaveStructure::tCareerClass::tCareerEvent* GetCurrentSaveCupAssociatedEvent() {
+		if (gCustomSave.nCareerCup == 64) return nullptr;
 		return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerCup-1];
 	}
 
@@ -84,7 +88,7 @@ namespace CareerMode {
 
 			// unlock the next cup if finished 3rd or higher
 			if (cup->nPosition >= 1 && cup->nPosition <= 3) {
-				auto nextCup = cup += 1;
+				auto nextCup = cup + 1;
 				nextCup->bUnlocked = true;
 
 				// unlock associated event with this cup
@@ -94,6 +98,14 @@ namespace CareerMode {
 		else if (auto cup = GetCurrentSaveEvent()) {
 			cup->nPosition = gCustomSave.aCupPlayerPosition[0]+1;
 			cup->nTimeOrScore = aPlayerResults[0].nFinishTime;
+		}
+
+		// unlock finals after last cup gets finished
+		auto careerClass = &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1];
+		auto careerClassSave = &aLUACareerClasses[gCustomSave.nCareerClass-1];
+		auto lastCup = &careerClass->aCups[careerClassSave->aCups.size()-1];
+		if (lastCup->nPosition >= 1 && lastCup->nPosition <= 3) {
+			careerClass->Finals.bUnlocked = true;
 		}
 
 		gCustomSave.nCareerCup = 0;
