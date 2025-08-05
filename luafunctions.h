@@ -56,6 +56,11 @@ int ChloeHUD_SetInCareerCupSelect(void* a1) {
 	return 0;
 }
 
+int ChloeHUD_SetInCareerClassSelect(void* a1) {
+	NewMenuHud::bInCareerClassSelect = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int ChloeHUD_CareerCupSelect_Left(void* a1) {
 	NewMenuHud::CareerCupSelect_MoveLeft();
 	return 0;
@@ -73,6 +78,16 @@ int ChloeHUD_CareerCupSelect_Up(void* a1) {
 
 int ChloeHUD_CareerCupSelect_Down(void* a1) {
 	NewMenuHud::CareerCupSelect_MoveDown();
+	return 0;
+}
+
+int ChloeHUD_CareerClassSelect_Up(void* a1) {
+	NewMenuHud::CareerClassSelect_MoveUp();
+	return 0;
+}
+
+int ChloeHUD_CareerClassSelect_Down(void* a1) {
+	NewMenuHud::CareerClassSelect_MoveDown();
 	return 0;
 }
 
@@ -129,6 +144,11 @@ int ChloeCareer_WasCareerRace(void* a1) {
 int ChloeCareer_ClearWasCareerRace(void* a1) {
 	CareerMode::bLastRaceCareerRace = false;
 	return 0;
+}
+
+int ChloeCareer_IsClassUnlocked(void* a1) {
+	lua_pushboolean(a1, gCustomSave.bCareerClassUnlocked[((int)luaL_checknumber(a1, 1))-1]);
+	return 1;
 }
 
 int ChloeHUD_SetCarStats(void* a1) {
@@ -457,6 +477,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareer, "ChloeHUD_SetInCareer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCarDealer, "ChloeHUD_SetInCarDealer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerCupSelect, "ChloeHUD_SetInCareerCupSelect");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerClassSelect, "ChloeHUD_SetInCareerClassSelect");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Left, "ChloeHUD_CareerCupSelect_Left");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Right, "ChloeHUD_CareerCupSelect_Right");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Up, "ChloeHUD_CareerCupSelect_Up");
@@ -464,6 +485,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorX, "ChloeHUD_CareerCupSelect_GetCursorX");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorY, "ChloeHUD_CareerCupSelect_GetCursorY");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked, "ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerClassSelect_Up, "ChloeHUD_CareerClassSelect_Up");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerClassSelect_Down, "ChloeHUD_CareerClassSelect_Down");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");
@@ -498,6 +521,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_SetIsCareerRace, "ChloeCareer_SetIsCareerRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerRace, "ChloeCareer_WasCareerRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_ClearWasCareerRace, "ChloeCareer_ClearWasCareerRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_IsClassUnlocked, "ChloeCareer_IsClassUnlocked");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCareerDefs, "ChloeCareerDefs_BeginCareerDefs");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginClass, "ChloeCareerDefs_BeginClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCup, "ChloeCareerDefs_BeginCup");

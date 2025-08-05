@@ -17,6 +17,7 @@ namespace NewMenuHud {
 
 	bool bInCareer = false;
 	bool bInCareerCupSelect = false;
+	bool bInCareerClassSelect = false;
 	bool bInCarDealer = false;
 	bool bInSkinSelector = false;
 	int nCarHorsepower = 0;
@@ -655,10 +656,54 @@ namespace NewMenuHud {
 		Draw1080pString(JUSTIFY_RIGHT, data, "EVENTS", &DrawStringFO2_Ingame12);
 	}
 
+	void CareerClassSelect_MoveUp() {
+		gCustomSave.nCareerClass--;
+		if (gCustomSave.nCareerClass < 1) gCustomSave.nCareerClass = 3;
+	}
+	void CareerClassSelect_MoveDown() {
+		gCustomSave.nCareerClass++;
+		if (gCustomSave.nCareerClass > 3) gCustomSave.nCareerClass = 1;
+	}
+
+	int nCareerClassSelectHighlightX = 590;
+	int nCareerClassSelectHighlightY = 310;
+	int nCareerClassSelectHighlightSizeX = 396;
+	int nCareerClassSelectHighlightSizeY = 115;
+	int nCareerClassSelectHighlightSpacing = 145;
+
+	tDrawPositions1080p gCareerClassSelectTitle = {0,0,0};
+
+	void DrawCareerClassSelect() {
+		static CNyaTimer gTimer;
+		gTimer.Process();
+
+		static auto textureLeft = LoadTextureFromBFS("data/menu/classselect_bg_left.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/classselect_bg_right.png");
+
+		if (!bInCareerClassSelect) return;
+
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+
+		if (gCustomSave.nCareerClass < 1) gCustomSave.nCareerClass = 1;
+
+		auto rgb = GetPaletteColor(18);
+		rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
+
+		float x1 = nCareerClassSelectHighlightX;
+		float y1 = nCareerClassSelectHighlightY + (nCareerClassSelectHighlightSpacing * (gCustomSave.nCareerClass-1));
+		float x2 = x1 + nCareerClassSelectHighlightSizeX;
+		float y2 = y1 + nCareerClassSelectHighlightSizeY;
+		Draw1080pSprite(JUSTIFY_LEFT, x1, x2, y1, y2, rgb, nullptr);
+
+		nCareerCupSelectClass = gCustomSave.nCareerClass;
+	}
+
 	void OnTick() {
 		DrawCarDealer();
 		DrawSkinSelector();
 		DrawCareerMenu();
+		DrawCareerClassSelect();
 		DrawCareerCupSelect();
 		DrawLoadingScreen();
 	}

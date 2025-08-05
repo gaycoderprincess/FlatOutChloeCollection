@@ -92,7 +92,14 @@ namespace CareerMode {
 				nextCup->bUnlocked = true;
 
 				// unlock associated event with this cup
-				GetCurrentSaveCupAssociatedEvent()->bUnlocked = true;
+				if (auto event = GetCurrentSaveCupAssociatedEvent()) {
+					event->bUnlocked = true;
+				}
+
+				// unlock next class after finals are done
+				if (gCustomSave.nCareerCup == 64 && gCustomSave.nCareerClass < 4) {
+					gCustomSave.bCareerClassUnlocked[gCustomSave.nCareerClass] = true;
+				}
 			}
 		}
 		else if (auto cup = GetCurrentSaveEvent()) {

@@ -153,6 +153,11 @@ void ProcessDebugMenu() {
 	QuickValueEditor("gCareerCupSelectEventsTitle.nPosX", NewMenuHud::gCareerCupSelectEventsTitle.nPosX);
 	QuickValueEditor("gCareerCupSelectEventsTitle.nPosY", NewMenuHud::gCareerCupSelectEventsTitle.nPosY);
 	QuickValueEditor("gCareerCupSelectEventsTitle.fSize", NewMenuHud::gCareerCupSelectEventsTitle.fSize);
+	QuickValueEditor("nCareerClassSelectHighlightX", NewMenuHud::nCareerClassSelectHighlightX);
+	QuickValueEditor("nCareerClassSelectHighlightY", NewMenuHud::nCareerClassSelectHighlightY);
+	QuickValueEditor("nCareerClassSelectHighlightSizeX", NewMenuHud::nCareerClassSelectHighlightSizeX);
+	QuickValueEditor("nCareerClassSelectHighlightSizeY", NewMenuHud::nCareerClassSelectHighlightSizeY);
+	QuickValueEditor("nCareerClassSelectHighlightSpacing", NewMenuHud::nCareerClassSelectHighlightSpacing);
 
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();
