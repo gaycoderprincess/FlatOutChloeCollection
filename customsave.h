@@ -65,6 +65,10 @@ struct tCustomSaveStructure {
 		int eventPosition[nNumCareerEventsPerCup];
 		int eventPoints[nNumCareerEventsPerCup];
 	} aCareerCupPlayers[nNumCareerMaxPlayers];
+	int nGameCompletion;
+	int nCupsPassed;
+	int nCupsMax;
+	int nCarsUnlocked;
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -112,10 +116,12 @@ struct tCustomSaveStructure {
 		memset(this,0,sizeof(*this));
 		SetDefaultPlayerSettings();
 	}
-	void Load() {
-		int saveSlot = pGameFlow->nSaveSlot;
+	void Load(int saveSlot = -1) {
 		if (saveSlot < 0) {
-			saveSlot = pGameFlow->Profile.nAutosaveSlot;
+			saveSlot = pGameFlow->nSaveSlot;
+			if (saveSlot < 0) {
+				saveSlot = pGameFlow->Profile.nAutosaveSlot;
+			}
 		}
 
 		memset(this,0,sizeof(*this));

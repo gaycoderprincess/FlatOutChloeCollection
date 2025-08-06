@@ -37,6 +37,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "musicplayer.h"
 #include "d3dhook.h"
 #include "windowedmode.h"
+#include "profiles.h"
 #include "luafunctions.h"
 #include "ddsparser.h"
 #include "nitrogain.h"
@@ -71,6 +72,7 @@ void CustomSetterThread() {
 		gCustomSave.aCareerGarage[pGameFlow->Profile.nCarType+1].ApplyUpgradesToCar();
 	}
 
+	SetWindowedMode();
 	SetHandlingDamage();
 	SetHandlingMode();
 	ProcessCarDamage();
@@ -102,9 +104,12 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarDealerPatches();
 			ApplyCarDamagePatches();
 			CareerMode::Init();
+			NewMenuHud::Init();
 
 			// remove copyright screen
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F);
+
+			NyaHookLib::Patch(0x68BDE0, "gamesave");
 
 			// 004E3CDD disable menu ui
 		} break;

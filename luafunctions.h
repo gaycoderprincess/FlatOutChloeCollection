@@ -250,6 +250,7 @@ int ChloeSave_LoadCustomData(void* a1) {
 }
 
 int ChloeSave_SaveCustomData(void* a1) {
+	CareerMode::OnSave();
 	gCustomSave.Save();
 	return 0;
 }
@@ -300,7 +301,7 @@ int ChloeCollection_GetCarClass(void* a1) {
 }
 
 int ChloeCollection_SetLoadingScreenTexture(void* a1) {
-	NewMenuHud::SetLoadingScreenTexture((const char*)lua_tolstring(a1, 1));
+	NewMenuHud::sLoadingScreenTextureName = (const char*)lua_tolstring(a1, 1);
 	return 0;
 }
 
@@ -439,6 +440,34 @@ int ChloeCareerDefs_AddTimeTrial(void* a1) {
 	return 0;
 }
 
+int ChloeProfiles_GetProfileCupsCompleted(void* a1) {
+	int id = luaL_checknumber(a1, 1);
+	if (!IsProfileValid(id)) return 0;
+	lua_pushnumber(a1, GetProfileCupsCompleted(id));
+	return 1;
+}
+
+int ChloeProfiles_GetProfileCupsMax(void* a1) {
+	int id = luaL_checknumber(a1, 1);
+	if (!IsProfileValid(id)) return 0;
+	lua_pushnumber(a1, GetProfileCupsMax(id));
+	return 1;
+}
+
+int ChloeProfiles_GetProfileCarsUnlocked(void* a1) {
+	int id = luaL_checknumber(a1, 1);
+	if (!IsProfileValid(id)) return 0;
+	lua_pushnumber(a1, GetProfileCarsUnlocked(id));
+	return 1;
+}
+
+int ChloeProfiles_GetProfileProgress(void* a1) {
+	int id = luaL_checknumber(a1, 1);
+	if (!IsProfileValid(id)) return 0;
+	lua_pushnumber(a1, GetProfileProgress(id));
+	return 1;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -531,6 +560,10 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddRace, "ChloeCareerDefs_AddRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddDerby, "ChloeCareerDefs_AddDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddTimeTrial, "ChloeCareerDefs_AddTimeTrial");
+	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCupsCompleted, "ChloeProfiles_GetProfileCupsCompleted");
+	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCupsMax, "ChloeProfiles_GetProfileCupsMax");
+	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCarsUnlocked, "ChloeProfiles_GetProfileCarsUnlocked");
+	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileProgress, "ChloeProfiles_GetProfileProgress");
 
 	RegisterLUAEnum(a1, HANDLING_NORMAL, "HANDLING_NORMAL");
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");

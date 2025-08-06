@@ -85,7 +85,7 @@ namespace NewGameHud {
 		}
 
 		int targetAlpha = -1;
-		if (closestPlayerDist < 6) targetAlpha = closestPlayerId;
+		if (closestPlayerDist < 8) targetAlpha = closestPlayerId;
 
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 			if (targetAlpha == i) {

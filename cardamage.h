@@ -27,7 +27,7 @@ void AddWreckedNotif(std::string player) {
 }
 
 // vanilla game uses 50.0, higher is less damage
-float fDamageMultiplier = 100.0;
+float fDamageMultiplier = 50.0;
 
 void ProcessCarDamage() {
 	static CNyaTimer gTimer;
@@ -36,7 +36,7 @@ void ProcessCarDamage() {
 		fWreckedNotifTimer -= gTimer.fDeltaTime;
 	}
 
-	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 50.0 : 100.0;
+	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 50.0 : 90.0;
 
 	if (GetGameState() != GAME_STATE_RACE) return;
 	if (pLoadingScreen) return;

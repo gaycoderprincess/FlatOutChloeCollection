@@ -23,7 +23,7 @@ namespace CareerMode {
 		std::vector<tCup> aCups;
 		std::vector<tCup> aEvents;
 		tCup Finals;
-	} aLUACareerClasses[4];
+	} aLUACareerClasses[nNumCareerClasses];
 
 	tLUAClass* luaDefs_currentClass = nullptr;
 	tLUAClass::tCup* luaDefs_currentCup = nullptr;
@@ -139,7 +139,7 @@ namespace CareerMode {
 			auto results = &aPlayerResults[i];
 			auto player = &gCustomSave.aCareerCupPlayers[i];
 			player->eventPosition[eventNumber] = results->nPosition;
-			if (results->bDNF) {
+			if (pGameFlow->nEventType == eEventType::RACE && results->bDNF) {
 				player->eventPoints[eventNumber] = 0;
 			}
 			else {
@@ -236,6 +236,59 @@ namespace CareerMode {
 			return GetTrackValueNumber(level, "Laps");
 		}
 		return 4;
+	}
+
+	void OnSave() {
+		float cupsCompleted = 0;
+		int cupsCompletedCount = 0;
+		int cupsTotal = 0;
+		float eventsCompleted = 0;
+		int eventsCompletedCount = 0;
+		int eventsTotal = 0;
+		for (int classId = 0; classId < 3; classId++) {
+			auto careerClass = &CareerMode::aLUACareerClasses[classId];
+			if (careerClass->aCups.empty()) continue;
+
+			cupsTotal += careerClass->aCups.size()+1;
+			eventsTotal += careerClass->aEvents.size();
+
+			for (int i = 0; i < careerClass->aCups.size(); i++) {
+				auto cup = &gCustomSave.aCareerClasses[classId].aCups[i];
+				if (cup->nPosition >= 1 && cup->nPosition <= 3) cupsCompletedCount++;
+
+				if (cup->nPosition == 1) cupsCompleted += 1;
+				else if (cup->nPosition == 2) cupsCompleted += 0.5;
+				else if (cup->nPosition == 3) cupsCompleted += 0.25;
+			}
+			for (int i = 0; i < careerClass->aEvents.size(); i++) {
+				auto cup = &gCustomSave.aCareerClasses[classId].aEvents[i];
+				if (cup->nPosition >= 1 && cup->nPosition <= 3) eventsCompletedCount++;
+
+				if (cup->nPosition == 1) eventsCompleted += 1;
+				else if (cup->nPosition == 2) eventsCompleted += 0.5;
+				else if (cup->nPosition == 3) eventsCompleted += 0.25;
+			}
+			auto cup = &gCustomSave.aCareerClasses[classId].Finals;
+			if (cup->nPosition >= 1 && cup->nPosition <= 3) cupsCompletedCount++;
+
+			if (cup->nPosition == 1) cupsCompleted += 1;
+			else if (cup->nPosition == 2) cupsCompleted += 0.5;
+			else if (cup->nPosition == 3) cupsCompleted += 0.25;
+		}
+
+		gCustomSave.nGameCompletion = ((double)(cupsCompleted + eventsCompleted) / (double)(cupsTotal + eventsTotal)) * 100;
+		gCustomSave.nCupsPassed = cupsCompletedCount;
+		gCustomSave.nCupsMax = cupsTotal;
+
+		gCustomSave.nCarsUnlocked = 0;
+		for (auto& car : aDealerCars) {
+			if (car.classId < 1 || car.classId > 3) {
+				gCustomSave.nCarsUnlocked++;
+				continue;
+			}
+
+			if (gCustomSave.bCareerClassUnlocked[car.classId-1]) gCustomSave.nCarsUnlocked++;
+		}
 	}
 
 	void Init() {

@@ -42,6 +42,17 @@ void SetWindowedMode() {
 	}
 }
 
+uintptr_t SetWindowedModeASM_jmp = 0x504EFE;
+void __attribute__((naked)) SetWindowedModeASM() {
+	__asm__ (
+		"mov dword ptr [esi+0x224], 1\n\t"
+		"mov dword ptr [esp+0x10], 0x90080000\n\t"
+		"jmp %0\n\t"
+			:
+			:  "m" (SetWindowedModeASM_jmp)
+	);
+}
+
 void ApplyWindowedModePatches() {
 	bForceFullscreen = std::filesystem::exists("fullscreen");
 	if (bForceFullscreen) return;
@@ -51,4 +62,5 @@ void ApplyWindowedModePatches() {
 
 	// always run in windowed - this'll be borderless
 	NyaHookLib::Patch<uint16_t>(0x438B5C, 0x9090);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x504EF0, &SetWindowedModeASM);
 }

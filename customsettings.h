@@ -7,7 +7,7 @@ tGameSetting aNewGameSettings[] = {
 		{ "Game", "DefaultPlayerName", (void*)0x6C02B0, 3, 0, 0 },
 		{ "Game", "Camera", (void*)0x6C029C, 0, 0, 9 },
 		{ "Game", "UseNewLoadingScreen", &nUseNewLoadingScreen, 1, 0, 0 },
-		{ "Game", "HandlingDamage", &nHandlingDamage, 1, 0, 0 },
+		{ "Game", "HandlingDamage", &nHandlingDamage, 0, 0, 2 },
 		{ "Game", "HandlingMode", &nHandlingMode, 0, 0, 2 },
 		{ "Game", "PlayerListDefaultState", &nPlayerListDefaultState, 0, 0, 1 },
 		{ "Game", "FO2CarsEnabled", &nFO2CarsEnabled, 1, 0, 0 },
