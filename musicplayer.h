@@ -127,6 +127,12 @@ namespace NewMusicPlayer {
 
 		if (pCurrentSong) {
 			pCurrentSong->Update();
+
+			// remove duplicate music popup after a race restart
+			if (pPlayerHost && pPlayerHost->nRaceTime < 0 && nMusicPopupTimeOffset > 0) {
+				nMusicPopupTimeOffset = -15000;
+			}
+
 			if (pCurrentSong->bFinished) {
 				pCurrentSong = nullptr;
 			}

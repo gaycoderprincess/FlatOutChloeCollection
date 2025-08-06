@@ -150,14 +150,25 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nCareerCupSelectEventsY", NewMenuHud::nCareerCupSelectEventsY);
 	//QuickValueEditor("fCareerCupSelectEventsSize", NewMenuHud::fCareerCupSelectEventsSize);
 	//QuickValueEditor("nCareerCupSelectEventsSpacing", NewMenuHud::nCareerCupSelectEventsSpacing);
-	QuickValueEditor("gCareerCupSelectEventsTitle.nPosX", NewMenuHud::gCareerCupSelectEventsTitle.nPosX);
-	QuickValueEditor("gCareerCupSelectEventsTitle.nPosY", NewMenuHud::gCareerCupSelectEventsTitle.nPosY);
-	QuickValueEditor("gCareerCupSelectEventsTitle.fSize", NewMenuHud::gCareerCupSelectEventsTitle.fSize);
-	QuickValueEditor("nCareerClassSelectHighlightX", NewMenuHud::nCareerClassSelectHighlightX);
-	QuickValueEditor("nCareerClassSelectHighlightY", NewMenuHud::nCareerClassSelectHighlightY);
-	QuickValueEditor("nCareerClassSelectHighlightSizeX", NewMenuHud::nCareerClassSelectHighlightSizeX);
-	QuickValueEditor("nCareerClassSelectHighlightSizeY", NewMenuHud::nCareerClassSelectHighlightSizeY);
-	QuickValueEditor("nCareerClassSelectHighlightSpacing", NewMenuHud::nCareerClassSelectHighlightSpacing);
+	//QuickValueEditor("gCareerCupSelectEventsTitle.nPosX", NewMenuHud::gCareerCupSelectEventsTitle.nPosX);
+	//QuickValueEditor("gCareerCupSelectEventsTitle.nPosY", NewMenuHud::gCareerCupSelectEventsTitle.nPosY);
+	//QuickValueEditor("gCareerCupSelectEventsTitle.fSize", NewMenuHud::gCareerCupSelectEventsTitle.fSize);
+	//QuickValueEditor("nCareerClassSelectHighlightX", NewMenuHud::nCareerClassSelectHighlightX);
+	//QuickValueEditor("nCareerClassSelectHighlightY", NewMenuHud::nCareerClassSelectHighlightY);
+	//QuickValueEditor("nCareerClassSelectHighlightSizeX", NewMenuHud::nCareerClassSelectHighlightSizeX);
+	//QuickValueEditor("nCareerClassSelectHighlightSizeY", NewMenuHud::nCareerClassSelectHighlightSizeY);
+	//QuickValueEditor("nCareerClassSelectHighlightSpacing", NewMenuHud::nCareerClassSelectHighlightSpacing);
+	//QuickValueEditor("gCareerClassSelectTitle.nPosX", NewMenuHud::gCareerClassSelectTitle.nPosX);
+	//QuickValueEditor("gCareerClassSelectTitle.nPosY", NewMenuHud::gCareerClassSelectTitle.nPosY);
+	//QuickValueEditor("gCareerClassSelectTitle.fSize", NewMenuHud::gCareerClassSelectTitle.fSize);
+	QuickValueEditor("gCareerClassSelectDescription.nPosX", NewMenuHud::gCareerClassSelectDescription.nPosX);
+	QuickValueEditor("gCareerClassSelectDescription.nPosY", NewMenuHud::gCareerClassSelectDescription.nPosY);
+	QuickValueEditor("gCareerClassSelectDescription.fSize", NewMenuHud::gCareerClassSelectDescription.fSize);
+	QuickValueEditor("gTrackPlacements.fPosX", NewMenuHud::gTrackPlacements.fPosX);
+	QuickValueEditor("gTrackPlacements.fPosY", NewMenuHud::gTrackPlacements.fPosY);
+	QuickValueEditor("gTrackPlacements.fSize", NewMenuHud::gTrackPlacements.fSize);
+	QuickValueEditor("gTrackPlacements.fSpacingX", NewMenuHud::gTrackPlacements.fSpacingX);
+	QuickValueEditor("gTrackPlacements.fSpacingY", NewMenuHud::gTrackPlacements.fSpacingY);
 
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();

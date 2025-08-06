@@ -20,7 +20,6 @@ namespace CareerMode {
 		};
 
 		std::vector<int> aCarUnlocks;
-		int nMoneyAward;
 		std::vector<tCup> aCups;
 		std::vector<tCup> aEvents;
 		tCup Finals;
@@ -83,8 +82,11 @@ namespace CareerMode {
 	}
 
 	void OnCupFinished() {
+		int playerPosition = gCustomSave.aCupPlayerPosition[0]+1;
 		if (auto cup = GetCurrentSaveCup()) {
-			cup->nPosition = gCustomSave.aCupPlayerPosition[0]+1;
+			if (!cup->nPosition || cup->nPosition > playerPosition) {
+				cup->nPosition = playerPosition;
+			}
 
 			// unlock the next cup if finished 3rd or higher
 			if (cup->nPosition >= 1 && cup->nPosition <= 3) {
@@ -103,8 +105,14 @@ namespace CareerMode {
 			}
 		}
 		else if (auto cup = GetCurrentSaveEvent()) {
-			cup->nPosition = gCustomSave.aCupPlayerPosition[0]+1;
+			if (!cup->nPosition || cup->nPosition > playerPosition) {
+				cup->nPosition = playerPosition;
+			}
 			cup->nTimeOrScore = aPlayerResults[0].nFinishTime;
+		}
+
+		if (playerPosition >= 1 && playerPosition <= 3) {
+			pGameFlow->Profile.nMoney += GetCurrentCup()->aCupWinnings[playerPosition-1];
 		}
 
 		// unlock finals after last cup gets finished

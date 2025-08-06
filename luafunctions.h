@@ -328,6 +328,7 @@ int ChloeCareer_StartCup(void* a1) {
 	gCustomSave.nCareerClass = luaL_checknumber(a1, 1);
 	gCustomSave.nCareerCup = luaL_checknumber(a1, 2);
 	gCustomSave.nCareerCupNextEvent = 0;
+	gCustomSave.nCareerEvent = 0;
 	memset(gCustomSave.aCareerCupPlayers, 0, sizeof(gCustomSave.aCareerCupPlayers));
 	return 0;
 }
@@ -336,21 +337,22 @@ int ChloeCareer_StartFinal(void* a1) {
 	gCustomSave.nCareerClass = luaL_checknumber(a1, 1);
 	gCustomSave.nCareerCup = 64;
 	gCustomSave.nCareerCupNextEvent = 0;
+	gCustomSave.nCareerEvent = 0;
 	memset(gCustomSave.aCareerCupPlayers, 0, sizeof(gCustomSave.aCareerCupPlayers));
 	return 0;
 }
 
 int ChloeCareer_StartEvent(void* a1) {
 	gCustomSave.nCareerClass = luaL_checknumber(a1, 1);
-	gCustomSave.nCareerEvent = luaL_checknumber(a1, 2);
+	gCustomSave.nCareerCup = 0;
 	gCustomSave.nCareerCupNextEvent = 0;
+	gCustomSave.nCareerEvent = luaL_checknumber(a1, 2);
 	memset(gCustomSave.aCareerCupPlayers, 0, sizeof(gCustomSave.aCareerCupPlayers));
 	return 0;
 }
 
 int ChloeCareerDefs_BeginCareerDefs(void* a1) {
 	for (auto& luaClass : CareerMode::aLUACareerClasses) {
-		luaClass.nMoneyAward = 0;
 		luaClass.aCarUnlocks.clear();
 		luaClass.aCups.clear();
 		luaClass.aEvents.clear();
@@ -384,11 +386,6 @@ int ChloeCareerDefs_BeginEvent(void* a1) {
 
 int ChloeCareerDefs_AddCarUnlock(void* a1) {
 	CareerMode::luaDefs_currentClass->aCarUnlocks.push_back(luaL_checknumber(a1, 1));
-	return 0;
-}
-
-int ChloeCareerDefs_SetMoneyAward(void* a1) {
-	CareerMode::luaDefs_currentClass->nMoneyAward = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -528,7 +525,6 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginFinal, "ChloeCareerDefs_BeginFinal");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginEvent, "ChloeCareerDefs_BeginEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddCarUnlock, "ChloeCareerDefs_AddCarUnlock");
-	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetMoneyAward, "ChloeCareerDefs_SetMoneyAward");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetCupName, "ChloeCareerDefs_SetCupName");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetAIUpgradeLevel, "ChloeCareerDefs_SetAIUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetCupWinnings, "ChloeCareerDefs_SetCupWinnings");

@@ -5,9 +5,15 @@ enum eHandlingMode {
 	NUM_HANDLING_MODES
 };
 
+enum eHandlingDamage {
+	HANDLINGDAMAGE_OFF,
+	HANDLINGDAMAGE_REDUCED,
+	HANDLINGDAMAGE_ON,
+};
+
 uint32_t nTransmission = 0;
 uint32_t nUseNewLoadingScreen = 1;
-uint32_t nHandlingDamage = 1;
+uint32_t nHandlingDamage = HANDLINGDAMAGE_REDUCED;
 uint32_t nHandlingMode = HANDLING_NORMAL;
 uint32_t nPlayerListDefaultState = 1;
 uint32_t nFO2CarsEnabled = 1;

@@ -43,11 +43,15 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "debugmenu.h"
 
 void SetHandlingDamage() {
-	static int nLast = -1;
-	if (nLast != nHandlingDamage) {
-		NyaHookLib::Patch<uint64_t>(0x416312, nHandlingDamage ? 0x9F8D000001B2850F : 0x9F8D90000001B3E9);
-		//NyaHookLib::Patch<uint64_t>(0x41624E, nHandlingDamage ? 0x45D900000442850F : 0x45D99000000443E9);
-		nLast = nHandlingDamage;
+	if (nHandlingDamage == HANDLINGDAMAGE_ON) return;
+	if (pLoadingScreen) return;
+	if (GetGameState() != GAME_STATE_RACE) return;
+
+	auto ply = GetPlayer(0);
+	if (!ply) return;
+	ply->pCar->FixPart(eCarFixPart::SUSPENSION);
+	if (nHandlingDamage == HANDLINGDAMAGE_OFF) {
+		ply->pCar->FixPart(eCarFixPart::WHEELS);
 	}
 }
 
@@ -98,6 +102,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarDealerPatches();
 			ApplyCarDamagePatches();
 			CareerMode::Init();
+
+			// remove copyright screen
+			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F);
 
 			// 004E3CDD disable menu ui
 		} break;

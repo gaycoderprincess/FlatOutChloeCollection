@@ -32,6 +32,19 @@ void __fastcall OnCarModelLoad(Car* pCar) {
 	NyaHookLib::Patch<uint8_t>(0x423D3F + 1, folderPath.length());
 	NyaHookLib::Patch(0x426BAB + 1, name.c_str());
 	NyaHookLib::Patch(0x426BCD + 1, name.c_str());
+
+	// retro demo cars
+	auto carId = pCar->pPlayer->nCarId;
+	if (carId >= 150 && carId <= 160) {
+		NyaHookLib::Patch(0x424E9C + 1, "dashboard");
+		NyaHookLib::Patch(0x424F48 + 1, "engine");
+		NyaHookLib::Patch(0x4259B8 + 1, "steering_wheel");
+	}
+	else {
+		NyaHookLib::Patch(0x424E9C + 1, "dash_lo");
+		NyaHookLib::Patch(0x424F48 + 1, "engine_1");
+		NyaHookLib::Patch(0x4259B8 + 1, "steering_wheel_lo");
+	}
 }
 
 uintptr_t LoadCarModelASM_jmp = 0x460E9E;

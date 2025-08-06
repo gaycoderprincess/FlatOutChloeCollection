@@ -503,22 +503,30 @@ namespace NewMenuHud {
 	int nCareerCupSelectClass = 0;
 	int nCareerCupSelectCursorX = 0;
 	int nCareerCupSelectCursorY = 0;
+	int GetCursorLimitX() {
+		if (nCareerCupSelectCursorY == 2) {
+			return CareerMode::aLUACareerClasses[nCareerCupSelectClass].aEvents.size();
+		}
+		return CareerMode::aLUACareerClasses[nCareerCupSelectClass].aCups.size();
+	}
 	void CareerCupSelect_MoveLeft() {
 		nCareerCupSelectCursorX--;
-		if (nCareerCupSelectCursorX < 0) nCareerCupSelectCursorX = CareerMode::aLUACareerClasses[nCareerCupSelectClass].aCups.size()-1;
+		if (nCareerCupSelectCursorX < 0) nCareerCupSelectCursorX = 0;
 	}
 	void CareerCupSelect_MoveRight() {
 		nCareerCupSelectCursorX++;
-		if (nCareerCupSelectCursorX >= CareerMode::aLUACareerClasses[nCareerCupSelectClass].aCups.size()) nCareerCupSelectCursorX = 0;
+		if (nCareerCupSelectCursorX >= GetCursorLimitX()) nCareerCupSelectCursorX = GetCursorLimitX()-1;
 	}
 	void CareerCupSelect_MoveUp() {
 		nCareerCupSelectCursorY--;
-		if (nCareerCupSelectCursorY < 0) nCareerCupSelectCursorY = 2;
+		if (nCareerCupSelectCursorY < 0) nCareerCupSelectCursorY = 0;
 	}
 	void CareerCupSelect_MoveDown() {
 		nCareerCupSelectCursorY++;
-		if (nCareerCupSelectCursorY > 2) nCareerCupSelectCursorY = 0;
+		if (nCareerCupSelectCursorY > 2) nCareerCupSelectCursorY = 2;
 	}
+
+	tDrawPositions gTrackPlacements = {0.263, 0.353, 0.05, 0.19, 0.135};
 
 	void DrawCareerCupSelect() {
 		static CNyaTimer gTimer;
@@ -532,12 +540,22 @@ namespace NewMenuHud {
 		static auto textureRight = LoadTextureFromBFS("data/menu/cupselect_bg_right.png");
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
 		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
+		static auto texturePlacements = LoadTextureFromBFS("data/menu/common.dds");
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
+		static auto trackPlacements = LoadHUDData("data/menu/common.bed", "common");
 
 		if (!bInCareerCupSelect) return;
 
+		if (nCareerCupSelectCursorX >= GetCursorLimitX()) nCareerCupSelectCursorX = 0;
+
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft[nCareerCupSelectClass]);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+
+		const char* trackPlacementNames[] = {
+				"first",
+				"second",
+				"third",
+		};
 
 		auto careerClass = &CareerMode::aLUACareerClasses[nCareerCupSelectClass];
 		for (int i = 0; i < careerClass->aCups.size(); i++) {
@@ -560,6 +578,16 @@ namespace NewMenuHud {
 				y2 = y1 + fCareerCupSelectEventHighlightSize;
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
 			}
+
+			if (cupSave->nPosition >= 1 && cupSave->nPosition <= 3) {
+				data = gTrackPlacements;
+				auto hud = GetHUDData(trackPlacements, trackPlacementNames[cupSave->nPosition-1]);
+				x1 = data.fPosX + data.fSpacingX * i;
+				y1 = data.fPosY;
+				x2 = x1 + data.fSize;
+				y2 = y1 + data.fSize;
+				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255, 255, 255, 255}, 0, texturePlacements, 0, hud->min, hud->max);
+			}
 		}
 		{
 			auto cup = &careerClass->Finals;
@@ -581,6 +609,16 @@ namespace NewMenuHud {
 				y2 = y1 + fCareerCupSelectEventHighlightSize;
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
 			}
+
+			if (cupSave->nPosition >= 1 && cupSave->nPosition <= 3) {
+				data = gTrackPlacements;
+				auto hud = GetHUDData(trackPlacements, trackPlacementNames[cupSave->nPosition-1]);
+				x1 = data.fPosX + data.fSpacingX * 0.5;
+				y1 = data.fPosY + data.fSpacingY * 1;
+				x2 = x1 + data.fSize;
+				y2 = y1 + data.fSize;
+				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255, 255, 255, 255}, 0, texturePlacements, 0, hud->min, hud->max);
+			}
 		}
 		for (int i = 0; i < careerClass->aEvents.size(); i++) {
 			auto cup = &careerClass->aEvents[i];
@@ -601,6 +639,16 @@ namespace NewMenuHud {
 				x2 = x1 + fCareerCupSelectEventHighlightSize * 1.5;
 				y2 = y1 + fCareerCupSelectEventHighlightSize;
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
+			}
+
+			if (cupSave->nPosition >= 1 && cupSave->nPosition <= 3) {
+				data = gTrackPlacements;
+				auto hud = GetHUDData(trackPlacements, trackPlacementNames[cupSave->nPosition-1]);
+				x1 = data.fPosX + data.fSpacingX * i;
+				y1 = data.fPosY + data.fSpacingY * 2;
+				x2 = x1 + data.fSize;
+				y2 = y1 + data.fSize;
+				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255, 255, 255, 255}, 0, texturePlacements, 0, hud->min, hud->max);
 			}
 		}
 
@@ -671,21 +719,63 @@ namespace NewMenuHud {
 	int nCareerClassSelectHighlightSizeY = 115;
 	int nCareerClassSelectHighlightSpacing = 145;
 
-	tDrawPositions1080p gCareerClassSelectTitle = {0,0,0};
+	tDrawPositions1080p gCareerClassSelectTitle = {1320, 190, 0.04};
+	tDrawPositions1080p gCareerClassSelectDescription = {1397, 435, 0.04, 0, 45};
+
+	std::string GetClassDescription(int classId) {
+		const char* descriptions[] = {
+			"Derby class description",
+			"Race class description",
+			"Street class description",
+		};
+
+		int cupsCompleted = 0;
+		int eventsCompleted = 0;
+		auto careerClass = &CareerMode::aLUACareerClasses[classId];
+		for (int i = 0; i < careerClass->aCups.size(); i++) {
+			auto cup = &gCustomSave.aCareerClasses[classId].aCups[i];
+			if (cup->nPosition >= 1 && cup->nPosition <= 3) cupsCompleted++;
+		}
+		for (int i = 0; i < careerClass->aEvents.size(); i++) {
+			auto cup = &gCustomSave.aCareerClasses[classId].aEvents[i];
+			if (cup->nPosition >= 1 && cup->nPosition <= 3) eventsCompleted++;
+		}
+		auto cup = &gCustomSave.aCareerClasses[classId].Finals;
+		if (cup->nPosition >= 1 && cup->nPosition <= 3) cupsCompleted++;
+
+		//std::string str = descriptions[classId];
+		auto str = std::format("Cups: {}/{}\nEvents: {}/{}", cupsCompleted, careerClass->aCups.size()+1, eventsCompleted, careerClass->aEvents.size());
+		return str;
+	}
 
 	void DrawCareerClassSelect() {
 		static CNyaTimer gTimer;
 		gTimer.Process();
 
+		static IDirect3DTexture9* textureClass[3] = {
+			LoadTextureFromBFS("data/menu/classicon_1.png"),
+			LoadTextureFromBFS("data/menu/classicon_2.png"),
+			LoadTextureFromBFS("data/menu/classicon_3.png"),
+		};
 		static auto textureLeft = LoadTextureFromBFS("data/menu/classselect_bg_left.png");
 		static auto textureRight = LoadTextureFromBFS("data/menu/classselect_bg_right.png");
 
 		if (!bInCareerClassSelect) return;
 
+		nCareerCupSelectCursorX = 0;
+		nCareerCupSelectCursorY = 0;
+		if (gCustomSave.nCareerClass < 1) gCustomSave.nCareerClass = 1;
+
+		for (int i = 0; i < 3; i++) {
+			float x1 = nCareerClassSelectHighlightX;
+			float y1 = nCareerClassSelectHighlightY + (nCareerClassSelectHighlightSpacing * i);
+			float x2 = x1 + nCareerClassSelectHighlightSizeX;
+			float y2 = y1 + nCareerClassSelectHighlightSizeY;
+			Draw1080pSprite(JUSTIFY_LEFT, x1, x2, y1, y2, {255, 255, 255, 255}, textureClass[i]);
+		}
+
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
-
-		if (gCustomSave.nCareerClass < 1) gCustomSave.nCareerClass = 1;
 
 		auto rgb = GetPaletteColor(18);
 		rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
@@ -696,7 +786,23 @@ namespace NewMenuHud {
 		float y2 = y1 + nCareerClassSelectHighlightSizeY;
 		Draw1080pSprite(JUSTIFY_LEFT, x1, x2, y1, y2, rgb, nullptr);
 
-		nCareerCupSelectClass = gCustomSave.nCareerClass;
+		nCareerCupSelectClass = gCustomSave.nCareerClass-1;
+
+		const char* classNames[] = {
+				"BRONZE CLASS",
+				"SILVER CLASS",
+				"GOLD CLASS",
+		};
+
+		tNyaStringData data;
+		data.x = gCareerClassSelectTitle.nPosX;
+		data.y = gCareerClassSelectTitle.nPosY;
+		data.size = gCareerClassSelectTitle.fSize;
+		Draw1080pString(JUSTIFY_RIGHT, data, classNames[nCareerCupSelectClass], &DrawStringFO2_Small);
+		data.x = gCareerClassSelectDescription.nPosX;
+		data.y = gCareerClassSelectDescription.nPosY;
+		data.size = gCareerClassSelectDescription.fSize;
+		Draw1080pString(JUSTIFY_RIGHT, data, GetClassDescription(nCareerCupSelectClass), &DrawStringFO2_Ingame12);
 	}
 
 	void OnTick() {
