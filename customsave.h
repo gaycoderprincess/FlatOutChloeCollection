@@ -1,3 +1,5 @@
+void DoGameSave();
+
 const int nNumCareerClasses = 4;
 const int nNumCareerEvents = 16;
 const int nNumCareerEventsPerCup = 16;
@@ -73,8 +75,14 @@ struct tCustomSaveStructure {
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
 	static inline uint8_t aCupPlayerPosition[nNumCareerMaxPlayers];
+	static inline uint8_t aCupLocalPlayerPlacements[nNumCareerMaxPlayers];
 
 	void CalculateCupPlayersByPosition() {
+		memset(aCupLocalPlayerPlacements,0,sizeof(aCupLocalPlayerPlacements));
+		for (auto& pos : aCareerCupPlayers[0].eventPosition) {
+			aCupLocalPlayerPlacements[pos]++;
+		}
+
 		struct tLeaderboardEntry {
 			int playerId;
 			int score;
@@ -187,13 +195,13 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			gCustomSave.Save();
+			DoGameSave();
 		}
 	}
 
 	static auto lastGameState = GetGameState();
 	if (lastGameState == GAME_STATE_RACE && GetGameState() == GAME_STATE_MENU) {
-		gCustomSave.Save();
+		DoGameSave();
 	}
 	lastGameState = GetGameState();
 }

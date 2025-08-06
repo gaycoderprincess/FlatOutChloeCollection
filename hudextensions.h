@@ -18,6 +18,7 @@ namespace NewMenuHud {
 	bool bInCareer = false;
 	bool bInCareerCupSelect = false;
 	bool bInCareerClassSelect = false;
+	bool bInCareerFinalResults = false;
 	bool bInCarDealer = false;
 	bool bInSkinSelector = false;
 	int nCarHorsepower = 0;
@@ -395,6 +396,12 @@ namespace NewMenuHud {
 			case TRACK_DERBY1A: return "derby1";
 			case TRACK_DERBY2A: return "derby2";
 			case TRACK_DERBY3A: return "derby3";
+			case TRACK_LONGJUMP: return "longjump";
+			case TRACK_HIGHJUMP: return "highjump";
+			case TRACK_BULLSEYE: return "bullseye";
+			case TRACK_BOWLING: return "bowling";
+			case TRACK_DARTS: return "darts";
+			case TRACK_CLOWN: return "clown";
 			default:
 				return nullptr;
 		}
@@ -570,6 +577,28 @@ namespace NewMenuHud {
 
 	tDrawPositions gTrackPlacements = {0.263, 0.353, 0.05, 0.19, 0.135};
 
+	void GetCareerStuntTargets(int level, int* out) {
+		switch (level) {
+			case TRACK_LONGJUMP:
+				out[0] = 250;
+				out[1] = 200;
+				out[2] = 100;
+				break;
+			case TRACK_HIGHJUMP:
+				out[0] = 300;
+				out[1] = 250;
+				out[2] = 100;
+				break;
+			case TRACK_BOWLING:
+				out[0] = 25;
+				out[1] = 20;
+				out[2] = 10;
+				break;
+			default:
+				break;
+		}
+	}
+
 	void DrawCareerCupSelect() {
 		static CNyaTimer gTimer;
 		gTimer.Process();
@@ -738,6 +767,23 @@ namespace NewMenuHud {
 			data.y = nCareerCupSelectLapsY;
 			data.size = fCareerCupSelectLapsSize;
 			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
+			auto hud = gCareerCupSelectEvents;
+			data.x = hud.nPosX;
+			data.y = hud.nPosY;
+			data.size = hud.fSize;
+			int level = cup->aRaces[0].nLevel;
+			int targets[3] = {0,0,0};
+			GetCareerStuntTargets(level, targets);
+			if (targets[0]) {
+				if (level == TRACK_BOWLING) {
+					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{} - 1st\n{} - 2nd\n{} - 3rd", targets[0], targets[1], targets[2]),
+									&DrawStringFO2_Ingame12);
+				}
+				else {
+					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{}m - 1st\n{}m - 2nd\n{}m - 3rd", targets[0], targets[1], targets[2]),
+									&DrawStringFO2_Ingame12);
+				}
+			}
 		}
 		data.x = gCareerCupSelectEventsTitle.nPosX;
 		data.y = gCareerCupSelectEventsTitle.nPosY;
@@ -847,12 +893,113 @@ namespace NewMenuHud {
 		Draw1080pString(JUSTIFY_RIGHT, data, GetClassDescription(nCareerCupSelectClass), &DrawStringFO2_Ingame12);
 	}
 
+	tDrawPositions1080p gCareerFinalResultsTitle = {1740,230,0.04};
+	tDrawPositions1080p gCareerFinalResultsCupName = {1740,275,0.02};
+	tDrawPositions1080p gCareerFinalResultsFinishString = {1740,325,0.04};
+	tDrawPositions1080p gCareerFinalResultsWinCounts = {1800,410,0.05,0,80};
+	int nCareerFinalResultsEventsX = 630;
+	int nCareerFinalResultsEventsSpacing = 70;
+	int nCareerFinalResultsPointsX = 1380;
+
+	void DrawCareerFinalResults() {
+		static CNyaTimer gTimer;
+		gTimer.Process();
+
+		static auto textureLeft = LoadTextureFromBFS("data/menu/final_results_screen_bg_left.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/final_results_screen_bg_right.png");
+
+		if (!bInCareerFinalResults) return;
+
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+
+		tNyaStringData data;
+		data.SetColor(GetPaletteColor(18));
+		data.x = nCareerListPositionX;
+		data.y = nCareerListTopY;
+		data.size = fCareerListSize;
+		Draw1080pString(JUSTIFY_LEFT, data, "#", &DrawStringFO2_Ingame12);
+		data.x = nCareerListNameX;
+		Draw1080pString(JUSTIFY_LEFT, data, "NAME", &DrawStringFO2_Ingame12);
+		int numRaces = CareerMode::nLastCupNumRaces;
+		data.x = nCareerFinalResultsEventsX + (nCareerFinalResultsEventsSpacing * 8);
+		data.x -= (nCareerFinalResultsEventsSpacing * numRaces);
+		for (int i = 0; i < numRaces; i++) {
+			data.XCenterAlign = false;
+			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(i+1), &DrawStringFO2_Ingame12);
+			data.x += nCareerFinalResultsEventsSpacing;
+		}
+		data.x = nCareerFinalResultsPointsX;
+		data.XCenterAlign = true;
+		Draw1080pString(JUSTIFY_LEFT, data, "POINTS", &DrawStringFO2_Ingame12);
+		data.y = nCareerListStartY;
+		data.SetColor(GetPaletteColor(17));
+		for (int i = 0; i < 8; i++) {
+			gCustomSave.CalculateCupPlayersByPosition();
+			int playerId = gCustomSave.aCupPlayersByPosition[i];
+			auto player = &gCustomSave.aCareerCupPlayers[playerId];
+			std::string playerName = GetCareerPlayerName(playerId);
+			data.XCenterAlign = false;
+			data.x = nCareerListPositionX;
+			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}.", i+1), &DrawStringFO2_Ingame12);
+			data.x = nCareerListNameX;
+			Draw1080pString(JUSTIFY_LEFT, data, playerName, &DrawStringFO2_Ingame12);
+			data.x = nCareerFinalResultsEventsX + (nCareerFinalResultsEventsSpacing * 8);
+			data.x -= (nCareerFinalResultsEventsSpacing * numRaces);
+			for (int j = 0; j < numRaces; j++) {
+				data.XCenterAlign = false;
+				Draw1080pString(JUSTIFY_LEFT, data, std::to_string(player->eventPoints[j]), &DrawStringFO2_Ingame12);
+				data.x += nCareerFinalResultsEventsSpacing;
+			}
+			data.x = nCareerFinalResultsPointsX;
+			data.XCenterAlign = true;
+			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(player->points), &DrawStringFO2_Ingame12);
+			data.y += nCareerListSpacing;
+		}
+		data.x = gCareerFinalResultsTitle.nPosX;
+		data.y = gCareerFinalResultsTitle.nPosY;
+		data.size = gCareerFinalResultsTitle.fSize;
+		data.SetColor(GetPaletteColor(18));
+		Draw1080pString(JUSTIFY_RIGHT, data, "Final Results", &DrawStringFO2_Ingame12);
+		data.x = gCareerFinalResultsCupName.nPosX;
+		data.y = gCareerFinalResultsCupName.nPosY;
+		data.size = gCareerFinalResultsCupName.fSize;
+		data.SetColor(GetPaletteColor(17));
+		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::sLastCupName, &DrawStringFO2_Small);
+		const char* placementStrings[] = {
+				"You finished first!",
+				"You finished second!",
+				"You finished third!",
+				"You finished fourth!",
+				"You finished fifth!",
+				"You finished sixth!",
+				"You finished seventh!",
+				"You finished eighth!",
+		};
+		int playerPosition = gCustomSave.aCupPlayerPosition[0];
+		if (playerPosition >= 0 && playerPosition < 8) {
+			data.x = gCareerFinalResultsFinishString.nPosX;
+			data.y = gCareerFinalResultsFinishString.nPosY;
+			data.size = gCareerFinalResultsFinishString.fSize;
+			Draw1080pString(JUSTIFY_RIGHT, data, placementStrings[playerPosition], &DrawStringFO2_Ingame12);
+		}
+		for (int i = 0; i < 3; i++) {
+			data.x = gCareerFinalResultsWinCounts.nPosX;
+			data.y = gCareerFinalResultsWinCounts.nPosY + (gCareerFinalResultsWinCounts.nSpacingY * i);
+			data.size = gCareerFinalResultsWinCounts.fSize;
+			data.XCenterAlign = false;
+			data.XRightAlign = true;
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("{}x", gCustomSave.aCupLocalPlayerPlacements[i+1]), &DrawStringFO2_Ingame12);
+		}
+	}
+
 	void OnTick() {
 		DrawCarDealer();
 		DrawSkinSelector();
 		DrawCareerMenu();
 		DrawCareerClassSelect();
 		DrawCareerCupSelect();
+		DrawCareerFinalResults();
 		DrawLoadingScreen();
 	}
 

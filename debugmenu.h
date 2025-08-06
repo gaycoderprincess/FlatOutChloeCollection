@@ -161,14 +161,30 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gCareerClassSelectTitle.nPosX", NewMenuHud::gCareerClassSelectTitle.nPosX);
 	//QuickValueEditor("gCareerClassSelectTitle.nPosY", NewMenuHud::gCareerClassSelectTitle.nPosY);
 	//QuickValueEditor("gCareerClassSelectTitle.fSize", NewMenuHud::gCareerClassSelectTitle.fSize);
-	QuickValueEditor("gCareerClassSelectDescription.nPosX", NewMenuHud::gCareerClassSelectDescription.nPosX);
-	QuickValueEditor("gCareerClassSelectDescription.nPosY", NewMenuHud::gCareerClassSelectDescription.nPosY);
-	QuickValueEditor("gCareerClassSelectDescription.fSize", NewMenuHud::gCareerClassSelectDescription.fSize);
-	QuickValueEditor("gTrackPlacements.fPosX", NewMenuHud::gTrackPlacements.fPosX);
-	QuickValueEditor("gTrackPlacements.fPosY", NewMenuHud::gTrackPlacements.fPosY);
-	QuickValueEditor("gTrackPlacements.fSize", NewMenuHud::gTrackPlacements.fSize);
-	QuickValueEditor("gTrackPlacements.fSpacingX", NewMenuHud::gTrackPlacements.fSpacingX);
-	QuickValueEditor("gTrackPlacements.fSpacingY", NewMenuHud::gTrackPlacements.fSpacingY);
+	//QuickValueEditor("gCareerClassSelectDescription.nPosX", NewMenuHud::gCareerClassSelectDescription.nPosX);
+	//QuickValueEditor("gCareerClassSelectDescription.nPosY", NewMenuHud::gCareerClassSelectDescription.nPosY);
+	//QuickValueEditor("gCareerClassSelectDescription.fSize", NewMenuHud::gCareerClassSelectDescription.fSize);
+	//QuickValueEditor("gTrackPlacements.fPosX", NewMenuHud::gTrackPlacements.fPosX);
+	//QuickValueEditor("gTrackPlacements.fPosY", NewMenuHud::gTrackPlacements.fPosY);
+	//QuickValueEditor("gTrackPlacements.fSize", NewMenuHud::gTrackPlacements.fSize);
+	//QuickValueEditor("gTrackPlacements.fSpacingX", NewMenuHud::gTrackPlacements.fSpacingX);
+	//QuickValueEditor("gTrackPlacements.fSpacingY", NewMenuHud::gTrackPlacements.fSpacingY);
+	//QuickValueEditor("gCareerFinalResultsTitle.nPosX", NewMenuHud::gCareerFinalResultsTitle.nPosX);
+	//QuickValueEditor("gCareerFinalResultsTitle.nPosY", NewMenuHud::gCareerFinalResultsTitle.nPosY);
+	//QuickValueEditor("gCareerFinalResultsTitle.fSize", NewMenuHud::gCareerFinalResultsTitle.fSize);
+	//QuickValueEditor("gCareerFinalResultsCupName.nPosX", NewMenuHud::gCareerFinalResultsCupName.nPosX);
+	//QuickValueEditor("gCareerFinalResultsCupName.nPosY", NewMenuHud::gCareerFinalResultsCupName.nPosY);
+	//QuickValueEditor("gCareerFinalResultsCupName.fSize", NewMenuHud::gCareerFinalResultsCupName.fSize);
+	//QuickValueEditor("gCareerFinalResultsFinishString.nPosX", NewMenuHud::gCareerFinalResultsFinishString.nPosX);
+	//QuickValueEditor("gCareerFinalResultsFinishString.nPosY", NewMenuHud::gCareerFinalResultsFinishString.nPosY);
+	//QuickValueEditor("gCareerFinalResultsFinishString.fSize", NewMenuHud::gCareerFinalResultsFinishString.fSize);
+	//QuickValueEditor("gCareerFinalResultsWinCounts.nPosX", NewMenuHud::gCareerFinalResultsWinCounts.nPosX);
+	//QuickValueEditor("gCareerFinalResultsWinCounts.nPosY", NewMenuHud::gCareerFinalResultsWinCounts.nPosY);
+	//QuickValueEditor("gCareerFinalResultsWinCounts.fSize", NewMenuHud::gCareerFinalResultsWinCounts.fSize);
+	//QuickValueEditor("gCareerFinalResultsWinCounts.nSpacingY", NewMenuHud::gCareerFinalResultsWinCounts.nSpacingY);
+	//QuickValueEditor("nCareerFinalResultsEventsX", NewMenuHud::nCareerFinalResultsEventsX);
+	//QuickValueEditor("nCareerFinalResultsEventsSpacing", NewMenuHud::nCareerFinalResultsEventsSpacing);
+	//QuickValueEditor("nCareerFinalResultsPointsX", NewMenuHud::nCareerFinalResultsPointsX);
 
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();

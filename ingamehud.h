@@ -27,6 +27,7 @@ namespace NewGameHud {
 
 	void DrawPlayerList() {
 		if (!IsRaceHUDUp()) return;
+		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
 		static CNyaTimer gTimer;
 		static double fPlayerListState = 0;
@@ -111,6 +112,8 @@ namespace NewGameHud {
 	float fPlayerHealthBarSizeY = 0.02;
 
 	void DrawPlayerHealthBar() {
+		return;
+
 		if (!IsRaceHUDUp()) return;
 		ProcessPlayerHealthBarAlpha();
 

@@ -2,6 +2,9 @@ namespace CareerMode {
 	bool bIsCareerRace = false;
 	bool bNextRaceCareerRace = false;
 	bool bLastRaceCareerRace = false;
+	bool bWasCareerCupJustFinished = false;
+	std::string sLastCupName;
+	int nLastCupNumRaces;
 
 	struct tLUAClass {
 		struct tCup {
@@ -83,6 +86,26 @@ namespace CareerMode {
 
 	void OnCupFinished() {
 		int playerPosition = gCustomSave.aCupPlayerPosition[0]+1;
+		auto cup = GetCurrentCup();
+		if (cup->aRaces[0].nLevel == TRACK_LONGJUMP) {
+			playerPosition = 4;
+			if (aPlayerResults[0].nFinishTime >= 100) playerPosition = 3;
+			if (aPlayerResults[0].nFinishTime >= 200) playerPosition = 2;
+			if (aPlayerResults[0].nFinishTime >= 250) playerPosition = 1;
+		}
+		if (cup->aRaces[0].nLevel == TRACK_HIGHJUMP) {
+			playerPosition = 4;
+			if (aPlayerResults[0].nFinishTime >= 100) playerPosition = 3;
+			if (aPlayerResults[0].nFinishTime >= 250) playerPosition = 2;
+			if (aPlayerResults[0].nFinishTime >= 300) playerPosition = 1;
+		}
+		if (cup->aRaces[0].nLevel == TRACK_BOWLING) {
+			playerPosition = 4;
+			if (aPlayerResults[0].nFinishTime >= 10) playerPosition = 3;
+			if (aPlayerResults[0].nFinishTime >= 20) playerPosition = 2;
+			if (aPlayerResults[0].nFinishTime >= 25) playerPosition = 1;
+		}
+
 		if (auto cup = GetCurrentSaveCup()) {
 			if (!cup->nPosition || cup->nPosition > playerPosition) {
 				cup->nPosition = playerPosition;
@@ -111,8 +134,15 @@ namespace CareerMode {
 			cup->nTimeOrScore = aPlayerResults[0].nFinishTime;
 		}
 
+		sLastCupName = cup->sName;
+		nLastCupNumRaces = cup->aRaces.size();
+		if (nLastCupNumRaces > 1) {
+			bWasCareerCupJustFinished = true;
+		}
+
 		if (playerPosition >= 1 && playerPosition <= 3) {
-			pGameFlow->Profile.nMoney += GetCurrentCup()->aCupWinnings[playerPosition-1];
+			pGameFlow->Profile.nMoney += cup->aCupWinnings[playerPosition-1];
+			pGameFlow->Profile.nMoneyGained += cup->aCupWinnings[playerPosition-1];
 		}
 
 		// unlock finals after last cup gets finished
@@ -157,6 +187,13 @@ namespace CareerMode {
 		return gCustomSave.nCareerCup >= 0 && gCustomSave.nCareerCupNextEvent > 0;
 	}
 
+	void ProcessResultsFromLastRace_Prompted() {
+		if (GetGameState() == GAME_STATE_MENU && !bPlayerResultsApplied) {
+			ProcessResultsFromLastRace();
+			bPlayerResultsApplied = true;
+		}
+	}
+
 	void OnTick() {
 		if (pLoadingScreen) return;
 		if (GetGameState() == GAME_STATE_RACE) {
@@ -180,12 +217,16 @@ namespace CareerMode {
 				results->bDNF = score->bIsDNF;
 				results->nPosition = score->nPosition;
 				results->nFinishTime = score->nFinishTime;
+
+				if (pGameFlow->nSubEventType == eSubEventType::STUNT_LONGJUMP || pGameFlow->nSubEventType == eSubEventType::STUNT_HIGHJUMP) {
+					results->nFinishTime = ((score->nStuntMetersScore[0] + score->nStuntMetersScore[1] + score->nStuntMetersScore[2]) * 0.01);
+				}
+				if (pGameFlow->nSubEventType == eSubEventType::STUNT_BOWLING) {
+					results->nFinishTime = score->nStuntPointsScore[0] + score->nStuntPointsScore[1] + score->nStuntPointsScore[2];
+				}
 			}
 		}
-		if (GetGameState() == GAME_STATE_MENU && !bPlayerResultsApplied) {
-			ProcessResultsFromLastRace();
-			bPlayerResultsApplied = true;
-		}
+		ProcessResultsFromLastRace_Prompted();
 	}
 
 	int __stdcall GetAIHandicapLevelNew(GameFlow* gameFlow) {
