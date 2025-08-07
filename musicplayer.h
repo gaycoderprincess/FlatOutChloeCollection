@@ -5,10 +5,10 @@ namespace NewMusicPlayer {
 	}
 
 	int GetMusicVolume() {
-		if (GetGameState() == GAME_STATE_RACE) {
-			return nIngameMusicVolume;
+		if (GetGameState() == GAME_STATE_MENU) {
+			return nInterfaceMusicVolume;
 		}
-		return nInterfaceMusicVolume;
+		return nIngameMusicVolume;
 	}
 
 	struct tSong {
@@ -118,7 +118,7 @@ namespace NewMusicPlayer {
 			return;
 		}
 
-		pCurrentPlaylist = GetGameState() == GAME_STATE_RACE ? pPlaylistIngame : pPlaylistMenu;
+		pCurrentPlaylist = GetGameState() == GAME_STATE_MENU ? pPlaylistMenu : pPlaylistIngame;
 		if (pCurrentPlaylist->aSongs.empty()) return;
 
 		if (GetGameState() == GAME_STATE_MENU) {

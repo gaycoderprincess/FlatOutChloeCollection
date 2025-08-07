@@ -18,28 +18,6 @@ int ChloeSkins_GetNumSkinsForCar(void* a1) {
 	return 1;
 }
 
-int ChloeSkins_IsSkinCustom(void* a1) {
-	static auto config = toml::parse_file("Config/CarSkins.toml");
-	int carId = (int)luaL_checknumber(a1, 1);
-	int skinId = (int)luaL_checknumber(a1, 2);
-	bool wrapAround = luaL_checknumber(a1, 3);
-	int numSkins = GetNumSkinsForCar(carId);
-	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
-		lua_pushboolean(a1, false);
-		return 1;
-	}
-	// wrap around
-	while (skinId < 1) {
-		skinId += numSkins;
-	}
-	while (skinId > numSkins) {
-		skinId -= numSkins;
-	}
-	std::wstring author = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId)].value_or(L"");
-	lua_pushboolean(a1, !author.empty());
-	return 1;
-}
-
 int ChloeCollection_GetRandom(void* a1) {
 	int r = rand() % (int)luaL_checknumber(a1, 1);
 	lua_pushnumber(a1, r);
@@ -525,7 +503,6 @@ void CustomLUAFunctions(void* a1) {
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_HasSafeZone, "ChloeWidescreen_HasSafeZone");
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_WasWidescreenToggled, "ChloeWidescreen_WasWidescreenToggled");
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_GetNumSkinsForCar, "ChloeSkins_GetNumSkinsForCar");
-	RegisterLUAFunction(a1, (void*)&ChloeSkins_IsSkinCustom, "ChloeSkins_IsSkinCustom");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetRandom, "ChloeCollection_GetRandom");
 	//RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarCustomMenuBG, "ChloeCollection_GetCarCustomMenuBG");
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_ShowSkinSelector, "ChloeSkins_ShowSkinSelector");

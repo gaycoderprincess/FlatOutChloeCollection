@@ -1,5 +1,10 @@
 void DoGameSave();
 
+namespace Achievements {
+	void Load(int saveSlot);
+	void Save(int saveSlot);
+}
+
 const int nNumCareerClasses = 4;
 const int nNumCareerEvents = 16;
 const int nNumCareerEventsPerCup = 16;
@@ -140,6 +145,8 @@ struct tCustomSaveStructure {
 
 		file.read((char*)this, sizeof(*this));
 
+		Achievements::Load(saveSlot+1);
+
 		// force unlock first career bits in case of save corruption
 		bCareerClassUnlocked[0] = true;
 		for (auto& data : aCareerClasses) {
@@ -162,6 +169,8 @@ struct tCustomSaveStructure {
 
 		auto file = std::ofstream(GetCustomSavePath(saveSlot+1), std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
+
+		Achievements::Save(saveSlot+1);
 
 		file.write((char*)this, sizeof(*this));
 	}

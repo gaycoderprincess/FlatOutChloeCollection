@@ -23,13 +23,50 @@ std::string GetStringNarrow(const wchar_t* string) {
 	return converter.to_bytes(string);
 }
 
+std::string GetSkinName(int carId, int skinId, bool wrapAround) {
+	static auto config = toml::parse_file("Config/CarSkins.toml");
+	int numSkins = GetNumSkinsForCar(carId);
+	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
+		return "---";
+	}
+	// wrap around
+	while (skinId < 1) {
+		skinId += numSkins;
+	}
+	while (skinId > numSkins) {
+		skinId -= numSkins;
+	}
+	std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId) + "name"].value_or("");
+	if (string.empty()) string = "Skin " + std::to_string(skinId);
+	return string;
+}
+
+std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
+	static auto config = toml::parse_file("Config/CarSkins.toml");
+	int numSkins = GetNumSkinsForCar(carId);
+	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
+		return "---";
+	}
+	// wrap around
+	while (skinId < 1) {
+		skinId += numSkins;
+	}
+	while (skinId > numSkins) {
+		skinId -= numSkins;
+	}
+	std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId)].value_or("");
+	if (!string.empty()) string = "Skin Author: " + std::to_string(skinId);
+	return string;
+}
+
 #include "bfsload.h"
 #include "filereader.h"
 #include "config.h"
 #include "customsave.h"
+#include "cardealer.h"
+#include "achievements.h"
 #include "customsettings.h"
 #include "cardamage.h"
-#include "cardealer.h"
 #include "carlimitadjuster.h"
 #include "carreset.h"
 #include "careermode.h"
@@ -108,6 +145,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarResetPatches();
 			CareerMode::Init();
 			NewMenuHud::Init();
+			Achievements::Init();
 
 			// remove copyright screen
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F);

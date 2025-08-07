@@ -196,7 +196,8 @@ namespace CareerMode {
 
 	void OnTick() {
 		if (pLoadingScreen) return;
-		if (GetGameState() == GAME_STATE_RACE) {
+		int gameState = GetGameState();
+		if (gameState == GAME_STATE_RACE || gameState == GAME_STATE_REPLAY) {
 			if (bNextRaceCareerRace) {
 				bIsCareerRace = true;
 				bNextRaceCareerRace = false;
@@ -206,7 +207,7 @@ namespace CareerMode {
 
 		if (!bIsCareerRace) return;
 
-		if (GetGameState() == GAME_STATE_RACE) {
+		if (gameState == GAME_STATE_RACE || gameState == GAME_STATE_REPLAY) {
 			bPlayerResultsApplied = false;
 			memset(aPlayerResults, 0, sizeof(aPlayerResults));
 			for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
@@ -315,6 +316,15 @@ namespace CareerMode {
 			if (cup->nPosition == 1) cupsCompleted += 1;
 			else if (cup->nPosition == 2) cupsCompleted += 0.5;
 			else if (cup->nPosition == 3) cupsCompleted += 0.25;
+		}
+
+		if (auto achievement = GetAchievement("COMPLETE_CAREER")) {
+			achievement->fInternalProgress = cupsCompletedCount;
+			achievement->fMaxInternalProgress = cupsTotal;
+		}
+		if (auto achievement = GetAchievement("COMPLETE_CAREER_GOLD")) {
+			achievement->fInternalProgress = cupsCompleted + eventsCompleted;
+			achievement->fMaxInternalProgress = cupsTotal + eventsTotal;
 		}
 
 		gCustomSave.nGameCompletion = ((double)(cupsCompleted + eventsCompleted) / (double)(cupsTotal + eventsTotal)) * 100;

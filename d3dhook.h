@@ -2,6 +2,7 @@ void HookLoop() {
 	NewMenuHud::OnTick();
 	NewGameHud::OnTick();
 	NewMusicPlayer::OnTick();
+	Achievements::OnTick();
 	ProcessPlayStats();
 	CommonMain();
 }

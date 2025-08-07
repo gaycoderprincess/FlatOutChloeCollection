@@ -26,6 +26,11 @@ void AddWreckedNotif(std::string player) {
 	fWreckedNotifTimer = 3;
 }
 
+void AddWreckedNotifSelf(std::string player) {
+	sWreckedNotif = "YOU ARE WRECKED!";
+	fWreckedNotifTimer = 3;
+}
+
 // vanilla game uses 50.0, higher is less damage
 float fDamageMultiplier = 50.0;
 
@@ -42,14 +47,14 @@ void ProcessCarDamage() {
 	if (pLoadingScreen) return;
 	if (pGameFlow->nEventType != eEventType::RACE) return;
 
-	auto localPlayer = GetPlayerScore<PlayerScoreRace>(1);
-	if (localPlayer->bHasFinished || localPlayer->bIsDNF) return;
-
 	if (pPlayerHost->nRaceTime <= 0) fWreckedNotifTimer = 0;
 
-	if (fWreckedNotifTimer > 0) {
+	if (fWreckedNotifTimer > 0 && !GetScoreManager()->nIsRaceOver) {
 		DrawWreckedNotif();
 	}
+
+	auto localPlayer = GetPlayerScore<PlayerScoreRace>(1);
+	if (localPlayer->bHasFinished || localPlayer->bIsDNF) return;
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
@@ -61,7 +66,12 @@ void ProcessCarDamage() {
 			//score->bHasFinished = true;
 			if (!score->bHasFinished) score->bIsDNF = true;
 
-			AddWreckedNotif(GetStringNarrow(ply->sPlayerName.Get()));
+			if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
+				AddWreckedNotifSelf(GetStringNarrow(ply->sPlayerName.Get()));
+			}
+			else {
+				AddWreckedNotif(GetStringNarrow(ply->sPlayerName.Get()));
+			}
 		}
 	}
 }

@@ -243,42 +243,6 @@ namespace NewMenuHud {
 		Draw1080pString(JUSTIFY_LEFT, data, className, &DrawStringFO2_Ingame12);
 	}
 
-	std::string GetSkinName(int carId, int skinId, bool wrapAround) {
-		static auto config = toml::parse_file("Config/CarSkins.toml");
-		int numSkins = GetNumSkinsForCar(carId);
-		if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
-			return "---";
-		}
-		// wrap around
-		while (skinId < 1) {
-			skinId += numSkins;
-		}
-		while (skinId > numSkins) {
-			skinId -= numSkins;
-		}
-		std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId) + "name"].value_or("");
-		if (string.empty()) string = "Skin " + std::to_string(skinId);
-		return string;
-	}
-
-	std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
-		static auto config = toml::parse_file("Config/CarSkins.toml");
-		int numSkins = GetNumSkinsForCar(carId);
-		if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
-			return "---";
-		}
-		// wrap around
-		while (skinId < 1) {
-			skinId += numSkins;
-		}
-		while (skinId > numSkins) {
-			skinId -= numSkins;
-		}
-		std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId)].value_or("");
-		if (!string.empty()) string = "Skin Author: " + std::to_string(skinId);
-		return string;
-	}
-
 	void DrawSkinSelector() {
 		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
 		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
@@ -845,6 +809,11 @@ namespace NewMenuHud {
 			LoadTextureFromBFS("data/menu/classicon_2.png"),
 			LoadTextureFromBFS("data/menu/classicon_3.png"),
 		};
+		static IDirect3DTexture9* textureClassLocked[3] = {
+			LoadTextureFromBFS("data/menu/classicon_1_locked.png"),
+			LoadTextureFromBFS("data/menu/classicon_2_locked.png"),
+			LoadTextureFromBFS("data/menu/classicon_3_locked.png"),
+		};
 		static auto textureLeft = LoadTextureFromBFS("data/menu/classselect_bg_left.png");
 		static auto textureRight = LoadTextureFromBFS("data/menu/classselect_bg_right.png");
 
@@ -859,7 +828,7 @@ namespace NewMenuHud {
 			float y1 = nCareerClassSelectHighlightY + (nCareerClassSelectHighlightSpacing * i);
 			float x2 = x1 + nCareerClassSelectHighlightSizeX;
 			float y2 = y1 + nCareerClassSelectHighlightSizeY;
-			Draw1080pSprite(JUSTIFY_LEFT, x1, x2, y1, y2, {255, 255, 255, 255}, textureClass[i]);
+			Draw1080pSprite(JUSTIFY_LEFT, x1, x2, y1, y2, {255, 255, 255, 255}, gCustomSave.bCareerClassUnlocked[i] ? textureClass[i] : textureClassLocked[i]);
 		}
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);

@@ -188,6 +188,33 @@ void ProcessDebugMenu() {
 
 	QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 
+	if (DrawMenuOption("Achievements")) {
+		ChloeMenuLib::BeginMenu();
+
+		if (Achievements::GetNumUnlockedAchievements() > 0) {
+			DrawMenuOption("Unlocked", "", true);
+			for (auto& achievement : Achievements::gAchievements) {
+				if (!achievement->bUnlocked) continue;
+				DrawDebugMenuViewerOption(achievement->sName);
+				DrawDebugMenuViewerOption(achievement->sDescription);
+				DrawMenuOption("", "", true);
+			}
+		}
+
+		if (Achievements::GetNumUnlockedAchievements() < Achievements::GetNumVisibleAchievements()) {
+			DrawMenuOption("Locked", "", true);
+			for (auto& achievement : Achievements::gAchievements) {
+				if (achievement->bUnlocked) continue;
+				if (achievement->bHidden) continue;
+				DrawDebugMenuViewerOption(std::format("{} ({}%)", achievement->sName, achievement->nProgress));
+				DrawDebugMenuViewerOption(achievement->sDescription);
+				DrawMenuOption("", "", true);
+			}
+		}
+
+		ChloeMenuLib::EndMenu();
+	}
+
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();
 		if (DrawMenuOption("Driver Location")) {

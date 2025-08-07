@@ -1,9 +1,6 @@
 namespace NewGameHud {
 	bool IsRaceHUDUp() {
-		if (auto ply = GetPlayerScore<PlayerScoreRace>(1)) {
-			if (ply->bHasFinished) return false;
-			if (ply->bIsDNF) return false;
-		}
+		if (GetScoreManager()->nIsRaceOver) return false;
 		return true;
 	}
 
