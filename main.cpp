@@ -145,6 +145,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarResetPatches();
 			CareerMode::Init();
 			NewMenuHud::Init();
+			NewGameHud::Init();
 			Achievements::Init();
 
 			// remove copyright screen

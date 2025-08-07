@@ -71,12 +71,23 @@ void QuickValueEditor(const char* name, int& value) {
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
-	QuickValueEditor("fPlayerHealthTextX", NewGameHud::fPlayerHealthTextX);
-	QuickValueEditor("fPlayerHealthTextY", NewGameHud::fPlayerHealthTextY);
-	QuickValueEditor("fPlayerHealthTextSize", NewGameHud::fPlayerHealthTextSize);
-	QuickValueEditor("fPlayerHealthBarX", NewGameHud::fPlayerHealthBarX);
-	QuickValueEditor("fPlayerHealthBarY", NewGameHud::fPlayerHealthBarY);
-	QuickValueEditor("fPlayerHealthBarSize", NewGameHud::fPlayerHealthBarSize);
+	//QuickValueEditor("fPlayerHealthTextX", NewGameHud::fPlayerHealthTextX);
+	//QuickValueEditor("fPlayerHealthTextY", NewGameHud::fPlayerHealthTextY);
+	//QuickValueEditor("fPlayerHealthTextSize", NewGameHud::fPlayerHealthTextSize);
+	//QuickValueEditor("fPlayerHealthBarX", NewGameHud::fPlayerHealthBarX);
+	//QuickValueEditor("fPlayerHealthBarY", NewGameHud::fPlayerHealthBarY);
+	//QuickValueEditor("fPlayerHealthBarSize", NewGameHud::fPlayerHealthBarSize);
+	//QuickValueEditor("fMapOffset", NewGameHud::fMapOffset);
+	//QuickValueEditor("fMusicPlayerOffset", NewGameHud::fMusicPlayerOffset);
+	//NewGameHud::fMusicPlayer416 = 416 + NewGameHud::fMusicPlayerOffset;
+	//NewGameHud::fMusicPlayer480 = 480 + NewGameHud::fMusicPlayerOffset;
+	//NewGameHud::fMusicPlayer428 = 428 + NewGameHud::fMusicPlayerOffset;
+	//QuickValueEditor("fContactTimerX", NewGameHud::fContactTimerX);
+	//QuickValueEditor("fContactTimerY1", NewGameHud::fContactTimerY1);
+	//QuickValueEditor("fContactTimerY2", NewGameHud::fContactTimerY2);
+	//QuickValueEditor("fContactTimerSize1", NewGameHud::fContactTimerSize1);
+	//QuickValueEditor("fContactTimerSize2", NewGameHud::fContactTimerSize2);
+
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 
 	if (DrawMenuOption("Achievements")) {

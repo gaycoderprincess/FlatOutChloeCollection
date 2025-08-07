@@ -1,6 +1,6 @@
 namespace NewGameHud {
 	bool IsRaceHUDUp() {
-		if (GetScoreManager()->nIsRaceOver) return false;
+		if (GetScoreManager()->nHideRaceHUD) return false;
 		return true;
 	}
 
@@ -177,6 +177,38 @@ namespace NewGameHud {
 		}
 	}
 
+	std::string GetContactTimerString(int value) {
+		auto valueAsSeconds = value / 1000;
+		int seconds = valueAsSeconds;
+		int milliseconds = value % 1000;
+
+		return std::format("{:02}\'\'{:02}", seconds, milliseconds/10);
+	}
+
+	float fContactTimerX = 0.009;
+	float fContactTimerY1 = 0.119;
+	float fContactTimerY2 = 0.153;
+	float fContactTimerSize1 = 0.041;
+	float fContactTimerSize2 = 0.041;
+	void DrawDerbyHUD() {
+		if (!IsRaceHUDUp()) return;
+		if (pGameFlow->nEventType != eEventType::DERBY) return;
+
+		auto timer = fDerbyMaxContactTimer - fDerbyContactTimer[0];
+
+		tNyaStringData data;
+		data.x = fContactTimerX * GetAspectRatioInv();
+		data.y = fContactTimerY1;
+		data.size = fContactTimerSize1;
+		data.SetColor(GetPaletteColor(18));
+		DrawStringFO2_Ingame12(data, "CONTACT TIMER");
+		data.x = fContactTimerX * GetAspectRatioInv();
+		data.y = fContactTimerY2;
+		data.size = fContactTimerSize2;
+		data.SetColor({255,255,255,255});
+		DrawStringFO2_Ingame24(data, GetContactTimerString(timer * 1000));
+	}
+
 	void OnTick() {
 		if (pLoadingScreen) return;
 		if (GetGameState() != GAME_STATE_RACE) {
@@ -188,5 +220,39 @@ namespace NewGameHud {
 		}
 		DrawPlayerList();
 		DrawPlayerHealthBar();
+		DrawDerbyHUD();
+	}
+
+	float fMapOffset = -50;
+	void OnMinimapLoad() {
+		pEnvironment->pMinimap->fScreenPos[1] += fMapOffset;
+	}
+
+	uintptr_t OnMinimapLoadASM_jmp = 0x4695CB;
+	void __attribute__((naked)) OnMinimapLoadASM() {
+		__asm__ (
+			"mov [eax+0x15C], edx\n\t"
+
+			"pushad\n\t"
+			"mov ecx, ebx\n\t"
+			"call %1\n\t"
+			"popad\n\t"
+
+			"jmp %0\n\t"
+				:
+				:  "m" (OnMinimapLoadASM_jmp), "i" (OnMinimapLoad)
+		);
+	}
+
+	float fMusicPlayerOffset = -410;
+	float fMusicPlayer416 = 416 + fMusicPlayerOffset;
+	float fMusicPlayer480 = 480 + fMusicPlayerOffset;
+	float fMusicPlayer428 = 428 + fMusicPlayerOffset;
+	void Init() {
+		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4695C5, &OnMinimapLoadASM);
+
+		NyaHookLib::Patch(0x4539D4 + 2, &fMusicPlayer416);
+		NyaHookLib::Patch(0x4539F4 + 2, &fMusicPlayer480);
+		NyaHookLib::Patch(0x453A52 + 2, &fMusicPlayer428);
 	}
 }

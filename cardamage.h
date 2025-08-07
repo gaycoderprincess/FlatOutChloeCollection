@@ -26,51 +26,115 @@ void AddWreckedNotif(std::string player) {
 	fWreckedNotifTimer = 3;
 }
 
-void AddWreckedNotifSelf(std::string player) {
+void AddWreckedNotifSelf() {
 	sWreckedNotif = "YOU ARE WRECKED!";
+	fWreckedNotifTimer = 3;
+}
+
+void AddTimeoutNotif(std::string player) {
+	sWreckedNotif = std::format("{}\nRAN OUT OF TIME", player);
+	fWreckedNotifTimer = 3;
+}
+
+void AddTimeoutNotifSelf() {
+	sWreckedNotif = "OUT OF TIME!";
 	fWreckedNotifTimer = 3;
 }
 
 // vanilla game uses 50.0, higher is less damage
 float fDamageMultiplier = 50.0;
+float fDerbyContactTimer[32];
+float fDerbyMaxContactTimer = 40;
+
+void ProcessDerbyContactTimer() {
+	static CNyaRaceTimer gTimer;
+	gTimer.Process();
+
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		auto ply = GetPlayer(i);
+		if (ply->pCar->fDamage >= 1.0) continue;
+		auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+		if (score->bIsDNF) continue;
+
+		for (auto& car : ply->pCar->aCarCollisions) {
+			if (car.damage > 0) {
+				fDerbyContactTimer[i] = 0;
+				car.damage = 0;
+			}
+		}
+
+		fDerbyContactTimer[i] += gTimer.fDeltaTime;
+		if (fDerbyContactTimer[i] >= fDerbyMaxContactTimer) {
+			score->bIsDNF = true;
+			score->nFinishTime = pPlayerHost->nRaceTime;
+
+			if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
+				AddTimeoutNotifSelf();
+			}
+			else {
+				AddTimeoutNotif(GetStringNarrow(ply->sPlayerName.Get()));
+			}
+		}
+	}
+}
 
 void ProcessCarDamage() {
-	static CNyaTimer gTimer;
+	NyaHookLib::Patch<uint8_t>(0x4167E8, pGameFlow->nEventType == eEventType::DERBY ? 0xEB : 0x75); // disable auto-ragdolling in derby
+
+	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 40.0 : 90.0;
+
+	if (GetGameState() != GAME_STATE_RACE) return;
+	if (pLoadingScreen) return;
+	if (pGameFlow->nEventType == eEventType::STUNT) return;
+
+	static CNyaRaceTimer gTimer;
 	gTimer.Process();
 	if (fWreckedNotifTimer > 0) {
 		fWreckedNotifTimer -= gTimer.fDeltaTime;
 	}
 
-	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 50.0 : 90.0;
+	if (pPlayerHost->nRaceTime <= 0) {
+		fWreckedNotifTimer = 0;
+		memset(fDerbyContactTimer,0,sizeof(fDerbyContactTimer));
+	}
 
-	if (GetGameState() != GAME_STATE_RACE) return;
-	if (pLoadingScreen) return;
-	if (pGameFlow->nEventType != eEventType::RACE) return;
-
-	if (pPlayerHost->nRaceTime <= 0) fWreckedNotifTimer = 0;
-
-	if (fWreckedNotifTimer > 0 && !GetScoreManager()->nIsRaceOver) {
+	if (fWreckedNotifTimer > 0 && !GetScoreManager()->nHideRaceHUD) {
 		DrawWreckedNotif();
 	}
 
-	auto localPlayer = GetPlayerScore<PlayerScoreRace>(1);
-	if (localPlayer->bHasFinished || localPlayer->bIsDNF) return;
+	if (pGameFlow->nEventType == eEventType::DERBY) {
+		ProcessDerbyContactTimer();
+	}
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
 		if (ply->pCar->fDamage < 1.0) continue;
 
-		auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
-		if (!score->bIsDNF) {
-			Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
-			//score->bHasFinished = true;
-			if (!score->bHasFinished) score->bIsDNF = true;
+		if (pGameFlow->nEventType == eEventType::DERBY) {
+			if (!ply->pCar->nIsRagdolled) {
+				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
 
-			if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
-				AddWreckedNotifSelf(GetStringNarrow(ply->sPlayerName.Get()));
+				if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
+					AddWreckedNotifSelf();
+				}
+				else {
+					AddWreckedNotif(GetStringNarrow(ply->sPlayerName.Get()));
+				}
 			}
-			else {
-				AddWreckedNotif(GetStringNarrow(ply->sPlayerName.Get()));
+		}
+		else {
+			auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+			if (!score->bIsDNF) {
+				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
+				//score->bHasFinished = true;
+				if (!score->bHasFinished) score->bIsDNF = true;
+
+				if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
+					AddWreckedNotifSelf();
+				}
+				else {
+					AddWreckedNotif(GetStringNarrow(ply->sPlayerName.Get()));
+				}
 			}
 		}
 	}
@@ -79,6 +143,10 @@ void ProcessCarDamage() {
 void __stdcall CarDamageResetNew(Car* pCar, float* pos, float* matrix) {
 	if (pCar->fDamage >= 1.0) return;
 	Car::Reset(pCar, pos, matrix);
+}
+
+float GetCarDamageNew() {
+	return GetPlayer(0)->pCar->fDamage;
 }
 
 void ApplyCarDamagePatches() {
@@ -95,5 +163,11 @@ void ApplyCarDamagePatches() {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, addr, &CarDamageResetNew);
 	}
 
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x451165, &GetCarDamageNew);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x416052, 0x4160E9); // disable vanilla derby wrecking
 	NyaHookLib::Patch(0x4161BF + 2, &fDamageMultiplier);
+
+	// enable damage nitro rewards for ai - also enables the hit tracking system
+	NyaHookLib::Patch<uint16_t>(0x416718, 0x9090);
+	NyaHookLib::Patch<uint16_t>(0x41671D, 0x9090);
 }
