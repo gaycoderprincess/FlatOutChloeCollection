@@ -71,122 +71,13 @@ void QuickValueEditor(const char* name, int& value) {
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
-	//if (DrawMenuOption(std::format("fPosX - {}", SkinSelector::fPosX))) { ValueEditorMenu(SkinSelector::fPosX); }
-	//if (DrawMenuOption(std::format("fPosY - {}", SkinSelector::fPosY))) { ValueEditorMenu(SkinSelector::fPosY); }
-	//if (DrawMenuOption(std::format("fSize - {}", SkinSelector::fSize))) { ValueEditorMenu(SkinSelector::fSize); }
-	//if (DrawMenuOption(std::format("fSpacing - {}", SkinSelector::fSpacing))) { ValueEditorMenu(SkinSelector::fSpacing); }
-	//if (DrawMenuOption(std::format("nPowerY - {}", NewMenuHud::nPowerY))) { ValueEditorMenu(NewMenuHud::nPowerY); }
-	//if (DrawMenuOption(std::format("nPriceY - {}", NewMenuHud::nPriceY))) { ValueEditorMenu(NewMenuHud::nPriceY); }
-	//if (DrawMenuOption(std::format("nWeightY - {}", NewMenuHud::nWeightY))) { ValueEditorMenu(NewMenuHud::nWeightY); }
-	//if (DrawMenuOption(std::format("nOffsetY - {}", NewMenuHud::nOffsetY))) { ValueEditorMenu(NewMenuHud::nOffsetY); }
-	//if (DrawMenuOption(std::format("nBaseX - {}", NewMenuHud::nBaseX))) { ValueEditorMenu(NewMenuHud::nBaseX); }
-	//if (DrawMenuOption(std::format("nOffsetX - {}", NewMenuHud::nOffsetX))) { ValueEditorMenu(NewMenuHud::nOffsetX); }
-	//if (DrawMenuOption(std::format("fBaseSize - {}", NewMenuHud::fBaseSize))) { ValueEditorMenu(NewMenuHud::fBaseSize); }
-	//if (DrawMenuOption(std::format("fOffsetSize - {}", NewMenuHud::fOffsetSize))) { ValueEditorMenu(NewMenuHud::fOffsetSize); }
-	//if (DrawMenuOption(std::format("nOffsetPriceY - {}", NewMenuHud::nOffsetPriceY))) { ValueEditorMenu(NewMenuHud::nOffsetPriceY); }
-	//if (DrawMenuOption(std::format("fOffsetPriceSize - {}", NewMenuHud::fOffsetPriceSize))) { ValueEditorMenu(NewMenuHud::fOffsetPriceSize); }
-	//if (DrawMenuOption(std::format("nDescriptionX - {}", NewMenuHud::nDescriptionX))) { ValueEditorMenu(NewMenuHud::nDescriptionX); }
-	//if (DrawMenuOption(std::format("nDescriptionY - {}", NewMenuHud::nDescriptionY))) { ValueEditorMenu(NewMenuHud::nDescriptionY); }
-	//if (DrawMenuOption(std::format("fDescriptionSize - {}", NewMenuHud::fDescriptionSize))) { ValueEditorMenu(NewMenuHud::fDescriptionSize); }
-	//if (DrawMenuOption(std::format("nSkinSelectTitleX - {}", NewMenuHud::nSkinSelectTitleX))) { ValueEditorMenu(NewMenuHud::nSkinSelectTitleX); }
-	//if (DrawMenuOption(std::format("nSkinSelectTitleY - {}", NewMenuHud::nSkinSelectTitleY))) { ValueEditorMenu(NewMenuHud::nSkinSelectTitleY); }
-	//if (DrawMenuOption(std::format("fSkinSelectSize - {}", NewMenuHud::fSkinSelectSize))) { ValueEditorMenu(NewMenuHud::fSkinSelectSize); }
-	//if (DrawMenuOption(std::format("fCarNameX - {}", NewMenuHud::fCarNameX))) { ValueEditorMenu(NewMenuHud::fCarNameX); }
-	//if (DrawMenuOption(std::format("fCarNameY - {}", NewMenuHud::fCarNameY))) { ValueEditorMenu(NewMenuHud::fCarNameY); }
-	//if (DrawMenuOption(std::format("fCarNameSize - {}", NewMenuHud::fCarNameSize))) { ValueEditorMenu(NewMenuHud::fCarNameSize); }
-	//if (DrawMenuOption(std::format("nCarNameTextX - {}", NewMenuHud::nCarNameTextX))) { ValueEditorMenu(NewMenuHud::nCarNameTextX); }
-	//if (DrawMenuOption(std::format("nCarNameTextY - {}", NewMenuHud::nCarNameTextY))) { ValueEditorMenu(NewMenuHud::nCarNameTextY); }
-	//if (DrawMenuOption(std::format("fCarNameTextSize - {}", NewMenuHud::fCarNameTextSize))) { ValueEditorMenu(NewMenuHud::fCarNameTextSize); }
-	//QuickValueEditor("fLoadingSpriteX", NewMenuHud::fLoadingSpriteX);
-	//QuickValueEditor("fLoadingSpriteY", NewMenuHud::fLoadingSpriteY);
-	//QuickValueEditor("fLoadingSpriteSize", NewMenuHud::fLoadingSpriteSize);
-	//QuickValueEditor("nLoadingLogoY", NewMenuHud::nLoadingLogoY);
-	//QuickValueEditor("nLoadingTextX", NewMenuHud::nLoadingTextX);
-	//QuickValueEditor("nLoadingTextY", NewMenuHud::nLoadingTextY);
-	//QuickValueEditor("fLoadingTextSize", NewMenuHud::fLoadingTextSize);
-	//QuickValueEditor("fPlayerListX", NewGameHud::fPlayerListX);
-	//QuickValueEditor("fPlayerListY", NewGameHud::fPlayerListY);
-	//QuickValueEditor("fPlayerListSize", NewGameHud::fPlayerListSize);
-	//QuickValueEditor("fPlayerListSpacing", NewGameHud::fPlayerListSpacing);
-	//QuickValueEditor("fWreckedNotifY", fWreckedNotifY);
-	//QuickValueEditor("fWreckedNotifSize", fWreckedNotifSize);
-	//QuickValueEditor("nCareerListPositionX", NewMenuHud::nCareerListPositionX);
-	//QuickValueEditor("nCareerListNameX", NewMenuHud::nCareerListNameX);
-	//QuickValueEditor("nCareerListPointsX", NewMenuHud::nCareerListPointsX);
-	//QuickValueEditor("nCareerListTopY", NewMenuHud::nCareerListTopY);
-	//QuickValueEditor("nCareerListStartY", NewMenuHud::nCareerListStartY);
-	//QuickValueEditor("nCareerListSpacing", NewMenuHud::nCareerListSpacing);
-	//QuickValueEditor("fCareerListSize", NewMenuHud::fCareerListSize);
-	//QuickValueEditor("nCareerEventNameX", NewMenuHud::nCareerEventNameX);
-	//QuickValueEditor("nCareerEventNameY", NewMenuHud::nCareerEventNameY);
-	//QuickValueEditor("nCareerEventDescY", NewMenuHud::nCareerEventDescY);
-	//QuickValueEditor("fCareerEventSize", NewMenuHud::fCareerEventSize);
-	//QuickValueEditor("fCareerEventDescSize", NewMenuHud::fCareerEventDescSize);
-	//QuickValueEditor("fNitroAirtimeTolerance", fNitroAirtimeTolerance);
-	//QuickValueEditor("fNitroAirtimeRate", fNitroAirtimeRate);
-	//QuickValueEditor("nClassX", NewMenuHud::nClassX);
-	//QuickValueEditor("nClassY", NewMenuHud::nClassY);
-	//QuickValueEditor("fClassSize", NewMenuHud::fClassSize);
-	//QuickValueEditor("fPlayerHealthTextX", NewGameHud::fPlayerHealthTextX);
-	//QuickValueEditor("fPlayerHealthTextY", NewGameHud::fPlayerHealthTextY);
-	//QuickValueEditor("fPlayerHealthTextSize", NewGameHud::fPlayerHealthTextSize);
-	//QuickValueEditor("fPlayerHealthBarX", NewGameHud::fPlayerHealthBarX);
-	//QuickValueEditor("fPlayerHealthBarY", NewGameHud::fPlayerHealthBarY);
-	//QuickValueEditor("fPlayerHealthBarSizeX", NewGameHud::fPlayerHealthBarSizeX);
-	//QuickValueEditor("fPlayerHealthBarSizeY", NewGameHud::fPlayerHealthBarSizeY);
-	//QuickValueEditor("fCareerCupSelectEventX", NewMenuHud::fCareerCupSelectEventX);
-	//QuickValueEditor("fCareerCupSelectEventY", NewMenuHud::fCareerCupSelectEventY);
-	//QuickValueEditor("fCareerCupSelectEventSpacingX", NewMenuHud::fCareerCupSelectEventSpacingX);
-	//QuickValueEditor("fCareerCupSelectEventSpacingY", NewMenuHud::fCareerCupSelectEventSpacingY);
-	//QuickValueEditor("fCareerCupSelectEventSize", NewMenuHud::fCareerCupSelectEventSize);
-	//QuickValueEditor("fCareerCupSelectEventHighlightSize", NewMenuHud::fCareerCupSelectEventHighlightSize);
-	//QuickValueEditor("nCareerCupSelectCupNameX", NewMenuHud::nCareerCupSelectCupNameX);
-	//QuickValueEditor("nCareerCupSelectCupNameY", NewMenuHud::nCareerCupSelectCupNameY);
-	//QuickValueEditor("fCareerCupSelectCupNameSize", NewMenuHud::fCareerCupSelectCupNameSize);
-	//QuickValueEditor("nCareerCupSelectLapsX", NewMenuHud::nCareerCupSelectLapsX);
-	//QuickValueEditor("nCareerCupSelectLapsY", NewMenuHud::nCareerCupSelectLapsY);
-	//QuickValueEditor("fCareerCupSelectLapsSize", NewMenuHud::fCareerCupSelectLapsSize);
-	//QuickValueEditor("nCareerCupSelectEventsX", NewMenuHud::nCareerCupSelectEventsX);
-	//QuickValueEditor("nCareerCupSelectEventsY", NewMenuHud::nCareerCupSelectEventsY);
-	//QuickValueEditor("fCareerCupSelectEventsSize", NewMenuHud::fCareerCupSelectEventsSize);
-	//QuickValueEditor("nCareerCupSelectEventsSpacing", NewMenuHud::nCareerCupSelectEventsSpacing);
-	//QuickValueEditor("gCareerCupSelectEventsTitle.nPosX", NewMenuHud::gCareerCupSelectEventsTitle.nPosX);
-	//QuickValueEditor("gCareerCupSelectEventsTitle.nPosY", NewMenuHud::gCareerCupSelectEventsTitle.nPosY);
-	//QuickValueEditor("gCareerCupSelectEventsTitle.fSize", NewMenuHud::gCareerCupSelectEventsTitle.fSize);
-	//QuickValueEditor("nCareerClassSelectHighlightX", NewMenuHud::nCareerClassSelectHighlightX);
-	//QuickValueEditor("nCareerClassSelectHighlightY", NewMenuHud::nCareerClassSelectHighlightY);
-	//QuickValueEditor("nCareerClassSelectHighlightSizeX", NewMenuHud::nCareerClassSelectHighlightSizeX);
-	//QuickValueEditor("nCareerClassSelectHighlightSizeY", NewMenuHud::nCareerClassSelectHighlightSizeY);
-	//QuickValueEditor("nCareerClassSelectHighlightSpacing", NewMenuHud::nCareerClassSelectHighlightSpacing);
-	//QuickValueEditor("gCareerClassSelectTitle.nPosX", NewMenuHud::gCareerClassSelectTitle.nPosX);
-	//QuickValueEditor("gCareerClassSelectTitle.nPosY", NewMenuHud::gCareerClassSelectTitle.nPosY);
-	//QuickValueEditor("gCareerClassSelectTitle.fSize", NewMenuHud::gCareerClassSelectTitle.fSize);
-	//QuickValueEditor("gCareerClassSelectDescription.nPosX", NewMenuHud::gCareerClassSelectDescription.nPosX);
-	//QuickValueEditor("gCareerClassSelectDescription.nPosY", NewMenuHud::gCareerClassSelectDescription.nPosY);
-	//QuickValueEditor("gCareerClassSelectDescription.fSize", NewMenuHud::gCareerClassSelectDescription.fSize);
-	//QuickValueEditor("gTrackPlacements.fPosX", NewMenuHud::gTrackPlacements.fPosX);
-	//QuickValueEditor("gTrackPlacements.fPosY", NewMenuHud::gTrackPlacements.fPosY);
-	//QuickValueEditor("gTrackPlacements.fSize", NewMenuHud::gTrackPlacements.fSize);
-	//QuickValueEditor("gTrackPlacements.fSpacingX", NewMenuHud::gTrackPlacements.fSpacingX);
-	//QuickValueEditor("gTrackPlacements.fSpacingY", NewMenuHud::gTrackPlacements.fSpacingY);
-	//QuickValueEditor("gCareerFinalResultsTitle.nPosX", NewMenuHud::gCareerFinalResultsTitle.nPosX);
-	//QuickValueEditor("gCareerFinalResultsTitle.nPosY", NewMenuHud::gCareerFinalResultsTitle.nPosY);
-	//QuickValueEditor("gCareerFinalResultsTitle.fSize", NewMenuHud::gCareerFinalResultsTitle.fSize);
-	//QuickValueEditor("gCareerFinalResultsCupName.nPosX", NewMenuHud::gCareerFinalResultsCupName.nPosX);
-	//QuickValueEditor("gCareerFinalResultsCupName.nPosY", NewMenuHud::gCareerFinalResultsCupName.nPosY);
-	//QuickValueEditor("gCareerFinalResultsCupName.fSize", NewMenuHud::gCareerFinalResultsCupName.fSize);
-	//QuickValueEditor("gCareerFinalResultsFinishString.nPosX", NewMenuHud::gCareerFinalResultsFinishString.nPosX);
-	//QuickValueEditor("gCareerFinalResultsFinishString.nPosY", NewMenuHud::gCareerFinalResultsFinishString.nPosY);
-	//QuickValueEditor("gCareerFinalResultsFinishString.fSize", NewMenuHud::gCareerFinalResultsFinishString.fSize);
-	//QuickValueEditor("gCareerFinalResultsWinCounts.nPosX", NewMenuHud::gCareerFinalResultsWinCounts.nPosX);
-	//QuickValueEditor("gCareerFinalResultsWinCounts.nPosY", NewMenuHud::gCareerFinalResultsWinCounts.nPosY);
-	//QuickValueEditor("gCareerFinalResultsWinCounts.fSize", NewMenuHud::gCareerFinalResultsWinCounts.fSize);
-	//QuickValueEditor("gCareerFinalResultsWinCounts.nSpacingY", NewMenuHud::gCareerFinalResultsWinCounts.nSpacingY);
-	//QuickValueEditor("nCareerFinalResultsEventsX", NewMenuHud::nCareerFinalResultsEventsX);
-	//QuickValueEditor("nCareerFinalResultsEventsSpacing", NewMenuHud::nCareerFinalResultsEventsSpacing);
-	//QuickValueEditor("nCareerFinalResultsPointsX", NewMenuHud::nCareerFinalResultsPointsX);
-
-	QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
+	QuickValueEditor("fPlayerHealthTextX", NewGameHud::fPlayerHealthTextX);
+	QuickValueEditor("fPlayerHealthTextY", NewGameHud::fPlayerHealthTextY);
+	QuickValueEditor("fPlayerHealthTextSize", NewGameHud::fPlayerHealthTextSize);
+	QuickValueEditor("fPlayerHealthBarX", NewGameHud::fPlayerHealthBarX);
+	QuickValueEditor("fPlayerHealthBarY", NewGameHud::fPlayerHealthBarY);
+	QuickValueEditor("fPlayerHealthBarSize", NewGameHud::fPlayerHealthBarSize);
+	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

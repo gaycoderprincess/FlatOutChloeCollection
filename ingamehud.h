@@ -64,6 +64,10 @@ namespace NewGameHud {
 	}
 
 	float fHealthBarAlpha[32];
+	float fHealthBarGlow[32];
+	double fHealthBarGlowTimer[32];
+	float fHealthBarGlowSpeed = 0.2;
+	bool bHealthBarMatches[32];
 
 	void ProcessPlayerHealthBarAlpha() {
 		static CNyaTimer gTimer;
@@ -74,6 +78,25 @@ namespace NewGameHud {
 		auto playerPos = GetPlayer(0)->pCar->GetMatrix()->p;
 		for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetPlayer(i);
+			float damage = ply->pCar->fDamage;
+			if (bHealthBarMatches[i] = fHealthBarGlow[i] == damage) {
+				fHealthBarGlowTimer[i] = 0;
+			}
+			else {
+				if (fHealthBarGlowTimer[i] < 0.666) {
+					fHealthBarGlowTimer[i] += gTimer.fDeltaTime;
+				}
+				else {
+					if (fHealthBarGlow[i] < damage) {
+						fHealthBarGlow[i] += fHealthBarGlowSpeed * gTimer.fDeltaTime;
+						if (fHealthBarGlow[i] > damage) fHealthBarGlow[i] = damage;
+					}
+					if (fHealthBarGlow[i] > damage) {
+						fHealthBarGlow[i] -= fHealthBarGlowSpeed * gTimer.fDeltaTime;
+						if (fHealthBarGlow[i] < damage) fHealthBarGlow[i] = damage;
+					}
+				}
+			}
 			if (GetPlayerScore<PlayerScoreRace>(i+1)->bIsDNF) continue;
 			auto dist = (ply->pCar->GetMatrix()->p - playerPos).length();
 			if (dist < closestPlayerDist) {
@@ -83,16 +106,20 @@ namespace NewGameHud {
 		}
 
 		int targetAlpha = -1;
-		if (closestPlayerDist < 8) targetAlpha = closestPlayerId;
+		if (closestPlayerDist < 10) targetAlpha = closestPlayerId;
 
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
-			if (targetAlpha == i) {
+			// keep glowing health bars for a while longer
+			if (targetAlpha == -1 && fHealthBarAlpha[i] == 1 && !bHealthBarMatches[i]) {
+
+			}
+			else if (targetAlpha == i) {
 				fHealthBarAlpha[i] += gTimer.fDeltaTime;
-				if (closestPlayerDist < 3) fHealthBarAlpha[i] = 1;
+				if (closestPlayerDist < 4) fHealthBarAlpha[i] = 1;
 			}
 			else {
 				fHealthBarAlpha[i] -= gTimer.fDeltaTime;
-				if (closestPlayerDist < 3) fHealthBarAlpha[i] = 0;
+				if (closestPlayerDist < 4) fHealthBarAlpha[i] = 0;
 			}
 
 			if (fHealthBarAlpha[i] < 0) fHealthBarAlpha[i] = 0;
@@ -100,18 +127,20 @@ namespace NewGameHud {
 		}
 	}
 
-	float fPlayerHealthTextX = 0.4;
-	float fPlayerHealthTextY = 0.9;
-	float fPlayerHealthTextSize = 0.03;
-	float fPlayerHealthBarX = 0.395;
-	float fPlayerHealthBarY = 0.94;
-	float fPlayerHealthBarSizeX = 0.45;
-	float fPlayerHealthBarSizeY = 0.02;
+	float fPlayerHealthTextX = 0.027;
+	float fPlayerHealthTextY = 0.91;
+	float fPlayerHealthTextSize = 0.029;
+	float fPlayerHealthBarX = 0.0205;
+	float fPlayerHealthBarY = 0.941;
+	float fPlayerHealthBarSize = 0.0389;
 
 	void DrawPlayerHealthBar() {
-		return;
-
 		if (!IsRaceHUDUp()) return;
+
+		static auto ai_damage_meter = NewMenuHud::LoadTextureFromBFS("data/menu/ai_damage_meter.png");
+		static auto ai_damage_meter_glow = NewMenuHud::LoadTextureFromBFS("data/menu/ai_damage_meter_glow.png");
+		static auto ai_damage_meter_bg = NewMenuHud::LoadTextureFromBFS("data/menu/ai_damage_meter_bg.png");
+
 		ProcessPlayerHealthBarAlpha();
 
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
@@ -121,26 +150,30 @@ namespace NewGameHud {
 			if (alpha < 0) alpha = 0;
 			if (alpha > 255) alpha = 255;
 
+			NewMenuHud::Draw1080pSprite(NewMenuHud::JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,(uint8_t)alpha}, ai_damage_meter_bg);
+
 			auto ply = GetPlayer(i);
 
 			tNyaStringData data;
 			data.x = fPlayerHealthTextX * GetAspectRatioInv();
 			data.y = fPlayerHealthTextY;
 			data.size = fPlayerHealthTextSize;
+			data.SetColor(GetPaletteColor(18));
 			data.a = alpha;
 			//DrawStringFO2_Ingame12(data, GetStringNarrow(ply->sPlayerName.Get()));
 			DrawStringFO2_Small(data, GetStringNarrow(ply->sPlayerName.Get()));
 
+			float aspect = 402.0 / 42.0;
+
+			float uv = 1 - ply->pCar->fDamage;
+			float uvGlow = 1 - fHealthBarGlow[i];
 			float x1 = fPlayerHealthBarX;
 			float y1 = fPlayerHealthBarY;
-			float x2 = fPlayerHealthBarX + std::lerp(0, fPlayerHealthBarSizeX, 1 - ply->pCar->fDamage);
-			float x2Max = fPlayerHealthBarX + fPlayerHealthBarSizeX;
-			float y2 = fPlayerHealthBarY + fPlayerHealthBarSizeY;
-			x1 *= GetAspectRatioInv();
-			x2 *= GetAspectRatioInv();
-			x2Max *= GetAspectRatioInv();
-			DrawRectangle(x1, x2Max, y1, y2, {0,0,0,(uint8_t)alpha});
-			DrawRectangle(x1, x2, y1, y2, {255,255,255,(uint8_t)alpha});
+			float x2 = fPlayerHealthBarX + std::lerp(0, fPlayerHealthBarSize * aspect, 1 - ply->pCar->fDamage);
+			float x2Glow = fPlayerHealthBarX + std::lerp(0, fPlayerHealthBarSize * aspect, 1 - fHealthBarGlow[i]);
+			float y2 = fPlayerHealthBarY + fPlayerHealthBarSize;
+			if (x2 != x2Glow) DrawRectangle(x1 * GetAspectRatioInv(), x2Glow * GetAspectRatioInv(), y1, y2, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter_glow, 0, {0,0}, {uvGlow,1});
+			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter, 0, {0,0}, {uv,1});
 		}
 	}
 
@@ -148,6 +181,8 @@ namespace NewGameHud {
 		if (pLoadingScreen) return;
 		if (GetGameState() != GAME_STATE_RACE) {
 			memset(fHealthBarAlpha,0,sizeof(fHealthBarAlpha));
+			memset(fHealthBarGlow,0,sizeof(fHealthBarGlow));
+			memset(fHealthBarGlowTimer,0,sizeof(fHealthBarGlowTimer));
 			bPlayerListUp = nPlayerListDefaultState;
 			return;
 		}
