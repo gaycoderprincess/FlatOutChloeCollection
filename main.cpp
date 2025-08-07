@@ -31,6 +31,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "cardamage.h"
 #include "cardealer.h"
 #include "carlimitadjuster.h"
+#include "carreset.h"
 #include "careermode.h"
 #include "hudextensions.h"
 #include "ingamehud.h"
@@ -78,6 +79,7 @@ void CustomSetterThread() {
 	ProcessCarDamage();
 	CareerMode::OnTick();
 	ProcessNitroGain();
+	ProcessCarReset();
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
@@ -103,6 +105,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarLimitAdjusterPatches();
 			ApplyCarDealerPatches();
 			ApplyCarDamagePatches();
+			ApplyCarResetPatches();
 			CareerMode::Init();
 			NewMenuHud::Init();
 

@@ -186,6 +186,8 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nCareerFinalResultsEventsSpacing", NewMenuHud::nCareerFinalResultsEventsSpacing);
 	//QuickValueEditor("nCareerFinalResultsPointsX", NewMenuHud::nCareerFinalResultsPointsX);
 
+	QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
+
 	if (DrawMenuOption("Car Helpers")) {
 		ChloeMenuLib::BeginMenu();
 		if (DrawMenuOption("Driver Location")) {
