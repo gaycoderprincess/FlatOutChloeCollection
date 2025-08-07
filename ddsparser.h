@@ -1,4 +1,18 @@
+bool IsNativelySupportedDDSFormat(const uint8_t* data) {
+	auto format = *(uint32_t*)(&data[0x54]);
+	if (format == 0x31545844) return true; // DXT1
+	if (format == 0x33545844) return true; // DXT3
+	if (format == 0x34545844) return true; // DXT4
+	if (format == 0x35545844) return true; // DXT5
+	return false;
+}
+
 bool CreateCustomTexture(DevTexture*& pTexture, uint8_t* data, uint32_t dataSize, uint32_t flags) {
+	if (IsNativelySupportedDDSFormat(data)) {
+		pTexture = DeviceD3d::CreateTextureFromMemory(pDeviceD3d, pTexture, data, dataSize, flags);
+		return pTexture->pD3DTexture;
+	}
+
 	if (!pTexture) {
 		// small dummy texture for constructing a DevTexture
 		pTexture = DeviceD3d::CreateTextureFromFile(pDeviceD3d, pTexture, "data/global/overlay/overlaynitro.dds", flags);
