@@ -81,8 +81,6 @@ void ProcessDerbyContactTimer() {
 void ProcessCarDamage() {
 	NyaHookLib::Patch<uint8_t>(0x4167E8, pGameFlow->nEventType == eEventType::DERBY ? 0xEB : 0x75); // disable auto-ragdolling in derby
 
-	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 40.0 : 90.0;
-
 	if (GetGameState() != GAME_STATE_RACE) return;
 	if (pLoadingScreen) return;
 	if (pGameFlow->nEventType == eEventType::STUNT) return;
@@ -149,6 +147,36 @@ float GetCarDamageNew() {
 	return GetPlayer(0)->pCar->fDamage;
 }
 
+void OnCarDamage(Car* pCar) {
+	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 40.0 : 90.0;
+	if (CareerMode::bIsCareerRace && pCar->pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
+		float mult = 1;
+		for (int i = 0; i < pGameFlow->Profile.nNumCarUpgrades; i++) {
+			auto upgrade = pGameFlow->Profile.aCarUpgrades[i];
+			if (upgrade == PlayerProfile::BODYUPGRADE1) mult += 0.30;
+			if (upgrade == PlayerProfile::BODYUPGRADE2) mult += 0.35;
+			if (upgrade == PlayerProfile::BODYUPGRADE3) mult += 0.35;
+		}
+		fDamageMultiplier *= mult;
+	}
+}
+
+uintptr_t OnCarDamageASM_jmp = 0x4161BF;
+void __attribute__((naked)) OnCarDamageASM() {
+	__asm__ (
+		"fld dword ptr [edi+0x29C]\n\t"
+
+		"pushad\n\t"
+		"mov ecx, edi\n\t"
+		"call %1\n\t"
+		"popad\n\t"
+
+		"jmp %0\n\t"
+			:
+			:  "m" (OnCarDamageASM_jmp), "i" (OnCarDamage)
+	);
+}
+
 void ApplyCarDamagePatches() {
 	uintptr_t addresses[] = {
 		0x4078F0,
@@ -166,8 +194,11 @@ void ApplyCarDamagePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x451165, &GetCarDamageNew);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x416052, 0x4160E9); // disable vanilla derby wrecking
 	NyaHookLib::Patch(0x4161BF + 2, &fDamageMultiplier);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4161B9, &OnCarDamageASM);
 
 	// enable damage nitro rewards for ai - also enables the hit tracking system
 	NyaHookLib::Patch<uint16_t>(0x416718, 0x9090);
 	NyaHookLib::Patch<uint16_t>(0x41671D, 0x9090);
+
+	NyaHookLib::Patch<uint8_t>(0x452B7F, 0xEB); // remove stupid slowmo feature when ragdolled
 }
