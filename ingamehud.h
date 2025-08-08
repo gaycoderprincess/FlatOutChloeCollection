@@ -26,7 +26,7 @@ namespace NewGameHud {
 		if (!IsRaceHUDUp()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
-		static CNyaTimer gTimer;
+		static CNyaRaceTimer gTimer;
 		static double fPlayerListState = 0;
 		gTimer.Process();
 
@@ -70,7 +70,7 @@ namespace NewGameHud {
 	bool bHealthBarMatches[32];
 
 	void ProcessPlayerHealthBarAlpha() {
-		static CNyaTimer gTimer;
+		static CNyaRaceTimer gTimer;
 		gTimer.Process();
 
 		int closestPlayerId = -1;
