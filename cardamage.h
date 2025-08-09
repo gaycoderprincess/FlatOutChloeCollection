@@ -122,7 +122,7 @@ void ProcessCarDamage() {
 		}
 		else {
 			auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
-			if (!score->bIsDNF) {
+			if (!ply->pCar->nIsRagdolled) {
 				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
 				//score->bHasFinished = true;
 				if (!score->bHasFinished) score->bIsDNF = true;
