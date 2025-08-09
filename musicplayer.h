@@ -145,7 +145,7 @@ namespace NewMusicPlayer {
 				pCurrentPlaylist = pPlaylistIngame;
 			}
 		}
-		
+
 		if (!pCurrentPlaylist || pCurrentPlaylist->aSongs.empty()) return;
 
 		if (GetGameState() == GAME_STATE_MENU) {
@@ -189,12 +189,15 @@ namespace NewMusicPlayer {
 		return pCurrentSong->sTitle.c_str();
 	}
 
-	tPlaylist LoadPlaylist(const char* path = "data/music/playlist_0.toml") {
+	tPlaylist LoadPlaylist(const char* path) {
 		size_t size;
+
 		auto file = (char*)ReadFileFromBfs(path, size);
+		if (!file) return {};
 
 		std::stringstream ss;
 		ss << file;
+		delete[] file;
 
 		try {
 			tPlaylist playlist;
@@ -217,7 +220,7 @@ namespace NewMusicPlayer {
 			return playlist;
 		}
 		catch (const toml::parse_error& err) {
-			MessageBoxA(0, std::format("Parsing failed: {}", err.what()).c_str(), "Fatal error", MB_ICONERROR);
+			MessageBoxA(0, std::format("Failed to parse {}: {}", path, err.what()).c_str(), "Fatal error", MB_ICONERROR);
 		}
 
 		return {};

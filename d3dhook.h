@@ -4,6 +4,7 @@ void HookLoop() {
 	NewMusicPlayer::OnTick();
 	Achievements::OnTick();
 	ProcessPlayStats();
+	ProcessCarReset();
 	CommonMain();
 }
 

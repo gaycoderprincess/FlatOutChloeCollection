@@ -70,11 +70,14 @@ namespace NewGameHud {
 	bool bHealthBarMatches[32];
 
 	void ProcessPlayerHealthBarAlpha() {
+		auto localPlayer = GetPlayer(0);
+
 		static CNyaRaceTimer gTimer;
 		gTimer.Process();
 
 		int closestPlayerId = -1;
 		float closestPlayerDist = 9999;
+		bool playerJustHit = false;
 		auto playerPos = GetPlayer(0)->pCar->GetMatrix()->p;
 		for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetPlayer(i);
@@ -98,10 +101,18 @@ namespace NewGameHud {
 				}
 			}
 			if (GetPlayerScore<PlayerScoreRace>(i+1)->bIsDNF) continue;
-			auto dist = (ply->pCar->GetMatrix()->p - playerPos).length();
-			if (dist < closestPlayerDist) {
-				closestPlayerDist = dist;
+			if (localPlayer->pCar->aCarCollisions[i].lastHitTimestamp > pPlayerHost->nRaceTime - 100) {
+				playerJustHit = true;
+				closestPlayerDist = (ply->pCar->GetMatrix()->p - playerPos).length();
 				closestPlayerId = i;
+				break;
+			}
+			else {
+				auto dist = (ply->pCar->GetMatrix()->p - playerPos).length();
+				if (dist < closestPlayerDist) {
+					closestPlayerDist = dist;
+					closestPlayerId = i;
+				}
 			}
 		}
 
@@ -115,11 +126,11 @@ namespace NewGameHud {
 			}
 			else if (targetAlpha == i) {
 				fHealthBarAlpha[i] += gTimer.fDeltaTime;
-				if (closestPlayerDist < 4) fHealthBarAlpha[i] = 1;
+				if (playerJustHit) fHealthBarAlpha[i] = 1;
 			}
 			else {
 				fHealthBarAlpha[i] -= gTimer.fDeltaTime;
-				if (closestPlayerDist < 4) fHealthBarAlpha[i] = 0;
+				if (playerJustHit) fHealthBarAlpha[i] = 0;
 			}
 
 			if (fHealthBarAlpha[i] < 0) fHealthBarAlpha[i] = 0;

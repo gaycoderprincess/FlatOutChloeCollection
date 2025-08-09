@@ -116,7 +116,6 @@ void CustomSetterThread() {
 	ProcessCarDamage();
 	CareerMode::OnTick();
 	ProcessNitroGain();
-	ProcessCarReset();
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
