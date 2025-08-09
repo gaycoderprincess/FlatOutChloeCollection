@@ -21,24 +21,37 @@ namespace NewMusicPlayer {
 		int nStreamVolume = 0;
 		bool bFinished = false;
 		bool bAlreadyPlayed = false;
+		bool bIsFromFile = false;
 
 		void Load() {
-			size_t size;
+			// file exists in filesystem, use streaming
+			if (std::filesystem::exists(sPath)) {
+				pStream = NyaAudio::LoadFileStreamed(sPath.c_str());
+				bIsFromFile = true;
+			}
+			else {
+				bIsFromFile = false;
 
-			auto data = (char*)ReadFileFromBfs(sPath.c_str(), size);
-			if (!data) return;
+				size_t size;
+				auto data = (char*)ReadFileFromBfs(sPath.c_str(), size);
+				if (!data) return;
 
-			pStream = NyaAudio::LoadMemory(data, size);
+				pStream = NyaAudio::LoadMemory(data, size);
+			}
 		}
 
 		void Play() {
 			nStreamVolume = GetMusicVolume();
 			bFinished = true;
 
+			if (bIsFromFile && !pStream) {
+				Load();
+			}
+
 			if (pStream) {
 				bFinished = false;
 				NyaAudio::SetVolume(pStream, nStreamVolume / 100.0);
-				NyaAudio::SkipTo(pStream, 0);
+				if (!bIsFromFile) NyaAudio::SkipTo(pStream, 0);
 				NyaAudio::Play(pStream);
 				bAlreadyPlayed = true;
 
@@ -55,6 +68,9 @@ namespace NewMusicPlayer {
 		void Stop() {
 			if (pStream) {
 				NyaAudio::Stop(pStream);
+				if (bIsFromFile) {
+					NyaAudio::Delete(&pStream);
+				}
 			}
 			bFinished = true;
 		}
@@ -98,6 +114,7 @@ namespace NewMusicPlayer {
 
 	tPlaylist* pPlaylistMenu = nullptr;
 	tPlaylist* pPlaylistIngame = nullptr;
+	tPlaylist* pPlaylistStunt = nullptr;
 
 	tPlaylist* pCurrentPlaylist = nullptr;
 	tSong* pCurrentSong = nullptr;
@@ -110,7 +127,6 @@ namespace NewMusicPlayer {
 	}
 
 	void OnTick() {
-		if (!pPlaylistIngame || !pPlaylistMenu) return;
 		if (GetGameState() == GAME_STATE_NONE) return;
 
 		if (pLoadingScreen || IsKeyJustPressed(VK_END)) {
@@ -118,8 +134,19 @@ namespace NewMusicPlayer {
 			return;
 		}
 
-		pCurrentPlaylist = GetGameState() == GAME_STATE_MENU ? pPlaylistMenu : pPlaylistIngame;
-		if (pCurrentPlaylist->aSongs.empty()) return;
+		if (GetGameState() == GAME_STATE_MENU) {
+			pCurrentPlaylist = pPlaylistMenu;
+		}
+		else {
+			if (pGameFlow->nEventType == eEventType::STUNT) {
+				pCurrentPlaylist = pPlaylistStunt;
+			}
+			else {
+				pCurrentPlaylist = pPlaylistIngame;
+			}
+		}
+		
+		if (!pCurrentPlaylist || pCurrentPlaylist->aSongs.empty()) return;
 
 		if (GetGameState() == GAME_STATE_MENU) {
 			nMusicPopupTimeOffset = 0;
@@ -134,6 +161,7 @@ namespace NewMusicPlayer {
 			}
 
 			if (pCurrentSong->bFinished) {
+				pCurrentSong->Stop();
 				pCurrentSong = nullptr;
 			}
 		}
@@ -209,9 +237,11 @@ namespace NewMusicPlayer {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
 
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_title.toml"));
+		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingamemodern.toml"));
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingame.toml"));
-		pPlaylistMenu = &aPlaylists[aPlaylists.size()-2];
-		pPlaylistIngame = &aPlaylists[aPlaylists.size()-1];
+		pPlaylistMenu = &aPlaylists[aPlaylists.size()-3];
+		pPlaylistIngame = &aPlaylists[aPlaylists.size()-2];
+		pPlaylistStunt = &aPlaylists[aPlaylists.size()-1];
 
 		for (auto& playlist : aPlaylists) {
 			for (auto& song : playlist.aSongs) {
