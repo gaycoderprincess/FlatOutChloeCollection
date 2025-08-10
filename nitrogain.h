@@ -26,12 +26,12 @@ void ProcessNitroGain() {
 		}
 		// make AI use nitro
 		if (ply->nPlayerType == PLAYERTYPE_AI) {
-			//float propNitro = 0;
-			//for (int j = 0; j < 10; j++) {
-			//	propNitro += ply->pCar->aObjectsSmashed[j] * fBonusTypeMayhem[j];
-			//}
-			//ply->pCar->fNitro += (ply->pCar->fNitroFromPropsLast = (propNitro - ply->pCar->fNitroFromPropsTotal));
-			//ply->pCar->fNitroFromPropsTotal = propNitro;
+			float propNitro = 0;
+			for (int j = 0; j < 10; j++) {
+				propNitro += ply->pCar->aObjectsSmashed[j] * fBonusTypeMayhem[j];
+			}
+			ply->pCar->fNitro += (ply->fNitroFromPropsLast = (propNitro - ply->fNitroFromPropsTotal));
+			ply->fNitroFromPropsTotal = propNitro;
 
 			for (auto& collision : ply->pCar->aCarCollisions) {
 				if (collision.damage > 0.0) {
@@ -50,7 +50,8 @@ void ProcessNitroGain() {
 
 void ApplyNitroGainPatches() {
 	NyaHookLib::Fill(0x4147B5, 0x90, 6); // AI nitro gain for ragdolling
-	NyaHookLib::Patch<uint16_t>(0x41B9F0, 0x9090); // record prop hits for AI
+	NyaHookLib::Patch<uint16_t>(0x41B9F0, 0x9090); // record prop hits for ai
+	NyaHookLib::Patch<uint16_t>(0x41D915, 0x9090); // register prop hit handler for ai
 
 	// enable car-to-car damage tracking for ai
 	NyaHookLib::Patch<uint16_t>(0x416718, 0x9090);
