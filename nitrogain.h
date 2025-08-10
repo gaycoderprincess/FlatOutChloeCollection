@@ -1,5 +1,7 @@
 float fNitroAirtimeTolerance = 0.5;
 float fNitroAirtimeRate = 2.5;
+bool bNitroRegen = false;
+float fNitroRegenerationRate = 0.05;
 
 void ProcessNitroGain() {
 	if (GetGameState() != GAME_STATE_RACE) return;
@@ -15,9 +17,42 @@ void ProcessNitroGain() {
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
-		if (ply->pCar->fTimeInAir < fNitroAirtimeTolerance) continue;
+		if (ply->pCar->fTimeInAir >= fNitroAirtimeTolerance) {
+			ply->pCar->fNitro += fNitroAirtimeRate * gTimer.fDeltaTime;
+			if (ply->pCar->fNitro >= ply->pCar->fMaxNitro) ply->pCar->fNitro = ply->pCar->fMaxNitro;
+		}
+		if (bNitroRegen && pPlayerHost->nRaceTime > 5000 && ply->fNitroButton <= 0.0) {
+			ply->pCar->fNitro += fNitroRegenerationRate * GetPlayerScore<PlayerScoreRace>(ply->nPlayerId)->nPosition * gTimer.fDeltaTime;
+		}
+		// make AI use nitro
+		if (ply->nPlayerType == PLAYERTYPE_AI) {
+			//float propNitro = 0;
+			//for (int j = 0; j < 10; j++) {
+			//	propNitro += ply->pCar->aObjectsSmashed[j] * fBonusTypeMayhem[j];
+			//}
+			//ply->pCar->fNitro += (ply->pCar->fNitroFromPropsLast = (propNitro - ply->pCar->fNitroFromPropsTotal));
+			//ply->pCar->fNitroFromPropsTotal = propNitro;
 
-		ply->pCar->fNitro += fNitroAirtimeRate * gTimer.fDeltaTime;
+			for (auto& collision : ply->pCar->aCarCollisions) {
+				if (collision.damage > 0.0) {
+					ply->pCar->fNitro += collision.damage * ply->pCar->fMaxNitro;
+					collision.damage = 0.0;
+				}
+			}
+
+			//ply->fNitroButton = ply->pCar->fNitroButton = ply->fGasPedal >= 0.9 && ply->fBrakePedal <= 0.1;
+			ply->fNitroButton = ply->pCar->fNitroButton = ply->pCar->fNitro > 0.5 && ply->pCar->GetVelocity()->length() > 10 && ply->fGasPedal >= 0.5 && ply->fBrakePedal <= 0.1;
+		}
+
 		if (ply->pCar->fNitro >= ply->pCar->fMaxNitro) ply->pCar->fNitro = ply->pCar->fMaxNitro;
 	}
+}
+
+void ApplyNitroGainPatches() {
+	NyaHookLib::Fill(0x4147B5, 0x90, 6); // AI nitro gain for ragdolling
+	NyaHookLib::Patch<uint16_t>(0x41B9F0, 0x9090); // record prop hits for AI
+
+	// enable car-to-car damage tracking for ai
+	NyaHookLib::Patch<uint16_t>(0x416718, 0x9090);
+	NyaHookLib::Patch<uint16_t>(0x41671D, 0x9090);
 }

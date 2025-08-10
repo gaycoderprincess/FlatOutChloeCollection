@@ -90,6 +90,10 @@ void ProcessDebugMenu() {
 
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 
+	if (DrawMenuOption(std::format("bNitroRegen - {}", bNitroRegen), "", false, false)) {
+		bNitroRegen = !bNitroRegen;
+	}
+
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();
 
@@ -183,6 +187,15 @@ void ProcessDebugMenu() {
 		DrawDebugMenuViewerOption(std::format("Player Pointer - {:X}", (uintptr_t)ply));
 		DrawDebugMenuViewerOption(std::format("Player Car Pointer - {:X}", (uintptr_t)ply->pCar));
 		DrawDebugMenuViewerOption(std::format("Player Score Pointer - {:X}", (uintptr_t)GetPlayerScore<PlayerScoreRace>(1)));
+
+		//for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		//	auto ply = GetPlayer(i);
+		//	if (!ply) continue;
+		//	DrawDebugMenuViewerOption(std::format("{} Prop Nitro - {:.2f}", GetStringNarrow(ply->sPlayerName.Get()), ply->pCar->fNitroFromPropsTotal));
+		//}
+		//for (int i = 0; i < 10; i++) {
+		//	DrawDebugMenuViewerOption(std::format("{} Knocked Down - {}/{}", i, ply->pCar->aObjectsSmashed[i], Track::aBonusObjects[i]));
+		//}
 	}
 
 	ChloeMenuLib::EndMenu();

@@ -142,6 +142,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarDealerPatches();
 			ApplyCarDamagePatches();
 			ApplyCarResetPatches();
+			ApplyNitroGainPatches();
 			CareerMode::Init();
 			NewMenuHud::Init();
 			NewGameHud::Init();

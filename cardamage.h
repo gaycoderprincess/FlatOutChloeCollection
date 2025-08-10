@@ -237,9 +237,5 @@ void ApplyCarDamagePatches() {
 	NyaHookLib::Patch(0x4161BF + 2, &fDamageMultiplier);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4161B9, &OnCarDamageASM);
 
-	// enable damage nitro rewards for ai - also enables the hit tracking system
-	NyaHookLib::Patch<uint16_t>(0x416718, 0x9090);
-	NyaHookLib::Patch<uint16_t>(0x41671D, 0x9090);
-
 	NyaHookLib::Patch<uint8_t>(0x452B7F, 0xEB); // remove stupid slowmo feature when ragdolled
 }
