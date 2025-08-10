@@ -202,6 +202,7 @@ namespace NewMusicPlayer {
 
 		auto file = (char*)ReadFileFromBfs(path, size);
 		if (!file) return {};
+		file[size-1]=0;
 
 		std::stringstream ss;
 		ss << file;
