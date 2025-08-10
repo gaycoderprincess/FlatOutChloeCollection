@@ -55,7 +55,7 @@ std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
 		skinId -= numSkins;
 	}
 	std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId)].value_or("");
-	if (!string.empty()) string = "Skin Author: " + std::to_string(skinId);
+	if (!string.empty()) string = "Author: " + string;
 	return string;
 }
 

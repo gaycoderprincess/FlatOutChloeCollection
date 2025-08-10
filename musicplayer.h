@@ -247,8 +247,9 @@ namespace NewMusicPlayer {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
 
+		// TODO playlist switching
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_title.toml"));
-		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingamemodern.toml"));
+		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingame.toml"));
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingame.toml"));
 		pPlaylistMenu = &aPlaylists[aPlaylists.size()-3];
 		pPlaylistIngame = &aPlaylists[aPlaylists.size()-2];

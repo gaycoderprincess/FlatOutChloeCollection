@@ -243,8 +243,12 @@ namespace NewMenuHud {
 		Draw1080pString(JUSTIFY_LEFT, data, className, &DrawStringFO2_Ingame12);
 	}
 
+	//tDrawPositions1080p gCarSkinSelectAuthor = {1588,797,0.02};
+	tDrawPositions1080p gCarSkinSelectAuthor = {1716,801,0.035};
+
 	void DrawSkinSelector() {
 		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
+		static auto textureSkinAuthor = LoadTextureFromBFS("data/menu/carselect_skin.png");
 		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
 
 		if (!bInSkinSelector) return;
@@ -266,6 +270,17 @@ namespace NewMenuHud {
 		}
 		else {
 			skinLoop = false;
+		}
+
+		if (auto author = GetSkinAuthor(car, skin, false); !author.empty()) {
+			Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255, 255, 255, 255}, textureSkinAuthor);
+
+			tNyaStringData data;
+			data.x = gCarSkinSelectAuthor.nPosX;
+			data.y = gCarSkinSelectAuthor.nPosY;
+			data.size = gCarSkinSelectAuthor.fSize;
+			data.XCenterAlign = true;
+			Draw1080pString(JUSTIFY_RIGHT, data, author, &DrawStringFO2_Ingame12);
 		}
 
 		tNyaStringData data;

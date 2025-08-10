@@ -88,6 +88,10 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fContactTimerSize1", NewGameHud::fContactTimerSize1);
 	//QuickValueEditor("fContactTimerSize2", NewGameHud::fContactTimerSize2);
 
+	QuickValueEditor("gCarSkinSelectAuthor.nPosX", NewMenuHud::gCarSkinSelectAuthor.nPosX);
+	QuickValueEditor("gCarSkinSelectAuthor.nPosY", NewMenuHud::gCarSkinSelectAuthor.nPosY);
+	QuickValueEditor("gCarSkinSelectAuthor.fSize", NewMenuHud::gCarSkinSelectAuthor.fSize);
+
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 
 	if (DrawMenuOption(std::format("bNitroRegen - {}", bNitroRegen), "", false, false)) {
