@@ -209,7 +209,7 @@ void ProcessPlayStats() {
 	}
 
 	static auto lastGameState = GetGameState();
-	if (lastGameState == GAME_STATE_RACE && GetGameState() == GAME_STATE_MENU) {
+	if ((lastGameState == GAME_STATE_RACE || lastGameState == GAME_STATE_REPLAY) && GetGameState() == GAME_STATE_MENU) {
 		DoGameSave();
 	}
 	lastGameState = GetGameState();

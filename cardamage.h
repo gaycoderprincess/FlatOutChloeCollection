@@ -78,6 +78,36 @@ void ProcessDerbyContactTimer() {
 	}
 }
 
+bool IsPlayerWrecked(Player* ply) {
+	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+	if (score->bHasFinished) return ply->pCar->nIsRagdolled;
+	return score->bIsDNF;
+}
+
+void AwardWreck(int playerId) {
+	const int wreckAwardTimeout = 1000;
+
+	int32_t lastHitTimestamp = -1;
+	Player* lastHitPlayer = nullptr;
+
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		if (i == playerId) continue;
+
+		auto ply = GetPlayer(i);
+		if (IsPlayerWrecked(ply)) continue;
+		if (ply->pCar->aCarCollisions[playerId].lastHitTimestamp > lastHitTimestamp) {
+			lastHitTimestamp = ply->pCar->aCarCollisions[playerId].lastHitTimestamp;
+			lastHitPlayer = ply;
+		}
+	}
+
+	if (lastHitPlayer && lastHitTimestamp > pPlayerHost->nRaceTime - wreckAwardTimeout) {
+		if (lastHitPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
+			if (pGameFlow->nEventType == eEventType::RACE) Achievements::AwardAchievement(GetAchievement("WRECK_CAR_RACE"));
+		}
+	}
+}
+
 void ProcessCarDamage() {
 	NyaHookLib::Patch<uint8_t>(0x4167E8, pGameFlow->nEventType == eEventType::DERBY ? 0xEB : 0x75); // disable auto-ragdolling in derby
 
@@ -110,6 +140,8 @@ void ProcessCarDamage() {
 
 		if (pGameFlow->nEventType == eEventType::DERBY) {
 			if (!ply->pCar->nIsRagdolled) {
+				AwardWreck(i);
+
 				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
 
 				if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
@@ -121,9 +153,12 @@ void ProcessCarDamage() {
 			}
 		}
 		else {
-			auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
-			if (!ply->pCar->nIsRagdolled) {
+			if (!IsPlayerWrecked(ply)) {
+				AwardWreck(i);
+
 				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
+
+				auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 				//score->bHasFinished = true;
 				if (!score->bHasFinished) score->bIsDNF = true;
 

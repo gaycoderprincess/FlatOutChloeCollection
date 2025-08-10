@@ -51,7 +51,7 @@ namespace Achievements {
 
 	std::vector<CAchievement*> gAchievements = {
 		new CAchievement("WIN_RACE", "Starting Point", "Win a race", CAT_GENERAL),
-		new CAchievement("WIN_RACE_WRECK", "Eliminator", "Win a race after wrecking everyone", CAT_SINGLEPLAYER),
+		//new CAchievement("WIN_RACE_WRECK", "Eliminator", "Win a race after wrecking everyone", CAT_SINGLEPLAYER),
 		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GENERAL),
 		new CAchievement("BUY_CUSTOM_SKIN", "Community-Run", "Purchase a car with a custom livery", CAT_CAREER),
 		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 10%% health", CAT_GENERAL),
@@ -60,6 +60,7 @@ namespace Achievements {
 		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete FlatOut mode", CAT_CAREER),
 		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete FlatOut mode with all gold", CAT_CAREER),
 		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_TRACKS),
+		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_TRACKS),
 	};
 
 	std::vector<CAchievement*> GetAchievementsInCategory(uint32_t category) {

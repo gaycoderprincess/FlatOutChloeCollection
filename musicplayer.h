@@ -11,6 +11,8 @@ namespace NewMusicPlayer {
 		return nIngameMusicVolume;
 	}
 
+	bool bLastSongPlayedInReplay = false;
+
 	struct tSong {
 		std::string sPath;
 		std::string sArtist;
@@ -62,6 +64,11 @@ namespace NewMusicPlayer {
 				}
 
 				SetMenuSongNames(wsArtist.c_str(), wsTitle.c_str());
+
+				if (pPlayerHost) {
+					nMusicPopupTimeOffset = pPlayerHost->nRaceTime;
+					bLastSongPlayedInReplay = GetGameState() == GAME_STATE_REPLAY;
+				}
 			}
 		}
 
@@ -160,6 +167,11 @@ namespace NewMusicPlayer {
 				nMusicPopupTimeOffset = -15000;
 			}
 
+			// remove duplicate music popup during replays
+			if ((GetGameState() == GAME_STATE_REPLAY) != bLastSongPlayedInReplay) {
+				nMusicPopupTimeOffset = -15000;
+			}
+
 			if (pCurrentSong->bFinished) {
 				pCurrentSong->Stop();
 				pCurrentSong = nullptr;
@@ -172,10 +184,6 @@ namespace NewMusicPlayer {
 			}
 			pCurrentSong->Play();
 			pLastSong = pCurrentSong;
-
-			if (pPlayerHost) {
-				nMusicPopupTimeOffset = pPlayerHost->nRaceTime;
-			}
 		}
 	}
 
