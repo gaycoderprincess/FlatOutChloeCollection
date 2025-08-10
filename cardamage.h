@@ -1,3 +1,8 @@
+float GetCarDamage(Car* pCar) {
+	if (pGameFlow->nEventType == eEventType::DERBY) return pCar->GetDerbyDamage();
+	return pCar->fDamage;
+}
+
 std::string sWreckedNotif;
 double fWreckedNotifTimer = 0;
 
@@ -52,14 +57,14 @@ void ProcessDerbyContactTimer() {
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
-		if (ply->pCar->fDamage >= 1.0) continue;
+		if (GetCarDamage(ply->pCar) >= 1.0) continue;
 		auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 		if (score->bIsDNF) continue;
 
 		for (auto& car : ply->pCar->aCarCollisions) {
-			if (car.damage > 0) {
+			if (car.lastHitTimestamp > pPlayerHost->nRaceTime - 50) {
 				fDerbyContactTimer[i] = 0;
-				car.damage = 0;
+				//car.damage = 0;
 			}
 		}
 
@@ -79,6 +84,7 @@ void ProcessDerbyContactTimer() {
 }
 
 bool IsPlayerWrecked(Player* ply) {
+	if (GetCarDamage(ply->pCar) < 1.0) return false;
 	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 	if (score->bHasFinished) return ply->pCar->nIsRagdolled;
 	return score->bIsDNF;
@@ -136,7 +142,7 @@ void ProcessCarDamage() {
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
-		if (ply->pCar->fDamage < 1.0) continue;
+		if (GetCarDamage(ply->pCar) < 1.0) continue;
 
 		if (pGameFlow->nEventType == eEventType::DERBY) {
 			if (!ply->pCar->nIsRagdolled) {
@@ -174,12 +180,12 @@ void ProcessCarDamage() {
 }
 
 void __stdcall CarDamageResetNew(Car* pCar, float* pos, float* matrix) {
-	if (pCar->fDamage >= 1.0) return;
+	if (GetCarDamage(pCar) >= 1.0) return;
 	Car::Reset(pCar, pos, matrix);
 }
 
 float GetCarDamageNew() {
-	return GetPlayer(0)->pCar->fDamage;
+	return GetCarDamage(GetPlayer(0)->pCar);
 }
 
 void OnCarDamage(Car* pCar) {

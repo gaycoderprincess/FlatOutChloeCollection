@@ -478,6 +478,27 @@ namespace Achievements {
 
 		if (pLoadingScreen) return;
 
+		static double fTrackCheckTimer = 3;
+		fTrackCheckTimer += gTimer.fDeltaTime;
+		if (fTrackCheckTimer > 3) {
+			auto achievement = GetAchievement("TRACKMASTER");
+
+			achievement->sTrackString = "";
+			if (!achievement->bUnlocked) {
+				for (int i = 1; i < GetNumTracks() + 1; i++) {
+					if (!DoesTrackExist(i)) continue;
+					if (DoesTrackValueExist(i, "StuntMode")) continue;
+					if (gCustomSave.tracksWon[i]) continue;
+
+					if (!achievement->sTrackString.empty()) achievement->sTrackString += ", ";
+					achievement->sTrackString += GetTrackName(i);
+				}
+				achievement->sTrackString = "Remaining: " + achievement->sTrackString;
+				achievement->pTrackFunction = Achievements::OnTrack_GenericString;
+			}
+			fTrackCheckTimer = 0;
+		}
+
 		if (GetGameState() == GAME_STATE_RACE) {
 			auto ply = GetPlayerScore<PlayerScoreRace>(1);
 			if (IsRaceMode() && ply->bHasFinished && pPlayerHost->GetNumPlayers() > 1) {
@@ -490,15 +511,15 @@ namespace Achievements {
 					//	AwardAchievement(GetAchievement("WIN_MP_RACE"));
 					//}
 					// SP and 8+ players only for the all wreck achievement
-					if (pPlayerHost->GetNumPlayers() >= 8) {
-						bool anyoneAlive = false;
-						for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
-							auto ply = GetPlayer(i);
-							if (!ply) continue;
-							if (ply->pCar->fDamage < 1.0) anyoneAlive = true;
-						}
-						if (!anyoneAlive) AwardAchievement(GetAchievement("WIN_RACE_WRECK"));
-					}
+					//if (pPlayerHost->GetNumPlayers() >= 8) {
+					//	bool anyoneAlive = false;
+					//	for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
+					//		auto ply = GetPlayer(i);
+					//		if (!ply) continue;
+					//		if (ply->pCar->fDamage < 1.0) anyoneAlive = true;
+					//	}
+					//	if (!anyoneAlive) AwardAchievement(GetAchievement("WIN_RACE_WRECK"));
+					//}
 				}
 			}
 		}

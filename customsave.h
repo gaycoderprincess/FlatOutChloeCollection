@@ -192,7 +192,6 @@ void ProcessPlayStats() {
 		bool changed = false;
 		int track = pGameFlow->nLevel;
 
-		// time trials should count for this
 		if (pGameFlow->nSubEventType != eSubEventType::RACE_TIMETRIAL) {
 			auto ply = GetPlayerScore<PlayerScoreRace>(1);
 			if (ply->bHasFinished) {

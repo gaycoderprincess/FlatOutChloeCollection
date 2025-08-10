@@ -81,7 +81,7 @@ namespace NewGameHud {
 		auto playerPos = GetPlayer(0)->pCar->GetMatrix()->p;
 		for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetPlayer(i);
-			float damage = ply->pCar->fDamage;
+			float damage = GetCarDamage(ply->pCar);
 			if (bHealthBarMatches[i] = fHealthBarGlow[i] == damage) {
 				fHealthBarGlowTimer[i] = 0;
 			}
@@ -176,11 +176,11 @@ namespace NewGameHud {
 
 			float aspect = 402.0 / 42.0;
 
-			float uv = 1 - ply->pCar->fDamage;
+			float uv = 1 - GetCarDamage(ply->pCar);
 			float uvGlow = 1 - fHealthBarGlow[i];
 			float x1 = fPlayerHealthBarX;
 			float y1 = fPlayerHealthBarY;
-			float x2 = fPlayerHealthBarX + std::lerp(0, fPlayerHealthBarSize * aspect, 1 - ply->pCar->fDamage);
+			float x2 = fPlayerHealthBarX + std::lerp(0, fPlayerHealthBarSize * aspect, 1 - GetCarDamage(ply->pCar));
 			float x2Glow = fPlayerHealthBarX + std::lerp(0, fPlayerHealthBarSize * aspect, 1 - fHealthBarGlow[i]);
 			float y2 = fPlayerHealthBarY + fPlayerHealthBarSize;
 			if (x2 != x2Glow) DrawRectangle(x1 * GetAspectRatioInv(), x2Glow * GetAspectRatioInv(), y1, y2, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter_glow, 0, {0,0}, {uvGlow,1});
