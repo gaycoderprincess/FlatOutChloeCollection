@@ -1,4 +1,4 @@
-class CIngameHUDElement {
+class CIngameHUDElement : public CHUDElement {
 public:
 	static inline std::vector<CIngameHUDElement*> aGameHUD;
 
@@ -10,9 +10,6 @@ public:
 		if (GetScoreManager()->nHideRaceHUD) return false;
 		return true;
 	}
-
-	virtual void Reset() {}
-	virtual void Process() = 0;
 };
 
 namespace NewGameHud {
@@ -63,3 +60,7 @@ namespace NewGameHud {
 		NyaHookLib::Patch(0x453A52 + 2, &fMusicPlayer428);
 	}
 }
+
+#include "ingame_playerlist.h"
+#include "ingame_damagemeter.h"
+#include "ingame_contacttimer.h"

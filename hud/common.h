@@ -1,4 +1,4 @@
-class CMenuHUDElement {
+class CHUDElement {
 public:
 	bool bEnabled = false;
 
@@ -150,28 +150,7 @@ public:
 		return nullptr;
 	}
 
-	static inline std::vector<CMenuHUDElement*> aMenuHUD;
-
-	CMenuHUDElement() {
-		aMenuHUD.push_back(this);
-	}
-
 	virtual void Init() {}
 	virtual void Reset() {}
 	virtual void Process() = 0;
 };
-
-namespace NewMenuHud {
-	void OnTick() {
-		for (auto& hud : CMenuHUDElement::aMenuHUD) {
-			if (!hud->bEnabled) hud->Reset();
-			hud->Process();
-		}
-	}
-
-	void Init() {
-		for (auto& hud : CMenuHUDElement::aMenuHUD) {
-			hud->Init();
-		}
-	}
-}
