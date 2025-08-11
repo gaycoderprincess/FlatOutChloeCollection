@@ -44,6 +44,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "luafunctions.h"
 #include "ddsparser.h"
 #include "nitrogain.h"
+#include "ultrawide.h"
 #include "debugmenu.h"
 
 void SetHandlingDamage() {
@@ -108,13 +109,14 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarDamagePatches();
 			ApplyCarResetPatches();
 			ApplyNitroGainPatches();
+			//ApplyUltrawidePatches(); // todo finish this
 			CareerMode::Init();
 			NewMenuHud::Init();
 			NewGameHud::Init();
 			Achievements::Init();
 
-			// remove copyright screen
-			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F);
+			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
+			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos
 
 			NyaHookLib::Patch(0x68BDE0, "gamesave");
 
