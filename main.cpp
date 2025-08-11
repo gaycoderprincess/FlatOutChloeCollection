@@ -118,7 +118,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
 			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos
 
-			NyaHookLib::Patch(0x68BDE0, "gamesave");
+			NyaHookLib::Patch(0x68BDE0, "gamesave"); // change savefile name
 
 			// 004E3CDD disable menu ui
 		} break;

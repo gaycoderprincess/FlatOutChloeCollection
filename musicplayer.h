@@ -12,6 +12,7 @@ namespace NewMusicPlayer {
 	}
 
 	bool bLastSongPlayedInReplay = false;
+	bool bIsFirstIngameSong = false;
 
 	struct tSong {
 		std::string sPath;
@@ -19,6 +20,7 @@ namespace NewMusicPlayer {
 		std::string sTitle;
 		std::wstring wsArtist;
 		std::wstring wsTitle;
+		uint32_t nStartPos;
 		NyaAudio::NyaSound pStream = 0;
 		int nStreamVolume = 0;
 		bool bFinished = false;
@@ -55,6 +57,10 @@ namespace NewMusicPlayer {
 				NyaAudio::SetVolume(pStream, nStreamVolume / 100.0);
 				if (!bIsFromFile) NyaAudio::SkipTo(pStream, 0);
 				NyaAudio::Play(pStream);
+				if (bIsFirstIngameSong && nStartPos > 0) {
+					NyaAudio::SkipTo(pStream, nStartPos, true);
+				}
+				bIsFirstIngameSong = false;
 				bAlreadyPlayed = true;
 
 				if (GetGameState() == GAME_STATE_MENU) {
@@ -143,6 +149,7 @@ namespace NewMusicPlayer {
 
 		if (GetGameState() == GAME_STATE_MENU) {
 			pCurrentPlaylist = pPlaylistMenu;
+			bIsFirstIngameSong = true;
 		}
 		else {
 			if (pGameFlow->nEventType == eEventType::STUNT) {
@@ -161,6 +168,11 @@ namespace NewMusicPlayer {
 
 		if (pCurrentSong) {
 			pCurrentSong->Update();
+
+			// hide dummy stunt song names
+			if (pCurrentSong->sTitle == "Henri") {
+				nMusicPopupTimeOffset = -15000;
+			}
 
 			// remove duplicate music popup after a race restart
 			if (pPlayerHost && pPlayerHost->nRaceTime < 0 && nMusicPopupTimeOffset > 0) {
@@ -221,6 +233,7 @@ namespace NewMusicPlayer {
 				song.sTitle = config["Playlist"][name]["Song"].value_or("");
 				song.wsArtist = config["Playlist"][name]["Artist"].value_or(L"");
 				song.wsTitle = config["Playlist"][name]["Song"].value_or(L"");
+				song.nStartPos = config["Playlist"][name]["StartPos"].value_or(0);
 				if (song.sPath.empty()) continue;
 				if (song.sArtist.empty()) continue;
 				if (song.sTitle.empty()) continue;
@@ -251,7 +264,7 @@ namespace NewMusicPlayer {
 		// TODO playlist switching
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_title.toml"));
 		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingame.toml"));
-		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingame.toml"));
+		aPlaylists.push_back(LoadPlaylist("data/music/playlist_stunt.toml"));
 		pPlaylistMenu = &aPlaylists[aPlaylists.size()-3];
 		pPlaylistIngame = &aPlaylists[aPlaylists.size()-2];
 		pPlaylistStunt = &aPlaylists[aPlaylists.size()-1];
