@@ -10,7 +10,7 @@ public:
 	static constexpr int nLoadingTextY = 980;
 	static constexpr float fLoadingTextSize = 0.04;
 
-	static inline std::string sLoadingScreenTextureName = "data/menu/loading.tga";
+	static inline std::string sTextureName = "data/menu/loading.tga";
 	static const char* GetLoadingScreenForTrack(int track) {
 		switch (track) {
 			case TRACK_FOREST1A: return "forest1_1";
@@ -70,9 +70,9 @@ public:
 		if (!nUseNewLoadingScreen) return;
 
 		if (!pLoadingScreen) return;
-		if (sLoadingScreenTextureName.empty()) return;
+		if (sTextureName.empty()) return;
 
-		auto tex = LoadTextureFromBFS(sLoadingScreenTextureName.c_str());
+		auto tex = LoadTextureFromBFS(sTextureName.c_str());
 		if (!tex) return;
 
 		static auto loadingAnim = LoadTextureFromBFS("data/menu/loading_anim.tga");
@@ -112,13 +112,13 @@ public:
 
 	static void OnLoadToMenu() {
 		// set image to loading.tga for going to the menu
-		sLoadingScreenTextureName = "data/menu/loading.tga";
+		sTextureName = "data/menu/loading.tga";
 	}
 
 	static void OnLoadToRace() {
 		// set image to track loading when loading into a race
 		auto loading = GetLoadingScreenForTrack(pGameFlow->nLevel);
-		if (loading) sLoadingScreenTextureName = std::format("data/menu/bg/{}.tga", loading);
+		if (loading) sTextureName = std::format("data/menu/bg/{}.tga", loading);
 	}
 
 	static inline uintptr_t OnLoadToMenuASM_jmp = 0x4C0610;

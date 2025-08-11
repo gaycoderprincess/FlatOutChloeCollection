@@ -24,7 +24,7 @@ public:
 	static constexpr float fEventSize = 0.035;
 	static constexpr float fEventDescSize = 0.036;
 
-	static std::string GetCareerPlayerName(int i) {
+	static std::string GetPlayerName(int i) {
 		return i == 0 ? GetStringNarrow(pGameFlow->Profile.wsPlayerName) : aAIPlayerNames[i-1];
 	}
 
@@ -55,7 +55,7 @@ public:
 			gCustomSave.CalculateCupPlayersByPosition();
 			int playerId = gCustomSave.aCupPlayersByPosition[i];
 			auto player = &gCustomSave.aCareerCupPlayers[playerId];
-			std::string playerName = GetCareerPlayerName(playerId);
+			std::string playerName = GetPlayerName(playerId);
 			data.XCenterAlign = false;
 			data.x = nListPositionX;
 			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}.", i+1), &DrawStringFO2_Ingame12);

@@ -53,6 +53,10 @@ namespace NewGameHud {
 	float fMusicPlayer480 = 480 + fMusicPlayerOffset;
 	float fMusicPlayer428 = 428 + fMusicPlayerOffset;
 	void Init() {
+		for (auto& hud : CIngameHUDElement::aGameHUD) {
+			hud->Init();
+		}
+
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4695C5, &OnMinimapLoadASM);
 
 		NyaHookLib::Patch(0x4539D4 + 2, &fMusicPlayer416);

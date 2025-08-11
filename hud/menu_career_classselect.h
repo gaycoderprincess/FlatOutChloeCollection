@@ -9,14 +9,14 @@ public:
 		if (gCustomSave.nCareerClass > 3) gCustomSave.nCareerClass = 1;
 	}
 
-	static constexpr int nCareerClassSelectHighlightX = 590;
-	static constexpr int nCareerClassSelectHighlightY = 310;
-	static constexpr int nCareerClassSelectHighlightSizeX = 396;
-	static constexpr int nCareerClassSelectHighlightSizeY = 115;
-	static constexpr int nCareerClassSelectHighlightSpacing = 145;
+	static constexpr int nHighlightX = 590;
+	static constexpr int nHighlightY = 310;
+	static constexpr int nHighlightSizeX = 396;
+	static constexpr int nHighlightSizeY = 115;
+	static constexpr int nHighlightSpacing = 145;
 
-	static constexpr tDrawPositions1080p gCareerClassSelectTitle = {1320, 190, 0.04};
-	static constexpr tDrawPositions1080p gCareerClassSelectDescription = {1397, 435, 0.04, 0, 45};
+	static constexpr tDrawPositions1080p gTitle = {1320, 190, 0.04};
+	static constexpr tDrawPositions1080p gDescription = {1397, 435, 0.04, 0, 45};
 
 	static std::string GetClassDescription(int classId) {
 		const char* descriptions[] = {
@@ -63,15 +63,15 @@ public:
 
 		if (!bEnabled) return;
 
-		Menu_CareerCupSelect.nCareerCupSelectCursorX = 0;
-		Menu_CareerCupSelect.nCareerCupSelectCursorY = 0;
+		Menu_CareerCupSelect.nCursorX = 0;
+		Menu_CareerCupSelect.nCursorY = 0;
 		if (gCustomSave.nCareerClass < 1) gCustomSave.nCareerClass = 1;
 
 		for (int i = 0; i < 3; i++) {
-			float x1 = nCareerClassSelectHighlightX;
-			float y1 = nCareerClassSelectHighlightY + (nCareerClassSelectHighlightSpacing * i);
-			float x2 = x1 + nCareerClassSelectHighlightSizeX;
-			float y2 = y1 + nCareerClassSelectHighlightSizeY;
+			float x1 = nHighlightX;
+			float y1 = nHighlightY + (nHighlightSpacing * i);
+			float x2 = x1 + nHighlightSizeX;
+			float y2 = y1 + nHighlightSizeY;
 			Draw1080pSprite(JUSTIFY_LEFT, x1, x2, y1, y2, {255, 255, 255, 255}, gCustomSave.bCareerClassUnlocked[i] ? textureClass[i] : textureClassLocked[i]);
 		}
 
@@ -81,13 +81,13 @@ public:
 		auto rgb = GetPaletteColor(18);
 		rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
 
-		float x1 = nCareerClassSelectHighlightX;
-		float y1 = nCareerClassSelectHighlightY + (nCareerClassSelectHighlightSpacing * (gCustomSave.nCareerClass-1));
-		float x2 = x1 + nCareerClassSelectHighlightSizeX;
-		float y2 = y1 + nCareerClassSelectHighlightSizeY;
+		float x1 = nHighlightX;
+		float y1 = nHighlightY + (nHighlightSpacing * (gCustomSave.nCareerClass-1));
+		float x2 = x1 + nHighlightSizeX;
+		float y2 = y1 + nHighlightSizeY;
 		Draw1080pSprite(JUSTIFY_LEFT, x1, x2, y1, y2, rgb, nullptr);
 
-		Menu_CareerCupSelect.nCareerCupSelectClass = gCustomSave.nCareerClass-1;
+		Menu_CareerCupSelect.nClass = gCustomSave.nCareerClass-1;
 
 		const char* classNames[] = {
 				"BRONZE CLASS",
@@ -96,13 +96,13 @@ public:
 		};
 
 		tNyaStringData data;
-		data.x = gCareerClassSelectTitle.nPosX;
-		data.y = gCareerClassSelectTitle.nPosY;
-		data.size = gCareerClassSelectTitle.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, classNames[Menu_CareerCupSelect.nCareerCupSelectClass], &DrawStringFO2_Small);
-		data.x = gCareerClassSelectDescription.nPosX;
-		data.y = gCareerClassSelectDescription.nPosY;
-		data.size = gCareerClassSelectDescription.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, GetClassDescription(Menu_CareerCupSelect.nCareerCupSelectClass), &DrawStringFO2_Ingame12);
+		data.x = gTitle.nPosX;
+		data.y = gTitle.nPosY;
+		data.size = gTitle.fSize;
+		Draw1080pString(JUSTIFY_RIGHT, data, classNames[Menu_CareerCupSelect.nClass], &DrawStringFO2_Small);
+		data.x = gDescription.nPosX;
+		data.y = gDescription.nPosY;
+		data.size = gDescription.fSize;
+		Draw1080pString(JUSTIFY_RIGHT, data, GetClassDescription(Menu_CareerCupSelect.nClass), &DrawStringFO2_Ingame12);
 	}
 } Menu_CareerClassSelect;

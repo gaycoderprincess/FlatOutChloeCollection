@@ -1,12 +1,12 @@
 class CMenu_CareerFinalResults : public CMenuHUDElement {
 public:
-	static constexpr tDrawPositions1080p gCareerFinalResultsTitle = {1740,230,0.04};
-	static constexpr tDrawPositions1080p gCareerFinalResultsCupName = {1740,275,0.02};
-	static constexpr tDrawPositions1080p gCareerFinalResultsFinishString = {1740,325,0.04};
-	static constexpr tDrawPositions1080p gCareerFinalResultsWinCounts = {1800,410,0.05,0,80};
-	static constexpr int nCareerFinalResultsEventsX = 630;
-	static constexpr int nCareerFinalResultsEventsSpacing = 70;
-	static constexpr int nCareerFinalResultsPointsX = 1380;
+	static constexpr tDrawPositions1080p gTitle = {1740,230,0.04};
+	static constexpr tDrawPositions1080p gCupName = {1740,275,0.02};
+	static constexpr tDrawPositions1080p gFinishString = {1740,325,0.04};
+	static constexpr tDrawPositions1080p gWinCounts = {1800,410,0.05,0,80};
+	static constexpr int nEventsX = 630;
+	static constexpr int nEventsSpacing = 70;
+	static constexpr int nPointsX = 1380;
 
 	virtual void Process() {
 		static CNyaTimer gTimer;
@@ -29,14 +29,14 @@ public:
 		data.x = CMenu_Career::nListNameX;
 		Draw1080pString(JUSTIFY_LEFT, data, "NAME", &DrawStringFO2_Ingame12);
 		int numRaces = CareerMode::nLastCupNumRaces;
-		data.x = nCareerFinalResultsEventsX + (nCareerFinalResultsEventsSpacing * 8);
-		data.x -= (nCareerFinalResultsEventsSpacing * numRaces);
+		data.x = nEventsX + (nEventsSpacing * 8);
+		data.x -= (nEventsSpacing * numRaces);
 		for (int i = 0; i < numRaces; i++) {
 			data.XCenterAlign = false;
 			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(i+1), &DrawStringFO2_Ingame12);
-			data.x += nCareerFinalResultsEventsSpacing;
+			data.x += nEventsSpacing;
 		}
-		data.x = nCareerFinalResultsPointsX;
+		data.x = nPointsX;
 		data.XCenterAlign = true;
 		Draw1080pString(JUSTIFY_LEFT, data, "POINTS", &DrawStringFO2_Ingame12);
 		data.y = CMenu_Career::nListStartY;
@@ -45,32 +45,32 @@ public:
 			gCustomSave.CalculateCupPlayersByPosition();
 			int playerId = gCustomSave.aCupPlayersByPosition[i];
 			auto player = &gCustomSave.aCareerCupPlayers[playerId];
-			std::string playerName = CMenu_Career::GetCareerPlayerName(playerId);
+			std::string playerName = CMenu_Career::GetPlayerName(playerId);
 			data.XCenterAlign = false;
 			data.x = CMenu_Career::nListPositionX;
 			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}.", i+1), &DrawStringFO2_Ingame12);
 			data.x = CMenu_Career::nListNameX;
 			Draw1080pString(JUSTIFY_LEFT, data, playerName, &DrawStringFO2_Ingame12);
-			data.x = nCareerFinalResultsEventsX + (nCareerFinalResultsEventsSpacing * 8);
-			data.x -= (nCareerFinalResultsEventsSpacing * numRaces);
+			data.x = nEventsX + (nEventsSpacing * 8);
+			data.x -= (nEventsSpacing * numRaces);
 			for (int j = 0; j < numRaces; j++) {
 				data.XCenterAlign = false;
 				Draw1080pString(JUSTIFY_LEFT, data, std::to_string(player->eventPoints[j]), &DrawStringFO2_Ingame12);
-				data.x += nCareerFinalResultsEventsSpacing;
+				data.x += nEventsSpacing;
 			}
-			data.x = nCareerFinalResultsPointsX;
+			data.x = nPointsX;
 			data.XCenterAlign = true;
 			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(player->points), &DrawStringFO2_Ingame12);
 			data.y += CMenu_Career::nListSpacing;
 		}
-		data.x = gCareerFinalResultsTitle.nPosX;
-		data.y = gCareerFinalResultsTitle.nPosY;
-		data.size = gCareerFinalResultsTitle.fSize;
+		data.x = gTitle.nPosX;
+		data.y = gTitle.nPosY;
+		data.size = gTitle.fSize;
 		data.SetColor(GetPaletteColor(18));
 		Draw1080pString(JUSTIFY_RIGHT, data, "Final Results", &DrawStringFO2_Ingame12);
-		data.x = gCareerFinalResultsCupName.nPosX;
-		data.y = gCareerFinalResultsCupName.nPosY;
-		data.size = gCareerFinalResultsCupName.fSize;
+		data.x = gCupName.nPosX;
+		data.y = gCupName.nPosY;
+		data.size = gCupName.fSize;
 		data.SetColor(GetPaletteColor(17));
 		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::sLastCupName, &DrawStringFO2_Small);
 		const char* placementStrings[] = {
@@ -85,15 +85,15 @@ public:
 		};
 		int playerPosition = gCustomSave.aCupPlayerPosition[0];
 		if (playerPosition >= 0 && playerPosition < 8) {
-			data.x = gCareerFinalResultsFinishString.nPosX;
-			data.y = gCareerFinalResultsFinishString.nPosY;
-			data.size = gCareerFinalResultsFinishString.fSize;
+			data.x = gFinishString.nPosX;
+			data.y = gFinishString.nPosY;
+			data.size = gFinishString.fSize;
 			Draw1080pString(JUSTIFY_RIGHT, data, placementStrings[playerPosition], &DrawStringFO2_Ingame12);
 		}
 		for (int i = 0; i < 3; i++) {
-			data.x = gCareerFinalResultsWinCounts.nPosX;
-			data.y = gCareerFinalResultsWinCounts.nPosY + (gCareerFinalResultsWinCounts.nSpacingY * i);
-			data.size = gCareerFinalResultsWinCounts.fSize;
+			data.x = gWinCounts.nPosX;
+			data.y = gWinCounts.nPosY + (gWinCounts.nSpacingY * i);
+			data.size = gWinCounts.fSize;
 			data.XCenterAlign = false;
 			data.XRightAlign = true;
 			Draw1080pString(JUSTIFY_RIGHT, data, std::format("{}x", gCustomSave.aCupLocalPlayerPlacements[i+1]), &DrawStringFO2_Ingame12);

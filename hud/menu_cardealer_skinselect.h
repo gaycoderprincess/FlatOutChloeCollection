@@ -1,8 +1,8 @@
 class CMenu_CarDealerSkinSelect : public CMenuHUDElement {
 public:
-	static constexpr tDrawPositions1080p gCarSkinSelectTitle = {1720, 328, 0.035};
-	//static constexpr tDrawPositions1080p gCarSkinSelectAuthor = {1588,797,0.02};
-	static constexpr tDrawPositions1080p gCarSkinSelectAuthor = {1716,801,0.035};
+	static constexpr tDrawPositions1080p gTitle = {1720, 328, 0.035};
+	//static constexpr tDrawPositions1080p gAuthor = {1588,797,0.02};
+	static constexpr tDrawPositions1080p gAuthor = {1716,801,0.035};
 
 	virtual void Process() {
 		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
@@ -34,17 +34,17 @@ public:
 			Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255, 255, 255, 255}, textureSkinAuthor);
 
 			tNyaStringData data;
-			data.x = gCarSkinSelectAuthor.nPosX;
-			data.y = gCarSkinSelectAuthor.nPosY;
-			data.size = gCarSkinSelectAuthor.fSize;
+			data.x = gAuthor.nPosX;
+			data.y = gAuthor.nPosY;
+			data.size = gAuthor.fSize;
 			data.XCenterAlign = true;
 			Draw1080pString(JUSTIFY_RIGHT, data, author, &DrawStringFO2_Ingame12);
 		}
 
 		tNyaStringData data;
-		data.x = gCarSkinSelectTitle.nPosX;
-		data.y = gCarSkinSelectTitle.nPosY;
-		data.size = gCarSkinSelectTitle.fSize;
+		data.x = gTitle.nPosX;
+		data.y = gTitle.nPosY;
+		data.size = gTitle.fSize;
 		data.XCenterAlign = true;
 		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Small);
 

@@ -1,10 +1,10 @@
 class CMenu_CareerCupSelect : public CMenuHUDElement {
 public:
-	static constexpr tDrawPositions gCareerCupSelectEvent = {0.15, 0.29, 0.1, 0.19, 0.135};
-	static constexpr float fCareerCupSelectEventHighlightSize = 0.094;
+	static constexpr tDrawPositions gEvent = {0.15, 0.29, 0.1, 0.19, 0.135};
+	static constexpr float fEventHighlightSize = 0.094;
 
-	static constexpr tDrawPositions1080p gCareerCupSelectCupName = {1320, 193, 0.03};
-	static constexpr int nCareerCupSelectLapsX[10] = {
+	static constexpr tDrawPositions1080p gCupName = {1320, 193, 0.03};
+	static constexpr int nLapsX[10] = {
 			1766, // 0
 			1769, // 1
 			1766, // 2
@@ -16,41 +16,41 @@ public:
 			1766, // 8
 			1766, // 9
 	};
-	static constexpr int nCareerCupSelectLapsY = 323;
-	static constexpr float fCareerCupSelectLapsSize = 0.03;
-	static constexpr tDrawPositions1080p gCareerCupSelectEvents = {1530, 435, 0.04, 0, 45};
-	static constexpr tDrawPositions1080p gCareerCupSelectEventsTitle = {1505, 285, 0.04};
+	static constexpr int nLapsY = 323;
+	static constexpr float fLapsSize = 0.03;
+	static constexpr tDrawPositions1080p gEvents = {1530, 435, 0.04, 0, 45};
+	static constexpr tDrawPositions1080p gEventsTitle = {1505, 285, 0.04};
 
-	int nCareerCupSelectClass = 0;
-	int nCareerCupSelectCursorX = 0;
-	int nCareerCupSelectCursorY = 0;
+	int nClass = 0;
+	int nCursorX = 0;
+	int nCursorY = 0;
 	int GetCursorLimitX() {
-		if (nCareerCupSelectCursorY == 2) {
-			return CareerMode::aLUACareerClasses[nCareerCupSelectClass].aEvents.size();
+		if (nCursorY == 2) {
+			return CareerMode::aLUACareerClasses[nClass].aEvents.size();
 		}
-		return CareerMode::aLUACareerClasses[nCareerCupSelectClass].aCups.size();
+		return CareerMode::aLUACareerClasses[nClass].aCups.size();
 	}
 
 	void MoveLeft() {
-		nCareerCupSelectCursorX--;
-		if (nCareerCupSelectCursorX < 0) nCareerCupSelectCursorX = 0;
+		nCursorX--;
+		if (nCursorX < 0) nCursorX = 0;
 	}
 	void MoveRight() {
-		nCareerCupSelectCursorX++;
-		if (nCareerCupSelectCursorX >= GetCursorLimitX()) nCareerCupSelectCursorX = GetCursorLimitX()-1;
+		nCursorX++;
+		if (nCursorX >= GetCursorLimitX()) nCursorX = GetCursorLimitX()-1;
 	}
 	void MoveUp() {
-		nCareerCupSelectCursorY--;
-		if (nCareerCupSelectCursorY < 0) nCareerCupSelectCursorY = 0;
+		nCursorY--;
+		if (nCursorY < 0) nCursorY = 0;
 	}
 	void MoveDown() {
-		nCareerCupSelectCursorY++;
-		if (nCareerCupSelectCursorY > 2) nCareerCupSelectCursorY = 2;
+		nCursorY++;
+		if (nCursorY > 2) nCursorY = 2;
 	}
 
 	static constexpr tDrawPositions gTrackPlacements = {0.263, 0.353, 0.05, 0.19, 0.135};
 
-	static void GetCareerStuntTargets(int level, int* out) {
+	static void GetStuntTargets(int level, int* out) {
 		switch (level) {
 			case TRACK_LONGJUMP:
 				out[0] = 250;
@@ -90,9 +90,9 @@ public:
 
 		if (!bEnabled) return;
 
-		if (nCareerCupSelectCursorX >= GetCursorLimitX()) nCareerCupSelectCursorX = 0;
+		if (nCursorX >= GetCursorLimitX()) nCursorX = 0;
 
-		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft[nCareerCupSelectClass]);
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft[nClass]);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 
 		const char* trackPlacementNames[] = {
@@ -101,25 +101,25 @@ public:
 				"third",
 		};
 
-		auto careerClass = &CareerMode::aLUACareerClasses[nCareerCupSelectClass];
+		auto careerClass = &CareerMode::aLUACareerClasses[nClass];
 		for (int i = 0; i < careerClass->aCups.size(); i++) {
 			auto cup = &careerClass->aCups[i];
-			auto cupSave = &gCustomSave.aCareerClasses[nCareerCupSelectClass].aCups[i];
+			auto cupSave = &gCustomSave.aCareerClasses[nClass].aCups[i];
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
 			}
-			auto data = gCareerCupSelectEvent;
+			auto data = gEvent;
 			float x1 = data.fPosX + data.fSpacingX * i;
 			float y1 = data.fPosY;
 			float x2 = x1 + data.fSize * 1.5;
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
-			if (i == nCareerCupSelectCursorX && nCareerCupSelectCursorY == 0) {
+			if (i == nCursorX && nCursorY == 0) {
 				auto rgb = GetPaletteColor(18);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
-				x2 = x1 + fCareerCupSelectEventHighlightSize * 1.5;
-				y2 = y1 + fCareerCupSelectEventHighlightSize;
+				x2 = x1 + fEventHighlightSize * 1.5;
+				y2 = y1 + fEventHighlightSize;
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
 			}
 
@@ -135,22 +135,22 @@ public:
 		}
 		{
 			auto cup = &careerClass->Finals;
-			auto cupSave = &gCustomSave.aCareerClasses[nCareerCupSelectClass].Finals;
+			auto cupSave = &gCustomSave.aCareerClasses[nClass].Finals;
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
 			}
-			auto data = gCareerCupSelectEvent;
+			auto data = gEvent;
 			float x1 = data.fPosX + data.fSpacingX * 0.5;
 			float y1 = data.fPosY + data.fSpacingY;
 			float x2 = x1 + data.fSize * 1.5;
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
-			if (nCareerCupSelectCursorY == 1) {
+			if (nCursorY == 1) {
 				auto rgb = GetPaletteColor(18);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
-				x2 = x1 + fCareerCupSelectEventHighlightSize * 1.5;
-				y2 = y1 + fCareerCupSelectEventHighlightSize;
+				x2 = x1 + fEventHighlightSize * 1.5;
+				y2 = y1 + fEventHighlightSize;
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
 			}
 
@@ -166,22 +166,22 @@ public:
 		}
 		for (int i = 0; i < careerClass->aEvents.size(); i++) {
 			auto cup = &careerClass->aEvents[i];
-			auto cupSave = &gCustomSave.aCareerClasses[nCareerCupSelectClass].aEvents[i];
+			auto cupSave = &gCustomSave.aCareerClasses[nClass].aEvents[i];
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
 			}
-			auto data = gCareerCupSelectEvent;
+			auto data = gEvent;
 			float x1 = data.fPosX + data.fSpacingX * i;
 			float y1 = data.fPosY + data.fSpacingY * 2;
 			float x2 = x1 + data.fSize * 1.5;
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
-			if (i == nCareerCupSelectCursorX && nCareerCupSelectCursorY == 2) {
+			if (i == nCursorX && nCursorY == 2) {
 				auto rgb = GetPaletteColor(18);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
-				x2 = x1 + fCareerCupSelectEventHighlightSize * 1.5;
-				y2 = y1 + fCareerCupSelectEventHighlightSize;
+				x2 = x1 + fEventHighlightSize * 1.5;
+				y2 = y1 + fEventHighlightSize;
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
 			}
 
@@ -197,17 +197,17 @@ public:
 		}
 
 		tNyaStringData data;
-		data.x = gCareerCupSelectCupName.nPosX;
-		data.y = gCareerCupSelectCupName.nPosY;
-		data.size = gCareerCupSelectCupName.fSize;
-		if (nCareerCupSelectCursorY == 0) {
-			auto cup = &careerClass->aCups[nCareerCupSelectCursorX];
+		data.x = gCupName.nPosX;
+		data.y = gCupName.nPosY;
+		data.size = gCupName.fSize;
+		if (nCursorY == 0) {
+			auto cup = &careerClass->aCups[nCursorX];
 			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
-			data.x = nCareerCupSelectLapsX[cup->aRaces.size()];
-			data.y = nCareerCupSelectLapsY;
-			data.size = fCareerCupSelectLapsSize;
+			data.x = nLapsX[cup->aRaces.size()];
+			data.y = nLapsY;
+			data.size = fLapsSize;
 			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
-			auto hud = gCareerCupSelectEvents;
+			auto hud = gEvents;
 			data.x = hud.nPosX;
 			data.y = hud.nPosY;
 			data.size = hud.fSize;
@@ -216,14 +216,14 @@ public:
 				data.y += hud.nSpacingY;
 			}
 		}
-		else if (nCareerCupSelectCursorY == 1) {
+		else if (nCursorY == 1) {
 			auto cup = &careerClass->Finals;
 			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
-			data.x = nCareerCupSelectLapsX[cup->aRaces.size()];
-			data.y = nCareerCupSelectLapsY;
-			data.size = fCareerCupSelectLapsSize;
+			data.x = nLapsX[cup->aRaces.size()];
+			data.y = nLapsY;
+			data.size = fLapsSize;
 			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
-			auto hud = gCareerCupSelectEvents;
+			auto hud = gEvents;
 			data.x = hud.nPosX;
 			data.y = hud.nPosY;
 			data.size = hud.fSize;
@@ -232,21 +232,21 @@ public:
 				data.y += hud.nSpacingY;
 			}
 		}
-		else if (nCareerCupSelectCursorY == 2) {
-			if (nCareerCupSelectCursorX >= careerClass->aEvents.size()) return;
-			auto cup = &careerClass->aEvents[nCareerCupSelectCursorX];
+		else if (nCursorY == 2) {
+			if (nCursorX >= careerClass->aEvents.size()) return;
+			auto cup = &careerClass->aEvents[nCursorX];
 			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
-			data.x = nCareerCupSelectLapsX[cup->aRaces.size()];
-			data.y = nCareerCupSelectLapsY;
-			data.size = fCareerCupSelectLapsSize;
+			data.x = nLapsX[cup->aRaces.size()];
+			data.y = nLapsY;
+			data.size = fLapsSize;
 			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
-			auto hud = gCareerCupSelectEvents;
+			auto hud = gEvents;
 			data.x = hud.nPosX;
 			data.y = hud.nPosY;
 			data.size = hud.fSize;
 			int level = cup->aRaces[0].nLevel;
 			int targets[3] = {0,0,0};
-			GetCareerStuntTargets(level, targets);
+			GetStuntTargets(level, targets);
 			if (targets[0]) {
 				if (level == TRACK_BOWLING) {
 					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{} - 1st\n{} - 2nd\n{} - 3rd", targets[0], targets[1], targets[2]),
@@ -258,9 +258,9 @@ public:
 				}
 			}
 		}
-		data.x = gCareerCupSelectEventsTitle.nPosX;
-		data.y = gCareerCupSelectEventsTitle.nPosY;
-		data.size = gCareerCupSelectEventsTitle.fSize;
+		data.x = gEventsTitle.nPosX;
+		data.y = gEventsTitle.nPosY;
+		data.size = gEventsTitle.fSize;
 		data.SetColor(GetPaletteColor(18));
 		Draw1080pString(JUSTIFY_RIGHT, data, "EVENTS", &DrawStringFO2_Ingame12);
 	}
