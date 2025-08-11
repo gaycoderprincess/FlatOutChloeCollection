@@ -25,88 +25,88 @@ int ChloeCollection_GetRandom(void* a1) {
 }
 
 int ChloeSkins_ShowSkinSelector(void* a1) {
-	NewMenuHud::bInSkinSelector = luaL_checknumber(a1, 1);
+	Menu_CarDealerSkinSelect.bEnabled = luaL_checknumber(a1, 1);
 	return 0;
 }
 
 int ChloeHUD_SetInCarDealer(void* a1) {
-	NewMenuHud::bInCarDealer = luaL_checknumber(a1, 1);
+	Menu_CarDealer.bEnabled = luaL_checknumber(a1, 1);
 	return 0;
 }
 
 int ChloeHUD_SetInCareerCupSelect(void* a1) {
-	NewMenuHud::bInCareerCupSelect = luaL_checknumber(a1, 1);
+	Menu_CareerCupSelect.bEnabled = luaL_checknumber(a1, 1);
 	return 0;
 }
 
 int ChloeHUD_SetInCareerClassSelect(void* a1) {
-	NewMenuHud::bInCareerClassSelect = luaL_checknumber(a1, 1);
+	Menu_CareerClassSelect.bEnabled = luaL_checknumber(a1, 1);
 	return 0;
 }
 
 int ChloeHUD_SetInCareerFinalResults(void* a1) {
-	NewMenuHud::bInCareerFinalResults = luaL_checknumber(a1, 1);
+	Menu_CareerFinalResults.bEnabled = luaL_checknumber(a1, 1);
 	return 0;
 }
 
 int ChloeHUD_CareerCupSelect_Left(void* a1) {
-	NewMenuHud::CareerCupSelect_MoveLeft();
+	Menu_CareerCupSelect.MoveLeft();
 	return 0;
 }
 
 int ChloeHUD_CareerCupSelect_Right(void* a1) {
-	NewMenuHud::CareerCupSelect_MoveRight();
+	Menu_CareerCupSelect.MoveRight();
 	return 0;
 }
 
 int ChloeHUD_CareerCupSelect_Up(void* a1) {
-	NewMenuHud::CareerCupSelect_MoveUp();
+	Menu_CareerCupSelect.MoveUp();
 	return 0;
 }
 
 int ChloeHUD_CareerCupSelect_Down(void* a1) {
-	NewMenuHud::CareerCupSelect_MoveDown();
+	Menu_CareerCupSelect.MoveDown();
 	return 0;
 }
 
 int ChloeHUD_CareerClassSelect_Up(void* a1) {
-	NewMenuHud::CareerClassSelect_MoveUp();
+	Menu_CareerClassSelect.MoveUp();
 	return 0;
 }
 
 int ChloeHUD_CareerClassSelect_Down(void* a1) {
-	NewMenuHud::CareerClassSelect_MoveDown();
+	Menu_CareerClassSelect.MoveDown();
 	return 0;
 }
 
 int ChloeHUD_CareerCupSelect_GetCursorX(void* a1) {
-	lua_pushnumber(a1, NewMenuHud::nCareerCupSelectCursorX+1);
+	lua_pushnumber(a1, Menu_CareerCupSelect.nCareerCupSelectCursorX+1);
 	return 1;
 }
 
 int ChloeHUD_CareerCupSelect_GetCursorY(void* a1) {
-	lua_pushnumber(a1, NewMenuHud::nCareerCupSelectCursorY+1);
+	lua_pushnumber(a1, Menu_CareerCupSelect.nCareerCupSelectCursorY+1);
 	return 1;
 }
 
 int ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked(void* a1) {
-	if (NewMenuHud::nCareerCupSelectCursorY == 0) {
-		auto cup = &gCustomSave.aCareerClasses[NewMenuHud::nCareerCupSelectClass].aCups[NewMenuHud::nCareerCupSelectCursorX];
+	if (Menu_CareerCupSelect.nCareerCupSelectCursorY == 0) {
+		auto cup = &gCustomSave.aCareerClasses[Menu_CareerCupSelect.nCareerCupSelectClass].aCups[Menu_CareerCupSelect.nCareerCupSelectCursorX];
 		lua_pushboolean(a1, cup->bUnlocked);
 		return 1;
 	}
-	else if (NewMenuHud::nCareerCupSelectCursorY == 1) {
-		auto cup = &gCustomSave.aCareerClasses[NewMenuHud::nCareerCupSelectClass].Finals;
+	else if (Menu_CareerCupSelect.nCareerCupSelectCursorY == 1) {
+		auto cup = &gCustomSave.aCareerClasses[Menu_CareerCupSelect.nCareerCupSelectClass].Finals;
 		lua_pushboolean(a1, cup->bUnlocked);
 		return 1;
 	}
-	else if (NewMenuHud::nCareerCupSelectCursorY == 2) {
-		if (NewMenuHud::nCareerCupSelectCursorX >= CareerMode::aLUACareerClasses[NewMenuHud::nCareerCupSelectClass].aEvents.size()) {
+	else if (Menu_CareerCupSelect.nCareerCupSelectCursorY == 2) {
+		if (Menu_CareerCupSelect.nCareerCupSelectCursorX >= CareerMode::aLUACareerClasses[Menu_CareerCupSelect.nCareerCupSelectClass].aEvents.size()) {
 			lua_pushboolean(a1, false);
 			return 1;
 		}
 
-		auto cup = &gCustomSave.aCareerClasses[NewMenuHud::nCareerCupSelectClass].aEvents[NewMenuHud::nCareerCupSelectCursorX];
+		auto cup = &gCustomSave.aCareerClasses[Menu_CareerCupSelect.nCareerCupSelectClass].aEvents[Menu_CareerCupSelect.nCareerCupSelectCursorX];
 		lua_pushboolean(a1, cup->bUnlocked);
 		return 1;
 	}
@@ -115,7 +115,7 @@ int ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked(void* a1) {
 }
 
 int ChloeHUD_SetInCareer(void* a1) {
-	NewMenuHud::bInCareer = luaL_checknumber(a1, 1);
+	Menu_Career.bEnabled = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -151,15 +151,15 @@ int ChloeCareer_ProcessResultsFromLastRace(void* a1) {
 }
 
 int ChloeHUD_SetCarStats(void* a1) {
-	NewMenuHud::nCarHorsepower = luaL_checknumber(a1, 1);
-	NewMenuHud::nCarWeight = luaL_checknumber(a1, 2);
-	NewMenuHud::nCarPrice = luaL_checknumber(a1, 3);
-	NewMenuHud::sCarName = GetCarName(pGameFlow->pMenuInterface->pMenuScene->nCar);
+	Menu_CarDealer.nCarHorsepower = luaL_checknumber(a1, 1);
+	Menu_CarDealer.nCarWeight = luaL_checknumber(a1, 2);
+	Menu_CarDealer.nCarPrice = luaL_checknumber(a1, 3);
+	Menu_CarDealer.sCarName = GetCarName(pGameFlow->pMenuInterface->pMenuScene->nCar);
 	return 0;
 }
 
 int ChloeHUD_SetCarDescription(void* a1) {
-	NewMenuHud::sCarDescription = (const char*)lua_tolstring(a1, 1);
+	Menu_CarDealer.sCarDescription = (const char*)lua_tolstring(a1, 1);
 	return 0;
 }
 
@@ -299,7 +299,7 @@ int ChloeCollection_GetCarClass(void* a1) {
 }
 
 int ChloeCollection_SetLoadingScreenTexture(void* a1) {
-	NewMenuHud::sLoadingScreenTextureName = (const char*)lua_tolstring(a1, 1);
+	CMenu_LoadingScreen::sLoadingScreenTextureName = (const char*)lua_tolstring(a1, 1);
 	return 0;
 }
 

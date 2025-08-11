@@ -20,6 +20,42 @@ std::string GetCarName(int carId) {
 	return "NULL";
 }
 
+std::string GetSkinName(int carId, int skinId, bool wrapAround) {
+	static auto config = toml::parse_file("Config/CarSkins.toml");
+	int numSkins = GetNumSkinsForCar(carId);
+	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
+		return "---";
+	}
+	// wrap around
+	while (skinId < 1) {
+		skinId += numSkins;
+	}
+	while (skinId > numSkins) {
+		skinId -= numSkins;
+	}
+	std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId) + "name"].value_or("");
+	if (string.empty()) string = "Skin " + std::to_string(skinId);
+	return string;
+}
+
+std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
+	static auto config = toml::parse_file("Config/CarSkins.toml");
+	int numSkins = GetNumSkinsForCar(carId);
+	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
+		return "---";
+	}
+	// wrap around
+	while (skinId < 1) {
+		skinId += numSkins;
+	}
+	while (skinId > numSkins) {
+		skinId -= numSkins;
+	}
+	std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId)].value_or("");
+	if (!string.empty()) string = "Author: " + string;
+	return string;
+}
+
 void ApplyCarDealerPatches() {
 	static auto config = toml::parse_file("Config/CarData.toml");
 	int count = config["CarDealer"]["NumCars"].value_or(0);

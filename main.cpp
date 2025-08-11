@@ -23,42 +23,6 @@ std::string GetStringNarrow(const wchar_t* string) {
 	return converter.to_bytes(string);
 }
 
-std::string GetSkinName(int carId, int skinId, bool wrapAround) {
-	static auto config = toml::parse_file("Config/CarSkins.toml");
-	int numSkins = GetNumSkinsForCar(carId);
-	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
-		return "---";
-	}
-	// wrap around
-	while (skinId < 1) {
-		skinId += numSkins;
-	}
-	while (skinId > numSkins) {
-		skinId -= numSkins;
-	}
-	std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId) + "name"].value_or("");
-	if (string.empty()) string = "Skin " + std::to_string(skinId);
-	return string;
-}
-
-std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
-	static auto config = toml::parse_file("Config/CarSkins.toml");
-	int numSkins = GetNumSkinsForCar(carId);
-	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
-		return "---";
-	}
-	// wrap around
-	while (skinId < 1) {
-		skinId += numSkins;
-	}
-	while (skinId > numSkins) {
-		skinId -= numSkins;
-	}
-	std::string string = config["car_" + std::to_string(carId)]["skin" + std::to_string(skinId)].value_or("");
-	if (!string.empty()) string = "Author: " + string;
-	return string;
-}
-
 #include "bfsload.h"
 #include "filereader.h"
 #include "config.h"
@@ -72,6 +36,16 @@ std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
 #include "careermode.h"
 #include "hudextensions.h"
 #include "ingamehud.h"
+#include "hud/game_playerlist.h"
+#include "hud/game_damagemeter.h"
+#include "hud/game_contacttimer.h"
+#include "hud/menu_career.h"
+#include "hud/menu_career_cupselect.h"
+#include "hud/menu_career_classselect.h"
+#include "hud/menu_career_finalresults.h"
+#include "hud/menu_cardealer.h"
+#include "hud/menu_cardealer_skinselect.h"
+#include "hud/menu_loadingscreen.h"
 #include "musicplayer.h"
 #include "d3dhook.h"
 #include "windowedmode.h"
