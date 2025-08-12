@@ -1,7 +1,7 @@
 tCustomSaveStructure gTempCustomSave;
 
 bool LoadProfileForStats(int id) {
-	gTempCustomSave.Load(id-1);
+	gTempCustomSave.Load(id-1, false);
 	return true;
 }
 bool IsProfileValid(int id) {

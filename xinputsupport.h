@@ -13,6 +13,8 @@
 // DPad Left - Player List
 // R3 - Look Back
 
+double fTimeSincePaused = 0;
+
 bool __thiscall IsMenuInputJustPressedNew(Controller* pThis, int input) {
 	auto orig = Controller::IsMenuInputJustPressed(pThis, input);
 	if (orig) return orig;
@@ -57,9 +59,22 @@ int __thiscall GetInputValueNew(Controller* pThis, int input) {
 
 	//if (aPressedDigital[input]) return 255;
 	if (input == 0) return GetPadKeyState(NYA_PAD_KEY_B); // handbrake
-	if (input == 1) return GetPadKeyState(NYA_PAD_KEY_A); // nitro
+	if (input == 1 && fTimeSincePaused > 0.75) return GetPadKeyState(NYA_PAD_KEY_A); // nitro
 	if (input == 4) return GetPadKeyState(NYA_PAD_KEY_R3); // look back
 	return 0;
+}
+
+void ProcessXInputSupport() {
+	static CNyaTimer gTimer;
+	gTimer.Process();
+
+	if (GetGameState() == GAME_STATE_RACE) {
+		if (pGameFlow->nIsPaused) fTimeSincePaused = 0;
+		fTimeSincePaused += gTimer.fDeltaTime;
+	}
+	else {
+		fTimeSincePaused = 999;
+	}
 }
 
 void ApplyXInputPatches() {

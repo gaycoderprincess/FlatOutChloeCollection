@@ -129,7 +129,7 @@ struct tCustomSaveStructure {
 		memset(this,0,sizeof(*this));
 		SetDefaultPlayerSettings();
 	}
-	void Load(int saveSlot = -1) {
+	void Load(int saveSlot = -1, bool loadAll = true) {
 		if (saveSlot < 0) {
 			saveSlot = pGameFlow->nSaveSlot;
 			if (saveSlot < 0) {
@@ -145,7 +145,7 @@ struct tCustomSaveStructure {
 
 		file.read((char*)this, sizeof(*this));
 
-		Achievements::Load(saveSlot+1);
+		if (loadAll) Achievements::Load(saveSlot+1);
 
 		// force unlock first career bits in case of save corruption
 		bCareerClassUnlocked[0] = true;

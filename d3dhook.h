@@ -5,6 +5,7 @@ void HookLoop() {
 	Achievements::OnTick();
 	ProcessPlayStats();
 	ProcessCarReset();
+	ProcessXInputSupport();
 	CommonMain();
 }
 
