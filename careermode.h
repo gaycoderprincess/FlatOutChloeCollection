@@ -188,6 +188,7 @@ namespace CareerMode {
 		if (GetGameState() == GAME_STATE_MENU && !bPlayerResultsApplied) {
 			ProcessResultsFromLastRace();
 			bPlayerResultsApplied = true;
+			bIsCareerRace = false;
 		}
 	}
 

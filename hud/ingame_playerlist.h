@@ -29,7 +29,7 @@ public:
 		gTimer.Process();
 
 		// todo rebindable?
-		if (IsKeyJustPressed('L') || IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_LEFT)) {
+		if (!pGameFlow->nIsPaused && (IsKeyJustPressed('L') || IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_LEFT))) {
 			bEnabled = !bEnabled;
 		}
 
