@@ -3,53 +3,30 @@ float GetCarDamage(Car* pCar) {
 	return pCar->fDamage;
 }
 
-std::string sWreckedNotif;
-double fWreckedNotifTimer = 0;
-
-float fWreckedNotifY = 0.1;
-float fWreckedNotifSize = 0.05;
-
-void DrawWreckedNotif() {
-	tNyaStringData data;
-	data.x = 0.5;
-	data.y = fWreckedNotifY;
-	data.size = fWreckedNotifSize;
-	data.XCenterAlign = true;
-	int a = 255;
-	if (fWreckedNotifTimer >= 2.5) {
-		a = (3 - fWreckedNotifTimer) * 2 * 255;
-	}
-	if (fWreckedNotifTimer <= 0.5) {
-		a = fWreckedNotifTimer * 2 * 255;
-	}
-	data.SetColor(255,255,255,a);
-	DrawStringFO2_Ingame12(data, sWreckedNotif);
-}
-
-void AddWreckedNotif(std::string player) {
-	sWreckedNotif = std::format("{}\nIS WRECKED", player);
-	fWreckedNotifTimer = 3;
-}
-
-void AddWreckedNotifSelf() {
-	sWreckedNotif = "YOU ARE WRECKED!";
-	fWreckedNotifTimer = 3;
-}
-
-void AddTimeoutNotif(std::string player) {
-	sWreckedNotif = std::format("{}\nRAN OUT OF TIME", player);
-	fWreckedNotifTimer = 3;
-}
-
-void AddTimeoutNotifSelf() {
-	sWreckedNotif = "OUT OF TIME!";
-	fWreckedNotifTimer = 3;
-}
+void AddWreckedNotif(const std::string& player);
+void AddWreckedNotifSelf();
+void AddTimeoutNotif(const std::string& player);
+void AddTimeoutNotifSelf();
+void AddCrashBonus(std::string type);
 
 // vanilla game uses 50.0, higher is less damage
 float fDamageMultiplier = 50.0;
 float fDerbyContactTimer[32];
 float fDerbyMaxContactTimer = 40;
+
+float fWhammoCrashVelocity1 = 10.0;
+float fPowerHitCrashVelocity1 = 20.0;
+float fBlastOutCrashVelocity1 = 35.0;
+int nRagdollPiggybagThreshold = 1000;
+int nWreckPiggybagThreshold = 1000;
+float fCrashVelocityMultiplier = 150;
+
+bool IsPlayerWrecked(Player* ply) {
+	if (GetCarDamage(ply->pCar) < 1.0) return false;
+	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+	if (score->bHasFinished) return ply->pCar->nIsRagdolled;
+	return score->bIsDNF;
+}
 
 void ProcessDerbyContactTimer() {
 	static CNyaRaceTimer gTimer;
@@ -57,21 +34,25 @@ void ProcessDerbyContactTimer() {
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
-		if (GetCarDamage(ply->pCar) >= 1.0) continue;
-		auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
-		if (score->bIsDNF) continue;
+		if (IsPlayerWrecked(ply)) continue;
 
 		for (auto& car : ply->pCar->aCarCollisions) {
 			if (car.lastHitTimestamp > pPlayerHost->nRaceTime - 50) {
 				fDerbyContactTimer[i] = 0;
-				//car.damage = 0;
 			}
 		}
 
 		fDerbyContactTimer[i] += gTimer.fDeltaTime;
 		if (fDerbyContactTimer[i] >= fDerbyMaxContactTimer) {
-			score->bIsDNF = true;
+			auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 			score->nFinishTime = pPlayerHost->nRaceTime;
+			// ragdoll ai players out if they run out of time
+			if (ply->nPlayerType == PLAYERTYPE_AI) {
+				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
+			}
+			else {
+				score->bIsDNF = true;
+			}
 
 			if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
 				AddTimeoutNotifSelf();
@@ -83,16 +64,7 @@ void ProcessDerbyContactTimer() {
 	}
 }
 
-bool IsPlayerWrecked(Player* ply) {
-	if (GetCarDamage(ply->pCar) < 1.0) return false;
-	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
-	if (score->bHasFinished) return ply->pCar->nIsRagdolled;
-	return score->bIsDNF;
-}
-
-void AwardWreck(int playerId) {
-	const int wreckAwardTimeout = 1000;
-
+Player* GetPlayerLastHit(int playerId) {
 	int32_t lastHitTimestamp = -1;
 	Player* lastHitPlayer = nullptr;
 
@@ -106,9 +78,63 @@ void AwardWreck(int playerId) {
 			lastHitPlayer = ply;
 		}
 	}
+	return lastHitPlayer;
+}
 
-	if (lastHitPlayer && lastHitTimestamp > pPlayerHost->nRaceTime - wreckAwardTimeout) {
+void ProcessCrashBonuses() {
+	static int32_t lastHitTimestamps[32] = {};
+	static bool isRagdolled[32] = {};
+
+	auto ply = GetPlayer(0);
+	if (IsPlayerWrecked(ply)) return;
+
+	for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
+		auto opponent = GetPlayer(i);
+		if (!opponent) continue;
+		if (IsPlayerWrecked(opponent)) continue;
+
+		auto& data = ply->pCar->aCarCollisions[i];
+		if (data.lastHitTimestamp > lastHitTimestamps[i]) {
+			//auto diff = opponent->pCar->GetVelocity()->Dot(*ply->pCar->GetVelocity());
+			//auto diff = ply->pCar->GetVelocity()->length() - opponent->pCar->GetVelocity()->length();
+			auto diff = data.damage;
+			diff *= fCrashVelocityMultiplier;
+			WriteLog(std::format("diff {}", diff));
+			if (diff > fBlastOutCrashVelocity1) {
+				AddCrashBonus("BLAST OUT!");
+			}
+			else if (diff > fPowerHitCrashVelocity1) {
+				AddCrashBonus("POWER HIT");
+			}
+			else if (diff > fWhammoCrashVelocity1) {
+				AddCrashBonus("SLAM");
+			}
+			if (pGameFlow->nEventType != eEventType::RACE) {
+				data.damage = 0;
+			}
+		}
+		if (opponent->pCar->nIsRagdolled != isRagdolled[i] && pGameFlow->nEventType != eEventType::DERBY) {
+			if (GetPlayerLastHit(i) == ply && data.lastHitTimestamp > pPlayerHost->nRaceTime - nRagdollPiggybagThreshold) {
+				AddCrashBonus("CRASH OUT!");
+			}
+		}
+		lastHitTimestamps[i] = data.lastHitTimestamp;
+		isRagdolled[i] = opponent->pCar->nIsRagdolled;
+	}
+}
+
+void __fastcall OnCarDamageRewards(Player* pPlayer) {
+	ProcessCrashBonuses();
+}
+
+void AwardWreck(int playerId) {
+	Player* lastHitPlayer = GetPlayerLastHit(playerId);
+	if (!lastHitPlayer) return;
+
+	auto lastHitTimestamp = lastHitPlayer->pCar->aCarCollisions[playerId].lastHitTimestamp;
+	if (lastHitTimestamp > pPlayerHost->nRaceTime - nWreckPiggybagThreshold) {
 		if (lastHitPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
+			AddCrashBonus("WRECKED!");
 			if (pGameFlow->nEventType == eEventType::RACE) Achievements::AwardAchievement(GetAchievement("WRECK_CAR_RACE"));
 		}
 	}
@@ -123,21 +149,14 @@ void ProcessCarDamage() {
 
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();
-	if (fWreckedNotifTimer > 0) {
-		fWreckedNotifTimer -= gTimer.fDeltaTime;
-	}
 
 	if (pPlayerHost->nRaceTime <= 0) {
-		fWreckedNotifTimer = 0;
 		memset(fDerbyContactTimer,0,sizeof(fDerbyContactTimer));
-	}
-
-	if (fWreckedNotifTimer > 0 && !GetScoreManager()->nHideRaceHUD) {
-		DrawWreckedNotif();
 	}
 
 	if (pGameFlow->nEventType == eEventType::DERBY) {
 		ProcessDerbyContactTimer();
+		ProcessCrashBonuses();
 	}
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
@@ -218,6 +237,21 @@ void __attribute__((naked)) OnCarDamageASM() {
 	);
 }
 
+uintptr_t OnCarDamageRewardsASM_jmp = 0x449087;
+void __attribute__((naked)) OnCarDamageRewardsASM() {
+	__asm__ (
+		"pushad\n\t"
+		"mov ecx, edi\n\t"
+		"call %1\n\t"
+		"popad\n\t"
+
+		"cmp [esi+0x1F00], ebx\n\t"
+		"jmp %0\n\t"
+			:
+			:  "m" (OnCarDamageRewardsASM_jmp), "i" (OnCarDamageRewards)
+	);
+}
+
 void ApplyCarDamagePatches() {
 	uintptr_t addresses[] = {
 		0x4078F0,
@@ -236,6 +270,7 @@ void ApplyCarDamagePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x416052, 0x4160E9); // disable vanilla derby wrecking
 	NyaHookLib::Patch(0x4161BF + 2, &fDamageMultiplier);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4161B9, &OnCarDamageASM);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x449081, &OnCarDamageRewardsASM);
 
 	NyaHookLib::Patch<uint8_t>(0x452B7F, 0xEB); // remove stupid slowmo feature when ragdolled
 }

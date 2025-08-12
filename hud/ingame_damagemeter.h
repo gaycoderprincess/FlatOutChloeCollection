@@ -6,6 +6,40 @@ public:
 	float fHealthBarGlowSpeed = 0.2;
 	bool bHealthBarMatches[32];
 
+	std::vector<std::string> aCrashBonuses;
+	double fCrashBonusTimer = 0;
+
+	//float fCrashBonusTextX = 0.118;
+	//float fCrashBonusTextY = 0.87;
+	//float fCrashBonusTextSize = 0.05;
+	float fCrashBonusTextX = 0.118;
+	float fCrashBonusTextY = 0.865;
+	float fCrashBonusTextSize = 0.03;
+
+	static constexpr float fCrashBonusFadeinStart = 2;
+	static constexpr float fCrashBonusFadeinEnd = 1.75;
+	static constexpr float fCrashBonusFadeinSpeed = 4;
+	static constexpr float fCrashBonusFadeoutStart = 0.5;
+	static constexpr float fCrashBonusFadeoutSpeed = 2;
+
+	void DrawCrashBonusNotif() {
+		tNyaStringData data;
+		data.x = fCrashBonusTextX;
+		data.y = fCrashBonusTextY;
+		data.size = fCrashBonusTextSize;
+		data.XCenterAlign = true;
+		//data.SetColor(GetPaletteColor(18));
+		int a = 255;
+		if (fCrashBonusTimer >= fCrashBonusFadeinEnd) {
+			a = (fCrashBonusFadeinStart - fCrashBonusTimer) * fCrashBonusFadeinSpeed * 255;
+		}
+		if (fCrashBonusTimer <= fCrashBonusFadeoutStart) {
+			a = fCrashBonusTimer * fCrashBonusFadeoutSpeed * 255;
+		}
+		data.a = a;
+		DrawStringFO2_Small(data, aCrashBonuses[0]);
+	}
+
 	static constexpr float fHealthTextX = 0.027;
 	static constexpr float fHealthTextY = 0.91;
 	static constexpr float fHealthTextSize = 0.029;
@@ -61,7 +95,7 @@ public:
 		}
 
 		int targetAlpha = -1;
-		if (closestPlayerDist < 10) targetAlpha = closestPlayerId;
+		if (closestPlayerDist < 15) targetAlpha = closestPlayerId;
 
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 			// keep glowing health bars for a while longer
@@ -128,5 +162,34 @@ public:
 			if (x2 != x2Glow) DrawRectangle(x1 * GetAspectRatioInv(), x2Glow * GetAspectRatioInv(), y1, y2, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter_glow, 0, {0,0}, {uvGlow,1});
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter, 0, {0,0}, {uv,1});
 		}
+
+		static CNyaRaceTimer gTimer;
+		gTimer.Process();
+		if (fCrashBonusTimer > 0) {
+			fCrashBonusTimer -= gTimer.fDeltaTime;
+			// increase speed if there's more than one
+			if (aCrashBonuses.size() > 1) {
+				fCrashBonusTimer -= gTimer.fDeltaTime;
+				if (fCrashBonusTimer < fCrashBonusFadeinEnd && fCrashBonusTimer > fCrashBonusFadeoutStart) {
+					fCrashBonusTimer = fCrashBonusFadeoutStart;
+				}
+			}
+			// play next in queue
+			if (fCrashBonusTimer <= 0) {
+				if (!aCrashBonuses.empty()) aCrashBonuses.erase(aCrashBonuses.begin());
+				if (!aCrashBonuses.empty()) fCrashBonusTimer = fCrashBonusFadeinStart;
+			}
+		}
+		else if (!aCrashBonuses.empty()) {
+			fCrashBonusTimer = fCrashBonusFadeinStart;
+		}
+
+		if (!aCrashBonuses.empty()) {
+			DrawCrashBonusNotif();
+		}
 	}
 } HUD_DamageMeter;
+
+void AddCrashBonus(std::string type) {
+	HUD_DamageMeter.aCrashBonuses.push_back(type);
+}

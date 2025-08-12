@@ -34,7 +34,7 @@ int ChloeHUD_SetInCarDealer(void* a1) {
 	return 0;
 }
 
-int ChloeHUD_SetIn(void* a1) {
+int ChloeHUD_SetInCareerCupSelect(void* a1) {
 	Menu_CareerCupSelect.bEnabled = luaL_checknumber(a1, 1);
 	return 0;
 }
@@ -508,7 +508,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_ShowSkinSelector, "ChloeSkins_ShowSkinSelector");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareer, "ChloeHUD_SetInCareer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCarDealer, "ChloeHUD_SetInCarDealer");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetIn, "ChloeHUD_SetIn");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerCupSelect, "ChloeHUD_SetInCareerCupSelect");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerClassSelect, "ChloeHUD_SetInCareerClassSelect");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerFinalResults, "ChloeHUD_SetInCareerFinalResults");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Left, "ChloeHUD_CareerCupSelect_Left");

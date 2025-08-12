@@ -1,4 +1,5 @@
 class CHUD_PlayerList : public CIngameHUDElement {
+public:
 	static constexpr float fPosX = 0.07;
 	static constexpr float fPosY = 0.3;
 	static constexpr float fSize = 0.038;

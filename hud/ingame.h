@@ -68,3 +68,4 @@ namespace NewGameHud {
 #include "ingame_playerlist.h"
 #include "ingame_damagemeter.h"
 #include "ingame_contacttimer.h"
+#include "ingame_wrecked.h"

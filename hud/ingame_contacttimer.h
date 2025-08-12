@@ -1,4 +1,5 @@
 class CHUD_ContactTimer : public CIngameHUDElement {
+public:
 	static constexpr float fPosX = 0.009;
 	static constexpr float fPosY1 = 0.119;
 	static constexpr float fPosY2 = 0.153;
