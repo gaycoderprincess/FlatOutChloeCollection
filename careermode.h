@@ -44,6 +44,8 @@ namespace CareerMode {
 		bool bFinished;
 		bool bDNF;
 		uint32_t nFinishTime;
+		int aSceneryBonuses[10];
+		int aCrashBonuses[NUM_CRASHBONUS_TYPES];
 	};
 	tPlayerResult aPlayerResults[nNumCareerMaxPlayers];
 	bool bPlayerResultsApplied = false;
@@ -79,6 +81,38 @@ namespace CareerMode {
 	tCustomSaveStructure::tCareerClass::tCareerEvent* GetCurrentSaveEvent() {
 		if (gCustomSave.nCareerEvent == 0) return nullptr;
 		return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerEvent-1];
+	}
+
+	int GetCrashBonusPrice(int type) {
+		switch (type) {
+			case CRASHBONUS_SUPERFLIP:
+				return 200;
+			case CRASHBONUS_SLAM:
+				return 100;
+			case CRASHBONUS_POWERHIT:
+				return 200;
+			case CRASHBONUS_BLASTOUT:
+				return 300;
+			case CRASHBONUS_WRECKED:
+				return 1500;
+			case CRASHBONUS_RAGDOLLED:
+				return 400;
+			default:
+				return 0;
+		}
+	}
+
+	void OnRaceFinished() {
+		for (int i = 0; i < 10; i++) {
+			auto cashSceneryBonuses = aPlayerResults[0].aSceneryBonuses[i] * fBonusTypePrice[i];
+			pGameFlow->Profile.nMoney += cashSceneryBonuses;
+			pGameFlow->Profile.nMoneyGained += cashSceneryBonuses;
+		}
+		for (int i = 0; i < NUM_CRASHBONUS_TYPES; i++) {
+			auto cashCrashBonuses = aPlayerResults[0].aCrashBonuses[i] * GetCrashBonusPrice(i);
+			pGameFlow->Profile.nMoney += cashCrashBonuses;
+			pGameFlow->Profile.nMoneyGained += cashCrashBonuses;
+		}
 	}
 
 	void OnCupFinished() {
@@ -167,6 +201,7 @@ namespace CareerMode {
 			auto player = &gCustomSave.aCareerCupPlayers[i];
 			player->eventPosition[eventNumber] = results->nPosition;
 			if (pGameFlow->nEventType == eEventType::RACE && results->bDNF) {
+				player->eventPosition[eventNumber] = 8;
 				player->eventPoints[eventNumber] = 0;
 			}
 			else {
@@ -175,6 +210,7 @@ namespace CareerMode {
 			}
 		}
 		gCustomSave.CalculateCupPlayersByPosition();
+		OnRaceFinished();
 		if (gCustomSave.nCareerCupNextEvent >= GetCurrentCup()->aRaces.size()) {
 			OnCupFinished();
 		}
@@ -205,7 +241,7 @@ namespace CareerMode {
 
 		if (!bIsCareerRace) return;
 
-		if (gameState == GAME_STATE_RACE || gameState == GAME_STATE_REPLAY) {
+		if (gameState == GAME_STATE_RACE) {
 			bPlayerResultsApplied = false;
 			memset(aPlayerResults, 0, sizeof(aPlayerResults));
 			for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
@@ -216,6 +252,8 @@ namespace CareerMode {
 				results->bDNF = score->bIsDNF;
 				results->nPosition = score->nPosition;
 				results->nFinishTime = score->nFinishTime;
+				memcpy(results->aSceneryBonuses, player->pCar->aObjectsSmashed, sizeof(results->aSceneryBonuses));
+				memcpy(results->aCrashBonuses, aCrashBonusesReceived[i], sizeof(results->aCrashBonuses));
 
 				if (pGameFlow->nSubEventType == eSubEventType::STUNT_LONGJUMP || pGameFlow->nSubEventType == eSubEventType::STUNT_HIGHJUMP) {
 					results->nFinishTime = ((score->nStuntMetersScore[0] + score->nStuntMetersScore[1] + score->nStuntMetersScore[2]) * 0.01);

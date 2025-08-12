@@ -197,7 +197,7 @@ public:
 	}
 } HUD_DamageMeter;
 
-void AddCrashBonus(int type) {
+void AddCrashBonus(int playerId, int type) {
 	std::string str;
 	switch (type) {
 		case CRASHBONUS_SUPERFLIP:
@@ -220,6 +220,9 @@ void AddCrashBonus(int type) {
 			break;
 	}
 	if (str.empty()) return;
-	aCrashBonusesReceived[type]++;
-	HUD_DamageMeter.aCrashBonuses.push_back(str);
+
+	aCrashBonusesReceived[playerId][type]++;
+	if (GetPlayer(playerId)->nPlayerType == PLAYERTYPE_LOCAL) {
+		HUD_DamageMeter.aCrashBonuses.push_back(str);
+	}
 }

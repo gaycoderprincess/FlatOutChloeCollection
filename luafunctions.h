@@ -155,6 +155,23 @@ int ChloeCareer_ProcessResultsFromLastRace(void* a1) {
 	return 0;
 }
 
+int ChloeCareer_GetLastRaceSmashScore(void* a1) {
+	auto count = CareerMode::aPlayerResults[0].aSceneryBonuses[(int)luaL_checknumber(a1, 1)];
+	auto price = fBonusTypePrice[(int)luaL_checknumber(a1, 1)];
+	lua_pushnumber(a1, count);
+	lua_pushnumber(a1, count*price);
+	return 2;
+}
+
+int ChloeCareer_GetLastRaceSmashTotalMoney(void* a1) {
+	int money = 0;
+	for (int i = 0; i < 10; i++) {
+		money += CareerMode::aPlayerResults[0].aSceneryBonuses[i] * fBonusTypePrice[i];
+	}
+	lua_pushnumber(a1, money);
+	return 1;
+}
+
 int ChloeHUD_SetCarStats(void* a1) {
 	Menu_CarDealer.nCarHorsepower = luaL_checknumber(a1, 1);
 	Menu_CarDealer.nCarWeight = luaL_checknumber(a1, 2);
@@ -566,6 +583,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_ClearWasCareerRace, "ChloeCareer_ClearWasCareerRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_IsClassUnlocked, "ChloeCareer_IsClassUnlocked");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_ProcessResultsFromLastRace, "ChloeCareer_ProcessResultsFromLastRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetLastRaceSmashScore, "ChloeCareer_GetLastRaceSmashScore");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetLastRaceSmashTotalMoney, "ChloeCareer_GetLastRaceSmashTotalMoney");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCareerDefs, "ChloeCareerDefs_BeginCareerDefs");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginClass, "ChloeCareerDefs_BeginClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCup, "ChloeCareerDefs_BeginCup");

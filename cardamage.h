@@ -13,13 +13,13 @@ enum eCrashBonus {
 	CRASHBONUS_WRECKED,
 	NUM_CRASHBONUS_TYPES
 };
-int aCrashBonusesReceived[NUM_CRASHBONUS_TYPES] = {};
+int aCrashBonusesReceived[32][NUM_CRASHBONUS_TYPES] = {};
 
 void AddWreckedNotif(const std::string& player);
 void AddWreckedNotifSelf();
 void AddTimeoutNotif(const std::string& player);
 void AddTimeoutNotifSelf();
-void AddCrashBonus(int type);
+void AddCrashBonus(int playerId, int type);
 
 // vanilla game uses 50.0, higher is less damage
 float fDamageMultiplier = 50.0;
@@ -60,7 +60,7 @@ void ProcessDerbyContactTimer() {
 			score->nFinishTime = pPlayerHost->nRaceTime;
 			// ragdoll ai players out if they run out of time
 			if (ply->nPlayerType == PLAYERTYPE_AI) {
-				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
+				if (!ply->pCar->nIsRagdolled) Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
 			}
 			else {
 				score->bIsDNF = true;
@@ -93,14 +93,16 @@ Player* GetPlayerLastHit(int playerId) {
 	return lastHitPlayer;
 }
 
+template<int playerId>
 void ProcessCrashBonuses() {
 	static int32_t lastHitTimestamps[32] = {};
 	static bool isRagdolled[32] = {};
 
-	auto ply = GetPlayer(0);
+	auto ply = GetPlayer(playerId);
 	if (IsPlayerWrecked(ply)) return;
 
-	for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		if (i == playerId) continue;
 		auto opponent = GetPlayer(i);
 		if (!opponent) continue;
 		if (IsPlayerWrecked(opponent)) continue;
@@ -112,13 +114,13 @@ void ProcessCrashBonuses() {
 			auto diff = data.damage;
 			diff *= fCrashVelocityMultiplier;
 			if (diff > fBlastOutCrashVelocity1) {
-				AddCrashBonus(CRASHBONUS_BLASTOUT);
+				AddCrashBonus(playerId, CRASHBONUS_BLASTOUT);
 			}
 			else if (diff > fPowerHitCrashVelocity1) {
-				AddCrashBonus(CRASHBONUS_POWERHIT);
+				AddCrashBonus(playerId, CRASHBONUS_POWERHIT);
 			}
 			else if (diff > fWhammoCrashVelocity1) {
-				AddCrashBonus(CRASHBONUS_SLAM);
+				AddCrashBonus(playerId, CRASHBONUS_SLAM);
 			}
 			if (pGameFlow->nEventType != eEventType::RACE) {
 				data.damage = 0;
@@ -126,12 +128,23 @@ void ProcessCrashBonuses() {
 		}
 		if (opponent->pCar->nIsRagdolled != isRagdolled[i] && pGameFlow->nEventType != eEventType::DERBY) {
 			if (GetPlayerLastHit(i) == ply && data.lastHitTimestamp > pPlayerHost->nRaceTime - nRagdollPiggybagThreshold) {
-				AddCrashBonus(CRASHBONUS_RAGDOLLED);
+				AddCrashBonus(playerId, CRASHBONUS_RAGDOLLED);
 			}
 		}
 		lastHitTimestamps[i] = data.lastHitTimestamp;
 		isRagdolled[i] = opponent->pCar->nIsRagdolled;
 	}
+}
+
+void ProcessCrashBonuses() {
+	ProcessCrashBonuses<0>();
+	ProcessCrashBonuses<1>();
+	ProcessCrashBonuses<2>();
+	ProcessCrashBonuses<3>();
+	ProcessCrashBonuses<4>();
+	ProcessCrashBonuses<5>();
+	ProcessCrashBonuses<6>();
+	ProcessCrashBonuses<7>();
 }
 
 void __fastcall OnCarDamageRewards(Player* pPlayer) {
@@ -144,8 +157,8 @@ void AwardWreck(int playerId) {
 
 	auto lastHitTimestamp = lastHitPlayer->pCar->aCarCollisions[playerId].lastHitTimestamp;
 	if (lastHitTimestamp > pPlayerHost->nRaceTime - nWreckPiggybagThreshold) {
+		AddCrashBonus(lastHitPlayer->nPlayerId-1, CRASHBONUS_WRECKED);
 		if (lastHitPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
-			AddCrashBonus(CRASHBONUS_WRECKED);
 			if (pGameFlow->nEventType == eEventType::RACE) Achievements::AwardAchievement(GetAchievement("WRECK_CAR_RACE"));
 		}
 	}
@@ -163,6 +176,7 @@ void ProcessCarDamage() {
 
 	if (pPlayerHost->nRaceTime <= 0) {
 		memset(fDerbyContactTimer,0,sizeof(fDerbyContactTimer));
+		memset(aCrashBonusesReceived,0,sizeof(aCrashBonusesReceived));
 	}
 
 	if (pGameFlow->nEventType == eEventType::DERBY) {
@@ -192,7 +206,7 @@ void ProcessCarDamage() {
 			if (!IsPlayerWrecked(ply)) {
 				AwardWreck(i);
 
-				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
+				if (!ply->pCar->nIsRagdolled) Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
 
 				auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 				//score->bHasFinished = true;
