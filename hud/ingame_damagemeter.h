@@ -186,12 +186,17 @@ public:
 			fCrashBonusTimer = fCrashBonusFadeinStart;
 		}
 
+		if (pPlayerHost->nRaceTime <= 0) {
+			fCrashBonusTimer = 0;
+			aCrashBonuses.clear();
+		}
+
 		if (!aCrashBonuses.empty()) {
 			DrawCrashBonusNotif();
 		}
 	}
 } HUD_DamageMeter;
 
-void AddCrashBonus(std::string type) {
+void AddCrashBonus(const std::string& type) {
 	HUD_DamageMeter.aCrashBonuses.push_back(type);
 }

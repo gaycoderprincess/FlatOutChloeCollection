@@ -7,7 +7,7 @@ void AddWreckedNotif(const std::string& player);
 void AddWreckedNotifSelf();
 void AddTimeoutNotif(const std::string& player);
 void AddTimeoutNotifSelf();
-void AddCrashBonus(std::string type);
+void AddCrashBonus(const std::string& type);
 
 // vanilla game uses 50.0, higher is less damage
 float fDamageMultiplier = 50.0;
@@ -99,7 +99,6 @@ void ProcessCrashBonuses() {
 			//auto diff = ply->pCar->GetVelocity()->length() - opponent->pCar->GetVelocity()->length();
 			auto diff = data.damage;
 			diff *= fCrashVelocityMultiplier;
-			WriteLog(std::format("diff {}", diff));
 			if (diff > fBlastOutCrashVelocity1) {
 				AddCrashBonus("BLAST OUT!");
 			}
