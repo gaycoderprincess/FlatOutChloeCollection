@@ -70,4 +70,5 @@ namespace ChloeMenuHud {
 #include "menu_career_classselect.h"
 #include "menu_career_finalresults.h"
 #include "menu_cardealer.h"
+#include "menu_cardealer_sell.h"
 #include "menu_loadingscreen.h"

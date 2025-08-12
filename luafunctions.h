@@ -221,12 +221,19 @@ int ChloeGarage_GetNumCarsOwned(void* a1) {
 int ChloeGarage_AddUpgrade(void* a1) {
 	auto car = &gCustomSave.aCareerGarage[pGameFlow->Profile.nCarType+1];
 	car->SetUpgradePurchased(luaL_checknumber(a1, 1), true);
+	car->nUpgradesValue += luaL_checknumber(a1, 2);
 	return 0;
 }
 
 int ChloeGarage_IsCarUpgraded(void* a1) {
 	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
 	lua_pushboolean(a1, car->IsUpgradePurchased(luaL_checknumber(a1, 2)));
+	return 1;
+}
+
+int ChloeGarage_GetCarUpgradesValue(void* a1) {
+	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
+	lua_pushnumber(a1, car->nUpgradesValue);
 	return 1;
 }
 
@@ -536,6 +543,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetNumCarsOwned, "ChloeGarage_GetNumCarsOwned");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_AddUpgrade, "ChloeGarage_AddUpgrade");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_IsCarUpgraded, "ChloeGarage_IsCarUpgraded");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetCarUpgradesValue, "ChloeGarage_GetCarUpgradesValue");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_WriteLog, "ChloeCollection_WriteLog");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetNumDealerCars, "ChloeCollection_GetNumDealerCars");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetDealerCarId, "ChloeCollection_GetDealerCarId");

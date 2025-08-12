@@ -4,11 +4,11 @@ public:
 
 	bool bSkinSelector = false;
 
-	int nCarHorsepower = 0;
-	int nCarWeight = 0;
-	int nCarPrice = 0;
-	std::string sCarName;
-	std::string sCarDescription;
+	static inline int nCarHorsepower = 0;
+	static inline int nCarWeight = 0;
+	static inline int nCarPrice = 0;
+	static inline std::string sCarName;
+	static inline std::string sCarDescription;
 
 	// todo add interpolation with upgrades
 	static constexpr int nPowerY = 392;
@@ -110,16 +110,11 @@ public:
 		}
 	}
 
-	virtual void Process() {
-		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
+	void DrawCarLogo() {
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
 		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/car_logos.bed", "car_logos");
 
-		ProcessSkinSelector();
-
 		if (!bEnabled) return;
-
-		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 
 		if (auto logo = GetHUDData(gCarLogos, std::format("car{}", pGameFlow->pMenuInterface->pMenuScene->nCar))) {
 			DrawRectangle(gCarName.fPosX * GetAspectRatioInv(),
@@ -135,6 +130,17 @@ public:
 			data.XCenterAlign = true;
 			Draw1080pString(JUSTIFY_LEFT, data, sCarName, &DrawStringFO2_Small);
 		}
+	}
+
+	virtual void Process() {
+		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
+
+		DrawCarLogo();
+		ProcessSkinSelector();
+
+		if (!bEnabled) return;
+
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 
 		tNyaStringData data;
 		data.x = nBaseX;
