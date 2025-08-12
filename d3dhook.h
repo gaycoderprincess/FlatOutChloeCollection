@@ -1,5 +1,5 @@
 void HookLoop() {
-	NewMenuHud::OnTick();
+	ChloeMenuHud::OnTick();
 	NewGameHud::OnTick();
 	NewMusicPlayer::OnTick();
 	Achievements::OnTick();

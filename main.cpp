@@ -111,7 +111,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyNitroGainPatches();
 			//ApplyUltrawidePatches(); // todo finish this
 			CareerMode::Init();
-			NewMenuHud::Init();
+			ChloeMenuHud::Init();
 			NewGameHud::Init();
 			Achievements::Init();
 

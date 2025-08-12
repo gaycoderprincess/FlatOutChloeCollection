@@ -34,7 +34,6 @@ public:
 
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
-		if (GetGameState() == GAME_STATE_REPLAY) return;
 
 		static CNyaRaceTimer gTimer;
 		gTimer.Process();

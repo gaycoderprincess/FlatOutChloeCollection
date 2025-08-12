@@ -3,11 +3,23 @@ float GetCarDamage(Car* pCar) {
 	return pCar->fDamage;
 }
 
+enum eCrashBonus {
+	CRASHBONUS_CRASHFLYBY,
+	CRASHBONUS_SUPERFLIP,
+	CRASHBONUS_SLAM,
+	CRASHBONUS_POWERHIT,
+	CRASHBONUS_BLASTOUT,
+	CRASHBONUS_RAGDOLLED,
+	CRASHBONUS_WRECKED,
+	NUM_CRASHBONUS_TYPES
+};
+int aCrashBonusesReceived[NUM_CRASHBONUS_TYPES] = {};
+
 void AddWreckedNotif(const std::string& player);
 void AddWreckedNotifSelf();
 void AddTimeoutNotif(const std::string& player);
 void AddTimeoutNotifSelf();
-void AddCrashBonus(const std::string& type);
+void AddCrashBonus(int type);
 
 // vanilla game uses 50.0, higher is less damage
 float fDamageMultiplier = 50.0;
@@ -100,13 +112,13 @@ void ProcessCrashBonuses() {
 			auto diff = data.damage;
 			diff *= fCrashVelocityMultiplier;
 			if (diff > fBlastOutCrashVelocity1) {
-				AddCrashBonus("BLAST OUT!");
+				AddCrashBonus(CRASHBONUS_BLASTOUT);
 			}
 			else if (diff > fPowerHitCrashVelocity1) {
-				AddCrashBonus("POWER HIT");
+				AddCrashBonus(CRASHBONUS_POWERHIT);
 			}
 			else if (diff > fWhammoCrashVelocity1) {
-				AddCrashBonus("SLAM");
+				AddCrashBonus(CRASHBONUS_SLAM);
 			}
 			if (pGameFlow->nEventType != eEventType::RACE) {
 				data.damage = 0;
@@ -114,7 +126,7 @@ void ProcessCrashBonuses() {
 		}
 		if (opponent->pCar->nIsRagdolled != isRagdolled[i] && pGameFlow->nEventType != eEventType::DERBY) {
 			if (GetPlayerLastHit(i) == ply && data.lastHitTimestamp > pPlayerHost->nRaceTime - nRagdollPiggybagThreshold) {
-				AddCrashBonus("CRASH OUT!");
+				AddCrashBonus(CRASHBONUS_RAGDOLLED);
 			}
 		}
 		lastHitTimestamps[i] = data.lastHitTimestamp;
@@ -133,7 +145,7 @@ void AwardWreck(int playerId) {
 	auto lastHitTimestamp = lastHitPlayer->pCar->aCarCollisions[playerId].lastHitTimestamp;
 	if (lastHitTimestamp > pPlayerHost->nRaceTime - nWreckPiggybagThreshold) {
 		if (lastHitPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
-			AddCrashBonus("WRECKED!");
+			AddCrashBonus(CRASHBONUS_WRECKED);
 			if (pGameFlow->nEventType == eEventType::RACE) Achievements::AwardAchievement(GetAchievement("WRECK_CAR_RACE"));
 		}
 	}

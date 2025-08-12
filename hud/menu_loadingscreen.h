@@ -1,5 +1,7 @@
 class CMenu_LoadingScreen : public CMenuHUDElement {
 public:
+	virtual const char* GetName() { return "menu_loadingscreen"; }
+
 	static constexpr float fLoadingSpriteX = 0.07;
 	static constexpr float fLoadingSpriteY = 0.8;
 	static constexpr float fLoadingSpriteSize = 0.15;

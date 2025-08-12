@@ -90,10 +90,10 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gCarSkinSelectAuthor.nPosX", NewMenuHud::gCarSkinSelectAuthor.nPosX);
 	//QuickValueEditor("gCarSkinSelectAuthor.nPosY", NewMenuHud::gCarSkinSelectAuthor.nPosY);
 	//QuickValueEditor("gCarSkinSelectAuthor.fSize", NewMenuHud::gCarSkinSelectAuthor.fSize);
-	QuickValueEditor("fCrashBonusTextX", HUD_DamageMeter.fCrashBonusTextX);
-	QuickValueEditor("fCrashBonusTextY", HUD_DamageMeter.fCrashBonusTextY);
-	QuickValueEditor("fCrashBonusTextSize", HUD_DamageMeter.fCrashBonusTextSize);
-	QuickValueEditor("fCrashVelocityMultiplier", fCrashVelocityMultiplier);
+	//QuickValueEditor("fCrashBonusTextX", HUD_DamageMeter.fCrashBonusTextX);
+	//QuickValueEditor("fCrashBonusTextY", HUD_DamageMeter.fCrashBonusTextY);
+	//QuickValueEditor("fCrashBonusTextSize", HUD_DamageMeter.fCrashBonusTextSize);
+	//QuickValueEditor("fCrashVelocityMultiplier", fCrashVelocityMultiplier);
 
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 

@@ -197,6 +197,29 @@ public:
 	}
 } HUD_DamageMeter;
 
-void AddCrashBonus(const std::string& type) {
-	HUD_DamageMeter.aCrashBonuses.push_back(type);
+void AddCrashBonus(int type) {
+	std::string str;
+	switch (type) {
+		case CRASHBONUS_SUPERFLIP:
+			str = "SUPER FLIP!";
+			break;
+		case CRASHBONUS_SLAM:
+			str = "SLAM";
+			break;
+		case CRASHBONUS_POWERHIT:
+			str = "POWER HIT";
+			break;
+		case CRASHBONUS_BLASTOUT:
+			str = "BLAST OUT!";
+			break;
+		case CRASHBONUS_RAGDOLLED:
+			str = "CRASH OUT!";
+			break;
+		case CRASHBONUS_WRECKED:
+			str = "WRECKED!";
+			break;
+	}
+	if (str.empty()) return;
+	aCrashBonusesReceived[type]++;
+	HUD_DamageMeter.aCrashBonuses.push_back(str);
 }

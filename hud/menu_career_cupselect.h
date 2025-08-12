@@ -1,5 +1,7 @@
 class CMenu_CareerCupSelect : public CMenuHUDElement {
 public:
+	virtual const char* GetName() { return "menu_career_cupselect"; }
+
 	static constexpr tDrawPositions gEvent = {0.15, 0.29, 0.1, 0.19, 0.135};
 	static constexpr float fEventHighlightSize = 0.094;
 
@@ -31,19 +33,19 @@ public:
 		return CareerMode::aLUACareerClasses[nClass].aCups.size();
 	}
 
-	void MoveLeft() {
+	virtual void MoveLeft() {
 		nCursorX--;
 		if (nCursorX < 0) nCursorX = 0;
 	}
-	void MoveRight() {
+	virtual void MoveRight() {
 		nCursorX++;
 		if (nCursorX >= GetCursorLimitX()) nCursorX = GetCursorLimitX()-1;
 	}
-	void MoveUp() {
+	virtual void MoveUp() {
 		nCursorY--;
 		if (nCursorY < 0) nCursorY = 0;
 	}
-	void MoveDown() {
+	virtual void MoveDown() {
 		nCursorY++;
 		if (nCursorY > 2) nCursorY = 2;
 	}

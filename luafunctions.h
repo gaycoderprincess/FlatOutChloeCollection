@@ -24,28 +24,38 @@ int ChloeCollection_GetRandom(void* a1) {
 	return 1;
 }
 
+int ChloeMenu_EnterMenu(void* a1) {
+	ChloeMenuHud::EnterMenu((const char*)lua_tolstring(a1, 1));
+	return 0;
+}
+
+int ChloeMenu_ExitMenu(void* a1) {
+	ChloeMenuHud::EnterMenu(nullptr);
+	return 0;
+}
+
+int ChloeMenu_MoveLeft(void* a1) {
+	ChloeMenuHud::OnMoveLeft();
+	return 0;
+}
+
+int ChloeMenu_MoveRight(void* a1) {
+	ChloeMenuHud::OnMoveRight();
+	return 0;
+}
+
+int ChloeMenu_MoveUp(void* a1) {
+	ChloeMenuHud::OnMoveUp();
+	return 0;
+}
+
+int ChloeMenu_MoveDown(void* a1) {
+	ChloeMenuHud::OnMoveDown();
+	return 0;
+}
+
 int ChloeSkins_ShowSkinSelector(void* a1) {
-	Menu_CarDealerSkinSelect.bEnabled = luaL_checknumber(a1, 1);
-	return 0;
-}
-
-int ChloeHUD_SetInCarDealer(void* a1) {
-	Menu_CarDealer.bEnabled = luaL_checknumber(a1, 1);
-	return 0;
-}
-
-int ChloeHUD_SetInCareerCupSelect(void* a1) {
-	Menu_CareerCupSelect.bEnabled = luaL_checknumber(a1, 1);
-	return 0;
-}
-
-int ChloeHUD_SetInCareerClassSelect(void* a1) {
-	Menu_CareerClassSelect.bEnabled = luaL_checknumber(a1, 1);
-	return 0;
-}
-
-int ChloeHUD_SetInCareerFinalResults(void* a1) {
-	Menu_CareerFinalResults.bEnabled = luaL_checknumber(a1, 1);
+	Menu_CarDealer.bSkinSelector = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -112,11 +122,6 @@ int ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked(void* a1) {
 	}
 	lua_pushboolean(a1, false);
 	return 1;
-}
-
-int ChloeHUD_SetInCareer(void* a1) {
-	Menu_Career.bEnabled = luaL_checknumber(a1, 1);
-	return 0;
 }
 
 int ChloeCareer_SetIsCareerRace(void* a1) {
@@ -505,21 +510,16 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_GetNumSkinsForCar, "ChloeSkins_GetNumSkinsForCar");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetRandom, "ChloeCollection_GetRandom");
 	//RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarCustomMenuBG, "ChloeCollection_GetCarCustomMenuBG");
+	RegisterLUAFunction(a1, (void*)&ChloeMenu_EnterMenu, "ChloeMenu_EnterMenu");
+	RegisterLUAFunction(a1, (void*)&ChloeMenu_ExitMenu, "ChloeMenu_ExitMenu");
+	RegisterLUAFunction(a1, (void*)&ChloeMenu_MoveLeft, "ChloeMenu_MoveLeft");
+	RegisterLUAFunction(a1, (void*)&ChloeMenu_MoveRight, "ChloeMenu_MoveRight");
+	RegisterLUAFunction(a1, (void*)&ChloeMenu_MoveUp, "ChloeMenu_MoveUp");
+	RegisterLUAFunction(a1, (void*)&ChloeMenu_MoveDown, "ChloeMenu_MoveDown");
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_ShowSkinSelector, "ChloeSkins_ShowSkinSelector");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareer, "ChloeHUD_SetInCareer");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCarDealer, "ChloeHUD_SetInCarDealer");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerCupSelect, "ChloeHUD_SetInCareerCupSelect");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerClassSelect, "ChloeHUD_SetInCareerClassSelect");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetInCareerFinalResults, "ChloeHUD_SetInCareerFinalResults");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Left, "ChloeHUD_CareerCupSelect_Left");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Right, "ChloeHUD_CareerCupSelect_Right");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Up, "ChloeHUD_CareerCupSelect_Up");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_Down, "ChloeHUD_CareerCupSelect_Down");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorX, "ChloeHUD_CareerCupSelect_GetCursorX");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorY, "ChloeHUD_CareerCupSelect_GetCursorY");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked, "ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerClassSelect_Up, "ChloeHUD_CareerClassSelect_Up");
-	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerClassSelect_Down, "ChloeHUD_CareerClassSelect_Down");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");

@@ -1,10 +1,12 @@
 class CMenu_CareerClassSelect : public CMenuHUDElement {
 public:
-	void MoveUp() {
+	virtual const char* GetName() { return "menu_career_classselect"; }
+
+	virtual void MoveUp() {
 		gCustomSave.nCareerClass--;
 		if (gCustomSave.nCareerClass < 1) gCustomSave.nCareerClass = 3;
 	}
-	void MoveDown() {
+	virtual void MoveDown() {
 		gCustomSave.nCareerClass++;
 		if (gCustomSave.nCareerClass > 3) gCustomSave.nCareerClass = 1;
 	}

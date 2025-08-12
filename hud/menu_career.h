@@ -1,5 +1,7 @@
 class CMenu_Career : public CMenuHUDElement {
 public:
+	virtual const char* GetName() { return "menu_career"; }
+
 	static inline const char* aAIPlayerNames[] = {
 			"FRANK BENTON",
 			"SUE O'NEILL",

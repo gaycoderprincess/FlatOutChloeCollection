@@ -1,5 +1,7 @@
 class CMenu_CareerFinalResults : public CMenuHUDElement {
 public:
+	virtual const char* GetName() { return "menu_career_finalresults"; }
+
 	static constexpr tDrawPositions1080p gTitle = {1740,230,0.04};
 	static constexpr tDrawPositions1080p gCupName = {1740,275,0.02};
 	static constexpr tDrawPositions1080p gFinishString = {1740,325,0.04};
