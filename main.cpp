@@ -38,6 +38,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "hud/menu.h"
 #include "hud/ingame.h"
 #include "musicplayer.h"
+#include "xinputsupport.h"
 #include "d3dhook.h"
 #include "windowedmode.h"
 #include "profiles.h"
@@ -110,6 +111,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarResetPatches();
 			ApplyNitroGainPatches();
 			//ApplyUltrawidePatches(); // todo finish this
+			ApplyXInputPatches();
 			CareerMode::Init();
 			ChloeMenuHud::Init();
 			NewGameHud::Init();

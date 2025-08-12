@@ -142,7 +142,7 @@ namespace NewMusicPlayer {
 	void OnTick() {
 		if (GetGameState() == GAME_STATE_NONE) return;
 
-		if (pLoadingScreen || IsKeyJustPressed(VK_END)) {
+		if (pLoadingScreen || IsKeyJustPressed(VK_END) || IsPadKeyJustPressed(NYA_PAD_KEY_SELECT)) {
 			StopPlayback();
 			return;
 		}
