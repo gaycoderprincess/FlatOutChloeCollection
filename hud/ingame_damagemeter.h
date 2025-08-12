@@ -15,6 +15,7 @@ public:
 	float fCrashBonusTextX = 0.118;
 	float fCrashBonusTextY = 0.865;
 	float fCrashBonusTextSize = 0.03;
+	float fCrashBonusTextSize2 = 0.06;
 
 	static constexpr float fCrashBonusFadeinStart = 2;
 	static constexpr float fCrashBonusFadeinEnd = 1.75;
@@ -32,6 +33,7 @@ public:
 		int a = 255;
 		if (fCrashBonusTimer >= fCrashBonusFadeinEnd) {
 			a = (fCrashBonusFadeinStart - fCrashBonusTimer) * fCrashBonusFadeinSpeed * 255;
+			data.size = std::lerp(fCrashBonusTextSize2, fCrashBonusTextSize, a / 255.0);
 		}
 		if (fCrashBonusTimer <= fCrashBonusFadeoutStart) {
 			a = fCrashBonusTimer * fCrashBonusFadeoutSpeed * 255;

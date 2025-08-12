@@ -5,6 +5,7 @@ public:
 
 	float fNotifY = 0.1;
 	float fNotifSize = 0.05;
+	float fNotifSize2 = 0.1;
 
 	void DrawWreckedNotif() {
 		tNyaStringData data;
@@ -15,6 +16,7 @@ public:
 		int a = 255;
 		if (fNotifTimer >= 2.5) {
 			a = (3 - fNotifTimer) * 2 * 255;
+			data.size = std::lerp(fNotifSize2, fNotifSize, a / 255.0);
 		}
 		if (fNotifTimer <= 0.5) {
 			a = fNotifTimer * 2 * 255;
