@@ -97,10 +97,6 @@ void ProcessDebugMenu() {
 
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 
-	if (DrawMenuOption(std::format("bNitroRegen - {}", bNitroRegen), "", false, false)) {
-		bNitroRegen = !bNitroRegen;
-	}
-
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();
 

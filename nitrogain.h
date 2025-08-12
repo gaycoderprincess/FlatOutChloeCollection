@@ -12,6 +12,8 @@ void ProcessNitroGain() {
 	if (localPlayer->bHasFinished || localPlayer->bIsDNF) return;
 	if (pPlayerHost->nRaceTime <= 0) return;
 
+	bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode");
+
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();
 
