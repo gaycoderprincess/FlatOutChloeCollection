@@ -75,6 +75,8 @@ void ProcessXInputSupport() {
 	else {
 		fTimeSincePaused = 999;
 	}
+
+	SetPadDeadzone(((nControllerDeadzone / 100.0) * 8192) + 2048);
 }
 
 void ApplyXInputPatches() {
