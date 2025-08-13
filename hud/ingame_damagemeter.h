@@ -223,6 +223,10 @@ void AddCrashBonus(int playerId, int type) {
 
 	aCrashBonusesReceived[playerId][type]++;
 	if (GetPlayer(playerId)->nPlayerType == PLAYERTYPE_LOCAL) {
+		if (type != CRASHBONUS_SUPERFLIP && type != CRASHBONUS_WRECKED) {
+			GetAchievement("BLAST_ALL")->fInternalProgress += 1;
+		}
+
 		HUD_DamageMeter.aCrashBonuses.push_back(str);
 	}
 }

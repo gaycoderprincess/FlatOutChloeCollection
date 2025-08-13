@@ -101,7 +101,7 @@ namespace NewMusicPlayer {
 	};
 
 	struct tPlaylist {
-		std::string sName;
+		std::wstring wsName;
 		std::vector<tSong> aSongs;
 
 		tSong* GetNextSong() {
@@ -122,11 +122,20 @@ namespace NewMusicPlayer {
 
 			return songs[rand()%songs.size()];
 		}
-	};
-	std::vector<tPlaylist> aPlaylists;
 
-	tPlaylist* pPlaylistMenu = nullptr;
+		void Load() {
+			for (auto& song : aSongs) {
+				song.Load();
+			}
+		}
+	};
+	std::vector<tPlaylist> aPlaylistsTitle;
+	std::vector<tPlaylist> aPlaylistsIngame;
+	std::vector<tPlaylist> aPlaylistsStunt;
+
+	tPlaylist* pPlaylistTitle = nullptr;
 	tPlaylist* pPlaylistIngame = nullptr;
+	tPlaylist* pPlaylistDerby = nullptr;
 	tPlaylist* pPlaylistStunt = nullptr;
 
 	tPlaylist* pCurrentPlaylist = nullptr;
@@ -142,22 +151,31 @@ namespace NewMusicPlayer {
 	void OnTick() {
 		if (GetGameState() == GAME_STATE_NONE) return;
 
+		if (nMenuSoundtrack < 0 || nMenuSoundtrack >= aPlaylistsTitle.size()) nMenuSoundtrack = 0;
+		if (nIngameStuntSoundtrack < 0 || nIngameStuntSoundtrack >= aPlaylistsStunt.size()) nIngameStuntSoundtrack = 0;
+		if (nIngameSoundtrack < 0 || nIngameSoundtrack >= aPlaylistsIngame.size()) nIngameSoundtrack = 0;
+		if (nIngameDerbySoundtrack < 0 || nIngameDerbySoundtrack >= aPlaylistsIngame.size()) nIngameDerbySoundtrack = 0;
+		if (pPlaylistTitle != &aPlaylistsTitle[nMenuSoundtrack]) {
+			StopPlayback();
+			pPlaylistTitle = &aPlaylistsTitle[nMenuSoundtrack];
+		}
+		pPlaylistIngame = &aPlaylistsIngame[nIngameSoundtrack];
+		pPlaylistDerby = &aPlaylistsIngame[nIngameDerbySoundtrack];
+		pPlaylistStunt = &aPlaylistsStunt[nIngameStuntSoundtrack];
+
 		if (pLoadingScreen || IsKeyJustPressed(VK_END) || IsPadKeyJustPressed(NYA_PAD_KEY_SELECT)) {
 			StopPlayback();
 			return;
 		}
 
 		if (GetGameState() == GAME_STATE_MENU) {
-			pCurrentPlaylist = pPlaylistMenu;
+			pCurrentPlaylist = pPlaylistTitle;
 			bIsFirstIngameSong = true;
 		}
 		else {
-			if (pGameFlow->nEventType == eEventType::STUNT) {
-				pCurrentPlaylist = pPlaylistStunt;
-			}
-			else {
-				pCurrentPlaylist = pPlaylistIngame;
-			}
+			if (pGameFlow->nEventType == eEventType::STUNT) pCurrentPlaylist = pPlaylistStunt;
+			else if (pGameFlow->nEventType == eEventType::DERBY) pCurrentPlaylist = pPlaylistDerby;
+			else pCurrentPlaylist = pPlaylistIngame;
 		}
 
 		if (!pCurrentPlaylist || pCurrentPlaylist->aSongs.empty()) return;
@@ -209,11 +227,12 @@ namespace NewMusicPlayer {
 		return pCurrentSong->sTitle.c_str();
 	}
 
-	tPlaylist LoadPlaylist(const char* path) {
+	bool LoadPlaylist(tPlaylist* out, const char* fileName) {
 		size_t size;
 
-		auto file = (char*)ReadFileFromBfs(path, size);
-		if (!file) return {};
+		auto file = (char*)ReadFileFromBfs(std::format("data/music/{}.toml", fileName).c_str(), size);
+		if (!file) return false;
+		if (file[size-2] == '\r') file[size-2]=0;
 		file[size-1]=0;
 
 		std::stringstream ss;
@@ -221,9 +240,7 @@ namespace NewMusicPlayer {
 		delete[] file;
 
 		try {
-			tPlaylist playlist;
 			auto config = toml::parse(ss);
-			playlist.sName = config["Playlist"]["Name"].value_or("");
 			int count = config["Playlist"]["Count"].value_or(0);
 			for (int i = 0; i < count; i++) {
 				tSong song;
@@ -237,15 +254,65 @@ namespace NewMusicPlayer {
 				if (song.sPath.empty()) continue;
 				if (song.sArtist.empty()) continue;
 				if (song.sTitle.empty()) continue;
-				playlist.aSongs.push_back(song);
+				out->aSongs.push_back(song);
 			}
-			return playlist;
+			return !out->aSongs.empty();
 		}
 		catch (const toml::parse_error& err) {
-			MessageBoxA(0, std::format("Failed to parse {}: {}", path, err.what()).c_str(), "Fatal error", MB_ICONERROR);
+			MessageBoxA(0, std::format("Failed to parse {}: {}", fileName, err.what()).c_str(), "Fatal error", MB_ICONERROR);
 		}
 
-		return {};
+		return false;
+	}
+
+	void LoadPlaylistConfig() {
+		static auto config = toml::parse_file("Config/Music.toml");
+		int numPlaylists = config["main"]["playlist_count"].value_or(1);
+		int numMenuPlaylists = config["main"]["menuplaylist_count"].value_or(1);
+		int numStuntPlaylists = config["main"]["stuntplaylist_count"].value_or(1);
+		int defaultMenu = config["main"]["default_menu"].value_or(1) - 1;
+		int defaultIngame = config["main"]["default_race"].value_or(1) - 1;
+		int defaultDerby = config["main"]["default_derby"].value_or(1) - 1;
+		int defaultStunt = config["main"]["default_stunt"].value_or(1) - 1;
+		for (int i = 0; i < numPlaylists; i++) {
+			tPlaylist playlist;
+			playlist.wsName = config[std::format("playlist{}", i+1)]["name"].value_or(L"");
+			LoadPlaylist(&playlist, config[std::format("playlist{}", i+1)]["file"].value_or(""));
+			if (playlist.wsName.empty()) continue;
+			if (playlist.aSongs.empty()) continue;
+			aPlaylistsIngame.push_back(playlist);
+		}
+		for (int i = 0; i < numMenuPlaylists; i++) {
+			tPlaylist playlist;
+			playlist.wsName = config[std::format("menuplaylist{}", i+1)]["name"].value_or(L"");
+			LoadPlaylist(&playlist, config[std::format("menuplaylist{}", i+1)]["file"].value_or(""));
+			if (playlist.wsName.empty()) continue;
+			if (playlist.aSongs.empty()) continue;
+			aPlaylistsTitle.push_back(playlist);
+		}
+		for (int i = 0; i < numStuntPlaylists; i++) {
+			tPlaylist playlist;
+			playlist.wsName = config[std::format("stuntplaylist{}", i+1)]["name"].value_or(L"");
+			LoadPlaylist(&playlist, config[std::format("stuntplaylist{}", i+1)]["file"].value_or(""));
+			if (playlist.wsName.empty()) continue;
+			if (playlist.aSongs.empty()) continue;
+			aPlaylistsStunt.push_back(playlist);
+		}
+		if (defaultMenu < 0 || defaultMenu >= aPlaylistsTitle.size()) defaultMenu = 0;
+		if (defaultStunt < 0 || defaultStunt >= aPlaylistsStunt.size()) defaultStunt = 0;
+		if (defaultIngame < 0 || defaultIngame >= aPlaylistsIngame.size()) defaultIngame = 0;
+		if (defaultDerby < 0 || defaultDerby >= aPlaylistsIngame.size()) defaultDerby = 0;
+		nMenuSoundtrack = defaultMenu;
+		nIngameSoundtrack = defaultIngame;
+		nIngameDerbySoundtrack = defaultDerby;
+		nIngameStuntSoundtrack = defaultStunt;
+
+		for (auto& setting : aNewGameSettings) {
+			if (setting.value == &nMenuSoundtrack) setting.maxValue = aPlaylistsTitle.size()-1;
+			if (setting.value == &nIngameSoundtrack) setting.maxValue = aPlaylistsIngame.size()-1;
+			if (setting.value == &nIngameDerbySoundtrack) setting.maxValue = aPlaylistsIngame.size()-1;
+			if (setting.value == &nIngameStuntSoundtrack) setting.maxValue = aPlaylistsStunt.size()-1;
+		}
 	}
 
 	void Init() {
@@ -261,18 +328,10 @@ namespace NewMusicPlayer {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
 
-		// TODO playlist switching
-		aPlaylists.push_back(LoadPlaylist("data/music/playlist_title.toml"));
-		aPlaylists.push_back(LoadPlaylist("data/music/playlist_ingame.toml"));
-		aPlaylists.push_back(LoadPlaylist("data/music/playlist_stunt.toml"));
-		pPlaylistMenu = &aPlaylists[aPlaylists.size()-3];
-		pPlaylistIngame = &aPlaylists[aPlaylists.size()-2];
-		pPlaylistStunt = &aPlaylists[aPlaylists.size()-1];
+		LoadPlaylistConfig();
 
-		for (auto& playlist : aPlaylists) {
-			for (auto& song : playlist.aSongs) {
-				song.Load();
-			}
-		}
+		for (auto& playlist : aPlaylistsTitle) { playlist.Load(); }
+		for (auto& playlist : aPlaylistsIngame) { playlist.Load(); }
+		for (auto& playlist : aPlaylistsStunt) { playlist.Load(); }
 	}
 }

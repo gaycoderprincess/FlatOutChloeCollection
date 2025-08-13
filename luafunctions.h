@@ -509,6 +509,48 @@ int ChloeProfiles_GetProfileProgress(void* a1) {
 	return 1;
 }
 
+int ChloeOST_GetSoundtrackName(void* a1) {
+	int id = (int)luaL_checknumber(a1, 1);
+	if (id < 0 || id >= NewMusicPlayer::aPlaylistsIngame.size()) return 0;
+	auto name = NewMusicPlayer::aPlaylistsIngame[id].wsName;
+	if (name.empty()) return 0;
+	lua_pushlstring(a1, name.c_str(), (name.length() + 1) * 2);
+	return 1;
+}
+
+int ChloeOST_GetMenuSoundtrackName(void* a1) {
+	int id = (int)luaL_checknumber(a1, 1);
+	if (id < 0 || id >= NewMusicPlayer::aPlaylistsTitle.size()) return 0;
+	auto name = NewMusicPlayer::aPlaylistsTitle[id].wsName;
+	if (name.empty()) return 0;
+	lua_pushlstring(a1, name.c_str(), (name.length() + 1) * 2);
+	return 1;
+}
+
+int ChloeOST_GetStuntSoundtrackName(void* a1) {
+	int id = (int)luaL_checknumber(a1, 1);
+	if (id < 0 || id >= NewMusicPlayer::aPlaylistsStunt.size()) return 0;
+	auto name = NewMusicPlayer::aPlaylistsStunt[id].wsName;
+	if (name.empty()) return 0;
+	lua_pushlstring(a1, name.c_str(), (name.length() + 1) * 2);
+	return 1;
+}
+
+int ChloeOST_GetNumSoundtracks(void* a1) {
+	lua_pushnumber(a1, NewMusicPlayer::aPlaylistsIngame.size());
+	return 1;
+}
+
+int ChloeOST_GetNumMenuSoundtracks(void* a1) {
+	lua_pushnumber(a1, NewMusicPlayer::aPlaylistsTitle.size());
+	return 1;
+}
+
+int ChloeOST_GetNumStuntSoundtracks(void* a1) {
+	lua_pushnumber(a1, NewMusicPlayer::aPlaylistsStunt.size());
+	return 1;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -522,8 +564,6 @@ void RegisterLUAEnum(void* a1, int id, const char* name) {
 }
 
 void CustomLUAFunctions(void* a1) {
-	NewMusicPlayer::Init();
-
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_GetAspect, "ChloeWidescreen_GetAspect");
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_LeftJustify, "ChloeWidescreen_LeftJustify");
 	//RegisterLUAFunction(a1, (void*)&ChloeWidescreen_SafeLeftJustify, "ChloeWidescreen_SafeLeftJustify");
@@ -607,6 +647,12 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCupsMax, "ChloeProfiles_GetProfileCupsMax");
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCarsUnlocked, "ChloeProfiles_GetProfileCarsUnlocked");
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileProgress, "ChloeProfiles_GetProfileProgress");
+	RegisterLUAFunction(a1, (void*)&ChloeOST_GetSoundtrackName, "ChloeOST_GetSoundtrackName");
+	RegisterLUAFunction(a1, (void*)&ChloeOST_GetMenuSoundtrackName, "ChloeOST_GetMenuSoundtrackName");
+	RegisterLUAFunction(a1, (void*)&ChloeOST_GetStuntSoundtrackName, "ChloeOST_GetStuntSoundtrackName");
+	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumSoundtracks, "ChloeOST_GetNumSoundtracks");
+	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumMenuSoundtracks, "ChloeOST_GetNumMenuSoundtracks");
+	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumStuntSoundtracks, "ChloeOST_GetNumStuntSoundtracks");
 
 	RegisterLUAEnum(a1, HANDLING_NORMAL, "HANDLING_NORMAL");
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");

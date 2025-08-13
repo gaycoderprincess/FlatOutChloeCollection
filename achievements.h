@@ -53,6 +53,7 @@ namespace Achievements {
 		new CAchievement("WIN_RACE", "Starting Point", "Win a race", CAT_GENERAL),
 		//new CAchievement("WIN_RACE_WRECK", "Eliminator", "Win a race after wrecking everyone", CAT_SINGLEPLAYER),
 		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GENERAL),
+		new CAchievement("BLAST_ALL", "Blast Master", "Get 500 crash bonuses", CAT_GENERAL),
 		new CAchievement("BUY_CUSTOM_SKIN", "Community-Run", "Purchase a car with a custom livery", CAT_CAREER),
 		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 10%% health", CAT_GENERAL),
 		new CAchievement("CASH_AWARD", "Makin' it Big", "Reach a total balance of 100,000CR", CAT_CAREER),
@@ -536,6 +537,9 @@ namespace Achievements {
 		GetAchievement("ALL_CARS")->pTickFunction = OnTick_AllCars;
 
 		GetAchievement("LOW_HP")->pTrackFunction = OnTrack_LowHP;
+		GetAchievement("BLAST_ALL")->pTrackFunction = OnTrack_GenericProgress;
+
+		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
 	}
 }
 

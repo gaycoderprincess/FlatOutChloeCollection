@@ -23,7 +23,6 @@ std::string GetStringNarrow(const wchar_t* string) {
 	return converter.to_bytes(string);
 }
 
-#include "bfsload.h"
 #include "filereader.h"
 #include "config.h"
 #include "customsave.h"
@@ -38,6 +37,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "hud/menu.h"
 #include "hud/ingame.h"
 #include "musicplayer.h"
+#include "bfsload.h"
 #include "xinputsupport.h"
 #include "d3dhook.h"
 #include "windowedmode.h"

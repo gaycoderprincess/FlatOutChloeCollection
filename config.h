@@ -11,6 +11,10 @@ enum eHandlingDamage {
 	HANDLINGDAMAGE_ON,
 };
 
+uint32_t nMenuSoundtrack = 0;
+uint32_t nIngameSoundtrack = 0;
+uint32_t nIngameDerbySoundtrack = 0;
+uint32_t nIngameStuntSoundtrack = 0;
 uint32_t nTransmission = 0;
 uint32_t nUseNewLoadingScreen = 1;
 uint32_t nHandlingDamage = HANDLINGDAMAGE_REDUCED;

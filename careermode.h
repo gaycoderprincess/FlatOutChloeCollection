@@ -52,6 +52,7 @@ namespace CareerMode {
 
 	void SetIsCareerMode(bool apply) {
 		bNextRaceCareerRace = apply;
+		if (!apply) bIsCareerRace = false;
 		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
 		NyaHookLib::Patch<uint8_t>(0x431B08, apply ? 0xEB : 0x75); // don't null upgrades
 		NyaHookLib::Patch<uint64_t>(0x43BD79, apply ? 0x418B909090909090 : 0x418B000000EC840F); // use custom upgrades
