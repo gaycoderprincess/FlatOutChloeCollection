@@ -54,7 +54,7 @@ namespace CareerMode {
 		bNextRaceCareerRace = apply;
 		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
 		NyaHookLib::Patch<uint8_t>(0x431B08, apply ? 0xEB : 0x75); // don't null upgrades
-		// todo what does 0043BD71 do?
+		NyaHookLib::Patch<uint64_t>(0x43BD79, apply ? 0x418B909090909090 : 0x418B000000EC840F); // use custom upgrades
 	}
 
 	auto GetCurrentCup() {

@@ -134,6 +134,11 @@ int ChloeCareer_WasCareerRace(void* a1) {
 	return 1;
 }
 
+int ChloeCareer_WasCareerRaceFinished(void* a1) {
+	lua_pushboolean(a1, CareerMode::aPlayerResults[0].bFinished || CareerMode::aPlayerResults[0].bDNF);
+	return 1;
+}
+
 int ChloeCareer_WasCareerCupJustFinished(void* a1) {
 	lua_pushboolean(a1, CareerMode::bWasCareerCupJustFinished);
 	return 1;
@@ -579,6 +584,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_ResignCup, "ChloeCareer_ResignCup");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_SetIsCareerRace, "ChloeCareer_SetIsCareerRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerRace, "ChloeCareer_WasCareerRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerRaceFinished, "ChloeCareer_WasCareerRaceFinished");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerCupJustFinished, "ChloeCareer_WasCareerCupJustFinished");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_ClearWasCareerRace, "ChloeCareer_ClearWasCareerRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_IsClassUnlocked, "ChloeCareer_IsClassUnlocked");
