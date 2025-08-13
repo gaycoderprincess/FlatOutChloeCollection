@@ -68,6 +68,16 @@ void QuickValueEditor(const char* name, int& value) {
 	if (DrawMenuOption(std::format("{} - {}", name, value))) { ValueEditorMenu(value); }
 }
 
+void QuickValueEditor(const char* name, CHUDElement::tDrawPositions1080p& value, bool useSpacing) {
+	if (DrawMenuOption(std::format("{}.nPosX - {}", name, value.nPosX))) { ValueEditorMenu(value.nPosX); }
+	if (DrawMenuOption(std::format("{}.nPosY - {}", name, value.nPosY))) { ValueEditorMenu(value.nPosY); }
+	if (DrawMenuOption(std::format("{}.fSize - {}", name, value.fSize))) { ValueEditorMenu(value.fSize); }
+	if (useSpacing) {
+		if (DrawMenuOption(std::format("{}.nSpacingX - {}", name, value.nSpacingX))) { ValueEditorMenu(value.nSpacingX); }
+		if (DrawMenuOption(std::format("{}.nSpacingY - {}", name, value.nSpacingY))) { ValueEditorMenu(value.nSpacingY); }
+	}
+}
+
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
@@ -94,6 +104,13 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fCrashBonusTextY", HUD_DamageMeter.fCrashBonusTextY);
 	//QuickValueEditor("fCrashBonusTextSize", HUD_DamageMeter.fCrashBonusTextSize);
 	//QuickValueEditor("fCrashVelocityMultiplier", fCrashVelocityMultiplier);
+	QuickValueEditor("gTitles", Menu_CrashResult.gTitles, true);
+	QuickValueEditor("fNumberOffset", Menu_CrashResult.fNumberOffset);
+	QuickValueEditor("fCashOffset", Menu_CrashResult.fCashOffset);
+	QuickValueEditor("fBottomOffset", Menu_CrashResult.fBottomOffset);
+	QuickValueEditor("fSubSize", Menu_CrashResult.fSubSize);
+	QuickValueEditor("gTotalTitle", Menu_CrashResult.gTotalTitle, false);
+	QuickValueEditor("gTotalAmount", Menu_CrashResult.gTotalAmount, false);
 
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 

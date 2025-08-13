@@ -255,11 +255,12 @@ namespace CareerMode {
 				results->nFinishTime = score->nFinishTime;
 				if (pGameFlow->nEventType == eEventType::RACE) {
 					memcpy(results->aSceneryBonuses, player->pCar->aObjectsSmashed, sizeof(results->aSceneryBonuses));
+					memcpy(results->aCrashBonuses, aCrashBonusesReceived[i], sizeof(results->aCrashBonuses));
 				}
 				else {
 					memset(results->aSceneryBonuses, 0, sizeof(results->aSceneryBonuses));
+					memset(results->aCrashBonuses, 0, sizeof(results->aCrashBonuses)); // no crash bonuses for derbies, ruins the economy
 				}
-				memcpy(results->aCrashBonuses, aCrashBonusesReceived[i], sizeof(results->aCrashBonuses));
 
 				if (pGameFlow->nSubEventType == eSubEventType::STUNT_LONGJUMP || pGameFlow->nSubEventType == eSubEventType::STUNT_HIGHJUMP) {
 					results->nFinishTime = ((score->nStuntMetersScore[0] + score->nStuntMetersScore[1] + score->nStuntMetersScore[2]) * 0.01);

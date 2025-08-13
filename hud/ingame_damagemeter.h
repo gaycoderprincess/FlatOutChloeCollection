@@ -197,29 +197,32 @@ public:
 	}
 } HUD_DamageMeter;
 
-void AddCrashBonus(int playerId, int type) {
-	std::string str;
+const char* GetCrashBonusName(int type) {
 	switch (type) {
-		case CRASHBONUS_SUPERFLIP:
-			str = "SUPER FLIP!";
-			break;
-		case CRASHBONUS_SLAM:
-			str = "SLAM";
-			break;
-		case CRASHBONUS_POWERHIT:
-			str = "POWER HIT";
-			break;
-		case CRASHBONUS_BLASTOUT:
-			str = "BLAST OUT!";
-			break;
-		case CRASHBONUS_RAGDOLLED:
-			str = "CRASH OUT!";
-			break;
-		case CRASHBONUS_WRECKED:
-			str = "WRECKED!";
-			break;
+	case CRASHBONUS_SUPERFLIP:
+		return "SUPER FLIP!";
+		break;
+	case CRASHBONUS_SLAM:
+		return "SLAM";
+		break;
+	case CRASHBONUS_POWERHIT:
+		return "POWER HIT";
+		break;
+	case CRASHBONUS_BLASTOUT:
+		return "BLAST OUT!";
+		break;
+	case CRASHBONUS_RAGDOLLED:
+		return "CRASH OUT!";
+		break;
+	case CRASHBONUS_WRECKED:
+		return "WRECKED!";
+		break;
 	}
-	if (str.empty()) return;
+}
+
+void AddCrashBonus(int playerId, int type) {
+	auto str = GetCrashBonusName(type);
+	if (!str) return;
 
 	aCrashBonusesReceived[playerId][type]++;
 	if (GetPlayer(playerId)->nPlayerType == PLAYERTYPE_LOCAL) {

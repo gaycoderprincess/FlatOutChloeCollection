@@ -56,7 +56,7 @@ namespace Achievements {
 		new CAchievement("BLAST_ALL", "Blast Master", "Get 500 crash bonuses", CAT_GENERAL),
 		new CAchievement("BUY_CUSTOM_SKIN", "Community-Run", "Purchase a car with a custom livery", CAT_CAREER),
 		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 10%% health", CAT_GENERAL),
-		new CAchievement("CASH_AWARD", "Makin' it Big", "Reach a total balance of 100,000CR", CAT_CAREER),
+		new CAchievement("CASH_AWARD", "Makin' it Big", "Reach a total balance of $50,000", CAT_CAREER),
 		new CAchievement("ALL_CARS", "Car Collector", "Unlock all cars in the game", CAT_GENERAL),
 		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete FlatOut mode", CAT_CAREER),
 		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete FlatOut mode with all gold", CAT_CAREER),
@@ -379,8 +379,8 @@ namespace Achievements {
 	}
 	void OnTick_CashAward(CAchievement* pThis, double delta) {
 		pThis->fInternalProgress = pGameFlow->Profile.nMoney;
-		pThis->nProgress = (pThis->fInternalProgress / 100000.0) * 100;
-		if (pGameFlow->Profile.nMoney >= 100000) AwardAchievement(pThis);
+		pThis->nProgress = (pThis->fInternalProgress / 50000.0) * 100;
+		if (pGameFlow->Profile.nMoney >= 50000) AwardAchievement(pThis);
 	}
 	void OnTick_Trackmaster(CAchievement* pThis, double delta) {
 		int numTracks = 0;
