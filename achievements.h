@@ -60,8 +60,8 @@ namespace Achievements {
 		new CAchievement("ALL_CARS", "Car Collector", "Unlock all cars in the game", CAT_GENERAL),
 		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete FlatOut mode", CAT_CAREER),
 		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete FlatOut mode with all gold", CAT_CAREER),
-		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_TRACKS),
-		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_TRACKS),
+		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_GENERAL),
+		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_GENERAL),
 	};
 
 	std::vector<CAchievement*> GetAchievementsInCategory(uint32_t category) {

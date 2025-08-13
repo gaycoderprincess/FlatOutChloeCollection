@@ -28,7 +28,9 @@ void ProcessCarReset() {
 		fCarResetFadeTimer += gTimer.fDeltaTime * 1.5;
 		if (fCarResetFadeTimer >= 1) {
 			ply->ResetCar(ply, 0);
-			*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * fCarResetSpeed;
+			if (pGameFlow->nEventType != eEventType::DERBY) {
+				*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * fCarResetSpeed;
+			}
 			bCarResetRequested = false;
 		}
 	}

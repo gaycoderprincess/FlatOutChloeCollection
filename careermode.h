@@ -253,7 +253,12 @@ namespace CareerMode {
 				results->bDNF = score->bIsDNF;
 				results->nPosition = score->nPosition;
 				results->nFinishTime = score->nFinishTime;
-				memcpy(results->aSceneryBonuses, player->pCar->aObjectsSmashed, sizeof(results->aSceneryBonuses));
+				if (pGameFlow->nEventType == eEventType::RACE) {
+					memcpy(results->aSceneryBonuses, player->pCar->aObjectsSmashed, sizeof(results->aSceneryBonuses));
+				}
+				else {
+					memset(results->aSceneryBonuses, 0, sizeof(results->aSceneryBonuses));
+				}
 				memcpy(results->aCrashBonuses, aCrashBonusesReceived[i], sizeof(results->aCrashBonuses));
 
 				if (pGameFlow->nSubEventType == eSubEventType::STUNT_LONGJUMP || pGameFlow->nSubEventType == eSubEventType::STUNT_HIGHJUMP) {
