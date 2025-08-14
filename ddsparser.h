@@ -61,6 +61,7 @@ uint8_t* ReadTextureDataFromFile(const char* _path, size_t* outSize) {
 
 	auto data = new uint8_t[*outSize];
 	file.pFileCodec->ReadBytes(data, *outSize);
+	return data;
 }
 
 DevTexture* __thiscall CreateTextureFromMemoryNew(DeviceD3d* pThis, DevTexture* pTexture, uint8_t* data, uint32_t dataSize, uint32_t flags) {

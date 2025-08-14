@@ -104,13 +104,17 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fCrashBonusTextY", HUD_DamageMeter.fCrashBonusTextY);
 	//QuickValueEditor("fCrashBonusTextSize", HUD_DamageMeter.fCrashBonusTextSize);
 	//QuickValueEditor("fCrashVelocityMultiplier", fCrashVelocityMultiplier);
-	QuickValueEditor("gTitles", Menu_CrashResult.gTitles, true);
-	QuickValueEditor("fNumberOffset", Menu_CrashResult.fNumberOffset);
-	QuickValueEditor("fCashOffset", Menu_CrashResult.fCashOffset);
-	QuickValueEditor("fBottomOffset", Menu_CrashResult.fBottomOffset);
-	QuickValueEditor("fSubSize", Menu_CrashResult.fSubSize);
-	QuickValueEditor("gTotalTitle", Menu_CrashResult.gTotalTitle, false);
-	QuickValueEditor("gTotalAmount", Menu_CrashResult.gTotalAmount, false);
+	//QuickValueEditor("gTitles", Menu_CrashResult.gTitles, true);
+	//QuickValueEditor("fNumberOffset", Menu_CrashResult.fNumberOffset);
+	//QuickValueEditor("fCashOffset", Menu_CrashResult.fCashOffset);
+	//QuickValueEditor("fBottomOffset", Menu_CrashResult.fBottomOffset);
+	//QuickValueEditor("fSubSize", Menu_CrashResult.fSubSize);
+	//QuickValueEditor("gTotalTitle", Menu_CrashResult.gTotalTitle, false);
+	//QuickValueEditor("gTotalAmount", Menu_CrashResult.gTotalAmount, false);
+	QuickValueEditor("gUnlockTitle", Menu_Career_Unlock.gUnlockTitle, false);
+	QuickValueEditor("gUnlockSubtitle", Menu_Career_Unlock.gUnlockSubtitle, false);
+	QuickValueEditor("gBottomTitle", Menu_Career_Unlock.gBottomTitle, false);
+	ChloeMenuHud::EnterMenu(&Menu_Career_Unlock);
 
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 

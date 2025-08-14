@@ -194,6 +194,34 @@ int ChloeCareer_GetLastRaceCrashTotalMoney(void* a1) {
 	return 1;
 }
 
+int ChloeCareer_GetNewlyUnlockedClass(void* a1) {
+	lua_pushnumber(a1, CareerMode::nNewlyUnlockedClass);
+	return 1;
+}
+
+int ChloeCareer_GetNewlyUnlockedCarCount(void* a1) {
+	int count = 0;
+	for (auto& car : aDealerCars) {
+		if (car.classId == CareerMode::nNewlyUnlockedClass) count++;
+	}
+	lua_pushnumber(a1, count);
+	return 1;
+}
+
+int ChloeCareer_GetNewlyUnlockedCar(void* a1) {
+	std::vector<int> cars;
+	for (auto& car : aDealerCars) {
+		if (car.classId == CareerMode::nNewlyUnlockedClass) cars.push_back(car.carId);
+	}
+	lua_pushnumber(a1, cars[(int)luaL_checknumber(a1, 1)-1]);
+	return 1;
+}
+
+int ChloeCareer_ResetNewlyUnlockedClass(void* a1) {
+	CareerMode::nNewlyUnlockedClass = -1;
+	return 0;
+}
+
 int ChloeHUD_SetCarStats(void* a1) {
 	Menu_CarDealer.nCarHorsepower = luaL_checknumber(a1, 1);
 	Menu_CarDealer.nCarWeight = luaL_checknumber(a1, 2);
@@ -723,6 +751,10 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetLastRaceSmashTotalMoney, "ChloeCareer_GetLastRaceSmashTotalMoney");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetLastRaceCrashScore, "ChloeCareer_GetLastRaceCrashScore");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetLastRaceCrashTotalMoney, "ChloeCareer_GetLastRaceCrashTotalMoney");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetNewlyUnlockedClass, "ChloeCareer_GetNewlyUnlockedClass");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_ResetNewlyUnlockedClass, "ChloeCareer_ResetNewlyUnlockedClass");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetNewlyUnlockedCarCount, "ChloeCareer_GetNewlyUnlockedCarCount");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetNewlyUnlockedCar, "ChloeCareer_GetNewlyUnlockedCar");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCareerDefs, "ChloeCareerDefs_BeginCareerDefs");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginClass, "ChloeCareerDefs_BeginClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCup, "ChloeCareerDefs_BeginCup");

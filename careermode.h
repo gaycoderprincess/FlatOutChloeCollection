@@ -116,6 +116,8 @@ namespace CareerMode {
 		}
 	}
 
+	int nNewlyUnlockedClass = -1;
+
 	void OnCupFinished() {
 		int playerPosition = gCustomSave.aCupPlayerPosition[0]+1;
 		auto cup = GetCurrentCup();
@@ -155,6 +157,9 @@ namespace CareerMode {
 
 				// unlock next class after finals are done
 				if (gCustomSave.nCareerCup == 64 && gCustomSave.nCareerClass < 4) {
+					if (!gCustomSave.bCareerClassUnlocked[gCustomSave.nCareerClass]) {
+						nNewlyUnlockedClass = gCustomSave.nCareerClass+1;
+					}
 					gCustomSave.bCareerClassUnlocked[gCustomSave.nCareerClass] = true;
 				}
 			}
