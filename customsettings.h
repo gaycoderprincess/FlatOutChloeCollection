@@ -15,6 +15,7 @@ tGameSetting aNewGameSettings[] = {
 		{ "Game", "DerbySoundtrack", &nIngameDerbySoundtrack, 0, 0, 1 },
 		{ "Game", "StuntSoundtrack", &nIngameStuntSoundtrack, 0, 0, 1 },
 		{ "Game", "MenuSoundtrack", &nMenuSoundtrack, 0, 0, 1 },
+		{ "Game", "ShowBonus", &nShowBonus, 1, 0, 0 },
 		{ "Control", "ControllerGuid", (void*)0x6BEDD8, 3, 0, 0 },
 		{ "Control", "Controller", (void*)0x6BEDFC, 0, 0, 2 },
 		{ "Control", "ForceFeedback", (void*)0x6BEE00, 1, 0, 0 },

@@ -230,6 +230,6 @@ void AddCrashBonus(int playerId, int type) {
 			GetAchievement("BLAST_ALL")->fInternalProgress += 1;
 		}
 
-		HUD_DamageMeter.aCrashBonuses.push_back(str);
+		if (nShowBonus) HUD_DamageMeter.aCrashBonuses.push_back(str);
 	}
 }
