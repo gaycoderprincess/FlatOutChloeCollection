@@ -38,19 +38,7 @@ bool CreateCustomTexture(DevTexture*& pTexture, uint8_t* data, uint32_t dataSize
 	return true;
 }
 
-DevTexture* __thiscall CreateTextureFromMemoryNew(DeviceD3d* pThis, DevTexture* pTexture, uint8_t* data, uint32_t dataSize, uint32_t flags) {
-	if (CreateCustomTexture(pTexture, data, dataSize, flags)) {
-		return pTexture;
-	}
-	return nullptr;
-}
-
-DevTexture* __thiscall CreateTextureFromFileNew(DeviceD3d* pThis, DevTexture* pTexture, const char* _path, uint32_t flags) {
-	if (!pTexture) {
-		// small dummy texture for constructing a DevTexture
-		pTexture = DeviceD3d::CreateTextureFromFile(pThis, pTexture, "data/global/overlay/overlaynitro.dds", flags);
-	}
-
+uint8_t* ReadTextureDataFromFile(const char* _path, size_t* outSize) {
 	std::string path = _path;
 	// prefer tga files if they exist
 	if (path.ends_with(".dds")) {
@@ -69,10 +57,29 @@ DevTexture* __thiscall CreateTextureFromFileNew(DeviceD3d* pThis, DevTexture* pT
 	File file;
 	file.Load(path.c_str(), 9);
 
-	uint32_t dataSize = file.pFileCodec->GetFileSize();
+	*outSize = file.pFileCodec->GetFileSize();
 
-	auto data = new uint8_t[dataSize];
-	file.pFileCodec->ReadBytes(data, dataSize);
+	auto data = new uint8_t[*outSize];
+	file.pFileCodec->ReadBytes(data, *outSize);
+}
+
+DevTexture* __thiscall CreateTextureFromMemoryNew(DeviceD3d* pThis, DevTexture* pTexture, uint8_t* data, uint32_t dataSize, uint32_t flags) {
+	if (CreateCustomTexture(pTexture, data, dataSize, flags)) {
+		return pTexture;
+	}
+	return nullptr;
+}
+
+DevTexture* __thiscall CreateTextureFromFileNew(DeviceD3d* pThis, DevTexture* pTexture, const char* path, uint32_t flags) {
+	if (!pTexture) {
+		// small dummy texture for constructing a DevTexture
+		pTexture = DeviceD3d::CreateTextureFromFile(pThis, pTexture, "data/global/overlay/overlaynitro.dds", flags);
+	}
+
+	size_t dataSize;
+	auto data = ReadTextureDataFromFile(path, &dataSize);
+	if (!data) return nullptr;
+
 	if (CreateCustomTexture(pTexture, data, dataSize, flags)) {
 		delete[] data;
 		return pTexture;

@@ -25,16 +25,48 @@ public:
 	};
 	static inline std::vector<tLoadedTexture> aLoadedTextures;
 
+	static inline std::mutex gLoadedTextureMutex;
+
 	static IDirect3DTexture9* LoadTextureFromBFS(const char* path) {
+		gLoadedTextureMutex.lock();
 		for (auto& tex : aLoadedTextures) {
-			if (tex.path == path) return tex.texture;
+			if (tex.path == path) {
+				gLoadedTextureMutex.unlock();
+				return tex.texture;
+			}
 		}
+		gLoadedTextureMutex.unlock();
 
 		if (auto tex = pDeviceD3d->_vf_CreateTextureFromFile(nullptr, path, 9)) {
+			gLoadedTextureMutex.lock();
 			aLoadedTextures.push_back({path, tex, tex->pD3DTexture});
+			gLoadedTextureMutex.unlock();
 			return tex->pD3DTexture;
 		}
 		return nullptr;
+	}
+
+	static IDirect3DTexture9* LoadTextureFromMemory(std::string path, uint8_t* data, size_t dataSize) {
+		// fix header
+		if (path.ends_with(".dds") && data[0x4C] == 0x18) {
+			data[0x4C] = 0x20;
+		}
+
+		IDirect3DTexture9* tex = nullptr;
+		auto hr = D3DXCreateTextureFromFileInMemory(pDeviceD3d->pD3DDevice, data, dataSize, &tex);
+		if (hr == S_OK) {
+			gLoadedTextureMutex.lock();
+			aLoadedTextures.push_back({path, nullptr, tex});
+			gLoadedTextureMutex.unlock();
+			return tex;
+		}
+		return nullptr;
+	}
+
+	static void PreloadTexture(const std::string& path) {
+		size_t dataSize;
+		auto file = ReadTextureDataFromFile(path.c_str(), &dataSize);
+		std::thread(LoadTextureFromMemory, path, file, dataSize).detach();
 	}
 
 	enum eJustify {

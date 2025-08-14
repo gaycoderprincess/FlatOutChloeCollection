@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <fstream>
+#include <thread>
 #include <d3dx9.h>
 #include "toml++/toml.hpp"
 #include "nya_dx9_hookbase.h"
@@ -33,6 +34,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "carlimitadjuster.h"
 #include "carreset.h"
 #include "careermode.h"
+#include "ddsparser.h"
 #include "hud/common.h"
 #include "hud/ingame.h"
 #include "hud/menu.h"
@@ -43,7 +45,6 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "windowedmode.h"
 #include "profiles.h"
 #include "luafunctions.h"
-#include "ddsparser.h"
 #include "nitrogain.h"
 #include "ultrawide.h"
 #include "debugmenu.h"
@@ -113,7 +114,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			//ApplyUltrawidePatches(); // todo finish this
 			ApplyXInputPatches();
 			CareerMode::Init();
-			ChloeMenuHud::Init();
 			NewGameHud::Init();
 			Achievements::Init();
 
@@ -138,6 +138,11 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			}*/
 
 			// 004E3CDD disable menu ui
+
+			// use multithreaded flag for preloading textures
+			NyaHookLib::Patch(0x505EDE + 1, 0x20 | D3DCREATE_MULTITHREADED);
+			NyaHookLib::Patch(0x505EF9 + 1, 0x40 | D3DCREATE_MULTITHREADED);
+			NyaHookLib::Patch(0x505F00 + 1, 0x50 | D3DCREATE_MULTITHREADED);
 		} break;
 		default:
 			break;

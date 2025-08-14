@@ -30,12 +30,17 @@ public:
 		return i == 0 ? GetStringNarrow(pGameFlow->Profile.wsPlayerName) : aAIPlayerNames[i-1];
 	}
 
-	virtual void Process() {
-		static auto textureLeft = LoadTextureFromBFS("data/menu/cupresultscreenbg_left.png");
-		static auto textureRight = LoadTextureFromBFS("data/menu/cupresultscreenbg_right.png");
+	virtual void Init() {
+		PreloadTexture("data/menu/cupresultscreenbg_left.png");
+		PreloadTexture("data/menu/cupresultscreenbg_right.png");
+	}
 
+	virtual void Process() {
 		if (!bEnabled) return;
 		if (!CareerMode::IsCupActive()) return;
+
+		static auto textureLeft = LoadTextureFromBFS("data/menu/cupresultscreenbg_left.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/cupresultscreenbg_right.png");
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);

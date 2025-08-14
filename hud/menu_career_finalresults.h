@@ -10,14 +10,19 @@ public:
 	static constexpr int nEventsSpacing = 70;
 	static constexpr int nPointsX = 1380;
 
+	virtual void Init() {
+		PreloadTexture("data/menu/final_results_screen_bg_left.png");
+		PreloadTexture("data/menu/final_results_screen_bg_right.png");
+	}
+
 	virtual void Process() {
 		static CNyaTimer gTimer;
 		gTimer.Process();
 
+		if (!bEnabled) return;
+
 		static auto textureLeft = LoadTextureFromBFS("data/menu/final_results_screen_bg_left.png");
 		static auto textureRight = LoadTextureFromBFS("data/menu/final_results_screen_bg_right.png");
-
-		if (!bEnabled) return;
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);

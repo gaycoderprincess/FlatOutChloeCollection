@@ -36,12 +36,12 @@ public:
 	static constexpr tDrawPositions1080p gSkinAuthor = {1716,801,0.035};
 
 	void ProcessSkinSelector() {
+		if (!bEnabled) return;
+		if (!bSkinSelector) return;
+
 		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
 		static auto textureSkinAuthor = LoadTextureFromBFS("data/menu/carselect_skin.png");
 		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
-
-		if (!bEnabled) return;
-		if (!bSkinSelector) return;
 
 		auto menu = pGameFlow->pMenuInterface;
 		if (!menu) return;
@@ -111,10 +111,10 @@ public:
 	}
 
 	void DrawCarLogo() {
+		if (!bEnabled) return;
+
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
 		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/car_logos.bed", "car_logos");
-
-		if (!bEnabled) return;
 
 		if (auto logo = GetHUDData(gCarLogos, std::format("car{}", pGameFlow->pMenuInterface->pMenuScene->nCar))) {
 			DrawRectangle(gCarName.fPosX * GetAspectRatioInv(),
@@ -132,13 +132,21 @@ public:
 		}
 	}
 
+	virtual void Init() {
+		PreloadTexture("data/menu/carselect_left.png");
+		PreloadTexture("data/menu/car_logos.dds");
+		PreloadTexture("data/menu/carselect_right.png");
+		PreloadTexture("data/menu/carselect_skin.png");
+		PreloadTexture("data/menu/carselect_arrows.png");
+	}
+
 	virtual void Process() {
+		if (!bEnabled) return;
+
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
 
 		DrawCarLogo();
 		ProcessSkinSelector();
-
-		if (!bEnabled) return;
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 

@@ -2,12 +2,15 @@ class CMenu_CarDealer_Sell : public CMenu_CarDealer {
 public:
 	virtual const char* GetName() { return "menu_cardealer_sell"; }
 
+	virtual void Init() {
+		PreloadTexture("data/menu/sellcar_left.png");
+	}
+
 	virtual void Process() {
-		static auto textureLeft = LoadTextureFromBFS("data/menu/sellcar_left.png");
-
-		DrawCarLogo();
-
 		if (!bEnabled) return;
+
+		static auto textureLeft = LoadTextureFromBFS("data/menu/sellcar_left.png");
+		DrawCarLogo();
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 

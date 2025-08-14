@@ -46,9 +46,22 @@ public:
 		return str;
 	}
 
+	virtual void Init() {
+		PreloadTexture("data/menu/classicon_1.png");
+		PreloadTexture("data/menu/classicon_2.png");
+		PreloadTexture("data/menu/classicon_3.png");
+		PreloadTexture("data/menu/classicon_1_locked.png");
+		PreloadTexture("data/menu/classicon_2_locked.png");
+		PreloadTexture("data/menu/classicon_3_locked.png");
+		PreloadTexture("data/menu/classselect_bg_left.png");
+		PreloadTexture("data/menu/classselect_bg_right.png");
+	}
+
 	virtual void Process() {
 		static CNyaTimer gTimer;
 		gTimer.Process();
+
+		if (!bEnabled) return;
 
 		static IDirect3DTexture9* textureClass[3] = {
 				LoadTextureFromBFS("data/menu/classicon_1.png"),
@@ -62,8 +75,6 @@ public:
 		};
 		static auto textureLeft = LoadTextureFromBFS("data/menu/classselect_bg_left.png");
 		static auto textureRight = LoadTextureFromBFS("data/menu/classselect_bg_right.png");
-
-		if (!bEnabled) return;
 
 		Menu_CareerCupSelect.nCursorX = 0;
 		Menu_CareerCupSelect.nCursorY = 0;

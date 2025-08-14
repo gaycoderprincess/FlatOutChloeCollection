@@ -22,6 +22,10 @@ namespace ChloeMenuHud {
 	}
 
 	void Init() {
+		static bool bInited = false;
+		if (bInited) return;
+		bInited = true;
+
 		for (auto& hud : CMenuHUDElement::aMenuHUD) {
 			hud->Init();
 		}

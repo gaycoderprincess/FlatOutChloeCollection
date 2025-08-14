@@ -1,4 +1,5 @@
 void HookLoop() {
+	ChloeMenuHud::Init();
 	ChloeMenuHud::OnTick();
 	NewGameHud::OnTick();
 	NewMusicPlayer::OnTick();

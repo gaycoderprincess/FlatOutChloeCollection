@@ -74,9 +74,21 @@ public:
 		}
 	}
 
+	virtual void Init() {
+		PreloadTexture("data/menu/cup_bronze_bg.png");
+		PreloadTexture("data/menu/cup_silver_bg.png");
+		PreloadTexture("data/menu/cup_gold_bg.png");
+		PreloadTexture("data/menu/cupselect_bg_right.png");
+		PreloadTexture("data/menu/track_icons.dds");
+		PreloadTexture("data/menu/track_icons_inactive.dds");
+		PreloadTexture("data/menu/common.dds");
+	}
+
 	virtual void Process() {
 		static CNyaTimer gTimer;
 		gTimer.Process();
+
+		if (!bEnabled) return;
 
 		static IDirect3DTexture9* textureLeft[3] = {
 				LoadTextureFromBFS("data/menu/cup_bronze_bg.png"),
@@ -90,8 +102,6 @@ public:
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
 		static auto trackPlacements = LoadHUDData("data/menu/common.bed", "common");
 
-		if (!bEnabled) return;
-
 		if (nCursorX >= GetCursorLimitX()) nCursorX = 0;
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft[nClass]);
@@ -104,9 +114,10 @@ public:
 		};
 
 		auto careerClass = &CareerMode::aLUACareerClasses[nClass];
+		auto careerSaveClass = &gCustomSave.aCareerClasses[nClass];
 		for (int i = 0; i < careerClass->aCups.size(); i++) {
 			auto cup = &careerClass->aCups[i];
-			auto cupSave = &gCustomSave.aCareerClasses[nClass].aCups[i];
+			auto cupSave = &careerSaveClass->aCups[i];
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
@@ -137,7 +148,7 @@ public:
 		}
 		{
 			auto cup = &careerClass->Finals;
-			auto cupSave = &gCustomSave.aCareerClasses[nClass].Finals;
+			auto cupSave = &careerSaveClass->Finals;
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
@@ -168,7 +179,7 @@ public:
 		}
 		for (int i = 0; i < careerClass->aEvents.size(); i++) {
 			auto cup = &careerClass->aEvents[i];
-			auto cupSave = &gCustomSave.aCareerClasses[nClass].aEvents[i];
+			auto cupSave = &careerSaveClass->aEvents[i];
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
@@ -251,11 +262,11 @@ public:
 			GetStuntTargets(level, targets);
 			if (targets[0]) {
 				if (level == TRACK_BOWLING) {
-					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{} - 1st\n{} - 2nd\n{} - 3rd", targets[0], targets[1], targets[2]),
+					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{} - 1st\n{} - 2nd\n{} - 3rd\n\nPERSONAL BEST: {}", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),
 									&DrawStringFO2_Ingame12);
 				}
 				else {
-					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{}m - 1st\n{}m - 2nd\n{}m - 3rd", targets[0], targets[1], targets[2]),
+					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{}m - 1st\n{}m - 2nd\n{}m - 3rd\n\nPERSONAL BEST: {}m", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),
 									&DrawStringFO2_Ingame12);
 				}
 			}

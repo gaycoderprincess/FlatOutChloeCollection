@@ -43,10 +43,14 @@ public:
 		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", price), &DrawStringFO2_Ingame12);
 	}
 
-	virtual void Process() {
-		static auto textureBg = LoadTextureFromBFS("data/menu/reward_bonus_screen_bg.png");
+	virtual void Init() {
+		PreloadTexture("data/menu/reward_bonus_screen_bg.png");
+	}
 
+	virtual void Process() {
 		if (!bEnabled) return;
+
+		static auto textureBg = LoadTextureFromBFS("data/menu/reward_bonus_screen_bg.png");
 
 		Draw1080pSprite(JUSTIFY_CENTER, 0, 1920, 0, 1080, {255,255,255,255}, textureBg);
 
