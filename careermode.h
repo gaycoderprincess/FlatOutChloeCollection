@@ -2,6 +2,7 @@ namespace CareerMode {
 	bool bWasCareerCupJustFinished = false;
 	std::string sLastCupName;
 	int nLastCupNumRaces;
+	int nLastCupAward;
 
 	struct tLUAClass {
 		struct tCup {
@@ -173,11 +174,13 @@ namespace CareerMode {
 
 		sLastCupName = cup->sName;
 		nLastCupNumRaces = cup->aRaces.size();
+		nLastCupAward = 0;
 		if (nLastCupNumRaces > 1) {
 			bWasCareerCupJustFinished = true;
 		}
 
 		if (playerPosition >= 1 && playerPosition <= 3) {
+			nLastCupAward = cup->aCupWinnings[playerPosition-1];
 			pGameFlow->Profile.nMoney += cup->aCupWinnings[playerPosition-1];
 			pGameFlow->Profile.nMoneyGained += cup->aCupWinnings[playerPosition-1];
 		}

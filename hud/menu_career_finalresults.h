@@ -5,6 +5,7 @@ public:
 	static constexpr tDrawPositions1080p gTitle = {1740,230,0.04};
 	static constexpr tDrawPositions1080p gCupName = {1740,275,0.02};
 	static constexpr tDrawPositions1080p gFinishString = {1740,325,0.04};
+	static constexpr tDrawPositions1080p gRewardString = {1740,803,0.04};
 	static constexpr tDrawPositions1080p gWinCounts = {1800,410,0.05,0,80};
 	static constexpr int nEventsX = 630;
 	static constexpr int nEventsSpacing = 70;
@@ -96,6 +97,10 @@ public:
 			data.y = gFinishString.nPosY;
 			data.size = gFinishString.fSize;
 			Draw1080pString(JUSTIFY_RIGHT, data, placementStrings[playerPosition], &DrawStringFO2_Ingame12);
+			data.x = gRewardString.nPosX;
+			data.y = gRewardString.nPosY;
+			data.size = gRewardString.fSize;
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("Reward: ${}", CareerMode::nLastCupAward), &DrawStringFO2_Ingame12);
 		}
 		for (int i = 0; i < 3; i++) {
 			data.x = gWinCounts.nPosX;
