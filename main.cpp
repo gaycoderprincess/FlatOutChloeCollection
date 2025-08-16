@@ -9,6 +9,7 @@
 
 #include "fo1.h"
 #include "../nya-common-fouc/fo2versioncheck.h"
+#include "../FlatOutTimeTrialGhosts/include/chloetimetrial.h"
 #include "chloemenulib.h"
 
 void WriteLog(const std::string& str) {
@@ -51,26 +52,32 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "debugmenu.h"
 
 void SetHandlingDamage() {
-	if (nHandlingDamage == HANDLINGDAMAGE_ON) return;
+	int handlingDamage = nHandlingDamage;
+	if (CareerMode::IsCareerTimeTrial()) handlingDamage = HANDLINGDAMAGE_REDUCED;
+
+	if (handlingDamage == HANDLINGDAMAGE_ON) return;
 	if (pLoadingScreen) return;
 	if (GetGameState() != GAME_STATE_RACE) return;
 
 	auto ply = GetPlayer(0);
 	if (!ply) return;
 	ply->pCar->FixPart(eCarFixPart::SUSPENSION);
-	if (nHandlingDamage == HANDLINGDAMAGE_OFF) {
+	if (handlingDamage == HANDLINGDAMAGE_OFF) {
 		ply->pCar->FixPart(eCarFixPart::WHEELS);
 	}
 }
 
 void SetHandlingMode() {
+	int handlingMode = nHandlingMode;
+	if (CareerMode::IsCareerTimeTrial()) handlingMode = HANDLING_NORMAL;
+
 	static int nLast = -1;
-	if (nLast != nHandlingMode) {
-		NyaHookLib::Patch<uint64_t>(0x418B39, nHandlingMode == HANDLING_HARDCORE ? 0x86D9900000038DE9 : 0x86D90000038C840F);
-		NyaHookLib::Patch<uint64_t>(0x419211, nHandlingMode == HANDLING_HARDCORE ? 0x44D990000003D7E9 : 0x44D9000003D6850F);
-		nLast = nHandlingMode;
+	if (nLast != handlingMode) {
+		NyaHookLib::Patch<uint64_t>(0x418B39, handlingMode == HANDLING_HARDCORE ? 0x86D9900000038DE9 : 0x86D90000038C840F);
+		NyaHookLib::Patch<uint64_t>(0x419211, handlingMode == HANDLING_HARDCORE ? 0x44D990000003D7E9 : 0x44D9000003D6850F);
+		nLast = handlingMode;
 	}
-	pGameFlow->Profile.nEasyDifficulty = nHandlingMode == HANDLING_NORMAL;
+	pGameFlow->Profile.nEasyDifficulty = handlingMode == HANDLING_NORMAL;
 }
 
 void CustomSetterThread() {

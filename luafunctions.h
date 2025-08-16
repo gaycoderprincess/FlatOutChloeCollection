@@ -129,6 +129,11 @@ int ChloeCareer_SetIsCareerRace(void* a1) {
 	return 0;
 }
 
+int ChloeCareer_SetIsCareerTimeTrial(void* a1) {
+	CareerMode::SetIsCareerModeTimeTrial((int)luaL_checknumber(a1, 1));
+	return 0;
+}
+
 int ChloeCareer_WasCareerRace(void* a1) {
 	lua_pushboolean(a1, CareerMode::bLastRaceCareerRace);
 	return 1;
@@ -524,9 +529,10 @@ int ChloeCareerDefs_AddTimeTrial(void* a1) {
 	CareerMode::tLUAClass::tCup::tRace race;
 	race.nLevel = luaL_checknumber(a1, 1);
 	race.nLaps = luaL_checknumber(a1, 2);
-	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
+	race.nAIHandicapLevel = 1;
 	race.bIsDerby = false;
 	race.bIsTimeTrial = true;
+	race.nTimeTrialCar = luaL_checknumber(a1, 3);
 	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
 	return 0;
 }
@@ -747,6 +753,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_StartEvent, "ChloeCareer_StartEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_ResignCup, "ChloeCareer_ResignCup");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_SetIsCareerRace, "ChloeCareer_SetIsCareerRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_SetIsCareerTimeTrial, "ChloeCareer_SetIsCareerTimeTrial");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerRace, "ChloeCareer_WasCareerRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerRaceFinished, "ChloeCareer_WasCareerRaceFinished");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_WasCareerCupJustFinished, "ChloeCareer_WasCareerCupJustFinished");
@@ -804,7 +811,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");
 	RegisterLUAEnum(a1, HANDLING_HARDCORE, "HANDLING_HARDCORE");
 
-	static auto sVersionString = "Chloe's Collection v1.00 - Flat-Out Edition";
+	static auto sVersionString = "Chloe Collection v1.04 - Time Trial Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
 	lua_setglobal(a1, sVersionString);
 	lua_settable(a1, LUA_ENVIRONINDEX);

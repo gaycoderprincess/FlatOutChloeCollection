@@ -27,7 +27,19 @@ NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
 			{2,8,10,255}, // Seth Bellinger
 	};
 
+	NyaDrawing::CNyaRGBA32 aPlayerColorsTimeTrial[] = {
+			{255,255,255,255},
+			{236,221,16,255}, // gold
+			{186,186,186,255}, // silver
+			{175,100,0,255}, // bronze
+			{30,160,0,255}, // author
+			{219,100,193,255}, // super author
+	};
+
 	int id = ply->nPlayerId - 1;
+	if (CareerMode::IsCareerTimeTrial()) {
+		if (id >= 0 && id <= sizeof(aPlayerColorsTimeTrial) / sizeof(aPlayerColorsTimeTrial[0])) return aPlayerColorsTimeTrial[id];
+	}
 	if (id >= 0 && id <= sizeof(aPlayerColors) / sizeof(aPlayerColors[0])) return aPlayerColors[id];
 	return aPlayerColors[0];
 }

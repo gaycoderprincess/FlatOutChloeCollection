@@ -12,6 +12,7 @@ namespace CareerMode {
 				int nAIHandicapLevel; // NOTE this can be -1 for derbies!!
 				bool bIsDerby : 1;
 				bool bIsTimeTrial : 1;
+				int nTimeTrialCar;
 			};
 
 			std::string sName;
@@ -57,7 +58,9 @@ namespace CareerMode {
 		return &aLUACareerClasses[gCustomSave.nCareerClass-1].aCups[gCustomSave.nCareerCup-1];
 	}
 
-	auto GetCurrentRace() {
+	tLUAClass::tCup::tRace* GetCurrentRace() {
+		auto cup = GetCurrentCup();
+		if (!cup) return nullptr;
 		return &GetCurrentCup()->aRaces[gCustomSave.nCareerCupNextEvent];
 	}
 
@@ -97,6 +100,11 @@ namespace CareerMode {
 		NyaHookLib::Patch<uint64_t>(0x43BD79, apply ? 0x418B909090909090 : 0x418B000000EC840F); // use custom upgrades
 		//SetCareerAIUpgrades(bNextRaceCareerRace ? GetCurrentCup()->nAIUpgradeLevel : 0);
 		//NyaHookLib::WriteString(0x65F650, "MaxSettings");
+	}
+
+	void SetIsCareerModeTimeTrial(bool apply) {
+		bNextRaceCareerRace = apply;
+		if (!apply) bIsCareerRace = false;
 	}
 
 	int GetCrashBonusPrice(int type) {
@@ -251,7 +259,20 @@ namespace CareerMode {
 		}
 	}
 
+	bool IsCareerTimeTrial() {
+		if ((bNextRaceCareerRace || bIsCareerRace) && GetCurrentRace() && GetCurrentRace()->bIsTimeTrial) {
+			return true;
+		}
+		return false;
+	}
+
 	void OnTick() {
+		if (IsCareerTimeTrial()) {
+			if (auto ply = GetPlayer(0)) {
+				ply->nStartPosition = 1;
+			}
+		}
+
 		if (pLoadingScreen) return;
 		int gameState = GetGameState();
 		if (gameState == GAME_STATE_RACE || gameState == GAME_STATE_REPLAY) {

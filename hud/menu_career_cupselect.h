@@ -23,6 +23,8 @@ public:
 	static constexpr tDrawPositions1080p gEvents = {1530, 435, 0.04, 0, 45};
 	static constexpr tDrawPositions1080p gEventsTitle = {1505, 285, 0.04};
 
+	bool bCursorJustMoved = false;
+
 	int nClass = 0;
 	int nCursorX = 0;
 	int nCursorY = 0;
@@ -34,18 +36,22 @@ public:
 	}
 
 	virtual void MoveLeft() {
+		bCursorJustMoved = true;
 		nCursorX--;
 		if (nCursorX < 0) nCursorX = 0;
 	}
 	virtual void MoveRight() {
+		bCursorJustMoved = true;
 		nCursorX++;
 		if (nCursorX >= GetCursorLimitX()) nCursorX = GetCursorLimitX()-1;
 	}
 	virtual void MoveUp() {
+		bCursorJustMoved = true;
 		nCursorY--;
 		if (nCursorY < 0) nCursorY = 0;
 	}
 	virtual void MoveDown() {
+		bCursorJustMoved = true;
 		nCursorY++;
 		if (nCursorY > 2) nCursorY = 2;
 	}
@@ -101,6 +107,7 @@ public:
 		static auto texturePlacements = LoadTextureFromBFS("data/menu/common.dds");
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
 		static auto trackPlacements = LoadHUDData("data/menu/common.bed", "common");
+		static std::string sEventDescription;
 
 		if (nCursorX >= GetCursorLimitX()) nCursorX = 0;
 
@@ -257,16 +264,50 @@ public:
 			data.x = hud.nPosX;
 			data.y = hud.nPosY;
 			data.size = hud.fSize;
-			int level = cup->aRaces[0].nLevel;
-			int targets[3] = {0,0,0};
-			GetStuntTargets(level, targets);
-			if (targets[0]) {
-				if (level == TRACK_BOWLING) {
-					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{} - 1st\n{} - 2nd\n{} - 3rd\n\nPERSONAL BEST: {}", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),
-									&DrawStringFO2_Ingame12);
+			if (cup->aRaces[0].bIsTimeTrial) {
+				if (bCursorJustMoved) {
+					bCursorJustMoved = false;
+
+					int targets[5] = {};
+					ChloeTimeTrial::GetCareerMedalTimes(cup->aRaces[0].nLevel, cup->aRaces[0].nTimeTrialCar-1, targets);
+					std::string targetStrings[] = {
+							GetTimeFromMilliseconds(targets[0], true),
+							GetTimeFromMilliseconds(targets[1], true),
+							GetTimeFromMilliseconds(targets[2], true),
+					};
+					for (auto& str : targetStrings) {
+						str.pop_back();
+					}
+					auto pb = ChloeTimeTrial::GetCareerPBTime(cup->aRaces[0].nLevel, cup->aRaces[0].nTimeTrialCar-1);
+					std::string pbString = pb != UINT_MAX ? GetTimeFromMilliseconds(pb, true) : "N/A.";
+					pbString.pop_back();
+					if (targets[3] != UINT_MAX) {
+						auto authorString = GetTimeFromMilliseconds(targets[3], true);
+						authorString.pop_back();
+						sEventDescription = std::format("TARGETS\nAUTHOR - {}\nGOLD - {}\nSILVER - {}\nBRONZE - {}\n\nPERSONAL BEST: {}", authorString, targetStrings[0], targetStrings[1], targetStrings[2], pbString);
+					}
+					else {
+						sEventDescription = std::format("TARGETS\nGOLD - {}\nSILVER - {}\nBRONZE - {}\n\nPERSONAL BEST: {}", targetStrings[0], targetStrings[1], targetStrings[2], pbString);
+					}
+				}
+				Draw1080pString(JUSTIFY_RIGHT, data, sEventDescription, &DrawStringFO2_Ingame12);
+			}
+			else {
+				int level = cup->aRaces[0].nLevel;
+				int targets[3] = {0,0,0};
+				GetStuntTargets(level, targets);
+				if (targets[0]) {
+					if (level == TRACK_BOWLING) {
+						Draw1080pString(JUSTIFY_RIGHT, data, std::format("TARGETS\n{} - 1st\n{} - 2nd\n{} - 3rd\n\nPERSONAL BEST: {}", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),
+										&DrawStringFO2_Ingame12);
+					}
+					else {
+						Draw1080pString(JUSTIFY_RIGHT, data, std::format("TARGETS\n{}m - 1st\n{}m - 2nd\n{}m - 3rd\n\nPERSONAL BEST: {}m", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),
+										&DrawStringFO2_Ingame12);
+					}
 				}
 				else {
-					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n{}m - 1st\n{}m - 2nd\n{}m - 3rd\n\nPERSONAL BEST: {}m", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),
+					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n1st - ${}\n2nd - ${}\n3rd - ${}", cup->aCupWinnings[0], cup->aCupWinnings[1], cup->aCupWinnings[2]),
 									&DrawStringFO2_Ingame12);
 				}
 			}
