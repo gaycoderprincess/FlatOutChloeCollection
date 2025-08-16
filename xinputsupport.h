@@ -17,21 +17,21 @@ double fTimeSincePaused = 0;
 
 bool __thiscall IsMenuInputJustPressedNew(Controller* pThis, int input) {
 	auto orig = Controller::IsMenuInputJustPressed(pThis, input);
-	if (orig) return orig;
+	if (orig || !nControllerSupport) return orig;
 
-	if (input == 10) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_UP); }
-	if (input == 11) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_DOWN); }
-	if (input == 12) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_LEFT); }
-	if (input == 13) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_RIGHT); }
-	if (input == 8) { return IsPadKeyJustPressed(NYA_PAD_KEY_START); }
-	if (input == 0) { return IsPadKeyJustPressed(NYA_PAD_KEY_A); }
-	if (input == 9) { return IsPadKeyJustPressed(NYA_PAD_KEY_B); }
+	if (input == CONTROLLER_BUTTON_UP) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_UP); }
+	if (input == CONTROLLER_BUTTON_DOWN) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_DOWN); }
+	if (input == CONTROLLER_BUTTON_LEFT) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_LEFT); }
+	if (input == CONTROLLER_BUTTON_RIGHT) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_RIGHT); }
+	if (input == CONTROLLER_BUTTON_START) { return IsPadKeyJustPressed(NYA_PAD_KEY_START); }
+	if (input == CONTROLLER_BUTTON_A) { return IsPadKeyJustPressed(NYA_PAD_KEY_A); }
+	if (input == CONTROLLER_BUTTON_SELECT) { return IsPadKeyJustPressed(NYA_PAD_KEY_B); }
 	return false;
 }
 
 bool __thiscall IsGameInputJustPressedNew(Controller* pThis, int input) {
 	auto orig = Controller::IsGameInputJustPressed(pThis, input);
-	if (orig) return orig;
+	if (orig || !nControllerSupport) return orig;
 
 	if (input == 9) { return IsPadKeyJustPressed(NYA_PAD_KEY_START); } // pause
 	if (input == 3) { return IsPadKeyJustPressed(NYA_PAD_KEY_X); } // camera
@@ -44,7 +44,7 @@ bool __thiscall IsGameInputJustPressedNew(Controller* pThis, int input) {
 int __thiscall GetAnalogInputNew(Controller* pThis, int input, float* out) {
 	*out = 0.0;
 	Controller::GetAnalogInput(pThis, input, out);
-	if (*out != 0.0) return 0;
+	if (*out != 0.0 || !nControllerSupport) return *out != 0.0;
 
 	//if (aPressedAnalog[input]) { *out = 1.0; }
 	if (input == 0) { *out = GetPadKeyState(NYA_PAD_KEY_LSTICK_X) / 32767.0; } // steer
@@ -55,7 +55,7 @@ int __thiscall GetAnalogInputNew(Controller* pThis, int input, float* out) {
 
 int __thiscall GetInputValueNew(Controller* pThis, int input) {
 	auto orig = Controller::GetInputValue(pThis, input);
-	if (orig) return orig;
+	if (orig || !nControllerSupport) return orig;
 
 	//if (aPressedDigital[input]) return 255;
 	if (input == 0) return GetPadKeyState(NYA_PAD_KEY_B); // handbrake

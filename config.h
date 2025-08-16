@@ -22,6 +22,7 @@ uint32_t nHandlingMode = HANDLING_NORMAL;
 uint32_t nPlayerListDefaultState = 1;
 uint32_t nFO2CarsEnabled = 1;
 uint32_t nShowBonus = 1;
+uint32_t nControllerSupport = 1;
 
 namespace CareerMode {
 	bool bIsCareerRace = false;
