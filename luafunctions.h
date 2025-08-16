@@ -382,6 +382,11 @@ int ChloeCollection_SetLoadingScreenTexture(void* a1) {
 	return 0;
 }
 
+int ChloeCollection_SetNumLaps(void* a1) {
+	CareerMode::nForceNumLaps = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int ChloeCareer_IsCupActive(void* a1) {
 	lua_pushboolean(a1, CareerMode::IsCupActive());
 	return 1;
@@ -732,6 +737,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetDealerCarCamera, "ChloeCollection_GetDealerCarCamera");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetCarClass, "ChloeCollection_GetCarClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetLoadingScreenTexture, "ChloeCollection_SetLoadingScreenTexture");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetNumLaps, "ChloeCollection_SetNumLaps");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_IsCupActive, "ChloeCareer_IsCupActive");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetCurrentClass, "ChloeCareer_GetCurrentClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetCurrentCup, "ChloeCareer_GetCurrentCup");

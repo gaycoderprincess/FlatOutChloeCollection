@@ -27,7 +27,7 @@ public:
 	static constexpr float fEventDescSize = 0.036;
 
 	static std::string GetPlayerName(int i) {
-		return i == 0 ? GetStringNarrow(pGameFlow->Profile.wsPlayerName) : aAIPlayerNames[i-1];
+		return i == 0 ? GetStringNarrow(pGameFlow->Profile.sPlayerName) : aAIPlayerNames[i-1];
 	}
 
 	virtual void Init() {

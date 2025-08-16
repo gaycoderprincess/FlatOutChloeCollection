@@ -51,14 +51,6 @@ namespace CareerMode {
 	tPlayerResult aPlayerResults[nNumCareerMaxPlayers];
 	bool bPlayerResultsApplied = false;
 
-	void SetIsCareerMode(bool apply) {
-		bNextRaceCareerRace = apply;
-		if (!apply) bIsCareerRace = false;
-		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
-		NyaHookLib::Patch<uint8_t>(0x431B08, apply ? 0xEB : 0x75); // don't null upgrades
-		NyaHookLib::Patch<uint64_t>(0x43BD79, apply ? 0x418B909090909090 : 0x418B000000EC840F); // use custom upgrades
-	}
-
 	auto GetCurrentCup() {
 		if (gCustomSave.nCareerEvent > 0) return &aLUACareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerEvent-1];
 		if (gCustomSave.nCareerCup == 64) return &aLUACareerClasses[gCustomSave.nCareerClass-1].Finals;
@@ -83,6 +75,28 @@ namespace CareerMode {
 	tCustomSaveStructure::tCareerClass::tCareerEvent* GetCurrentSaveEvent() {
 		if (gCustomSave.nCareerEvent == 0) return nullptr;
 		return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerEvent-1];
+	}
+
+	void SetCareerAIUpgrades(int id) {
+		if (id <= 2) {
+			NyaHookLib::Patch(0x43EFF0 + 3, 0);
+		}
+		else if (id <= 4) {
+			NyaHookLib::Patch(0x43EFF0 + 3, 1); // medium
+		}
+		else {
+			NyaHookLib::Patch(0x43EFF0 + 3, 2); // full
+		}
+	}
+
+	void SetIsCareerMode(bool apply) {
+		bNextRaceCareerRace = apply;
+		if (!apply) bIsCareerRace = false;
+		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
+		NyaHookLib::Patch<uint8_t>(0x431B08, apply ? 0xEB : 0x75); // don't null upgrades
+		NyaHookLib::Patch<uint64_t>(0x43BD79, apply ? 0x418B909090909090 : 0x418B000000EC840F); // use custom upgrades
+		//SetCareerAIUpgrades(bNextRaceCareerRace ? GetCurrentCup()->nAIUpgradeLevel : 0);
+		//NyaHookLib::WriteString(0x65F650, "MaxSettings");
 	}
 
 	int GetCrashBonusPrice(int type) {
@@ -319,9 +333,16 @@ namespace CareerMode {
 		return 1;
 	}
 
+	int nForceNumLaps = -1;
+
 	int __stdcall GetNumLapsNew(GameFlow* gameFlow) {
 		if (bNextRaceCareerRace) {
 			return GetCurrentRace()->nLaps;
+		}
+		if (nForceNumLaps > 0) {
+			auto value = nForceNumLaps;
+			nForceNumLaps = -1;
+			return value;
 		}
 
 		int level = gameFlow->nLevel;

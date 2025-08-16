@@ -99,6 +99,7 @@ void ProcessCrashBonuses() {
 	static bool isRagdolled[32] = {};
 
 	auto ply = GetPlayer(playerId);
+	if (!ply) return;
 	if (IsPlayerWrecked(ply)) return;
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
