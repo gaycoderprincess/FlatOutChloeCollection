@@ -53,6 +53,10 @@ namespace NewGameHud {
 	float fMusicPlayer480 = 480 + fMusicPlayerOffset;
 	float fMusicPlayer428 = 428 + fMusicPlayerOffset;
 	void Init() {
+		static bool bInited = false;
+		if (bInited) return;
+		bInited = true;
+
 		for (auto& hud : CIngameHUDElement::aGameHUD) {
 			hud->Init();
 		}

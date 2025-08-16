@@ -118,6 +118,11 @@ public:
 		}
 	}
 
+	virtual void Init() {
+		PreloadTexture("data/global/overlay/ai_damage_meter.png");
+		PreloadTexture("data/global/overlay/ai_damage_meter_glow.png");
+		PreloadTexture("data/global/overlay/ai_damage_meter_bg.png");
+	}
 	virtual void Reset() {
 		memset(fHealthBarAlpha,0,sizeof(fHealthBarAlpha));
 		memset(fHealthBarGlow,0,sizeof(fHealthBarGlow));
@@ -126,9 +131,9 @@ public:
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
 
-		static auto ai_damage_meter = LoadTextureFromBFS("data/menu/ai_damage_meter.png");
-		static auto ai_damage_meter_glow = LoadTextureFromBFS("data/menu/ai_damage_meter_glow.png");
-		static auto ai_damage_meter_bg = LoadTextureFromBFS("data/menu/ai_damage_meter_bg.png");
+		static auto ai_damage_meter = LoadTextureFromBFS("data/global/overlay/ai_damage_meter.png");
+		static auto ai_damage_meter_glow = LoadTextureFromBFS("data/global/overlay/ai_damage_meter_glow.png");
+		static auto ai_damage_meter_bg = LoadTextureFromBFS("data/global/overlay/ai_damage_meter_bg.png");
 
 		ProcessHealthBarAlpha();
 

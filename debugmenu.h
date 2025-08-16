@@ -117,6 +117,8 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gRewardString", Menu_CareerFinalResults.gRewardString, false);
 	//ChloeMenuHud::EnterMenu(&Menu_Career_Unlock);
 
+	QuickValueEditor("fIngameMapSize", fIngameMapSize);
+
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 
 	if (DrawMenuOption("Achievements")) {

@@ -60,6 +60,7 @@ uint8_t* ReadTextureDataFromFile(const char* _path, size_t* outSize) {
 	*outSize = file.pFileCodec->GetFileSize();
 
 	auto data = new uint8_t[*outSize];
+	memset(data, 0, *outSize);
 	file.pFileCodec->ReadBytes(data, *outSize);
 	return data;
 }

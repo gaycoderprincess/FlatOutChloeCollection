@@ -1,6 +1,18 @@
+bool bIsDrawingMap = false;
+void DrawIngameMap();
+
 void HookLoop() {
+	if (bIsDrawingMap) {
+		DrawIngameMap();
+		bDontRefreshInputsThisLoop = true;
+		CommonMain();
+		bIsDrawingMap = false;
+		return;
+	}
+
 	ChloeMenuHud::Init();
 	ChloeMenuHud::OnTick();
+	NewGameHud::Init();
 	NewGameHud::OnTick();
 	NewMusicPlayer::OnTick();
 	Achievements::OnTick();

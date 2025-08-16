@@ -64,8 +64,9 @@ public:
 	}
 
 	static void PreloadTexture(const std::string& path) {
-		size_t dataSize;
+		size_t dataSize = 0;
 		auto file = ReadTextureDataFromFile(path.c_str(), &dataSize);
+		if (dataSize <= 0x4C) return;
 		std::thread(LoadTextureFromMemory, path, file, dataSize).detach();
 	}
 

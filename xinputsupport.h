@@ -84,5 +84,5 @@ void ApplyXInputPatches() {
 	NyaHookLib::Patch(0x667498, &IsGameInputJustPressedNew);
 	NyaHookLib::Patch(0x66749C, &GetInputValueNew);
 	NyaHookLib::Patch(0x6674B0, &GetAnalogInputNew);
-	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4F13EB, 0x4F147D); // never allocate more controllers
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4F13D3, 0x4F147D); // never allocate more controllers
 }
