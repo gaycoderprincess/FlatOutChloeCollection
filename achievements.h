@@ -149,6 +149,11 @@ namespace Achievements {
 		}
 	}
 
+	void Delete(int saveSlot) {
+		if (!std::filesystem::exists(GetAchievementSavePath(saveSlot))) return;
+		std::filesystem::remove(GetAchievementSavePath(saveSlot));
+	}
+
 	std::vector<CAchievement*> aUnlockBuffer;
 	auto gFailAchievement = CAchievement("ERROR", "ERROR", "ERROR", 0);
 

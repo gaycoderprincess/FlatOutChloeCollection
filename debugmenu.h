@@ -115,6 +115,7 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gUnlockSubtitle", Menu_Career_Unlock.gUnlockSubtitle, false);
 	//QuickValueEditor("gBottomTitle", Menu_Career_Unlock.gBottomTitle, false);
 	//QuickValueEditor("gRewardString", Menu_CareerFinalResults.gRewardString, false);
+	//QuickValueEditor("fSpacingX", HUD_PlayerList.fSpacingX);
 	//ChloeMenuHud::EnterMenu(&Menu_Career_Unlock);
 
 	QuickValueEditor("fIngameMapSize", fIngameMapSize);

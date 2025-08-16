@@ -3,6 +3,7 @@ void DoGameSave();
 namespace Achievements {
 	void Load(int saveSlot);
 	void Save(int saveSlot);
+	void Delete(int saveSlot);
 }
 
 const int nNumCareerClasses = 4;
@@ -180,6 +181,7 @@ struct tCustomSaveStructure {
 		if (std::filesystem::exists(save)) {
 			std::filesystem::remove(save);
 		}
+		Achievements::Delete(slot+1);
 	}
 } gCustomSave;
 

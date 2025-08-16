@@ -4,6 +4,7 @@ public:
 	static constexpr float fPosY = 0.3;
 	static constexpr float fSize = 0.038;
 	static constexpr float fSpacing = 0.03;
+	static constexpr float fSpacingX = 0.006;
 
 	// from easing-functions by nicolausYes
 	static double easeInOutQuart(double t) {
@@ -45,8 +46,8 @@ public:
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetScoreManager()->aScores[i];
 			if (!ply) continue;
-			auto string = GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get());
-			string = std::format("{}. {}", ply->nPosition, string);
+			auto string1 = std::format("{}.", ply->nPosition);
+			auto string2 = std::format("{}", GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get()));
 			if (ply->nPlayerId == 0) {
 				data.SetColor(GetPaletteColor(18));
 			}
@@ -56,7 +57,12 @@ public:
 			if (ply->bIsDNF) {
 				data.SetColor(64,64,64,255);
 			}
-			DrawStringFO2_Ingame12(data, string);
+			data.XRightAlign = true;
+			DrawStringFO2_Ingame12(data, string1);
+			data.x += fSpacingX * GetAspectRatioInv();
+			data.XRightAlign = false;
+			DrawStringFO2_Ingame12(data, string2);
+			data.x -= fSpacingX * GetAspectRatioInv();
 			data.y += fSpacing;
 		}
 	}
