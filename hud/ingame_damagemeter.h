@@ -214,6 +214,7 @@ const char* GetCrashBonusName(int type) {
 	case CRASHBONUS_WRECKED:
 		return "WRECKED!";
 	}
+	return nullptr;
 }
 
 void AddCrashBonus(int playerId, int type) {

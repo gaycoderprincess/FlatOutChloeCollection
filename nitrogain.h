@@ -20,11 +20,11 @@ void ProcessNitroGain() {
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
 		if (ply->pCar->fTimeInAir >= fNitroAirtimeTolerance) {
-			ply->pCar->fNitro += fNitroAirtimeRate * gTimer.fDeltaTime;
-			if (ply->pCar->fNitro >= ply->pCar->fMaxNitro) ply->pCar->fNitro = ply->pCar->fMaxNitro;
+			ply->pCar->GetNitro() += fNitroAirtimeRate * gTimer.fDeltaTime;
+			if (ply->pCar->GetNitro() >= ply->pCar->GetMaxNitro()) ply->pCar->GetNitro() = ply->pCar->GetMaxNitro();
 		}
 		if (bNitroRegen && pPlayerHost->nRaceTime > 5000 && ply->fNitroButton <= 0.0) {
-			ply->pCar->fNitro += fNitroRegenerationRate * GetPlayerScore<PlayerScoreRace>(ply->nPlayerId)->nPosition * gTimer.fDeltaTime;
+			ply->pCar->GetNitro() += fNitroRegenerationRate * GetPlayerScore<PlayerScoreRace>(ply->nPlayerId)->nPosition * gTimer.fDeltaTime;
 		}
 		// make AI use nitro
 		if (ply->nPlayerType == PLAYERTYPE_AI) {
@@ -32,21 +32,21 @@ void ProcessNitroGain() {
 			for (int j = 0; j < 10; j++) {
 				propNitro += ply->pCar->aObjectsSmashed[j] * fBonusTypeMayhem[j];
 			}
-			ply->pCar->fNitro += (ply->fNitroFromPropsLast = (propNitro - ply->fNitroFromPropsTotal));
+			ply->pCar->GetNitro() += (ply->fNitroFromPropsLast = (propNitro - ply->fNitroFromPropsTotal));
 			ply->fNitroFromPropsTotal = propNitro;
 
 			for (auto& collision : ply->pCar->aCarCollisions) {
 				if (collision.damage > 0.0) {
-					ply->pCar->fNitro += collision.damage * ply->pCar->fMaxNitro;
+					ply->pCar->GetNitro() += collision.damage * ply->pCar->GetMaxNitro();
 					collision.damage = 0.0;
 				}
 			}
 
 			//ply->fNitroButton = ply->pCar->fNitroButton = ply->fGasPedal >= 0.9 && ply->fBrakePedal <= 0.1;
-			ply->fNitroButton = ply->pCar->fNitroButton = ply->pCar->fNitro > 0.5 && ply->pCar->GetVelocity()->length() > 10 && ply->fGasPedal >= 0.5 && ply->fBrakePedal <= 0.1;
+			ply->fNitroButton = ply->pCar->fNitroButton = ply->pCar->GetNitro() > 0.5 && ply->pCar->GetVelocity()->length() > 10 && ply->fGasPedal >= 0.5 && ply->fBrakePedal <= 0.1;
 		}
 
-		if (ply->pCar->fNitro >= ply->pCar->fMaxNitro) ply->pCar->fNitro = ply->pCar->fMaxNitro;
+		if (ply->pCar->GetNitro() >= ply->pCar->GetMaxNitro()) ply->pCar->GetNitro() = ply->pCar->GetMaxNitro();
 	}
 }
 

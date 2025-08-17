@@ -228,41 +228,23 @@ namespace NewMusicPlayer {
 	}
 
 	bool LoadPlaylist(tPlaylist* out, const char* fileName) {
-		size_t size;
-
-		auto file = (char*)ReadFileFromBfs(std::format("data/music/{}.toml", fileName).c_str(), size);
-		if (!file) return false;
-		if (file[size-2] == '\r') file[size-2]=0;
-		file[size-1]=0;
-
-		std::stringstream ss;
-		ss << file;
-		delete[] file;
-
-		try {
-			auto config = toml::parse(ss);
-			int count = config["Playlist"]["Count"].value_or(0);
-			for (int i = 0; i < count; i++) {
-				tSong song;
-				auto name = std::format("Song{}", i+1);
-				song.sPath = config["Playlist"][name]["File"].value_or("");
-				song.sArtist = config["Playlist"][name]["Artist"].value_or("");
-				song.sTitle = config["Playlist"][name]["Song"].value_or("");
-				song.wsArtist = config["Playlist"][name]["Artist"].value_or(L"");
-				song.wsTitle = config["Playlist"][name]["Song"].value_or(L"");
-				song.nStartPos = config["Playlist"][name]["StartPos"].value_or(0);
-				if (song.sPath.empty()) continue;
-				if (song.sArtist.empty()) continue;
-				if (song.sTitle.empty()) continue;
-				out->aSongs.push_back(song);
-			}
-			return !out->aSongs.empty();
+		auto config = ReadTOMLFromBfs(std::format("data/music/{}.toml", fileName).c_str());
+		int count = config["Playlist"]["Count"].value_or(0);
+		for (int i = 0; i < count; i++) {
+			tSong song;
+			auto name = std::format("Song{}", i+1);
+			song.sPath = config["Playlist"][name]["File"].value_or("");
+			song.sArtist = config["Playlist"][name]["Artist"].value_or("");
+			song.sTitle = config["Playlist"][name]["Song"].value_or("");
+			song.wsArtist = config["Playlist"][name]["Artist"].value_or(L"");
+			song.wsTitle = config["Playlist"][name]["Song"].value_or(L"");
+			song.nStartPos = config["Playlist"][name]["StartPos"].value_or(0);
+			if (song.sPath.empty()) continue;
+			if (song.sArtist.empty()) continue;
+			if (song.sTitle.empty()) continue;
+			out->aSongs.push_back(song);
 		}
-		catch (const toml::parse_error& err) {
-			MessageBoxA(0, std::format("Failed to parse {}: {}", fileName, err.what()).c_str(), "Fatal error", MB_ICONERROR);
-		}
-
-		return false;
+		return !out->aSongs.empty();
 	}
 
 	void LoadPlaylistConfig() {

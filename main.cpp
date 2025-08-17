@@ -29,6 +29,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "config.h"
 #include "customsave.h"
 #include "cardealer.h"
+#include "cardatabase.h"
 #include "achievements.h"
 #include "customsettings.h"
 #include "cardamage.h"
@@ -94,6 +95,11 @@ void CustomSetterThread() {
 	ProcessNitroGain();
 }
 
+void OnFilesystemInit() {
+	NewMusicPlayer::Init();
+	ApplyCarDealerPatches();
+}
+
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
@@ -115,9 +121,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyDebugMenuPatches();
 			ApplyCustomSettingsPatches();
 			ApplyCarLimitAdjusterPatches();
-			ApplyCarDealerPatches();
 			ApplyCarDamagePatches();
 			ApplyCarResetPatches();
+			ApplyCarDatabasePatches();
 			ApplyNitroGainPatches();
 			//ApplyUltrawidePatches(); // todo finish this
 			ApplyIngameMapPatches();
