@@ -81,10 +81,12 @@ struct tCarTuningData {
 	}
 };
 
-tCarTuningData GetPlayerCareerTuningData() {
+tCarTuningData GetPlayerCareerTuningData(int carId) {
 	tCarTuningData data;
-	for (int i = 0; i < pGameFlow->Profile.nNumCarUpgrades; i++) {
-		data.ApplyUpgrade(pGameFlow->Profile.aCarUpgrades[i]);
+	auto& tuning = gCustomSave.aCareerGarage[carId];
+	for (int i = 0; i < PlayerProfile::NUM_UPGRADES; i++) {
+		if (!tuning.IsUpgradePurchased(i)) continue;
+		data.ApplyUpgrade(i);
 	}
 	return data;
 }
@@ -95,9 +97,9 @@ tCarTuningData GetAITuningData() {
 	return data;
 }
 
-tCarTuningData GetPlayerTuningData() {
+tCarTuningData GetPlayerTuningData(int carId) {
 	if (CareerMode::bNextRaceCareerRace || CareerMode::bIsCareerRace) {
-		return GetPlayerCareerTuningData();
+		return GetPlayerCareerTuningData(carId);
 	}
 	else {
 		return GetAITuningData();
@@ -105,7 +107,7 @@ tCarTuningData GetPlayerTuningData() {
 }
 
 tCarTuningData GetTuningDataForCar(Car* pCar) {
-	if (pCar->pPlayer->nPlayerType == PLAYERTYPE_LOCAL) return GetPlayerTuningData();
+	if (pCar->pPlayer->nPlayerType == PLAYERTYPE_LOCAL) return GetPlayerTuningData(pCar->pPlayer->nCarId+1);
 	return GetAITuningData();
 }
 

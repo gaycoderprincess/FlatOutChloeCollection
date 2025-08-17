@@ -14,13 +14,19 @@ public:
 		auto data = GetCarDataTable(carId);
 		auto config = GetCarPerformanceTable(carId);
 
-		tCarTuningData tuning; // todo
-
 		nCarPrice = data["Data"]["Price"].value_or(0);
 		if (!nCarPrice) nCarPrice = config["Data"]["Price"].value_or(0);
 		CAR_PERFORMANCE(nCarWeight, "Body", "Mass");
 		CAR_PERFORMANCE(nCarHorsepower, "Engine", "Horsepower");
 		sCarName = GetCarName(carId);
+	}
+
+	void SetCarStatsTuned(int carId) {
+		SetCarStats(carId);
+
+		auto config = GetCarPerformanceTable(carId);
+		auto tuning = GetPlayerCareerTuningData(carId);
+		CAR_PERFORMANCE_TUNE(nCarHorsepower, "Engine", "Engine_Max", "Horsepower", tuning.fHorsepower);
 	}
 
 	// todo add interpolation with upgrades

@@ -332,11 +332,12 @@ namespace CareerMode {
 		if (bNextRaceCareerRace) {
 			return GetCurrentCup()->fAIUpgradeLevel;
 		}
+		return 0.0;
 
 		int level = pGameFlow->nLevel;
 		if (DoesTrackValueExist(level, "AIUpgradeLevel")) {
 			auto upgrade = GetTrackValueNumber(level, "AIUpgradeLevel") / 6.0;
-			if (upgrade > 1.0) return .0;
+			if (upgrade > 1.0) return 1.0;
 			return upgrade;
 		}
 		return 0.0;

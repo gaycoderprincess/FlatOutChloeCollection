@@ -404,7 +404,7 @@ namespace Achievements {
 	void OnTick_BuyCustomSkin(CAchievement* pThis, double delta) {
 		for (int i = 0; i < aDealerCars.size(); i++) {
 			int carId = aDealerCars[i].carId;
-			auto careerCar = &gCustomSave.aCareerGarage[carId-1];
+			auto careerCar = &gCustomSave.aCareerGarage[carId];
 			if (!careerCar->bIsPurchased) continue;
 			if (GetSkinAuthor(carId, careerCar->nSkinId, false).empty()) continue;
 			AwardAchievement(pThis);

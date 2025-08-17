@@ -232,6 +232,11 @@ int ChloeHUD_SetCarStats(void* a1) {
 	return 0;
 }
 
+int ChloeHUD_SetCarStatsTuned(void* a1) {
+	Menu_CarDealer.SetCarStatsTuned(luaL_checknumber(a1, 1));
+	return 0;
+}
+
 int ChloeHUD_SetCarDescription(void* a1) {
 	Menu_CarDealer.sCarDescription = (const char*)lua_tolstring(a1, 1);
 	return 0;
@@ -689,7 +694,7 @@ int ChloeDatabase_GetCarPerformanceValue(void* a1) {
 
 int ChloeDatabase_GetCarHorsepowerTuned(void* a1) {
 	int carId = luaL_checknumber(a1, 1);
-	auto tuning = GetPlayerCareerTuningData();
+	auto tuning = GetPlayerCareerTuningData(carId);
 	auto config = GetCarPerformanceTable(carId);
 	float outValue;
 	CAR_PERFORMANCE_TUNE(outValue, "Engine", "Engine_Max", "Horsepower", tuning.fHorsepower);
@@ -699,7 +704,7 @@ int ChloeDatabase_GetCarHorsepowerTuned(void* a1) {
 
 int ChloeDatabase_GetCarHorsepowerTunedWithUpgrade(void* a1) {
 	int carId = luaL_checknumber(a1, 1);
-	auto tuning = GetPlayerCareerTuningData();
+	auto tuning = GetPlayerCareerTuningData(carId);
 	auto config = GetCarPerformanceTable(carId);
 	tuning.ApplyUpgrade(luaL_checknumber(a1, 2));
 	float outValue;
@@ -778,6 +783,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorY, "ChloeHUD_CareerCupSelect_GetCursorY");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked, "ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStatsTuned, "ChloeHUD_SetCarStatsTuned");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_LoadCustomData, "ChloeSave_LoadCustomData");
