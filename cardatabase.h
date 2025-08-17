@@ -321,6 +321,12 @@ void __stdcall LoadCarSuspension(Car* car) {
 	LoadCarSuspensionPart(car, false);
 }
 
+void __stdcall LoadCarEngineMesh(Car* car) {
+	car->SelectEngine(car, 0);
+	car->InitEngine(0);
+	car->FinishInitEngine(0);
+}
+
 void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBA2, &LoadCarEngine);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBAE, &LoadCarGearbox);
@@ -328,4 +334,5 @@ void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBC1, &LoadCarBodyASM);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CC0C, &LoadCarTires);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CC27, &LoadCarSuspension);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41DA38, &LoadCarEngineMesh);
 }

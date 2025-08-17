@@ -136,8 +136,6 @@ void ApplyCarLimitAdjusterPatches() {
 	NyaHookLib::Patch<uint16_t>(0x43F52F, 0x9090);
 
 	// make all cars load all engine models as engine_1
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x42ADD2, &GetEngineModel);
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x42AEC5, &GetEngineModel);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x424FD0, 0x424F5A); // engine_2
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x42503D, 0x424F5A); // engine_3
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x425117, 0x4250AA); // coolingfan_2
