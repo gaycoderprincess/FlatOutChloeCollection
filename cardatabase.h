@@ -280,10 +280,52 @@ void __stdcall LoadCarTires(Car* car) {
 	CAR_PERFORMANCE(car->Body.fRearSuspensionLift, "Rear", "SuspensionLift");
 }
 
+void LoadCarSuspensionPart(Car* car, bool front) {
+	auto config = GetCarPerformanceTable(car->pPlayer->nCarId+1);
+
+	tCarTuningData tuning; // todo
+
+	auto susp = front ? &car->Body.SuspensionFront : &car->Body.SuspensionRear;
+	auto category = front ? "SuspensionFront" : "SuspensionRear";
+
+	CAR_PERFORMANCE(susp->fMinLength, category, "MinLength");
+	CAR_PERFORMANCE(susp->fMaxLength, category, "MaxLength");
+	CAR_PERFORMANCE(susp->fRestLength, category, "RestLength");
+	CAR_PERFORMANCE(susp->fDefaultCompression, category, "DefaultCompression");
+	CAR_PERFORMANCE(susp->fBumpDamp, category, "BumpDamp");
+	CAR_PERFORMANCE(susp->fReboundDamp, category, "ReboundDamp");
+	CAR_PERFORMANCE(susp->fBumperLength, category, "BumperLength");
+	CAR_PERFORMANCE(susp->fBumperConst, category, "BumperConst");
+	CAR_PERFORMANCE(susp->fBumperRestitution, category, "BumperRestitution");
+	CAR_PERFORMANCE(susp->fRollBarStiffness, category, "RollBarStiffness");
+	CAR_PERFORMANCE(susp->fCamberAngle, category, "CamberAngle");
+	CAR_PERFORMANCE(susp->fCamberChangeUp, category, "CamberChangeUp");
+	CAR_PERFORMANCE(susp->fCamberChangeDown, category, "CamberChangeDown");
+	CAR_PERFORMANCE(susp->fCamberChangeIn, category, "CamberChangeIn");
+	CAR_PERFORMANCE(susp->fCamberChangeOut, category, "CamberChangeOut");
+
+	auto v62 = car->Body.fMass * 0.25;
+	susp->fDefaultCompression = (v62 * 9.81) / susp->fDefaultCompression;
+	auto v77 = 1.0 / v62;
+	auto v37 = sqrt(susp->fDefaultCompression * v77);
+	auto v59 = v37 * v62 + v37 * v62;
+	susp->fBumpDamp *= v59;
+	susp->fReboundDamp *= v59;
+	susp->fCamberAngle *= 0.017453292;
+	susp->fCamberChangeUp *= 0.017453292;
+	susp->fCamberChangeDown *= 0.017453292;
+}
+
+void __stdcall LoadCarSuspension(Car* car) {
+	LoadCarSuspensionPart(car, true);
+	LoadCarSuspensionPart(car, false);
+}
+
 void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBA2, &LoadCarEngine);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBAE, &LoadCarGearbox);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBBA, &LoadCarDifferential);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBC1, &LoadCarBodyASM);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CC0C, &LoadCarTires);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CC27, &LoadCarSuspension);
 }
