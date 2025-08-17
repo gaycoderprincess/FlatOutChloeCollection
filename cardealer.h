@@ -43,7 +43,7 @@ std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
 	static auto config = toml::parse_file("Config/CarSkins.toml");
 	int numSkins = GetNumSkinsForCar(carId);
 	if (!wrapAround && (skinId < 1 || skinId > numSkins)) {
-		return "---";
+		return "";
 	}
 	// wrap around
 	while (skinId < 1) {

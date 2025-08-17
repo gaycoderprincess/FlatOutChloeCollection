@@ -36,17 +36,6 @@ struct tCustomSaveStructure {
 				nUpgrades[upgrade / 8] &= ~bit;
 			}
 		}
-		void ApplyUpgradesToCar() {
-			pGameFlow->Profile.nNumCarUpgrades = 0;
-			memset(pGameFlow->Profile.aCarUpgrades, 0, sizeof(pGameFlow->Profile.aCarUpgrades));
-
-			for (int i = 0; i < 19*8; i++) {
-				if (IsUpgradePurchased(i)) {
-					pGameFlow->Profile.aCarUpgrades[pGameFlow->Profile.nNumCarUpgrades++] = i;
-				}
-				if (pGameFlow->Profile.nNumCarUpgrades >= 40) break;
-			}
-		}
 		void Clear() {
 			memset(this,0,sizeof(*this));
 		}

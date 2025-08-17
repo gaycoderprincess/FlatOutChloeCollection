@@ -83,9 +83,6 @@ void SetHandlingMode() {
 
 void CustomSetterThread() {
 	pGameFlow->nAutoTransmission = !nTransmission;
-	if (gCustomSave.bInitialized) {
-		gCustomSave.aCareerGarage[pGameFlow->Profile.nCarType+1].ApplyUpgradesToCar();
-	}
 
 	SetWindowedMode();
 	SetHandlingDamage();
