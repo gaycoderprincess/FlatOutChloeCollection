@@ -489,7 +489,7 @@ int ChloeCareerDefs_SetCupName(void* a1) {
 }
 
 int ChloeCareerDefs_SetAIUpgradeLevel(void* a1) {
-	CareerMode::luaDefs_currentCup->nAIUpgradeLevel = luaL_checknumber(a1, 1);
+	CareerMode::luaDefs_currentCup->fAIUpgradeLevel = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -687,23 +687,25 @@ int ChloeDatabase_GetCarPerformanceValue(void* a1) {
 	return 1;
 }
 
-// todo!
-int ChloeDatabase_GetCarPerformanceValueTuned(void* a1) {
-	auto config = GetCarPerformanceTable(luaL_checknumber(a1, 1));
-	auto category = (const char*)lua_tolstring(a1, 2);
-	auto keyValue = (const char*)lua_tolstring(a1, 3);
+int ChloeDatabase_GetCarHorsepowerTuned(void* a1) {
+	int carId = luaL_checknumber(a1, 1);
+	auto tuning = GetPlayerCareerTuningData();
+	auto config = GetCarPerformanceTable(carId);
 	float outValue;
-	CAR_PERFORMANCE(outValue, category, keyValue);
+	CAR_PERFORMANCE_TUNE(outValue, "Engine", "Engine_Max", "Horsepower", tuning.fHorsepower);
 	lua_pushnumber(a1, outValue);
 	return 1;
 }
 
 int ChloeDatabase_GetCarDataValue(void* a1) {
 	auto config = GetCarDataTable(luaL_checknumber(a1, 1));
+	auto config2 = GetCarPerformanceTable(luaL_checknumber(a1, 1));
 	auto category = (const char*)lua_tolstring(a1, 2);
 	auto keyValue = (const char*)lua_tolstring(a1, 3);
-	float outValue;
-	CAR_PERFORMANCE(outValue, category, keyValue);
+	float outValue = config[category][keyValue].value_or(-99999.0f);
+	if (outValue == -99999.0f) {
+		outValue = config2[category][keyValue].value_or(-99999.0f);
+	}
 	lua_pushnumber(a1, outValue);
 	return 1;
 }
@@ -845,7 +847,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetAchievementTracked, "ChloeCollection_SetAchievementTracked");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementTrackable, "ChloeCollection_GetAchievementTrackable");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceValue, "ChloeDatabase_GetCarPerformanceValue");
-	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceValueTuned, "ChloeDatabase_GetCarPerformanceValueTuned");
+	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarHorsepowerTuned, "ChloeDatabase_GetCarHorsepowerTuned");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataValue, "ChloeDatabase_GetCarDataValue");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceString, "ChloeDatabase_GetCarPerformanceString");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataString, "ChloeDatabase_GetCarDataString");

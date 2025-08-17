@@ -7,7 +7,7 @@ toml::table GetCarDataTable(int id) {
 }
 
 toml::table GetCarTireTable(int id) {
-	auto perf = GetCarPerformanceTable(id);
+	auto perf = GetCarDataTable(id);
 	auto tirePath = perf["Data"]["Tires"].value_or("tire1");
 	return ReadTOMLFromBfs(std::format("data/database/cars/{}.toml", tirePath));
 }
@@ -38,21 +38,76 @@ struct tCarTuningData {
 	float fEndRatio;
 
 	// suspension
-	struct tSuspensionTuning {
-		float fRestLength;
-		float fDefaultCompression;
-		float fBumpDamp;
-		float fReboundDamp;
-		float fBumperRestitution;
-		float fRollBarStiffness;
-	};
-	tSuspensionTuning SuspFront;
-	tSuspensionTuning SuspRear;
+	float fRestLength;
+	float fDefaultCompression;
+	float fBumpDamp;
+	float fReboundDamp;
+	float fBumperRestitution;
+	float fRollBarStiffness;
 
 	tCarTuningData() {
 		memset(this,0,sizeof(*this));
 	}
+
+	void ApplyUpgrade(int upgrade) {
+		static auto config = ReadTOMLFromBfs("data/database/upgrades.toml");
+		auto category = std::format("Upgrade{}", upgrade);
+		fBrakePower += config[category]["BrakePower"].value_or(0.0);
+		fDurability += config[category]["Durability"].value_or(0.0);
+		fTurboAcceleration += config[category]["TurboAcceleration"].value_or(0.0);
+		fInertiaEngine += config[category]["InertiaEngine"].value_or(0.0);
+		fInertiaDriveShaft += config[category]["InertiaDriveShaft"].value_or(0.0);
+		fEngineFriction += config[category]["EngineFriction"].value_or(0.0);
+		fTorqueMax += config[category]["TorqueMax"].value_or(0.0);
+		fHorsepower += config[category]["Horsepower"].value_or(0.0);
+		fClutchReleaseTime += config[category]["ClutchReleaseTime"].value_or(0.0);
+		//fGearShiftTime += config[category]["GearShiftTime"].value_or(0.0);
+		fClutchEngageTime += config[category]["ClutchEngageTime"].value_or(0.0);
+		fClutchTorque += config[category]["ClutchTorque"].value_or(0.0);
+		fEndRatio += config[category]["EndRatio"].value_or(0.0);
+		fRestLength += config[category]["RestLength"].value_or(0.0);
+		fDefaultCompression += config[category]["DefaultCompression"].value_or(0.0);
+		fBumpDamp += config[category]["BumpDamp"].value_or(0.0);
+		fReboundDamp += config[category]["ReboundDamp"].value_or(0.0);
+		fBumperRestitution += config[category]["BumperRestitution"].value_or(0.0);
+		fRollBarStiffness += config[category]["RollBarStiffness"].value_or(0.0);
+	}
+
+	void SetAllUpgrades(float value) {
+		for (int i = 0; i < sizeof(*this)/4; i++) {
+			auto f = (float*)this;
+			f[i] = value;
+		}
+	}
 };
+
+tCarTuningData GetPlayerCareerTuningData() {
+	tCarTuningData data;
+	for (int i = 0; i < pGameFlow->Profile.nNumCarUpgrades; i++) {
+		data.ApplyUpgrade(pGameFlow->Profile.aCarUpgrades[i]);
+	}
+	return data;
+}
+
+tCarTuningData GetAITuningData() {
+	tCarTuningData data;
+	data.SetAllUpgrades(CareerMode::GetAIUpgradeLevel());
+	return data;
+}
+
+tCarTuningData GetPlayerTuningData() {
+	if (CareerMode::bNextRaceCareerRace || CareerMode::bIsCareerRace) {
+		return GetPlayerCareerTuningData();
+	}
+	else {
+		return GetAITuningData();
+	}
+}
+
+tCarTuningData GetTuningDataForCar(Car* pCar) {
+	if (pCar->pPlayer->nPlayerType == PLAYERTYPE_LOCAL) return GetPlayerTuningData();
+	return GetAITuningData();
+}
 
 #define CAR_PERFORMANCE(value, category, name) value = config[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
 #define CAR_PERFORMANCE_ARRAY(value, category, name, arrayCount) for (int i = 0; i < arrayCount; i++) { value[i] = config[category][name][i].value_or(-99999.0f); if (value[i] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } }
@@ -67,7 +122,7 @@ struct tCarTuningData {
 void __stdcall LoadCarEngine(Engine* engine) {
 	auto config = GetCarPerformanceTable(engine->pPerformance->pCar->pPlayer->nCarId+1);
 
-	tCarTuningData tuning; // todo
+	auto tuning = GetTuningDataForCar(engine->pPerformance->pCar);
 	CAR_PERFORMANCE_TUNE(engine->fInertiaEngine, "Engine", "Engine_Max", "InertiaEngine", tuning.fInertiaEngine);
 	CAR_PERFORMANCE_TUNE(engine->fEngineFriction, "Engine", "Engine_Max", "EngineFriction", tuning.fEngineFriction);
 	CAR_PERFORMANCE(engine->fIdleRpm, "Engine", "IdleRpm");
@@ -97,7 +152,7 @@ void __stdcall LoadCarEngine(Engine* engine) {
 void __stdcall LoadCarGearbox(Gearbox* gearbox) {
 	auto config = GetCarPerformanceTable(gearbox->pPerformance->pCar->pPlayer->nCarId+1);
 
-	tCarTuningData tuning; // todo
+	auto tuning = GetTuningDataForCar(gearbox->pPerformance->pCar);
 	CAR_PERFORMANCE(gearbox->nNumGears, "Gearbox", "NumGears");
 	CAR_PERFORMANCE(gearbox->fGearRRatio, "Gearbox", "GearRRatio");
 	CAR_PERFORMANCE(gearbox->fGearNRatio, "Gearbox", "Gear1Ratio");
@@ -122,7 +177,7 @@ void __stdcall LoadCarGearbox(Gearbox* gearbox) {
 void __stdcall LoadCarDifferential(Differential* diff) {
 	auto config = GetCarPerformanceTable(diff->pPerformance->pCar->pPlayer->nCarId+1);
 
-	tCarTuningData tuning; // todo
+	auto tuning = GetTuningDataForCar(diff->pPerformance->pCar);
 	CAR_PERFORMANCE_TUNE(diff->fInertiaDriveShaft, "Engine", "Engine_Max", "InertiaDriveShaft", tuning.fInertiaDriveShaft);
 	CAR_PERFORMANCE_TUNE(diff->fEndRatio, "Gearbox", "Gearbox_Max", "EndRatio", tuning.fEndRatio);
 	CAR_PERFORMANCE_TUNE(diff->fClutchTorque, "Gearbox", "Gearbox_Max", "ClutchTorque", tuning.fClutchTorque);
@@ -136,7 +191,7 @@ void __fastcall LoadCarBody(Car* car) {
 	auto config = GetCarPerformanceTable(car->pPlayer->nCarId+1);
 	auto configData = GetCarDataTable(car->pPlayer->nCarId+1);
 
-	tCarTuningData tuning; // todo
+	auto tuning = GetTuningDataForCar(car);
 
 	std::string str = configData["Data"]["DataPath"].value_or("");
 	if (str.empty()) {
@@ -283,21 +338,22 @@ void __stdcall LoadCarTires(Car* car) {
 void LoadCarSuspensionPart(Car* car, bool front) {
 	auto config = GetCarPerformanceTable(car->pPlayer->nCarId+1);
 
-	tCarTuningData tuning; // todo
+	auto tuning = GetTuningDataForCar(car);
 
 	auto susp = front ? &car->Body.SuspensionFront : &car->Body.SuspensionRear;
 	auto category = front ? "SuspensionFront" : "SuspensionRear";
+	auto categoryMax = front ? "SuspensionFront_Max" : "SuspensionRear_Max";
 
 	CAR_PERFORMANCE(susp->fMinLength, category, "MinLength");
 	CAR_PERFORMANCE(susp->fMaxLength, category, "MaxLength");
-	CAR_PERFORMANCE(susp->fRestLength, category, "RestLength");
-	CAR_PERFORMANCE(susp->fDefaultCompression, category, "DefaultCompression");
-	CAR_PERFORMANCE(susp->fBumpDamp, category, "BumpDamp");
-	CAR_PERFORMANCE(susp->fReboundDamp, category, "ReboundDamp");
+	CAR_PERFORMANCE_TUNE(susp->fRestLength, category, categoryMax, "RestLength", tuning.fRestLength);
+	CAR_PERFORMANCE_TUNE(susp->fDefaultCompression, category, categoryMax, "DefaultCompression", tuning.fDefaultCompression);
+	CAR_PERFORMANCE_TUNE(susp->fBumpDamp, category, categoryMax, "BumpDamp", tuning.fBumpDamp);
+	CAR_PERFORMANCE_TUNE(susp->fReboundDamp, category, categoryMax, "ReboundDamp", tuning.fReboundDamp);
 	CAR_PERFORMANCE(susp->fBumperLength, category, "BumperLength");
 	CAR_PERFORMANCE(susp->fBumperConst, category, "BumperConst");
-	CAR_PERFORMANCE(susp->fBumperRestitution, category, "BumperRestitution");
-	CAR_PERFORMANCE(susp->fRollBarStiffness, category, "RollBarStiffness");
+	CAR_PERFORMANCE_TUNE(susp->fBumperRestitution, category, categoryMax, "BumperRestitution", tuning.fBumperRestitution);
+	CAR_PERFORMANCE_TUNE(susp->fRollBarStiffness, category, categoryMax, "RollBarStiffness", tuning.fRollBarStiffness);
 	CAR_PERFORMANCE(susp->fCamberAngle, category, "CamberAngle");
 	CAR_PERFORMANCE(susp->fCamberChangeUp, category, "CamberChangeUp");
 	CAR_PERFORMANCE(susp->fCamberChangeDown, category, "CamberChangeDown");
@@ -329,8 +385,14 @@ void __stdcall LoadCarEngineMesh(Car* car) {
 
 void __stdcall LoadCarSounds(Car* car) {
 	auto config = GetCarDataTable(car->pPlayer->nCarId+1);
+	auto config2 = GetCarPerformanceTable(car->pPlayer->nCarId+1);
 
-	Car::LoadEngineSounds(false, 0, &car->pEngineSound, std::format("data/sound/{}", config["Data"]["EngineSound"].value_or("")).c_str(), 0);
+	auto engineSoundFile = (std::string)config["Data"]["EngineSound"].value_or("");
+	if (engineSoundFile.empty()) {
+		engineSoundFile = config2["Data"]["EngineSound"].value_or("");
+	}
+
+	Car::LoadEngineSounds(false, 0, &car->pEngineSound,  std::format("data/sound/{}", engineSoundFile).c_str(), 0);
 	Car::LoadSurfaceSounds(4, &car->pSurfaceSounds, "data/sound/surface_sounds.bed");
 }
 

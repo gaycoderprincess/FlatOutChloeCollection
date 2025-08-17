@@ -16,7 +16,7 @@ namespace CareerMode {
 			};
 
 			std::string sName;
-			int nAIUpgradeLevel;
+			float fAIUpgradeLevel;
 			std::vector<tRace> aRaces;
 			int aCupWinnings[3] = {1500,1000,750};
 		};
@@ -80,26 +80,12 @@ namespace CareerMode {
 		return &gCustomSave.aCareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerEvent-1];
 	}
 
-	void SetCareerAIUpgrades(int id) {
-		if (id <= 2) {
-			NyaHookLib::Patch(0x43EFF0 + 3, 0);
-		}
-		else if (id <= 4) {
-			NyaHookLib::Patch(0x43EFF0 + 3, 1); // medium
-		}
-		else {
-			NyaHookLib::Patch(0x43EFF0 + 3, 2); // full
-		}
-	}
-
 	void SetIsCareerMode(bool apply) {
 		bNextRaceCareerRace = apply;
 		if (!apply) bIsCareerRace = false;
 		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
 		NyaHookLib::Patch<uint8_t>(0x431B08, apply ? 0xEB : 0x75); // don't null upgrades
 		NyaHookLib::Patch<uint64_t>(0x43BD79, apply ? 0x418B909090909090 : 0x418B000000EC840F); // use custom upgrades
-		//SetCareerAIUpgrades(bNextRaceCareerRace ? GetCurrentCup()->nAIUpgradeLevel : 0);
-		//NyaHookLib::WriteString(0x65F650, "MaxSettings");
 	}
 
 	void SetIsCareerModeTimeTrial(bool apply) {
@@ -342,16 +328,18 @@ namespace CareerMode {
 		}
 	}
 
-	int __stdcall GetAIUpgradeLevelNew(GameFlow* gameFlow) {
+	float GetAIUpgradeLevel() {
 		if (bNextRaceCareerRace) {
-			return GetCurrentCup()->nAIUpgradeLevel;
+			return GetCurrentCup()->fAIUpgradeLevel;
 		}
 
-		int level = gameFlow->nLevel;
+		int level = pGameFlow->nLevel;
 		if (DoesTrackValueExist(level, "AIUpgradeLevel")) {
-			return GetTrackValueNumber(level, "AIUpgradeLevel");
+			auto upgrade = GetTrackValueNumber(level, "AIUpgradeLevel") / 6.0;
+			if (upgrade > 1.0) return .0;
+			return upgrade;
 		}
-		return 1;
+		return 0.0;
 	}
 
 	int nForceNumLaps = -1;
@@ -437,7 +425,6 @@ namespace CareerMode {
 
 	void Init() {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x440560, &GetAIHandicapLevelNew);
-		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x440650, &GetAIUpgradeLevelNew);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4404A0, &GetNumLapsNew);
 	}
 }
