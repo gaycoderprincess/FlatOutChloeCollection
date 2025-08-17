@@ -171,6 +171,37 @@ void ProcessDebugMenu() {
 
 			ChloeMenuLib::EndMenu();
 		}
+		if (DrawMenuOption("Tire Dynamics")) {
+			ChloeMenuLib::BeginMenu();
+
+			if (auto ply = GetPlayer(0)) {
+				auto data = &ply->pCar->TireDynamics[0];
+				QuickValueEditor("fRollingResistance", data->fRollingResistance);
+				QuickValueEditor("fInducedDragCoeff", data->fInducedDragCoeff);
+				QuickValueEditor("fPneumaticTrail", data->fPneumaticTrail);
+				QuickValueEditor("fPneumaticOffset", data->fPneumaticOffset);
+				QuickValueEditor("fZStiffness[0]", data->fZStiffness[0]);
+				QuickValueEditor("fZStiffness[1]", data->fZStiffness[1]);
+				QuickValueEditor("fZStiffness[2]", data->fZStiffness[2]);
+				QuickValueEditor("fXStiffness[0]", data->fXStiffness[0]);
+				QuickValueEditor("fXStiffness[1]", data->fXStiffness[1]);
+				QuickValueEditor("fXStiffness[2]", data->fXStiffness[2]);
+				QuickValueEditor("fCStiffness[0]", data->fCStiffness[0]);
+				QuickValueEditor("fCStiffness[1]", data->fCStiffness[1]);
+				QuickValueEditor("fZFriction[0]", data->fZFriction[0]);
+				QuickValueEditor("fZFriction[1]", data->fZFriction[1]);
+				QuickValueEditor("fXFriction[0]", data->fXFriction[0]);
+				QuickValueEditor("fXFriction[1]", data->fXFriction[1]);
+				QuickValueEditor("fSlideControl", data->fSlideControl);
+				QuickValueEditor("fUnderSteer", data->fUnderSteer);
+				QuickValueEditor("fSlowDown", data->fSlowDown);
+			}
+			else {
+				DrawDebugMenuViewerOption("Not in a race");
+			}
+
+			ChloeMenuLib::EndMenu();
+		}
 		ChloeMenuLib::EndMenu();
 	}
 

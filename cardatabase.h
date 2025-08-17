@@ -2,6 +2,20 @@ toml::table GetCarPerformanceTable(int id) {
 	return ReadTOMLFromBfs(std::format("data/database/cars/car{}.toml", GetDealerCar(id)->performanceId));
 }
 
+toml::table GetCarDataTable(int id) {
+	return ReadTOMLFromBfs(std::format("data/database/cars/car{}.toml", id));
+}
+
+toml::table GetCarTireTable(int id) {
+	auto perf = GetCarPerformanceTable(id);
+	auto tirePath = perf["Data"]["Tires"].value_or("tire1");
+	return ReadTOMLFromBfs(std::format("data/database/cars/{}.toml", tirePath));
+}
+
+toml::table GetTireDynamicsTable() {
+	return ReadTOMLFromBfs("data/database/tiredynamics.toml");
+}
+
 // tuning lerp values - 0 to 1
 struct tCarTuningData {
 	// body
@@ -44,6 +58,11 @@ struct tCarTuningData {
 #define CAR_PERFORMANCE_ARRAY(value, category, name, arrayCount) for (int i = 0; i < arrayCount; i++) { value[i] = config[category][name][i].value_or(-99999.0f); if (value[i] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } }
 #define CAR_PERFORMANCE_FALLBACK(value, category, name, default) value = config[category][name].value_or(default)
 #define CAR_PERFORMANCE_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(config[category][name].value_or(-99999.0f), config[category_max][name].value_or(config[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
+
+#define TIRE_PERFORMANCE(value, category, name) value = global[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
+#define TIRE_PERFORMANCE_ARRAY(value, category, name, arrayCount) for (int j = 0; j < arrayCount; j++) { value[j] = global[category][name][j].value_or(-99999.0f); if (value[j] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } }
+#define TIRE_PERFORMANCE_FALLBACK(value, category, name, default) value = global[category][name].value_or(default)
+#define TIRE_PERFORMANCE_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(global[category][name].value_or(-99999.0f), config[category_max][name].value_or(config[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
 
 void __stdcall LoadCarEngine(Engine* engine) {
 	auto config = GetCarPerformanceTable(engine->pPerformance->pCar->pPlayer->nCarId+1);
@@ -115,16 +134,17 @@ void __stdcall LoadCarDifferential(Differential* diff) {
 
 void __fastcall LoadCarBody(Car* car) {
 	auto config = GetCarPerformanceTable(car->pPlayer->nCarId+1);
+	auto configData = GetCarDataTable(car->pPlayer->nCarId+1);
 
 	tCarTuningData tuning; // todo
 
-	std::string str = config["Data"]["DataPath"].value_or("");
+	std::string str = configData["Data"]["DataPath"].value_or("");
 	if (str.empty()) {
 		MessageBoxA(0, "Failed to read DataPath from Data", "Fatal error", MB_ICONERROR);
 	}
 	car->sFolderPath.Set(str.c_str(), str.length());
 
-	str = config["Data"]["Name"].value_or("");
+	str = configData["Data"]["Name"].value_or("");
 	if (str.empty()) {
 		MessageBoxA(0, "Failed to read Name from Data", "Fatal error", MB_ICONERROR);
 	}
@@ -185,9 +205,85 @@ int __attribute__((naked)) LoadCarBodyASM() {
 	);
 }
 
+void __stdcall LoadCarTires(Car* car) {
+	auto config = GetCarTireTable(car->pPlayer->nCarId+1);
+	float fRollingResistance;
+	float fInducedDragCoeff;
+	float fPneumaticTrail;
+	float fPneumaticOffset;
+	float fOptimalSlipRatio;
+	float fOptimalSlipAngle;
+	float fOptimalSlipLoad;
+	float fOptimalLoadFactor;
+	float fXFriction[2];
+	float fZFriction[2];
+	CAR_PERFORMANCE(fRollingResistance, "TireDynamics", "RollingResistance");
+	CAR_PERFORMANCE(fInducedDragCoeff, "TireDynamics", "InducedDragCoeff");
+	CAR_PERFORMANCE(fPneumaticTrail, "TireDynamics", "PneumaticTrail");
+	CAR_PERFORMANCE(fPneumaticOffset, "TireDynamics", "PneumaticOffset");
+	CAR_PERFORMANCE(fOptimalSlipRatio, "TireDynamics", "OptimalSlipRatio");
+	CAR_PERFORMANCE(fOptimalSlipAngle, "TireDynamics", "OptimalSlipAngle");
+	CAR_PERFORMANCE(fOptimalSlipLoad, "TireDynamics", "OptimalSlipLoad");
+	CAR_PERFORMANCE(fOptimalLoadFactor, "TireDynamics", "OptimalLoadFactor");
+	CAR_PERFORMANCE_ARRAY(fXFriction, "TireDynamics", "XFriction", 2);
+	CAR_PERFORMANCE_ARRAY(fZFriction, "TireDynamics", "ZFriction", 2);
+
+	auto v22 = car->Body.fMass * 2.4525001;
+	auto v105 = fOptimalSlipLoad * v22 * 2.6800001 / std::tan(fOptimalSlipAngle * 0.017453292);
+	auto v106 = fOptimalLoadFactor * v22 * 0.001;
+	auto v107 = fOptimalSlipLoad / fOptimalSlipRatio * v22 * 2.6800001 / (v22 * 0.001);
+
+	auto global = GetTireDynamicsTable();
+	for (int i = 0; i < 7; i++) {
+		auto category = std::format("GlobalDynamics_{}", i+1);
+		TIRE_PERFORMANCE(car->TireDynamics[i].fRollingResistance, category, "RollingResistance");
+		TIRE_PERFORMANCE(car->TireDynamics[i].fInducedDragCoeff, category, "InducedDragCoeff");
+		TIRE_PERFORMANCE(car->TireDynamics[i].fPneumaticTrail, category, "PneumaticTrail");
+		TIRE_PERFORMANCE(car->TireDynamics[i].fPneumaticOffset, category, "PneumaticOffset");
+		TIRE_PERFORMANCE_ARRAY(car->TireDynamics[i].fZStiffness, category, "ZStiffness", 3);
+		TIRE_PERFORMANCE_ARRAY(car->TireDynamics[i].fXStiffness, category, "XStiffness", 3);
+		TIRE_PERFORMANCE_ARRAY(car->TireDynamics[i].fCStiffness, category, "CStiffness", 2);
+		TIRE_PERFORMANCE_ARRAY(car->TireDynamics[i].fZFriction, category, "ZFriction", 2);
+		TIRE_PERFORMANCE_ARRAY(car->TireDynamics[i].fXFriction, category, "XFriction", 2);
+		TIRE_PERFORMANCE(car->TireDynamics[i].fSlideControl, category, "SlideControl");
+		TIRE_PERFORMANCE(car->TireDynamics[i].fUnderSteer, category, "UnderSteer");
+		TIRE_PERFORMANCE(car->TireDynamics[i].fSlowDown, category, "SlowDown");
+
+		// why are some of these multiplied by 0.0? wtf
+		car->TireDynamics[i].fRollingResistance *= fRollingResistance;
+		car->TireDynamics[i].fInducedDragCoeff *= fInducedDragCoeff;
+		car->TireDynamics[i].fPneumaticTrail *= fPneumaticTrail;
+		car->TireDynamics[i].fPneumaticOffset *= fPneumaticOffset;
+		car->TireDynamics[i].fZStiffness[0] *= 0.0;
+		car->TireDynamics[i].fZStiffness[1] *= v107;
+		car->TireDynamics[i].fZStiffness[2] *= 0.0;
+		car->TireDynamics[i].fXStiffness[0] *= v105;
+		car->TireDynamics[i].fXStiffness[1] *= v106;
+		car->TireDynamics[i].fXStiffness[2] *= 0.0;
+		car->TireDynamics[i].fCStiffness[0] *= 0.0;
+		car->TireDynamics[i].fCStiffness[1] *= 0.0;
+		car->TireDynamics[i].fZFriction[0] *= fZFriction[0];
+		car->TireDynamics[i].fZFriction[1] *= fZFriction[1];
+		car->TireDynamics[i].fXFriction[0] *= fXFriction[0];
+		car->TireDynamics[i].fXFriction[1] *= fXFriction[1];
+	}
+
+	CAR_PERFORMANCE(car->Body.fFrontTireMass, "Front", "Mass");
+	CAR_PERFORMANCE(car->Body.fFrontTireMomentOfInertia, "Front", "MomentOfInertia");
+	CAR_PERFORMANCE(car->Body.fFrontTireRadius, "Front", "Radius");
+	CAR_PERFORMANCE(car->Body.fFrontTireWidth, "Front", "Width");
+	CAR_PERFORMANCE(car->Body.fFrontSuspensionLift, "Front", "SuspensionLift");
+	CAR_PERFORMANCE(car->Body.fRearTireMass, "Rear", "Mass");
+	CAR_PERFORMANCE(car->Body.fRearTireMomentOfInertia, "Rear", "MomentOfInertia");
+	CAR_PERFORMANCE(car->Body.fRearTireRadius, "Rear", "Radius");
+	CAR_PERFORMANCE(car->Body.fRearTireWidth, "Rear", "Width");
+	CAR_PERFORMANCE(car->Body.fRearSuspensionLift, "Rear", "SuspensionLift");
+}
+
 void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBA2, &LoadCarEngine);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBAE, &LoadCarGearbox);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBBA, &LoadCarDifferential);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBC1, &LoadCarBodyASM);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CC0C, &LoadCarTires);
 }
