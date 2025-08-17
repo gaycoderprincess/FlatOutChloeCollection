@@ -85,7 +85,7 @@ float fFO1DriverLocOffset[3] = { (-0.307) - (-0.299), (0.484 - 0.04) - 0.2772743
 void __fastcall OnCarCreated(Car* car) {
 	if (car->pPlayer->nCarId >= 200 && car->pPlayer->nCarId <= 250) {
 		for (int i = 0; i < 3; i++) {
-			car->vDriverLoc[i] -= fFO1DriverLocOffset[i];
+			car->Body.fDriverLoc[i] -= fFO1DriverLocOffset[i];
 		}
 	}
 }

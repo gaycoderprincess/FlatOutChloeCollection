@@ -155,14 +155,14 @@ void ProcessDebugMenu() {
 			ChloeMenuLib::BeginMenu();
 
 			if (auto ply = GetPlayer(0)) {
-				if (DrawMenuOption(std::format("X - {}", ply->pCar->vDriverLoc[0]))) {
-					ValueEditorMenu(ply->pCar->vDriverLoc[0]);
+				if (DrawMenuOption(std::format("X - {}", ply->pCar->Body.fDriverLoc[0]))) {
+					ValueEditorMenu(ply->pCar->Body.fDriverLoc[0]);
 				}
-				if (DrawMenuOption(std::format("Y - {}", ply->pCar->vDriverLoc[1]))) {
-					ValueEditorMenu(ply->pCar->vDriverLoc[1]);
+				if (DrawMenuOption(std::format("Y - {}", ply->pCar->Body.fDriverLoc[1]))) {
+					ValueEditorMenu(ply->pCar->Body.fDriverLoc[1]);
 				}
-				if (DrawMenuOption(std::format("Z - {}", ply->pCar->vDriverLoc[2]))) {
-					ValueEditorMenu(ply->pCar->vDriverLoc[2]);
+				if (DrawMenuOption(std::format("Z - {}", ply->pCar->Body.fDriverLoc[2]))) {
+					ValueEditorMenu(ply->pCar->Body.fDriverLoc[2]);
 				}
 			}
 			else {

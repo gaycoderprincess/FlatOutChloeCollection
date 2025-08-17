@@ -14,11 +14,11 @@ struct tCarTuningData {
 	float fInertiaDriveShaft;
 	float fEngineFriction;
 	float fTorqueMax;
-	float fHorsepower;
+	float fHorsepower; // visual
 
 	// gearbox
 	float fClutchReleaseTime;
-	float fGearShiftTime;
+	//float fGearShiftTime;
 	float fClutchEngageTime;
 	float fClutchTorque;
 	float fEndRatio;
@@ -41,6 +41,7 @@ struct tCarTuningData {
 };
 
 #define CAR_PERFORMANCE(value, category, name) value = config[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
+#define CAR_PERFORMANCE_ARRAY(value, category, name, arrayCount) for (int i = 0; i < arrayCount; i++) { value[i] = config[category][name][i].value_or(-99999.0f); if (value[i] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } }
 #define CAR_PERFORMANCE_FALLBACK(value, category, name, default) value = config[category][name].value_or(default)
 #define CAR_PERFORMANCE_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(config[category][name].value_or(-99999.0f), config[category_max][name].value_or(config[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
 
@@ -55,8 +56,8 @@ void __stdcall LoadCarEngine(Engine* engine) {
 	CAR_PERFORMANCE_TUNE(engine->fTorqueMax, "Engine", "Engine_Max", "TorqueMax", tuning.fTorqueMax);
 	CAR_PERFORMANCE(engine->nTorqueCurveParams, "Engine", "TorqueCurveParams");
 	for (int i = 0; i < 20; i++) {
-		engine->aTorque[i].fRpm = config["Engine"][std::format("Torque{:02}", i)]["RPM"].value_or(0.0);
-		engine->aTorque[i].fCurve = config["Engine"][std::format("Torque{:02}", i)]["Curve"].value_or(0.0);
+		engine->aTorque[i].fRpm = config["Engine"][std::format("Torque{:02}", i)][0].value_or(0.0);
+		engine->aTorque[i].fCurve = config["Engine"][std::format("Torque{:02}", i)][1].value_or(0.0);
 	}
 	CAR_PERFORMANCE(engine->fExhaustPeakRpm, "Engine", "ExhaustPeakRpm");
 	CAR_PERFORMANCE_TUNE(engine->fTurboAcceleration, "Engine", "Engine_Max", "TurboAcceleration", tuning.fTurboAcceleration);
@@ -112,8 +113,81 @@ void __stdcall LoadCarDifferential(Differential* diff) {
 	diff->fUnknown40 = 100.0;
 }
 
+void __fastcall LoadCarBody(Car* car) {
+	auto config = GetCarPerformanceTable(car->pPlayer->nCarId+1);
+
+	tCarTuningData tuning; // todo
+
+	std::string str = config["Data"]["DataPath"].value_or("");
+	if (str.empty()) {
+		MessageBoxA(0, "Failed to read DataPath from Data", "Fatal error", MB_ICONERROR);
+	}
+	car->sFolderPath.Set(str.c_str(), str.length());
+
+	str = config["Data"]["Name"].value_or("");
+	if (str.empty()) {
+		MessageBoxA(0, "Failed to read Name from Data", "Fatal error", MB_ICONERROR);
+	}
+	car->sName.Set(str.c_str(), str.length());
+
+	auto body = &car->Body;
+
+	const char* steerBalanceFactor = nHandlingMode == HANDLING_PROFESSIONAL ? "ProSteerBalanceFactor" : "SteerBalanceFactor";
+	const char* steerBalanceRate = nHandlingMode == HANDLING_PROFESSIONAL ? "ProSteerBalanceRate" : "SteerBalanceRate";
+	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceFactor, "Body", steerBalanceFactor, 3);
+	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceRate, "Body", steerBalanceRate, 3);
+	CAR_PERFORMANCE_TUNE(body->fArcadeBrakePower, "Body", "Body_Max", "BrakePower", tuning.fBrakePower);
+	CAR_PERFORMANCE(body->nDriverType, "Body", "DriverType");
+	CAR_PERFORMANCE_ARRAY(body->fDriverLoc, "Body", "DriverLoc", 3);
+	CAR_PERFORMANCE(body->fWheelDisplacement, "Body", "WheelDisplacement");
+	CAR_PERFORMANCE_ARRAY(body->fWheelAligningTorqueLimits, "Body", "WheelAligningTorqueLimits", 2);
+	CAR_PERFORMANCE(body->fFFFrictionNominalLoad, "Body", "FFFrictionNominalLoad");
+	CAR_PERFORMANCE(body->fFFFrictionOffset, "Body", "FFFrictionOffset");
+	CAR_PERFORMANCE(body->fFFCenteringNominalLoad, "Body", "FFCenteringNominalLoad");
+	CAR_PERFORMANCE(body->fFFCenteringOffset, "Body", "FFCenteringOffset");
+	CAR_PERFORMANCE(body->fMass, "Body", "Mass");
+	CAR_PERFORMANCE_ARRAY(body->fMomentOfInertia, "Body", "MomentOfInertia", 3);
+	CAR_PERFORMANCE_ARRAY(body->fCenterOfMass, "Body", "CenterOfMass", 3);
+	CAR_PERFORMANCE_ARRAY(body->fAeroDrag, "Body", "AeroDrag", 3);
+	CAR_PERFORMANCE_ARRAY(body->fAeroDragLoc, "Body", "AeroDragLoc", 3);
+	CAR_PERFORMANCE_ARRAY(body->fDamping, "Body", "Damping", 2);
+	CAR_PERFORMANCE_ARRAY(body->fCenterOfDownForce, "Body", "CenterOfDownForce", 3);
+	CAR_PERFORMANCE(body->fDownForceConst, "Body", "DownForceConst");
+	CAR_PERFORMANCE_ARRAY(body->fSteeringSpeeds, "Body", "SteeringSpeeds", 2);
+	CAR_PERFORMANCE(body->fSteeringLimit, "Body", "SteeringLimit");
+	CAR_PERFORMANCE(body->fSteeringReduction, "Body", "SteeringReduction");
+	CAR_PERFORMANCE_ARRAY(body->fBrakeBalance, "Body", "BrakeBalance", 3);
+	CAR_PERFORMANCE(body->fBrakeTorque, "Body", "BrakeTorque");
+	CAR_PERFORMANCE(body->fHandBrakeTorque, "Body", "HandBrakeTorque");
+	CAR_PERFORMANCE(body->fTireTurnAngleIn, "Body", "TireTurnAngleIn");
+	CAR_PERFORMANCE(body->fTireTurnAngleOut, "Body", "TireTurnAngleOut");
+	CAR_PERFORMANCE(body->fTireCenteringSpeed, "Body", "TireCenteringSpeed");
+	CAR_PERFORMANCE(body->nFrontTraction, "Body", "FrontTraction");
+	CAR_PERFORMANCE(body->nRearTraction, "Body", "RearTraction");
+
+	body->fTireTurnAngleIn *= 0.017453292;
+	body->fTireTurnAngleOut *= 0.017453292;
+	body->fMass2 = body->fMass;
+	body->fCenterOfMass2[0] = body->fCenterOfMass[0];
+	body->fCenterOfMass2[1] = body->fCenterOfMass[1];
+	body->fCenterOfMass2[2] = body->fCenterOfMass[2];
+	car->fBrakeBalance = body->fBrakeBalance[1];
+	car->fTireTurnAngleIn = body->fTireTurnAngleIn;
+	car->fTireTurnAngleOut = body->fTireTurnAngleOut;
+}
+
+int __attribute__((naked)) LoadCarBodyASM() {
+	__asm__ (
+		"mov ecx, ebx\n\t"
+		"jmp %0\n\t"
+			:
+			:  "i" (LoadCarBody)
+	);
+}
+
 void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBA2, &LoadCarEngine);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBAE, &LoadCarGearbox);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBBA, &LoadCarDifferential);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBC1, &LoadCarBodyASM);
 }
