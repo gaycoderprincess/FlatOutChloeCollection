@@ -151,6 +151,13 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::Patch(0x505EDE + 1, 0x20 | D3DCREATE_MULTITHREADED);
 			NyaHookLib::Patch(0x505EF9 + 1, 0x40 | D3DCREATE_MULTITHREADED);
 			NyaHookLib::Patch(0x505F00 + 1, 0x50 | D3DCREATE_MULTITHREADED);
+
+			// swap restart and exit to menu in finish screen
+			NyaHookLib::Patch(0x45A62D + 2, 0x194C);
+			NyaHookLib::Patch(0x45A641 + 2, 0x194C);
+			NyaHookLib::Patch(0x45A667 + 2, 0x18FC);
+			NyaHookLib::Patch<uint8_t>(0x45A70C, 0x75);
+			NyaHookLib::Patch<uint8_t>(0x45A70F, 0x74);
 		} break;
 		default:
 			break;
