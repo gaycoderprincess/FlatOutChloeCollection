@@ -234,18 +234,10 @@ float GetCarDamageNew() {
 	return GetCarDamage(GetPlayer(0)->pCar);
 }
 
+float fCarDurability[32] = {};
 void OnCarDamage(Car* pCar) {
 	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 40.0 : 90.0;
-	if (CareerMode::bIsCareerRace && pCar->pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
-		float mult = 1;
-		for (int i = 0; i < pGameFlow->Profile.nNumCarUpgrades; i++) {
-			auto upgrade = pGameFlow->Profile.aCarUpgrades[i];
-			if (upgrade == PlayerProfile::BODYUPGRADE1) mult += 0.30;
-			if (upgrade == PlayerProfile::BODYUPGRADE2) mult += 0.35;
-			if (upgrade == PlayerProfile::BODYUPGRADE3) mult += 0.35;
-		}
-		fDamageMultiplier *= mult;
-	}
+	fDamageMultiplier *= 1 + fCarDurability[pCar->pPlayer->nPlayerId-1];
 }
 
 uintptr_t OnCarDamageASM_jmp = 0x4161BF;

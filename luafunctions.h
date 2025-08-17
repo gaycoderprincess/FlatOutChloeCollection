@@ -697,6 +697,17 @@ int ChloeDatabase_GetCarHorsepowerTuned(void* a1) {
 	return 1;
 }
 
+int ChloeDatabase_GetCarHorsepowerTunedWithUpgrade(void* a1) {
+	int carId = luaL_checknumber(a1, 1);
+	auto tuning = GetPlayerCareerTuningData();
+	auto config = GetCarPerformanceTable(carId);
+	tuning.ApplyUpgrade(luaL_checknumber(a1, 2));
+	float outValue;
+	CAR_PERFORMANCE_TUNE(outValue, "Engine", "Engine_Max", "Horsepower", tuning.fHorsepower);
+	lua_pushnumber(a1, outValue);
+	return 1;
+}
+
 int ChloeDatabase_GetCarDataValue(void* a1) {
 	auto config = GetCarDataTable(luaL_checknumber(a1, 1));
 	auto config2 = GetCarPerformanceTable(luaL_checknumber(a1, 1));
@@ -848,6 +859,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementTrackable, "ChloeCollection_GetAchievementTrackable");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceValue, "ChloeDatabase_GetCarPerformanceValue");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarHorsepowerTuned, "ChloeDatabase_GetCarHorsepowerTuned");
+	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarHorsepowerTunedWithUpgrade, "ChloeDatabase_GetCarHorsepowerTunedWithUpgrade");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataValue, "ChloeDatabase_GetCarDataValue");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceString, "ChloeDatabase_GetCarPerformanceString");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataString, "ChloeDatabase_GetCarDataString");

@@ -17,6 +17,7 @@ public:
 		tCarTuningData tuning; // todo
 
 		nCarPrice = data["Data"]["Price"].value_or(0);
+		if (!nCarPrice) nCarPrice = config["Data"]["Price"].value_or(0);
 		CAR_PERFORMANCE(nCarWeight, "Body", "Mass");
 		CAR_PERFORMANCE(nCarHorsepower, "Engine", "Horsepower");
 		sCarName = GetCarName(carId);

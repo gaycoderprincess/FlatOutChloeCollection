@@ -20,7 +20,7 @@ toml::table GetTireDynamicsTable() {
 struct tCarTuningData {
 	// body
 	float fBrakePower;
-	float fDurability; // todo implement with the new durability hack
+	float fDurability;
 
 	// engine
 	float fTurboAcceleration;
@@ -239,6 +239,7 @@ void __fastcall LoadCarBody(Car* car) {
 	CAR_PERFORMANCE(body->fTireCenteringSpeed, "Body", "TireCenteringSpeed");
 	CAR_PERFORMANCE(body->nFrontTraction, "Body", "FrontTraction");
 	CAR_PERFORMANCE(body->nRearTraction, "Body", "RearTraction");
+	CAR_PERFORMANCE_TUNE(fCarDurability[car->pPlayer->nPlayerId-1], "Body", "Body_Max", "Durability", tuning.fDurability);
 
 	body->fTireTurnAngleIn *= 0.017453292;
 	body->fTireTurnAngleOut *= 0.017453292;
@@ -392,7 +393,7 @@ void __stdcall LoadCarSounds(Car* car) {
 		engineSoundFile = config2["Data"]["EngineSound"].value_or("");
 	}
 
-	Car::LoadEngineSounds(false, 0, &car->pEngineSound,  std::format("data/sound/{}", engineSoundFile).c_str(), 0);
+	Car::LoadEngineSounds(car->pPlayer->nPlayerType == PLAYERTYPE_AI, 0, &car->pEngineSound,  std::format("data/sound/{}", engineSoundFile).c_str(), 0);
 	Car::LoadSurfaceSounds(4, &car->pSurfaceSounds, "data/sound/surface_sounds.bed");
 }
 
