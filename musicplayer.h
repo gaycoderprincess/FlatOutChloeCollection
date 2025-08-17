@@ -163,9 +163,13 @@ namespace NewMusicPlayer {
 		pPlaylistDerby = &aPlaylistsIngame[nIngameDerbySoundtrack];
 		pPlaylistStunt = &aPlaylistsStunt[nIngameStuntSoundtrack];
 
-		if (pLoadingScreen || IsKeyJustPressed(VK_END) || IsPadKeyJustPressed(NYA_PAD_KEY_SELECT)) {
+		if (pLoadingScreen) {
 			StopPlayback();
 			return;
+		}
+
+		if (IsKeyJustPressed(VK_END) || IsPadKeyJustPressed(NYA_PAD_KEY_SELECT)) {
+			StopPlayback();
 		}
 
 		if (GetGameState() == GAME_STATE_MENU) {
