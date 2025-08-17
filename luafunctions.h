@@ -228,10 +228,7 @@ int ChloeCareer_ResetNewlyUnlockedClass(void* a1) {
 }
 
 int ChloeHUD_SetCarStats(void* a1) {
-	Menu_CarDealer.nCarHorsepower = luaL_checknumber(a1, 1);
-	Menu_CarDealer.nCarWeight = luaL_checknumber(a1, 2);
-	Menu_CarDealer.nCarPrice = luaL_checknumber(a1, 3);
-	Menu_CarDealer.sCarName = GetCarName(pGameFlow->pMenuInterface->pMenuScene->nCar);
+	Menu_CarDealer.SetCarStats(luaL_checknumber(a1, 1));
 	return 0;
 }
 
@@ -680,6 +677,55 @@ int ChloeCollection_GetAchievementTrackable(void* a1) {
 	return 0;
 }
 
+int ChloeDatabase_GetCarPerformanceValue(void* a1) {
+	auto config = GetCarPerformanceTable(luaL_checknumber(a1, 1));
+	auto category = (const char*)lua_tolstring(a1, 2);
+	auto keyValue = (const char*)lua_tolstring(a1, 3);
+	float outValue;
+	CAR_PERFORMANCE(outValue, category, keyValue);
+	lua_pushnumber(a1, outValue);
+	return 1;
+}
+
+// todo!
+int ChloeDatabase_GetCarPerformanceValueTuned(void* a1) {
+	auto config = GetCarPerformanceTable(luaL_checknumber(a1, 1));
+	auto category = (const char*)lua_tolstring(a1, 2);
+	auto keyValue = (const char*)lua_tolstring(a1, 3);
+	float outValue;
+	CAR_PERFORMANCE(outValue, category, keyValue);
+	lua_pushnumber(a1, outValue);
+	return 1;
+}
+
+int ChloeDatabase_GetCarDataValue(void* a1) {
+	auto config = GetCarDataTable(luaL_checknumber(a1, 1));
+	auto category = (const char*)lua_tolstring(a1, 2);
+	auto keyValue = (const char*)lua_tolstring(a1, 3);
+	float outValue;
+	CAR_PERFORMANCE(outValue, category, keyValue);
+	lua_pushnumber(a1, outValue);
+	return 1;
+}
+
+int ChloeDatabase_GetCarPerformanceString(void* a1) {
+	auto config = GetCarPerformanceTable(luaL_checknumber(a1, 1));
+	auto category = (const char*)lua_tolstring(a1, 2);
+	auto keyValue = (const char*)lua_tolstring(a1, 3);
+	auto str = (std::string)config[category][keyValue].value_or("NULL");
+	lua_pushlstring(a1, (const wchar_t*)str.c_str(), (str.length() + 1));
+	return 1;
+}
+
+int ChloeDatabase_GetCarDataString(void* a1) {
+	auto config = GetCarDataTable(luaL_checknumber(a1, 1));
+	auto category = (const char*)lua_tolstring(a1, 2);
+	auto keyValue = (const char*)lua_tolstring(a1, 3);
+	auto str = (std::string)config[category][keyValue].value_or("NULL");
+	lua_pushlstring(a1, (const wchar_t*)str.c_str(), (str.length() + 1));
+	return 1;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -798,6 +844,11 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetNumAchievementsInCategory, "ChloeCollection_GetNumAchievementsInCategory");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetAchievementTracked, "ChloeCollection_SetAchievementTracked");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementTrackable, "ChloeCollection_GetAchievementTrackable");
+	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceValue, "ChloeDatabase_GetCarPerformanceValue");
+	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceValueTuned, "ChloeDatabase_GetCarPerformanceValueTuned");
+	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataValue, "ChloeDatabase_GetCarDataValue");
+	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceString, "ChloeDatabase_GetCarPerformanceString");
+	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataString, "ChloeDatabase_GetCarDataString");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

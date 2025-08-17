@@ -327,6 +327,13 @@ void __stdcall LoadCarEngineMesh(Car* car) {
 	car->FinishInitEngine(0);
 }
 
+void __stdcall LoadCarSounds(Car* car) {
+	auto config = GetCarDataTable(car->pPlayer->nCarId+1);
+
+	Car::LoadEngineSounds(false, 0, &car->pEngineSound, std::format("data/sound/{}", config["Data"]["EngineSound"].value_or("")).c_str(), 0);
+	Car::LoadSurfaceSounds(4, &car->pSurfaceSounds, "data/sound/surface_sounds.bed");
+}
+
 void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBA2, &LoadCarEngine);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBAE, &LoadCarGearbox);
@@ -335,4 +342,15 @@ void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CC0C, &LoadCarTires);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CC27, &LoadCarSuspension);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41DA38, &LoadCarEngineMesh);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x447A3D, &LoadCarSounds);
+
+	// remove equipment code
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x43EC90, 0x4D6B74);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x43ECA0, 0x4D6B74);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A72D2, 0x4D6B74);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A72E2, 0x4D6B74);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A72F2, 0x4D6B74);
+	NyaHookLib::Fill(0x43BB7E, 0x90, 5); // remove Equipment lua functions
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43BD20, 0x43C24A); // remove player tuning init
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43C250, 0x43C4FE); // remove ai tuning init
 }
