@@ -34,6 +34,7 @@ int nWreckPiggybagThreshold = 1000;
 float fCrashVelocityMultiplier = 150;
 
 bool IsPlayerWrecked(Player* ply) {
+	if (pGameFlow->nEventType == eEventType::DERBY) return ply->pCar->nIsRagdolled;
 	if (GetCarDamage(ply->pCar) < 1.0) return false;
 	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 	if (score->bHasFinished) return ply->pCar->nIsRagdolled;

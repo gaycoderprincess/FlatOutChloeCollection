@@ -9,13 +9,10 @@ public:
 	std::vector<std::string> aCrashBonuses;
 	double fCrashBonusTimer = 0;
 
-	//float fCrashBonusTextX = 0.118;
-	//float fCrashBonusTextY = 0.87;
-	//float fCrashBonusTextSize = 0.05;
-	float fCrashBonusTextX = 0.118;
-	float fCrashBonusTextY = 0.865;
-	float fCrashBonusTextSize = 0.03;
-	float fCrashBonusTextSize2 = 0.06;
+	static constexpr float fCrashBonusTextX = 0.118 * (16.0 / 9.0);
+	static constexpr float fCrashBonusTextY = 0.865;
+	static constexpr float fCrashBonusTextSize = 0.03;
+	static constexpr float fCrashBonusTextSize2 = 0.06;
 
 	static constexpr float fCrashBonusFadeinStart = 2;
 	static constexpr float fCrashBonusFadeinEnd = 1.75;
@@ -25,7 +22,7 @@ public:
 
 	void DrawCrashBonusNotif() {
 		tNyaStringData data;
-		data.x = fCrashBonusTextX;
+		data.x = fCrashBonusTextX * GetAspectRatioInv();
 		data.y = fCrashBonusTextY;
 		data.size = fCrashBonusTextSize;
 		data.XCenterAlign = true;
@@ -206,22 +203,16 @@ const char* GetCrashBonusName(int type) {
 	switch (type) {
 	case CRASHBONUS_SUPERFLIP:
 		return "SUPER FLIP!";
-		break;
 	case CRASHBONUS_SLAM:
 		return "SLAM";
-		break;
 	case CRASHBONUS_POWERHIT:
 		return "POWER HIT";
-		break;
 	case CRASHBONUS_BLASTOUT:
 		return "BLAST OUT!";
-		break;
 	case CRASHBONUS_RAGDOLLED:
 		return "CRASH OUT!";
-		break;
 	case CRASHBONUS_WRECKED:
 		return "WRECKED!";
-		break;
 	}
 }
 
