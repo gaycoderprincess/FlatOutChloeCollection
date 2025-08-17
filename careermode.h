@@ -329,6 +329,8 @@ namespace CareerMode {
 	}
 
 	float GetAIUpgradeLevel() {
+		if (IsCareerTimeTrial()) return 0.0;
+
 		if (bNextRaceCareerRace) {
 			return GetCurrentCup()->fAIUpgradeLevel;
 		}
