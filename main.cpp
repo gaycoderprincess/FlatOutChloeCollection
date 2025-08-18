@@ -20,6 +20,18 @@ void WriteLog(const std::string& str) {
 	file.flush();
 }
 
+bool bDebugLog = false;
+void WriteLogDebug(const std::string& title, const std::string& str) {
+	if (!bDebugLog) return;
+
+	static auto file = std::ofstream("FlatOutChloeCollection_gcp_debug.log");
+
+	file << "[" + title + "] ";
+	file << str;
+	file << "\n";
+	file.flush();
+}
+
 std::string GetStringNarrow(const wchar_t* string) {
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	return converter.to_bytes(string);
@@ -97,6 +109,26 @@ void OnFilesystemInit() {
 	ApplyCarDealerPatches();
 }
 
+void CommandlineArgReader(void* a1, const char* a2) {
+	auto str = (std::string)a2;
+	if (str == "-debug") bDebugLog = true;
+	WriteLogDebug("INIT", std::format("Commandline argument {}", a2));
+
+	return lua_setglobal(a1, a2);
+}
+
+uintptr_t OnFilesystemInitASM_jmp = 0x4398C0;
+void __attribute__((naked)) OnFilesystemInitASM() {
+	__asm__ (
+		"pushad\n\t"
+		"call %1\n\t"
+		"popad\n\t"
+		"jmp %0\n\t"
+			:
+			:  "m" (OnFilesystemInitASM_jmp), "i" (OnFilesystemInit)
+	);
+}
+
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
@@ -161,6 +193,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::Patch(0x45A667 + 2, 0x18FC);
 			NyaHookLib::Patch<uint8_t>(0x45A70C, 0x75);
 			NyaHookLib::Patch<uint8_t>(0x45A70F, 0x74);
+
+			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4D9A93, &CommandlineArgReader);
+			OnFilesystemInitASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A7261, &OnFilesystemInitASM);
 		} break;
 		default:
 			break;

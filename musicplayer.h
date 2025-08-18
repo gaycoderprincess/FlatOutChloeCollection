@@ -27,19 +27,28 @@ namespace NewMusicPlayer {
 		bool bAlreadyPlayed = false;
 		bool bIsFromFile = false;
 
-		void Load() {
+		void Load(bool loadStreams) {
+			WriteLogDebug("MUSIC", std::format("Loading song {} - {}", sArtist, sTitle));
+
 			// file exists in filesystem, use streaming
 			if (std::filesystem::exists(sPath)) {
-				pStream = NyaAudio::LoadFileStreamed(sPath.c_str());
+				WriteLogDebug("MUSIC", "Song found in loose files, setting up streaming");
+				if (loadStreams) {
+					WriteLogDebug("MUSIC", std::format("Initializing streaming for {}", sPath));
+					pStream = NyaAudio::LoadFileStreamed(sPath.c_str());
+				}
 				bIsFromFile = true;
 			}
 			else {
+				WriteLogDebug("MUSIC", "Song not found in loose files, searching for fallback in BFS");
+
 				bIsFromFile = false;
 
 				size_t size;
 				auto data = (char*)ReadFileFromBfs(sPath.c_str(), size);
 				if (!data) return;
 
+				WriteLogDebug("MUSIC", std::format("Song found in BFS, preloading {} bytes of data", size));
 				pStream = NyaAudio::LoadMemory(data, size);
 			}
 		}
@@ -49,7 +58,7 @@ namespace NewMusicPlayer {
 			bFinished = true;
 
 			if (bIsFromFile && !pStream) {
-				Load();
+				Load(true);
 			}
 
 			if (pStream) {
@@ -124,8 +133,10 @@ namespace NewMusicPlayer {
 		}
 
 		void Load() {
+			WriteLogDebug("MUSIC", std::format("Preloading playlist {}", GetStringNarrow(wsName.c_str())));
+
 			for (auto& song : aSongs) {
-				song.Load();
+				song.Load(false);
 			}
 		}
 	};
@@ -266,6 +277,7 @@ namespace NewMusicPlayer {
 			LoadPlaylist(&playlist, config[std::format("playlist{}", i+1)]["file"].value_or(""));
 			if (playlist.wsName.empty()) continue;
 			if (playlist.aSongs.empty()) continue;
+			WriteLogDebug("MUSIC", std::format("Adding ingame playlist {} with {} songs", GetStringNarrow(playlist.wsName.c_str()), playlist.aSongs.size()));
 			aPlaylistsIngame.push_back(playlist);
 		}
 		for (int i = 0; i < numMenuPlaylists; i++) {
@@ -274,6 +286,7 @@ namespace NewMusicPlayer {
 			LoadPlaylist(&playlist, config[std::format("menuplaylist{}", i+1)]["file"].value_or(""));
 			if (playlist.wsName.empty()) continue;
 			if (playlist.aSongs.empty()) continue;
+			WriteLogDebug("MUSIC", std::format("Adding menu playlist {} with {} songs", GetStringNarrow(playlist.wsName.c_str()), playlist.aSongs.size()));
 			aPlaylistsTitle.push_back(playlist);
 		}
 		for (int i = 0; i < numStuntPlaylists; i++) {
@@ -282,6 +295,7 @@ namespace NewMusicPlayer {
 			LoadPlaylist(&playlist, config[std::format("stuntplaylist{}", i+1)]["file"].value_or(""));
 			if (playlist.wsName.empty()) continue;
 			if (playlist.aSongs.empty()) continue;
+			WriteLogDebug("MUSIC", std::format("Adding stunt playlist {} with {} songs", GetStringNarrow(playlist.wsName.c_str()), playlist.aSongs.size()));
 			aPlaylistsStunt.push_back(playlist);
 		}
 		if (defaultMenu < 0 || defaultMenu >= aPlaylistsTitle.size()) defaultMenu = 0;
@@ -314,10 +328,18 @@ namespace NewMusicPlayer {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
 
+		WriteLogDebug("MUSIC", "--- Discovering playlists ---");
+
 		LoadPlaylistConfig();
+
+		WriteLogDebug("MUSIC", "--- Finished discovering playlists ---");
+
+		WriteLogDebug("MUSIC", "--- Preloading playlists ---");
 
 		for (auto& playlist : aPlaylistsTitle) { playlist.Load(); }
 		for (auto& playlist : aPlaylistsIngame) { playlist.Load(); }
 		for (auto& playlist : aPlaylistsStunt) { playlist.Load(); }
+
+		WriteLogDebug("MUSIC", "--- Finished preloading playlists ---");
 	}
 }

@@ -58,6 +58,7 @@ std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
 }
 
 void ApplyCarDealerPatches() {
+	WriteLogDebug("CARDEALER", "--- Loading car data ---");
 	auto config = ReadTOMLFromBfs("data/database/cardata.toml");
 	int count = config["CarDealer"]["NumCars"].value_or(0);
 	aDealerCars.reserve(count);
@@ -76,6 +77,8 @@ void ApplyCarDealerPatches() {
 			car.cameraId = i+1;
 		}
 		if (car.name.empty()) continue;
+		WriteLogDebug("CARDEALER", std::format("Registered dealer car {} ({}) to data ID {} with performance from car{}", i+1, car.name, car.carId, car.performanceId));
 		aDealerCars.push_back(car);
 	}
+	WriteLogDebug("CARDEALER", "--- Finished loading car data ---");
 }

@@ -94,6 +94,7 @@ tCarTuningData GetPlayerCareerTuningData(int carId) {
 tCarTuningData GetAITuningData() {
 	tCarTuningData data;
 	data.SetAllUpgrades(CareerMode::GetAIUpgradeLevel());
+	WriteLogDebug("HANDLING", std::format("Using AI upgrade level {}", data.fHorsepower));
 	return data;
 }
 
@@ -111,17 +112,20 @@ tCarTuningData GetTuningDataForCar(Car* pCar) {
 	return GetAITuningData();
 }
 
-#define CAR_PERFORMANCE(value, category, name) value = config[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
-#define CAR_PERFORMANCE_ARRAY(value, category, name, arrayCount) for (int i = 0; i < arrayCount; i++) { value[i] = config[category][name][i].value_or(-99999.0f); if (value[i] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } }
-#define CAR_PERFORMANCE_FALLBACK(value, category, name, default) value = config[category][name].value_or(default)
-#define CAR_PERFORMANCE_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(config[category][name].value_or(-99999.0f), config[category_max][name].value_or(config[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
+#define CAR_PERFORMANCE(value, category, name) value = config[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{} = {}", category, name, value));
+#define CAR_PERFORMANCE_ARRAY(value, category, name, arrayCount) for (int j = 0; j < arrayCount; j++) { value[j] = config[category][name][j].value_or(-99999.0f); if (value[j] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{}[{}] = {}", category, name, j+1, value[j])); }
+#define CAR_PERFORMANCE_FALLBACK(value, category, name, default) value = config[category][name].value_or(default); WriteLogDebug("HANDLING", std::format("{}.{} = {}", category, name, value));
+#define CAR_PERFORMANCE_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(config[category][name].value_or(-99999.0f), config[category_max][name].value_or(config[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{} = {} (tuned)", category, name, value));
 
-#define TIRE_PERFORMANCE(value, category, name) value = global[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
-#define TIRE_PERFORMANCE_ARRAY(value, category, name, arrayCount) for (int j = 0; j < arrayCount; j++) { value[j] = global[category][name][j].value_or(-99999.0f); if (value[j] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } }
-#define TIRE_PERFORMANCE_FALLBACK(value, category, name, default) value = global[category][name].value_or(default)
-#define TIRE_PERFORMANCE_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(global[category][name].value_or(-99999.0f), config[category_max][name].value_or(config[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); }
+#define TIRE_PERFORMANCE(value, category, name) value = global[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{} = {}", category, name, value));
+#define TIRE_PERFORMANCE_ARRAY(value, category, name, arrayCount) for (int j = 0; j < arrayCount; j++) { value[j] = global[category][name][j].value_or(-99999.0f); if (value[j] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{}[{}] = {}", category, name, j+1, value[j])); }
+#define TIRE_PERFORMANCE_FALLBACK(value, category, name, default) value = global[category][name].value_or(default); WriteLogDebug("HANDLING", std::format("{}.{} = {}", category, name, value));
+#define TIRE_PERFORMANCE_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(global[category][name].value_or(-99999.0f), config[category_max][name].value_or(config[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{} = {} (tuned)", category, name, value));
 
 void __stdcall LoadCarEngine(Engine* engine) {
+	WriteLogDebug("HANDLING", std::format("Initing engine for car{} for {}", engine->pPerformance->pCar->pPlayer->nCarId+1,
+							  GetStringNarrow(engine->pPerformance->pCar->pPlayer->sPlayerName.Get())));
+
 	auto config = GetCarPerformanceTable(engine->pPerformance->pCar->pPlayer->nCarId+1);
 
 	auto tuning = GetTuningDataForCar(engine->pPerformance->pCar);
@@ -152,6 +156,9 @@ void __stdcall LoadCarEngine(Engine* engine) {
 }
 
 void __stdcall LoadCarGearbox(Gearbox* gearbox) {
+	WriteLogDebug("HANDLING", std::format("Initing gearbox for car{} for {}", gearbox->pPerformance->pCar->pPlayer->nCarId+1,
+							  GetStringNarrow(gearbox->pPerformance->pCar->pPlayer->sPlayerName.Get())));
+
 	auto config = GetCarPerformanceTable(gearbox->pPerformance->pCar->pPlayer->nCarId+1);
 
 	auto tuning = GetTuningDataForCar(gearbox->pPerformance->pCar);
@@ -177,6 +184,9 @@ void __stdcall LoadCarGearbox(Gearbox* gearbox) {
 }
 
 void __stdcall LoadCarDifferential(Differential* diff) {
+	WriteLogDebug("HANDLING", std::format("Initing differential for car{} for {}", diff->pPerformance->pCar->pPlayer->nCarId+1,
+							  GetStringNarrow(diff->pPerformance->pCar->pPlayer->sPlayerName.Get())));
+
 	auto config = GetCarPerformanceTable(diff->pPerformance->pCar->pPlayer->nCarId+1);
 
 	auto tuning = GetTuningDataForCar(diff->pPerformance->pCar);
@@ -190,6 +200,9 @@ void __stdcall LoadCarDifferential(Differential* diff) {
 }
 
 void __fastcall LoadCarBody(Car* car) {
+	WriteLogDebug("HANDLING", std::format("Initing body for car{} for {}", car->pPlayer->nCarId+1,
+							  GetStringNarrow(car->pPlayer->sPlayerName.Get())));
+
 	auto config = GetCarPerformanceTable(car->pPlayer->nCarId+1);
 	auto configData = GetCarDataTable(car->pPlayer->nCarId+1);
 
@@ -264,6 +277,9 @@ int __attribute__((naked)) LoadCarBodyASM() {
 }
 
 void __stdcall LoadCarTires(Car* car) {
+	WriteLogDebug("HANDLING", std::format("Initing tires for car{} for {}", car->pPlayer->nCarId+1,
+							  GetStringNarrow(car->pPlayer->sPlayerName.Get())));
+
 	auto config = GetCarTireTable(car->pPlayer->nCarId+1);
 	float fRollingResistance;
 	float fInducedDragCoeff;
@@ -376,6 +392,9 @@ void LoadCarSuspensionPart(Car* car, bool front) {
 }
 
 void __stdcall LoadCarSuspension(Car* car) {
+	WriteLogDebug("HANDLING", std::format("Initing suspension for car{} for {}", car->pPlayer->nCarId+1,
+							  GetStringNarrow(car->pPlayer->sPlayerName.Get())));
+
 	LoadCarSuspensionPart(car, true);
 	LoadCarSuspensionPart(car, false);
 }
@@ -387,6 +406,9 @@ void __stdcall LoadCarEngineMesh(Car* car) {
 }
 
 void __stdcall LoadCarSounds(Car* car) {
+	WriteLogDebug("HANDLING", std::format("Initing sounds for car{} for {}", car->pPlayer->nCarId+1,
+							  GetStringNarrow(car->pPlayer->sPlayerName.Get())));
+
 	auto config = GetCarDataTable(car->pPlayer->nCarId+1);
 	auto config2 = GetCarPerformanceTable(car->pPlayer->nCarId+1);
 

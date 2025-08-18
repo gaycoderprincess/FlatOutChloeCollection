@@ -13,10 +13,8 @@ bool __fastcall NewBFSList1(uint32_t flags) {
 	return false;
 }
 
-void OnFilesystemInit();
 bool __fastcall NewBFSList2(uint32_t flags) {
 	MountBFSFiles("patch");
-	OnFilesystemInit();
 	return false;
 }
 
