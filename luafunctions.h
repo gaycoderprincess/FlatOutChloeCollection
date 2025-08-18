@@ -889,7 +889,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");
 	RegisterLUAEnum(a1, HANDLING_HARDCORE, "HANDLING_HARDCORE");
 
-	static auto sVersionString = "Chloe Collection v1.04 - Time Trial Edition";
+	static auto sVersionString = "Chloe Collection v1.05 - Database Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
 	lua_setglobal(a1, sVersionString);
 	lua_settable(a1, LUA_ENVIRONINDEX);
