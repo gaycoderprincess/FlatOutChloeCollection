@@ -128,7 +128,7 @@ void ProcessCrashBonuses() {
 				data.damage = 0;
 			}
 		}
-		if (opponent->pCar->nIsRagdolled != isRagdolled[i] && pGameFlow->nEventType != eEventType::DERBY) {
+		if (opponent->pCar->nIsRagdolled && !isRagdolled[i] && pGameFlow->nEventType != eEventType::DERBY) {
 			if (GetPlayerLastHit(i) == ply && data.lastHitTimestamp > pPlayerHost->nRaceTime - nRagdollPiggybagThreshold) {
 				AddCrashBonus(playerId, CRASHBONUS_RAGDOLLED);
 			}
@@ -271,6 +271,34 @@ void __attribute__((naked)) OnCarDamageRewardsASM() {
 	);
 }
 
+bool __fastcall IsCarWrecked_DamageCheck(Car* car) {
+	NyaHookLib::Patch<uint8_t>(0x4167D2, car->nIsRagdolled ? 0xEB : 0x75); // disable re-ragdolling
+	return IsPlayerWrecked(car->pPlayer);
+}
+
+uintptr_t IsPlayerWreckedASM_jmp = 0x4166B0;
+void __attribute__((naked)) IsPlayerWreckedASM() {
+	__asm__ (
+		"push ecx\n\t"
+		"push edx\n\t"
+		"push ebx\n\t"
+		"push ebp\n\t"
+		"push esi\n\t"
+		"push edi\n\t"
+		"mov ecx, edi\n\t"
+		"call %1\n\t"
+		"pop edi\n\t"
+		"pop esi\n\t"
+		"pop ebp\n\t"
+		"pop ebx\n\t"
+		"pop edx\n\t"
+		"pop ecx\n\t"
+		"jmp %0\n\t"
+			:
+			:  "m" (IsPlayerWreckedASM_jmp), "i" (IsCarWrecked_DamageCheck)
+	);
+}
+
 void ApplyCarDamagePatches() {
 	uintptr_t addresses[] = {
 		0x4078F0,
@@ -292,4 +320,6 @@ void ApplyCarDamagePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x449081, &OnCarDamageRewardsASM);
 
 	NyaHookLib::Patch<uint8_t>(0x452B7F, 0xEB); // remove stupid slowmo feature when ragdolled
+
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4166AA, &IsPlayerWreckedASM);
 }
