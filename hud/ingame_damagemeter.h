@@ -173,7 +173,7 @@ public:
 			fCrashBonusTimer -= gTimer.fDeltaTime;
 			// increase speed if there's more than one
 			if (aCrashBonuses.size() > 1) {
-				fCrashBonusTimer -= gTimer.fDeltaTime;
+				fCrashBonusTimer -= gTimer.fDeltaTime * 2;
 				if (fCrashBonusTimer < fCrashBonusFadeinEnd && fCrashBonusTimer > fCrashBonusFadeoutStart) {
 					fCrashBonusTimer = fCrashBonusFadeoutStart;
 				}
@@ -202,7 +202,7 @@ public:
 const char* GetCrashBonusName(int type) {
 	switch (type) {
 	case CRASHBONUS_SUPERFLIP:
-		return "SUPER FLIP!";
+		return "SUPER FLIP";
 	case CRASHBONUS_SLAM:
 		return "SLAM";
 	case CRASHBONUS_POWERHIT:

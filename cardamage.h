@@ -31,6 +31,7 @@ float fPowerHitCrashVelocity1 = 20.0;
 float fBlastOutCrashVelocity1 = 35.0;
 int nRagdollPiggybagThreshold = 1000;
 int nWreckPiggybagThreshold = 1000;
+int nFlipPiggybagThreshold = 1000;
 float fCrashVelocityMultiplier = 150;
 
 bool IsPlayerWrecked(Player* ply) {
@@ -96,8 +97,12 @@ Player* GetPlayerLastHit(int playerId) {
 
 template<int playerId>
 void ProcessCrashBonuses() {
+	static CNyaTimer gTimer;
+	gTimer.Process();
+
 	static int32_t lastHitTimestamps[32] = {};
 	static bool isRagdolled[32] = {};
+	static double rotateAmount[32] = {};
 
 	auto ply = GetPlayer(playerId);
 	if (!ply) return;
@@ -133,6 +138,24 @@ void ProcessCrashBonuses() {
 				AddCrashBonus(playerId, CRASHBONUS_RAGDOLLED);
 			}
 		}
+
+		if (data.lastHitTimestamp < 0 || data.lastHitTimestamp < pPlayerHost->nRaceTime - nFlipPiggybagThreshold) {
+			rotateAmount[i] = 0;
+		}
+		else {
+			auto carRotation = *opponent->pCar->GetMatrix();
+			carRotation.p = {0, 0, 0};
+			carRotation = carRotation.Invert();
+
+			auto angVelRelative = carRotation * *opponent->pCar->GetAngVelocity();
+			rotateAmount[i] += angVelRelative.z * gTimer.fDeltaTime;
+		}
+
+		if (std::abs(rotateAmount[i]) > std::numbers::pi * 0.75) {
+			AddCrashBonus(playerId, CRASHBONUS_SUPERFLIP);
+			rotateAmount[i] = 0;
+		}
+
 		lastHitTimestamps[i] = data.lastHitTimestamp;
 		isRagdolled[i] = opponent->pCar->nIsRagdolled;
 	}
