@@ -291,6 +291,9 @@ void __stdcall LoadCarTires(Car* car) {
 	float fOptimalLoadFactor;
 	float fXFriction[2];
 	float fZFriction[2];
+	float fSlideControl;
+	float fUnderSteer;
+	float fSlowDown;
 	CAR_PERFORMANCE(fRollingResistance, "TireDynamics", "RollingResistance");
 	CAR_PERFORMANCE(fInducedDragCoeff, "TireDynamics", "InducedDragCoeff");
 	CAR_PERFORMANCE(fPneumaticTrail, "TireDynamics", "PneumaticTrail");
@@ -301,6 +304,9 @@ void __stdcall LoadCarTires(Car* car) {
 	CAR_PERFORMANCE(fOptimalLoadFactor, "TireDynamics", "OptimalLoadFactor");
 	CAR_PERFORMANCE_ARRAY(fXFriction, "TireDynamics", "XFriction", 2);
 	CAR_PERFORMANCE_ARRAY(fZFriction, "TireDynamics", "ZFriction", 2);
+	CAR_PERFORMANCE(fSlideControl, "TireDynamics", "SlideControl");
+	CAR_PERFORMANCE(fUnderSteer, "TireDynamics", "UnderSteer");
+	CAR_PERFORMANCE(fSlowDown, "TireDynamics", "SlowDown");
 
 	auto v22 = car->Body.fMass * 2.4525001;
 	auto v105 = fOptimalSlipLoad * v22 * 2.6800001 / std::tan(fOptimalSlipAngle * 0.017453292);
@@ -340,6 +346,9 @@ void __stdcall LoadCarTires(Car* car) {
 		car->TireDynamics[i].fZFriction[1] *= fZFriction[1];
 		car->TireDynamics[i].fXFriction[0] *= fXFriction[0];
 		car->TireDynamics[i].fXFriction[1] *= fXFriction[1];
+		car->TireDynamics[i].fSlideControl *= fSlideControl;
+		car->TireDynamics[i].fUnderSteer *= fUnderSteer;
+		car->TireDynamics[i].fSlowDown *= fSlowDown;
 	}
 
 	CAR_PERFORMANCE(car->Body.fFrontTireMass, "Front", "Mass");

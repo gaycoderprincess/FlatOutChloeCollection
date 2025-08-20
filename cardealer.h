@@ -59,7 +59,7 @@ std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
 
 void ApplyCarDealerPatches() {
 	WriteLogDebug("CARDEALER", "--- Loading car data ---");
-	auto config = ReadTOMLFromBfs("data/database/cardata.toml");
+	auto config = ReadTOMLFromBfs("data/database/cardealer.toml");
 	int count = config["CarDealer"]["NumCars"].value_or(0);
 	aDealerCars.reserve(count);
 	for (int i = 0; i < count; i++) {

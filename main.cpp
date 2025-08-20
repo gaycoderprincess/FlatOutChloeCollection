@@ -72,11 +72,14 @@ void SetHandlingDamage() {
 	if (pLoadingScreen) return;
 	if (GetGameState() != GAME_STATE_RACE) return;
 
-	auto ply = GetPlayer(0);
-	if (!ply) return;
-	ply->pCar->FixPart(eCarFixPart::SUSPENSION);
-	if (handlingDamage == HANDLINGDAMAGE_OFF) {
-		ply->pCar->FixPart(eCarFixPart::WHEELS);
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		auto ply = GetPlayer(i);
+		if (!ply) continue;
+
+		ply->pCar->FixPart(eCarFixPart::SUSPENSION);
+		if (handlingDamage == HANDLINGDAMAGE_OFF) {
+			ply->pCar->FixPart(eCarFixPart::WHEELS);
+		}
 	}
 }
 
