@@ -127,6 +127,7 @@ public:
 	}
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
+		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
 		static auto ai_damage_meter = LoadTextureFromBFS("data/global/overlay/ai_damage_meter.png");
 		static auto ai_damage_meter_glow = LoadTextureFromBFS("data/global/overlay/ai_damage_meter_glow.png");
