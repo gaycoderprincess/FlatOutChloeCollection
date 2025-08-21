@@ -1,9 +1,12 @@
+const int nMaxPlayers = 32;
+int nNumAIProfiles = 7;
+
 int nOpponentCount = 7;
 int __cdecl GetCarCount(int, int) {
 	return nOpponentCount + 1;
 }
 
-static inline const wchar_t* aCustomPlayerNames[256] = {
+const wchar_t* aCustomPlayerNames[nMaxPlayers] = {
 		L"FRANK BENTON",
 		L"SUE O'NEILL",
 		L"TANIA GRAHAM",
@@ -15,7 +18,8 @@ static inline const wchar_t* aCustomPlayerNames[256] = {
 
 void GetAINames() {
 	auto config = toml::parse_file("Config/AIConfig.toml");
-	for (int i = 0; i < 256; i++) {
+	nNumAIProfiles = config["main"]["NumAIProfiles"].value_or(7);
+	for (int i = 0; i < nMaxPlayers; i++) {
 		auto str = (std::string) config["main"]["AI" + std::to_string(i + 1)].value_or("NULL");
 		if (str == "NULL" && aCustomPlayerNames[i]) continue;
 
@@ -28,13 +32,13 @@ void GetAINames() {
 }
 
 int __fastcall GetPlayerStartPosition(Player* pPlayer) {
-	static int startPositions[32];
+	static int startPositions[nMaxPlayers];
 
 	if (pPlayer->nPlayerId == 1) {
 		int numPlayers = 8;
 		auto startPositionTaken = new bool[numPlayers];
 		memset(startPositionTaken, 0, numPlayers);
-		for (int i = 0; i < 32; i++) {
+		for (int i = 0; i < nMaxPlayers; i++) {
 			startPositions[i] = i;
 			if (i < 8) {
 				do {
@@ -101,8 +105,8 @@ int __attribute__((naked)) AIPlayerStartPositionASM() {
 }
 
 void __stdcall OnLoadAIProfile(AIPlayer* player) {
-	while (player->nAIId >= 33) {
-		player->nAIId -= 32;
+	while (player->nAIId > nNumAIProfiles) {
+		player->nAIId -= nNumAIProfiles;
 	}
 	AIPlayer::LoadProfile(player);
 }
@@ -118,10 +122,8 @@ void ApplyAIExtenderPatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43F58E, &PlayerStartPositionASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43F838, &AIPlayerStartPositionASM);
 
-	int maxPlayers = 128;
-
 	{
-		int listnodeCount = maxPlayers * 4;
+		int listnodeCount = nMaxPlayers * 4;
 		int listnodeInitCount = listnodeCount - 1;
 		int listnodeSize = (listnodeCount * 0xC) + 0x4;
 		int listnodeLastOffset = listnodeSize - 0xC;
