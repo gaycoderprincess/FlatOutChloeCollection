@@ -48,6 +48,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "carreset.h"
 #include "careermode.h"
 #include "cardatabase.h"
+#include "aiextender.h"
 #include "ddsparser.h"
 #include "hud/common.h"
 #include "hud/ingame.h"
@@ -160,6 +161,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			//ApplyUltrawidePatches(); // todo finish this
 			ApplyIngameMapPatches();
 			ApplyXInputPatches();
+			ApplyAIExtenderPatches();
 			CareerMode::Init();
 			Achievements::Init();
 

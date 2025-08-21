@@ -117,10 +117,9 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gRewardString", Menu_CareerFinalResults.gRewardString, false);
 	//QuickValueEditor("fSpacingX", HUD_PlayerList.fSpacingX);
 	//ChloeMenuHud::EnterMenu(&Menu_Career_Unlock);
-
-	QuickValueEditor("fIngameMapSize", fIngameMapSize);
-
+	//QuickValueEditor("fIngameMapSize", fIngameMapSize);
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
+	//QuickValueEditor("nOpponentCount", nOpponentCount);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

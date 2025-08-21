@@ -449,4 +449,18 @@ void ApplyCarDatabasePatches() {
 	NyaHookLib::Fill(0x43BB7E, 0x90, 5); // remove Equipment lua functions
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43BD20, 0x43C24A); // remove player tuning init
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43C250, 0x43C4FE); // remove ai tuning init
+	NyaHookLib::Patch<uint8_t>(0x43D70C, 0xEB); // don't read cars.cfg
+	NyaHookLib::Patch<uint8_t>(0x43F36A, 0xEB); // don't use numcars
+	NyaHookLib::Patch<uint16_t>(0x43F3F9, 0x9090); // don't use numcars
+
+	// remove equipment class
+	NyaHookLib::Patch<uint8_t>(0x4A7790, 0xC3); // don't allocate equipment data
+	NyaHookLib::Patch<uint8_t>(0x43EE6A, 0xEB); // don't init player tuning
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43EE6A, 0x43EE88); // don't init splitscreen tuning
+	NyaHookLib::Fill(0x43EFF0, 0x90, 7); // don't reset car tuning class when initing players
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43FCA1, 0x43FCD8); // don't init car tuning class
+	// remove all car tuning inits
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x43F7C1, 0x43C4FE);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x440066, 0x43C24A);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4401FA, 0x43C24A);
 }
