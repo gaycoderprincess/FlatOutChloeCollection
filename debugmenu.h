@@ -121,6 +121,8 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 	//QuickValueEditor("nOpponentCount", nOpponentCount);
 
+	QuickValueEditor("Menu_Achievement_Description.gPos", Menu_Achievement_Description.gPos, false);
+
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();
 

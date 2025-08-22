@@ -688,6 +688,13 @@ int ChloeCollection_GetAchievementTrackable(void* a1) {
 	return 0;
 }
 
+int ChloeHUD_SelectAchievement(void* a1) {
+	if (auto achievement = GetAchievement((const char*)lua_tolstring(a1, 1))) {
+		Menu_Achievement_Description.SetAchievement(achievement);
+	}
+	return 0;
+}
+
 int ChloeDatabase_GetCarPerformanceValue(void* a1) {
 	auto config = GetCarPerformanceTable(luaL_checknumber(a1, 1));
 	auto category = (const char*)lua_tolstring(a1, 2);
@@ -791,6 +798,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStatsTuned, "ChloeHUD_SetCarStatsTuned");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_SelectAchievement, "ChloeHUD_SelectAchievement");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_LoadCustomData, "ChloeSave_LoadCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_SaveCustomData, "ChloeSave_SaveCustomData");
@@ -889,7 +897,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");
 	RegisterLUAEnum(a1, HANDLING_HARDCORE, "HANDLING_HARDCORE");
 
-	static auto sVersionString = "Chloe Collection v1.05 - Database Edition";
+	static auto sVersionString = "Chloe Collection v1.06 - Database Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
 	lua_setglobal(a1, sVersionString);
 	lua_settable(a1, LUA_ENVIRONINDEX);

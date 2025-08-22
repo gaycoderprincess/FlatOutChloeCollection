@@ -55,11 +55,11 @@ namespace Achievements {
 		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GENERAL),
 		new CAchievement("BLAST_ALL", "Blast Master", "Get 500 crash bonuses", CAT_GENERAL),
 		new CAchievement("BUY_CUSTOM_SKIN", "Community-Run", "Purchase a car with a custom livery", CAT_CAREER),
-		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 10%% health", CAT_GENERAL),
+		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 10% health", CAT_GENERAL),
 		new CAchievement("CASH_AWARD", "Makin' it Big", "Reach a total balance of $50,000", CAT_CAREER),
 		new CAchievement("ALL_CARS", "Car Collector", "Unlock all cars in the game", CAT_GENERAL),
-		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete FlatOut mode", CAT_CAREER),
-		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete FlatOut mode with all gold", CAT_CAREER),
+		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete career mode", CAT_CAREER),
+		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete career mode with all gold", CAT_CAREER),
 		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_GENERAL),
 		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_GENERAL),
 	};
@@ -432,14 +432,14 @@ namespace Achievements {
 	}
 	std::string OnTrack_LowHP(CAchievement* pThis) {
 		if (GetGameState() == GAME_STATE_RACE && IsRaceMode()) {
-			return std::format("Health: {:.0f}%%", (1.0 - GetPlayer(0)->pCar->fDamage) * 100);
+			return std::format("Health: {:.0f}%", (1.0 - GetPlayer(0)->pCar->fDamage) * 100);
 		}
 		return "Health: N/A";
 	}
 
 	const float fTrackPosX = 0.04;
 	const float fTrackPosY = 0.04;
-	const float fTrackSize = 0.02;
+	const float fTrackSize = 0.03;
 	const float fTrackSpacing = 0.03;
 
 	void DrawTrackUI() {

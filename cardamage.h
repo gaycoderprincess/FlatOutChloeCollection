@@ -151,7 +151,7 @@ void ProcessCrashBonuses() {
 			rotateAmount[i] += angVelRelative.z * gTimer.fDeltaTime;
 		}
 
-		if (std::abs(rotateAmount[i]) > std::numbers::pi * 0.75) {
+		if (std::abs(rotateAmount[i]) > std::numbers::pi * 0.9) {
 			AddCrashBonus(playerId, CRASHBONUS_SUPERFLIP);
 			rotateAmount[i] = 0;
 		}
