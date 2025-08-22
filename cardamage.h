@@ -31,7 +31,7 @@ float fPowerHitCrashVelocity1 = 20.0;
 float fBlastOutCrashVelocity1 = 35.0;
 int nRagdollPiggybagThreshold = 1000;
 int nWreckPiggybagThreshold = 1000;
-int nFlipPiggybagThreshold = 1000;
+int nFlipPiggybagThreshold = 2000;
 float fCrashVelocityMultiplier = 150;
 
 bool IsPlayerWrecked(Player* ply) {
@@ -345,4 +345,6 @@ void ApplyCarDamagePatches() {
 	NyaHookLib::Patch<uint8_t>(0x452B7F, 0xEB); // remove stupid slowmo feature when ragdolled
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4166AA, &IsPlayerWreckedASM);
+
+	NyaHookLib::Patch(0x416748 + 2, -100); // minimum crash bonus interval, default -500
 }

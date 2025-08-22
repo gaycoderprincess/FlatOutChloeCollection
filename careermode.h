@@ -3,6 +3,7 @@ namespace CareerMode {
 	std::string sLastCupName;
 	int nLastCupNumRaces;
 	int nLastCupAward;
+	int nLastRaceAwardTotal = 0;
 
 	struct tLUAClass {
 		struct tCup {
@@ -117,12 +118,19 @@ namespace CareerMode {
 			auto cashSceneryBonuses = aPlayerResults[0].aSceneryBonuses[i] * fBonusTypePrice[i];
 			pGameFlow->Profile.nMoney += cashSceneryBonuses;
 			pGameFlow->Profile.nMoneyGained += cashSceneryBonuses;
+			nLastRaceAwardTotal += cashSceneryBonuses;
 		}
 		for (int i = 0; i < NUM_CRASHBONUS_TYPES; i++) {
 			auto cashCrashBonuses = aPlayerResults[0].aCrashBonuses[i] * GetCrashBonusPrice(i);
 			pGameFlow->Profile.nMoney += cashCrashBonuses;
 			pGameFlow->Profile.nMoneyGained += cashCrashBonuses;
+			nLastRaceAwardTotal += cashCrashBonuses;
 		}
+
+		if (auto achievement = GetAchievement("CASH_DESTRUCTION")) {
+			if (nLastRaceAwardTotal > achievement->fInternalProgress) achievement->fInternalProgress = nLastRaceAwardTotal;
+		}
+		nLastRaceAwardTotal = 0;
 	}
 
 	int nNewlyUnlockedClass = -1;

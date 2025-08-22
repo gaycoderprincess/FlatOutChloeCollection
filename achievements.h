@@ -2,6 +2,7 @@ namespace Achievements {
 	bool IsRaceMode() {
 		if (pGameFlow->nEventType != eEventType::RACE) return false;
 		if (pGameFlow->nSubEventType != eSubEventType::RACE_NORMAL) return false;
+		if (CareerMode::IsCareerTimeTrial()) return false;
 		return true;
 	}
 
@@ -55,13 +56,14 @@ namespace Achievements {
 		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GENERAL),
 		new CAchievement("BLAST_ALL", "Blast Master", "Get 500 crash bonuses", CAT_GENERAL),
 		new CAchievement("BUY_CUSTOM_SKIN", "Community-Run", "Purchase a car with a custom livery", CAT_CAREER),
-		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 10% health", CAT_GENERAL),
+		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 25% health", CAT_GENERAL),
 		new CAchievement("CASH_AWARD", "Makin' it Big", "Reach a total balance of $50,000", CAT_CAREER),
 		new CAchievement("ALL_CARS", "Car Collector", "Unlock all cars in the game", CAT_GENERAL),
 		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete career mode", CAT_CAREER),
 		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete career mode with all gold", CAT_CAREER),
 		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_GENERAL),
 		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_GENERAL),
+		new CAchievement("CASH_DESTRUCTION", "Big Earner", "Earn over $5000 from a single career race", CAT_CAREER),
 	};
 
 	std::vector<CAchievement*> GetAchievementsInCategory(uint32_t category) {
@@ -365,7 +367,7 @@ namespace Achievements {
 	}
 
 	void OnTick_LowHP(CAchievement* pThis, double delta) {
-		pThis->nProgress = (pThis->fInternalProgress / 0.9) * 100;
+		pThis->nProgress = (pThis->fInternalProgress / 0.75) * 100;
 
 		if (GetGameState() == GAME_STATE_RACE) {
 			static bool bLast = false;
@@ -374,7 +376,7 @@ namespace Achievements {
 				if (!bLast && GetPlayerScore<PlayerScoreRace>(1)->nPosition == 1 && !GetPlayerScore<PlayerScoreRace>(1)->bIsDNF) {
 					auto damage = GetPlayer(0)->pCar->fDamage;
 					if (damage > pThis->fInternalProgress) pThis->fInternalProgress = damage;
-					if (damage >= 0.9) {
+					if (damage >= 0.75) {
 						AwardAchievement(pThis);
 					}
 				}
@@ -545,6 +547,7 @@ namespace Achievements {
 		GetAchievement("BLAST_ALL")->pTrackFunction = OnTrack_GenericProgress;
 
 		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
+		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 5000;
 	}
 }
 

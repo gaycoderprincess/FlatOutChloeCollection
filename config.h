@@ -28,4 +28,6 @@ namespace CareerMode {
 	bool bIsCareerRace = false;
 	bool bNextRaceCareerRace = false;
 	bool bLastRaceCareerRace = false;
+
+	bool IsCareerTimeTrial();
 }
