@@ -78,6 +78,9 @@ struct tCarTuningData {
 			auto f = (float*)this;
 			f[i] = value;
 		}
+		if (pGameFlow->nEventType != eEventType::DERBY) {
+			fDurability = 0.0; // slight hack to make opponents health lower
+		}
 	}
 };
 
@@ -102,9 +105,10 @@ tCarTuningData GetPlayerTuningData(int carId) {
 	if ((CareerMode::bNextRaceCareerRace || CareerMode::bIsCareerRace) && !CareerMode::IsCareerTimeTrial()) {
 		return GetPlayerCareerTuningData(carId);
 	}
-	else {
-		return GetAITuningData();
-	}
+
+	auto data = GetAITuningData();
+	data.fDurability = CareerMode::GetAIUpgradeLevel();
+	return data;
 }
 
 tCarTuningData GetTuningDataForCar(Car* pCar) {
