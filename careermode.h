@@ -184,8 +184,11 @@ namespace CareerMode {
 		else if (auto cup = GetCurrentSaveEvent()) {
 			if (!cup->nPosition || cup->nPosition > playerPosition) {
 				cup->nPosition = playerPosition;
+				cup->nTimeOrScore = aPlayerResults[0].nFinishTime;
 			}
-			cup->nTimeOrScore = aPlayerResults[0].nFinishTime;
+			else if (!cup->nTimeOrScore || aPlayerResults[0].nFinishTime > cup->nTimeOrScore) {
+				cup->nTimeOrScore = aPlayerResults[0].nFinishTime;
+			}
 		}
 
 		sLastCupName = cup->sName;
