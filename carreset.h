@@ -27,9 +27,11 @@ void ProcessCarReset() {
 	else {
 		fCarResetFadeTimer += gTimer.fDeltaTime * 1.5;
 		if (fCarResetFadeTimer >= 1) {
-			ply->ResetCar(ply, 0);
-			if (pGameFlow->nEventType != eEventType::DERBY) {
-				*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * fCarResetSpeed;
+			if (!IsPlayerWrecked(ply)) {
+				ply->ResetCar(ply, 0);
+				if (pGameFlow->nEventType != eEventType::DERBY) {
+					*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * fCarResetSpeed;
+				}
 			}
 			bCarResetRequested = false;
 		}

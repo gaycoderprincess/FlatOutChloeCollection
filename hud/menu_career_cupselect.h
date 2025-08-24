@@ -58,28 +58,6 @@ public:
 
 	static constexpr tDrawPositions gTrackPlacements = {0.263, 0.353, 0.05, 0.19, 0.135};
 
-	static void GetStuntTargets(int level, int* out) {
-		switch (level) {
-			case TRACK_LONGJUMP:
-				out[0] = 250;
-				out[1] = 200;
-				out[2] = 100;
-				break;
-			case TRACK_HIGHJUMP:
-				out[0] = 300;
-				out[1] = 250;
-				out[2] = 100;
-				break;
-			case TRACK_BOWLING:
-				out[0] = 25;
-				out[1] = 20;
-				out[2] = 10;
-				break;
-			default:
-				break;
-		}
-	}
-
 	virtual void Init() {
 		PreloadTexture("data/menu/cup_bronze_bg.png");
 		PreloadTexture("data/menu/cup_silver_bg.png");
@@ -295,7 +273,7 @@ public:
 			else {
 				int level = cup->aRaces[0].nLevel;
 				int targets[3] = {0,0,0};
-				GetStuntTargets(level, targets);
+				CareerMode::GetStuntTargets(level, targets);
 				if (targets[0]) {
 					if (level == TRACK_BOWLING) {
 						Draw1080pString(JUSTIFY_RIGHT, data, std::format("TARGETS\n{} - 1st\n{} - 2nd\n{} - 3rd\n\nPERSONAL BEST: {}", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),

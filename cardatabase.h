@@ -455,7 +455,7 @@ void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43C250, 0x43C4FE); // remove ai tuning init
 	NyaHookLib::Patch<uint8_t>(0x43D70C, 0xEB); // don't read cars.cfg
 	NyaHookLib::Patch<uint8_t>(0x43F36A, 0xEB); // don't use numcars
-	NyaHookLib::Patch<uint16_t>(0x43F3F9, 0x9090); // don't use numcars
+	NyaHookLib::Patch<uint8_t>(0x43F380, 0xEB); // don't use numcars
 
 	// remove equipment class
 	NyaHookLib::Patch<uint8_t>(0x4A7790, 0xC3); // don't allocate equipment data

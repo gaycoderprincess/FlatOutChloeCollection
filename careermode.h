@@ -135,26 +135,38 @@ namespace CareerMode {
 
 	int nNewlyUnlockedClass = -1;
 
+	void GetStuntTargets(int level, int* out) {
+		switch (level) {
+			case TRACK_LONGJUMP:
+				out[0] = 250;
+				out[1] = 200;
+				out[2] = 100;
+				break;
+			case TRACK_HIGHJUMP:
+				out[0] = 300;
+				out[1] = 250;
+				out[2] = 100;
+				break;
+			case TRACK_BOWLING:
+				out[0] = 20;
+				out[1] = 15;
+				out[2] = 10;
+				break;
+			default:
+				break;
+		}
+	}
+
 	void OnCupFinished() {
 		int playerPosition = gCustomSave.aCupPlayerPosition[0]+1;
 		auto cup = GetCurrentCup();
-		if (cup->aRaces[0].nLevel == TRACK_LONGJUMP) {
+		int targets[3] = {0,0,0};
+		GetStuntTargets(cup->aRaces[0].nLevel, targets);
+		if (targets[0]) {
 			playerPosition = 4;
-			if (aPlayerResults[0].nFinishTime >= 100) playerPosition = 3;
-			if (aPlayerResults[0].nFinishTime >= 200) playerPosition = 2;
-			if (aPlayerResults[0].nFinishTime >= 250) playerPosition = 1;
-		}
-		if (cup->aRaces[0].nLevel == TRACK_HIGHJUMP) {
-			playerPosition = 4;
-			if (aPlayerResults[0].nFinishTime >= 100) playerPosition = 3;
-			if (aPlayerResults[0].nFinishTime >= 250) playerPosition = 2;
-			if (aPlayerResults[0].nFinishTime >= 300) playerPosition = 1;
-		}
-		if (cup->aRaces[0].nLevel == TRACK_BOWLING) {
-			playerPosition = 4;
-			if (aPlayerResults[0].nFinishTime >= 10) playerPosition = 3;
-			if (aPlayerResults[0].nFinishTime >= 20) playerPosition = 2;
-			if (aPlayerResults[0].nFinishTime >= 25) playerPosition = 1;
+			if (aPlayerResults[0].nFinishTime >= targets[2]) playerPosition = 3;
+			if (aPlayerResults[0].nFinishTime >= targets[1]) playerPosition = 2;
+			if (aPlayerResults[0].nFinishTime >= targets[0]) playerPosition = 1;
 		}
 
 		if (auto cup = GetCurrentSaveCup()) {

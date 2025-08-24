@@ -106,6 +106,11 @@ void CustomSetterThread() {
 	ProcessCarDamage();
 	CareerMode::OnTick();
 	ProcessNitroGain();
+
+	// rng buffer overrun hack-fix
+	if (RNGGenerator::nNumValuesLeft <= 1) {
+		RNGGenerator::Reset();
+	}
 }
 
 void OnFilesystemInit() {
@@ -131,6 +136,19 @@ void __attribute__((naked)) OnFilesystemInitASM() {
 			:
 			:  "m" (OnFilesystemInitASM_jmp), "i" (OnFilesystemInit)
 	);
+}
+
+auto UpdateCameraHooked_call = (void(__thiscall*)(void*, float))0x47F070;
+void __fastcall UpdateCameraHooked(void* a1, void*, float a2) {
+	if (nHighCarCam) {
+		auto bak = pCameraManager->pPlayer->pCar->mMatrix[13];
+		pCameraManager->pPlayer->pCar->mMatrix[13] += 0.15;
+		UpdateCameraHooked_call(a1, a2);
+		pCameraManager->pPlayer->pCar->mMatrix[13] = bak;
+	}
+	else {
+		UpdateCameraHooked_call(a1, a2);
+	}
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
@@ -201,6 +219,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4D9A93, &CommandlineArgReader);
 			OnFilesystemInitASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A7261, &OnFilesystemInitASM);
+
+			UpdateCameraHooked_call = (void(__thiscall*)(void*, float))(*(uintptr_t*)0x662978);
+			NyaHookLib::Patch(0x662978, &UpdateCameraHooked);
 		} break;
 		default:
 			break;
