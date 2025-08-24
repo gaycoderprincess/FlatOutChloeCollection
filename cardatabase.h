@@ -82,6 +82,15 @@ struct tCarTuningData {
 			fDurability = 0.0; // slight hack to make opponents health lower
 		}
 	}
+
+	float GetUpgradePercentage() {
+		float upgrades = 0;
+		for (int i = 0; i < sizeof(*this)/4; i++) {
+			auto f = (float*)this;
+			upgrades += f[i];
+		}
+		return upgrades / (double)(sizeof(*this)/4);
+	}
 };
 
 tCarTuningData GetPlayerCareerTuningData(int carId) {

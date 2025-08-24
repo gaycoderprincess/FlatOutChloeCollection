@@ -84,6 +84,9 @@ namespace NewMusicPlayer {
 					nMusicPopupTimeOffset = pPlayerHost->nRaceTime;
 					bLastSongPlayedInReplay = GetGameState() == GAME_STATE_REPLAY;
 				}
+				else {
+					nMusicPopupTimeOffset = -3000;
+				}
 			}
 		}
 
@@ -160,6 +163,9 @@ namespace NewMusicPlayer {
 	}
 
 	void OnTick() {
+		static CNyaTimer gTimer;
+		gTimer.Process();
+
 		if (GetGameState() == GAME_STATE_NONE) return;
 
 		if (nMenuSoundtrack < 0 || nMenuSoundtrack >= aPlaylistsTitle.size()) nMenuSoundtrack = 0;
@@ -208,13 +214,22 @@ namespace NewMusicPlayer {
 			}
 
 			// remove duplicate music popup after a race restart
-			if (pPlayerHost && pPlayerHost->nRaceTime < 0 && nMusicPopupTimeOffset > 0) {
+			if (nMusicPopupTimeOffset > pPlayerHost->nRaceTime) {
 				nMusicPopupTimeOffset = -15000;
+			}
+
+			// remove music popup from start of race after 5 seconds pass
+			if (nMusicPopupTimeOffset <= -3000 && nMusicPopupTimeOffset > -15000 && pPlayerHost->nRaceTime >= 5000) {
+				nMusicPopupTimeOffset = -1000;
 			}
 
 			// remove duplicate music popup during replays
 			if ((GetGameState() == GAME_STATE_REPLAY) != bLastSongPlayedInReplay) {
 				nMusicPopupTimeOffset = -15000;
+			}
+
+			if (GetGameState() != GAME_STATE_MENU && pGameFlow->nIsPaused) {
+				nMusicPopupTimeOffset -= gTimer.fDeltaTime * 1000;
 			}
 
 			if (pCurrentSong->bFinished) {
