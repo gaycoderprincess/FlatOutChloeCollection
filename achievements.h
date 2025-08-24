@@ -63,7 +63,7 @@ namespace Achievements {
 		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete career mode with all gold", CAT_CAREER),
 		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_GENERAL),
 		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_GENERAL),
-		new CAchievement("CASH_DESTRUCTION", "Big Earner", "Earn over $5000 from a single career race", CAT_CAREER),
+		new CAchievement("CASH_DESTRUCTION", "Big Earner", "Earn over $4000 from a single career race", CAT_CAREER),
 	};
 
 	std::vector<CAchievement*> GetAchievementsInCategory(uint32_t category) {
@@ -547,7 +547,7 @@ namespace Achievements {
 		GetAchievement("BLAST_ALL")->pTrackFunction = OnTrack_GenericProgress;
 
 		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
-		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 5000;
+		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 4000;
 	}
 }
 
