@@ -120,8 +120,7 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fIngameMapSize", fIngameMapSize);
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 	//QuickValueEditor("nOpponentCount", nOpponentCount);
-
-	QuickValueEditor("Menu_Achievement_Description.gPos", Menu_Achievement_Description.gPos, false);
+	//QuickValueEditor("Menu_Achievement_Description.gPos", Menu_Achievement_Description.gPos, false);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

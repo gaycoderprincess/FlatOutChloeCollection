@@ -126,6 +126,11 @@ tCarTuningData GetTuningDataForCar(Car* pCar) {
 #define TIRE_PERFORMANCE_FALLBACK(value, category, name, default) value = global[category][name].value_or(default); WriteLogDebug("HANDLING", std::format("{}.{} = {}", category, name, value));
 #define TIRE_PERFORMANCE_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(global[category][name].value_or(-99999.0f), config[category_max][name].value_or(config[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{} = {} (tuned)", category, name, value));
 
+#define CAR_DATA(value, category, name) value = data[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{} = {}", category, name, value));
+#define CAR_DATA_ARRAY(value, category, name, arrayCount) for (int j = 0; j < arrayCount; j++) { value[j] = data[category][name][j].value_or(-99999.0f); if (value[j] == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{}[{}] = {}", category, name, j+1, value[j])); }
+#define CAR_DATA_FALLBACK(value, category, name, default) value = data[category][name].value_or(default); WriteLogDebug("HANDLING", std::format("{}.{} = {}", category, name, value));
+#define CAR_DATA_TUNE(value, category, category_max, name, tuningValue) value = std::lerp(data[category][name].value_or(-99999.0f), data[category_max][name].value_or(data[category][name].value_or(0.0)), tuningValue); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{} = {} (tuned)", category, name, value));
+
 void __stdcall LoadCarEngine(Engine* engine) {
 	WriteLogDebug("HANDLING", std::format("Initing engine for car{} for {}", engine->pPerformance->pCar->pPlayer->nCarId+1,
 							  GetStringNarrow(engine->pPerformance->pCar->pPlayer->sPlayerName.Get())));
@@ -203,22 +208,28 @@ void __stdcall LoadCarDifferential(Differential* diff) {
 	diff->fUnknown40 = 100.0;
 }
 
+
+// fo2 roamer driverloc:
+// -0.299, 0.04, 0.09 in fo1
+//float fFO1DriverLocOffset[3] = { (-0.421) - (-0.299), (-0.08546461) - (0.04), (-0.078) - (0.09) };
+float fFO1DriverLocOffset[3] = { (-0.307) - (-0.299), (0.484 - 0.04) - 0.27727438, (0.025 - 0.09) - 0.09 };
+
 void __fastcall LoadCarBody(Car* car) {
 	WriteLogDebug("HANDLING", std::format("Initing body for car{} for {}", car->pPlayer->nCarId+1,
 							  GetStringNarrow(car->pPlayer->sPlayerName.Get())));
 
 	auto config = GetCarPerformanceTable(car->pPlayer->nCarId+1);
-	auto configData = GetCarDataTable(car->pPlayer->nCarId+1);
+	auto data = GetCarDataTable(car->pPlayer->nCarId+1);
 
 	auto tuning = GetTuningDataForCar(car);
 
-	std::string str = configData["Data"]["DataPath"].value_or("");
+	std::string str = data["Data"]["DataPath"].value_or("");
 	if (str.empty()) {
 		MessageBoxA(0, "Failed to read DataPath from Data", "Fatal error", MB_ICONERROR);
 	}
 	car->sFolderPath.Set(str.c_str(), str.length());
 
-	str = configData["Data"]["Name"].value_or("");
+	str = data["Data"]["Name"].value_or("");
 	if (str.empty()) {
 		MessageBoxA(0, "Failed to read Name from Data", "Fatal error", MB_ICONERROR);
 	}
@@ -232,7 +243,7 @@ void __fastcall LoadCarBody(Car* car) {
 	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceRate, "Body", steerBalanceRate, 3);
 	CAR_PERFORMANCE_TUNE(body->fArcadeBrakePower, "Body", "Body_Max", "BrakePower", tuning.fBrakePower);
 	CAR_PERFORMANCE(body->nDriverType, "Body", "DriverType");
-	CAR_PERFORMANCE_ARRAY(body->fDriverLoc, "Body", "DriverLoc", 3);
+	CAR_DATA_ARRAY(body->fDriverLoc, "Body", "DriverLoc", 3);
 	CAR_PERFORMANCE(body->fWheelDisplacement, "Body", "WheelDisplacement");
 	CAR_PERFORMANCE_ARRAY(body->fWheelAligningTorqueLimits, "Body", "WheelAligningTorqueLimits", 2);
 	CAR_PERFORMANCE(body->fFFFrictionNominalLoad, "Body", "FFFrictionNominalLoad");
@@ -269,6 +280,13 @@ void __fastcall LoadCarBody(Car* car) {
 	car->fBrakeBalance = body->fBrakeBalance[1];
 	car->fTireTurnAngleIn = body->fTireTurnAngleIn;
 	car->fTireTurnAngleOut = body->fTireTurnAngleOut;
+
+	// fo2 cars driverloc offset hack
+	if (car->pPlayer->nCarId >= 200 && car->pPlayer->nCarId <= 250) {
+		for (int i = 0; i < 3; i++) {
+			body->fDriverLoc[i] -= fFO1DriverLocOffset[i];
+		}
+	}
 }
 
 int __attribute__((naked)) LoadCarBodyASM() {
