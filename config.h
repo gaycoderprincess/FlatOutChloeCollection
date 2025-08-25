@@ -27,6 +27,7 @@ uint32_t nHighCarCam = 0;
 
 namespace CareerMode {
 	bool bIsCareerRace = false;
+	bool bLastRaceCareerRace = false;
 
 	bool IsCareerTimeTrial();
 }

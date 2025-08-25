@@ -228,8 +228,6 @@ namespace CareerMode {
 	}
 
 	void ProcessResultsFromLastRace() {
-		SetIsCareerMode(false);
-
 		// don't proceed if we quit the race
 		if (!aPlayerResults[0].bDNF && !aPlayerResults[0].bFinished) return;
 

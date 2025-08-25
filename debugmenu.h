@@ -68,6 +68,16 @@ void QuickValueEditor(const char* name, int& value) {
 	if (DrawMenuOption(std::format("{} - {}", name, value))) { ValueEditorMenu(value); }
 }
 
+void QuickValueEditor(const char* name, CHUDElement::tDrawPositions& value, bool useSpacing) {
+	if (DrawMenuOption(std::format("{}.fPosX - {}", name, value.fPosX))) { ValueEditorMenu(value.fPosX); }
+	if (DrawMenuOption(std::format("{}.fPosY - {}", name, value.fPosY))) { ValueEditorMenu(value.fPosY); }
+	if (DrawMenuOption(std::format("{}.fSize - {}", name, value.fSize))) { ValueEditorMenu(value.fSize); }
+	if (useSpacing) {
+		if (DrawMenuOption(std::format("{}.fSpacingX - {}", name, value.fSpacingX))) { ValueEditorMenu(value.fSpacingX); }
+		if (DrawMenuOption(std::format("{}.fSpacingY - {}", name, value.fSpacingY))) { ValueEditorMenu(value.fSpacingY); }
+	}
+}
+
 void QuickValueEditor(const char* name, CHUDElement::tDrawPositions1080p& value, bool useSpacing) {
 	if (DrawMenuOption(std::format("{}.nPosX - {}", name, value.nPosX))) { ValueEditorMenu(value.nPosX); }
 	if (DrawMenuOption(std::format("{}.nPosY - {}", name, value.nPosY))) { ValueEditorMenu(value.nPosY); }
@@ -121,8 +131,11 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 	//QuickValueEditor("nOpponentCount", nOpponentCount);
 	//QuickValueEditor("Menu_Achievement_Description.gPos", Menu_Achievement_Description.gPos, false);
-	QuickValueEditor("CarnageRace::gScoreHUD", CarnageRace::gScoreHUD, true);
-	QuickValueEditor("HUD_ArcadeScore.fPosY1", CarnageRace::HUD_ArcadeScore.fPosY1);
+	//QuickValueEditor("CarnageRace::gScoreHUD", CarnageRace::gScoreHUD, true);
+	//QuickValueEditor("HUD_ArcadeScore.fPosY1", CarnageRace::HUD_ArcadeScore.fPosY1);
+	QuickValueEditor("gBase", CarnageRace::HUD_ArcadeRace.gBase, true);
+	QuickValueEditor("gCheckpointBonus", CarnageRace::HUD_ArcadeRace.gCheckpointBonus, false);
+	QuickValueEditor("fElementTotalSpacing", CarnageRace::HUD_ArcadeRace.fElementTotalSpacing);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

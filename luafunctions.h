@@ -150,7 +150,7 @@ int ChloeCareer_WasCareerCupJustFinished(void* a1) {
 }
 
 int ChloeCareer_ClearWasCareerRace(void* a1) {
-	CareerMode::bIsCareerRace = false;
+	CareerMode::SetIsCareerMode(false);
 	CareerMode::bWasCareerCupJustFinished = false;
 	return 0;
 }
@@ -758,7 +758,7 @@ int ChloeDatabase_GetCarDataString(void* a1) {
 }
 
 int ChloeArcade_SetIsCarnageRace(void* a1) {
-	CarnageRace::bIsCarnageRace = (int)luaL_checknumber(a1, 1);
+	CarnageRace::SetIsCarnageRace((int)luaL_checknumber(a1, 1));
 	return 0;
 }
 
@@ -768,7 +768,7 @@ int ChloeArcade_WasCarnageRace(void* a1) {
 }
 
 int ChloeArcade_ClearWasCarnageRace(void* a1) {
-	CarnageRace::bIsCarnageRace = false;
+	CarnageRace::SetIsCarnageRace(false);
 	return 0;
 }
 
