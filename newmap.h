@@ -36,8 +36,8 @@ NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
 			{219,100,193,255}, // super author
 	};
 
-	//int id = ply->nPlayerType == PLAYERTYPE_LOCAL ? 0 : ply->nPlayerId - 1; // hack for splitscreen
 	int id = ply->nPlayerId - 1;
+	if (IsInSplitScreen() && ply->nPlayerType == PLAYERTYPE_LOCAL) id++; // never use white arrow in splitscreen
 	if (CareerMode::IsCareerTimeTrial()) {
 		if (id >= 0 && id <= sizeof(aPlayerColorsTimeTrial) / sizeof(aPlayerColorsTimeTrial[0])) return aPlayerColorsTimeTrial[id];
 	}

@@ -23,6 +23,7 @@ public:
 
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
+		if (IsInSplitScreen()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
 		static CNyaRaceTimer gTimer;
