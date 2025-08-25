@@ -30,7 +30,8 @@ namespace CarnageRace {
 	int nPlayerScore = 0;
 	int nPlayerPosition = 0;
 
-	const double fScoreMaxTime = 5;
+	const double fScoreMaxTime = 4;
+	const double fScoreMaxTimeFull = 2;
 	double fScoreTimer = 0;
 
 	double fCashoutNotifTimer = 0;
@@ -77,6 +78,10 @@ namespace CarnageRace {
 		entry.name = name;
 		entry.points = points;
 		aScoreHUD.push_back(entry);
+
+		if (aScoreHUD.size() >= 10) {
+			fScoreTimer = fScoreMaxTimeFull;
+		}
 	}
 
 	int GetCrashBonusPrice(int type) {
@@ -243,7 +248,10 @@ namespace CarnageRace {
 			if (!IsRaceHUDUp()) return;
 			if (!bIsCarnageRace) return;
 
-			std::string timeLeftString = GetTimeFromMilliseconds(fPlayerTimeLeft*1000, true);
+			int timeLeft = fPlayerTimeLeft*1000;
+			if (timeLeft < 0) timeLeft = 0;
+			
+			std::string timeLeftString = GetTimeFromMilliseconds(timeLeft, true);
 			timeLeftString.pop_back();
 			// leading zero
 			if (fPlayerTimeLeft < 60 * 10) {
@@ -259,7 +267,7 @@ namespace CarnageRace {
 				data.y = gCheckpointBonus.nPosY;
 				data.size = gCheckpointBonus.fSize;
 				data.SetColor(GetPaletteColor(13));
-				Draw1080pString(JUSTIFY_LEFT, data, std::format("+{} SECONDS", nCheckpointNotifAmount), &DrawStringFO2_Ingame12);
+				Draw1080pStringBottomMost(JUSTIFY_LEFT, data, std::format("+{} SECONDS", nCheckpointNotifAmount), &DrawStringFO2_Ingame12);
 			}
 		}
 	} HUD_ArcadeRace;
@@ -279,11 +287,11 @@ namespace CarnageRace {
 			data.size = gScoreHUD.fSize;
 			data.XRightAlign = true;
 			data.SetColor(GetPaletteColor(color1));
-			Draw1080pString(JUSTIFY_RIGHT, data, left, &DrawStringFO2_Ingame12);
+			Draw1080pStringBottomMost(JUSTIFY_RIGHT, data, left, &DrawStringFO2_Ingame12);
 			data.x += gScoreHUD.nSpacingX;
 			data.XRightAlign = false;
 			data.SetColor(GetPaletteColor(color2));
-			Draw1080pString(JUSTIFY_RIGHT, data, right, &DrawStringFO2_Ingame12);
+			Draw1080pStringBottomMost(JUSTIFY_RIGHT, data, right, &DrawStringFO2_Ingame12);
 		}
 
 		std::string GetNthString(int num) {

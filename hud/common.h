@@ -125,6 +125,11 @@ public:
 		return DrawString(data, text, drawFunc);
 	}
 
+	static void Draw1080pStringBottomMost(eJustify justify, tNyaStringData data, const std::string& text, void(*drawFunc)(const tNyaStringData&, const std::string&)) {
+		DoJustify(justify, data.x, data.y);
+		drawFunc(data, text);
+	}
+
 	static float GetFlashingAlpha(float timer) {
 		return (0.75 + 0.25 * (std::cos(timer * 3.141592 * 2) + 1.0) / 2) * 255;
 	}
