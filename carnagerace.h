@@ -1,5 +1,5 @@
 namespace CarnageRace {
-	bool bIsCarnageRace = false;
+	bool bIsCarnageRace = true;
 
 	struct tScoreEntry {
 		std::string name;
@@ -8,6 +8,7 @@ namespace CarnageRace {
 	std::vector<tScoreEntry> aScoreHUD;
 
 	int nPlayerScore = 0;
+	int nPlayerPosition = 0;
 
 	const double fScoreMaxTime = 5;
 	double fScoreTimer = 0;
@@ -16,6 +17,10 @@ namespace CarnageRace {
 	int nCashoutNotifAmount = 0;
 
 	void AddScore(std::string name, double points) {
+		auto ply = GetPlayerScore<PlayerScoreRace>(1);
+		if (ply->nPosition < nPlayerPosition || aScoreHUD.empty()) {
+			nPlayerPosition = ply->nPosition;
+		}
 		fScoreTimer = fScoreMaxTime;
 
 		if (name == "SCENERY CRASHES" || name == "AIRTIME") {
@@ -54,15 +59,14 @@ namespace CarnageRace {
 
 	void OnCrashBonus(Player* pPlayer, int type) {
 		if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) return;
-		aScoreHUD.push_back({GetCrashBonusName(type), GetCrashBonusPrice(type)});
+		AddScore(GetCrashBonusName(type), GetCrashBonusPrice(type));
 	}
 
 	void Init() {
 		ChloeEvents::OnCrashBonus.push_back(OnCrashBonus);
 	}
 
-	CHUDElement::tDrawPositions1080p gScoreHUD = {0,0,0.03,0,16};
-	CHUDElement::tDrawPositions1080p gScoreHUD2 = {0,0};
+	CHUDElement::tDrawPositions1080p gScoreHUD = {1700,350,0.033,20,32};
 
 	int aRacePositionMultiplier[] = {
 			5,
@@ -81,12 +85,12 @@ namespace CarnageRace {
 
 		tNyaStringData data;
 		data.x = gScoreHUD.nPosX;
-		data.y = gScoreHUD.nPosY;
+		data.y = gScoreHUD.nPosY + gScoreHUD.nSpacingY * id;
 		data.size = gScoreHUD.fSize;
 		data.XRightAlign = true;
 		data.SetColor(GetPaletteColor(color1));
 		CHUDElement::Draw1080pString(CHUDElement::JUSTIFY_RIGHT, data, left, &DrawStringFO2_Ingame12);
-		data.x = gScoreHUD2.nPosX;
+		data.x += gScoreHUD.nSpacingX;
 		data.XRightAlign = false;
 		data.SetColor(GetPaletteColor(color2));
 		CHUDElement::Draw1080pString(CHUDElement::JUSTIFY_RIGHT, data, right, &DrawStringFO2_Ingame12);
@@ -94,18 +98,17 @@ namespace CarnageRace {
 
 	std::string GetNthString(int num) {
 		std::string str = std::to_string(num);
-		if (num != 11 && num % 10 == 1) str += "st";
-		else if (num != 12 && num % 10 == 2) str += "nd";
-		else if (num != 13 && num % 10 == 3) str += "rd";
-		else str += "th";
+		if (num != 11 && num % 10 == 1) str += "ST";
+		else if (num != 12 && num % 10 == 2) str += "ND";
+		else if (num != 13 && num % 10 == 3) str += "RD";
+		else str += "TH";
 		return str;
 	}
 
 	void CashOutCombo() {
 		double pointsAwarded = 0;
-		auto ply = GetPlayerScore<PlayerScoreRace>(1);
 		for (auto& score : aScoreHUD) {
-			pointsAwarded += score.points * aRacePositionMultiplier[ply->nPosition-1];
+			pointsAwarded += score.points * aRacePositionMultiplier[nPlayerPosition-1];
 		}
 		nPlayerScore += pointsAwarded;
 		fCashoutNotifTimer = fScoreMaxTime;
@@ -177,7 +180,7 @@ namespace CarnageRace {
 		int id = 0;
 		if (!aScoreHUD.empty()) {
 			auto ply = GetPlayerScore<PlayerScoreRace>(1);
-			DrawScoreHUDEntry(id++, std::format("POSITION ({}{})", ply->nPosition, GetNthString(ply->nPosition)), std::format("{}X", aRacePositionMultiplier[ply->nPosition-1]));
+			DrawScoreHUDEntry(id++, std::format("POSITION ({})", GetNthString(nPlayerPosition)), std::format("{}X", aRacePositionMultiplier[nPlayerPosition-1]));
 		}
 		else if (fCashoutNotifTimer > 0) {
 			DrawScoreHUDEntry(id++, "TOTAL", std::format("+{}", nCashoutNotifAmount));
@@ -186,12 +189,39 @@ namespace CarnageRace {
 			DrawScoreHUDEntry(id++, score.name, std::to_string((int)score.points));
 		}
 
-		fScoreTimer -= gTimer.Process();
-		fCashoutNotifTimer -= gTimer.Process();
+		fScoreTimer -= gTimer.fDeltaTime;
+		fCashoutNotifTimer -= gTimer.fDeltaTime;
 
 		// todo cash out at the end of the race
-		if (fScoreTimer <= 0) {
+		if (fScoreTimer <= 0 && !aScoreHUD.empty()) {
 			CashOutCombo();
 		}
 	}
+
+	class CHUD_ArcadeScore : public CIngameHUDElement {
+	public:
+
+		static constexpr float fPosX = 0.009;
+		float fPosY1 = 0.119;
+		static constexpr float fPosY2 = 0.153 - 0.119;
+		static constexpr float fSize1 = 0.041;
+		static constexpr float fSize2 = 0.041;
+
+		virtual void Process() {
+			if (!IsRaceHUDUp()) return;
+			if (!bIsCarnageRace) return;
+
+			tNyaStringData data;
+			data.x = fPosX * GetAspectRatioInv();
+			data.y = fPosY1;
+			data.size = fSize1;
+			data.SetColor(GetPaletteColor(18));
+			DrawStringFO2_Ingame12(data, "SCORE");
+			data.x = fPosX * GetAspectRatioInv();
+			data.y += fPosY2;
+			data.size = fSize2;
+			data.SetColor({255,255,255,255});
+			DrawStringFO2_Ingame24(data, std::to_string(nPlayerScore));
+		}
+	} HUD_ArcadeScore;
 }

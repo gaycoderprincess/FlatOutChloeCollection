@@ -60,11 +60,11 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "d3dhook.h"
 #include "windowedmode.h"
 #include "profiles.h"
+#include "carnagerace.h"
 #include "luafunctions.h"
 #include "nitrogain.h"
 #include "ultrawide.h"
 #include "newmap.h"
-#include "carnagerace.h"
 #include "debugmenu.h"
 
 void SetHandlingDamage() {

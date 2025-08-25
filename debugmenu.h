@@ -122,7 +122,7 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nOpponentCount", nOpponentCount);
 	//QuickValueEditor("Menu_Achievement_Description.gPos", Menu_Achievement_Description.gPos, false);
 	QuickValueEditor("CarnageRace::gScoreHUD", CarnageRace::gScoreHUD, true);
-	QuickValueEditor("CarnageRace::gScoreHUD2", CarnageRace::gScoreHUD2, false);
+	QuickValueEditor("HUD_ArcadeScore.fPosY1", CarnageRace::HUD_ArcadeScore.fPosY1);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

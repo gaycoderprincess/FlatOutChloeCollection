@@ -757,6 +757,21 @@ int ChloeDatabase_GetCarDataString(void* a1) {
 	return 1;
 }
 
+int ChloeArcade_SetIsCarnageRace(void* a1) {
+	CarnageRace::bIsCarnageRace = (int)luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcade_WasCarnageRace(void* a1) {
+	lua_pushboolean(a1, CarnageRace::bIsCarnageRace);
+	return 1;
+}
+
+int ChloeArcade_ClearWasCarnageRace(void* a1) {
+	CarnageRace::bIsCarnageRace = false;
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -884,6 +899,9 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataValue, "ChloeDatabase_GetCarDataValue");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceString, "ChloeDatabase_GetCarPerformanceString");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataString, "ChloeDatabase_GetCarDataString");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsCarnageRace, "ChloeArcade_SetIsCarnageRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasCarnageRace, "ChloeArcade_WasCarnageRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_ClearWasCarnageRace, "ChloeArcade_ClearWasCarnageRace");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");
