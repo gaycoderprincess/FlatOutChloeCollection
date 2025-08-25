@@ -19,6 +19,16 @@ void ProcessNitroGain() {
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
+		if (QuickRace::bIsQuickRace) {
+			if (QuickRace::nNitroLevel == QuickRace::NITRO_0) {
+				ply->pCar->GetNitro() = 0.0;
+				return;
+			} else if (QuickRace::nNitroLevel == QuickRace::NITRO_INFINITE) {
+				ply->pCar->GetNitro() = ply->pCar->GetMaxNitro();
+				return;
+			}
+		}
+
 		if (ply->pCar->fTimeInAir >= fNitroAirtimeTolerance) {
 			ply->pCar->GetNitro() += fNitroAirtimeRate * gTimer.fDeltaTime;
 			if (ply->pCar->GetNitro() >= ply->pCar->GetMaxNitro()) ply->pCar->GetNitro() = ply->pCar->GetMaxNitro();

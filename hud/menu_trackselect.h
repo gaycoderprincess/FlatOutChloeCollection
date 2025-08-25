@@ -1,0 +1,404 @@
+class CMenu_TrackSelect : public CMenuHUDElement {
+public:
+	virtual const char* GetName() { return "menu_trackselect"; }
+
+	enum eTrackType {
+		TRACKTYPE_FOREST = 1,
+		TRACKTYPE_FIELDS = 2,
+		TRACKTYPE_PIT = 3,
+		TRACKTYPE_RACING = 4,
+		TRACKTYPE_TOWN = 5,
+		TRACKTYPE_WINTER = 6,
+		TRACKTYPE_ARENA = 7,
+		NUM_RACE_TRACKTYPES,
+		TRACKTYPE_DERBY = NUM_RACE_TRACKTYPES,
+		TRACKTYPE_STUNT = 9,
+		NUM_TRACKTYPES
+	};
+
+	static inline const char* aTrackTypeNames[] = {
+		"FOREST",
+		"FIELDS",
+		"PIT",
+		"RACING",
+		"TOWN",
+		"WINTER",
+		"ARENA",
+		"DERBY",
+		"STUNT",
+	};
+
+	enum eDamageLevel {
+		DAMAGE_0,
+		DAMAGE_50,
+		DAMAGE_100,
+		DAMAGE_200,
+		DAMAGE_500,
+		DAMAGE_1000,
+		NUM_DAMAGE_LEVELS
+	};
+
+	enum eUpgradeLevel {
+		UPGRADE_0,
+		UPGRADE_50,
+		UPGRADE_100,
+		NUM_UPGRADE_LEVELS
+	};
+
+	struct tOption {
+		std::string name;
+		int* value;
+	};
+
+	static inline int nGameType = 0;
+	static inline int nTrackType = TRACKTYPE_FOREST;
+	static inline int nTrack = 0;
+	static inline int nLaps = 3;
+	static inline int nDamage = DAMAGE_100;
+	static inline int nNitro = QuickRace::NITRO_100;
+	static inline int nUpgrades = UPGRADE_0;
+
+	static inline tOption aOptions[] = {
+			{"GAME TYPE", &nGameType},
+			{"TRACK TYPE", &nTrackType},
+			{"TRACK", &nTrack},
+			{"LAPS", &nLaps},
+			{"DAMAGE", &nDamage},
+			{"NITRO", &nNitro},
+			{"UPGRADES", &nUpgrades},
+			{"", nullptr},
+			{"GO RACE", nullptr},
+	};
+
+	eEventType GetGameMode() {
+		switch (nGameType) {
+			case 0:
+			default:
+				return eEventType::RACE;
+			case 1:
+				return eEventType::DERBY;
+			case 2:
+				return eEventType::STUNT;
+		}
+	}
+
+	std::vector<int> GetTrackSelection() {
+		std::vector<int> aTracks;
+		for (int i = 1; i < GetNumTracks()+1; i++) {
+			if (!DoesTrackExist(i)) continue;
+			if (GetTrackValueNumber(i, "TrackType") == nTrackType) {
+				aTracks.push_back(i);
+			}
+		}
+		return aTracks;
+	}
+
+	int GetTrackId() {
+		auto aTracks = GetTrackSelection();
+		if (aTracks.empty()) {
+			WriteLog(std::format("No tracks available for category {}!", aTrackTypeNames[nTrackType-1]));
+			return 1;
+		}
+		if (nTrack <= 0 || nTrack >= aTracks.size()) return aTracks[0];
+		return aTracks[nTrack];
+	}
+
+	float GetDamageLevel() {
+		switch (nDamage) {
+			case DAMAGE_0:
+			default:
+				return 0;
+			case DAMAGE_50:
+				return 0.5;
+			case DAMAGE_100:
+				return 1.0;
+			case DAMAGE_200:
+				return 2.0;
+			case DAMAGE_500:
+				return 5.0;
+			case DAMAGE_1000:
+				return 10.0;
+		}
+	}
+
+	float GetUpgradeLevel() {
+		switch (nUpgrades) {
+			case UPGRADE_0:
+			default:
+				return 0;
+			case UPGRADE_50:
+				return 0.5;
+			case UPGRADE_100:
+				return 1.0;
+		}
+	}
+
+	int nCursorY = 0;
+	void CheckOptionBounds(int* changedValue) {
+		if (GetGameMode() == eEventType::RACE) {
+			if (nTrackType < TRACKTYPE_FOREST) nTrackType = NUM_RACE_TRACKTYPES - 1;
+			if (nTrackType >= NUM_RACE_TRACKTYPES) nTrackType = TRACKTYPE_FOREST;
+		}
+		else if (GetGameMode() == eEventType::DERBY) {
+			nTrackType = TRACKTYPE_DERBY;
+		}
+		else if (GetGameMode() == eEventType::STUNT) {
+			nTrackType = TRACKTYPE_STUNT;
+		}
+
+		if (changedValue == &nGameType || changedValue == &nTrackType) {
+			nTrack = 0;
+		}
+
+		auto tracks = GetTrackSelection();
+		if (nTrack < 0) nTrack = tracks.size()-1;
+		if (nTrack >= tracks.size()) nTrack = 0;
+
+		// reset lap count
+		if (changedValue == &nGameType || changedValue == &nTrackType || changedValue == &nTrack) {
+			nLaps = DoesTrackValueExist(tracks[nTrack], "Laps") ? GetTrackValueNumber(tracks[nTrack], "Laps") : 3;
+		}
+
+		if (nLaps < 1) nLaps = 1;
+		if (nLaps > 10) nLaps = 10;
+
+		if (GetGameMode() == eEventType::DERBY) {
+			if (nDamage < DAMAGE_50) nDamage = DAMAGE_50;
+			if (nDamage >= NUM_DAMAGE_LEVELS) nDamage = NUM_DAMAGE_LEVELS-1;
+		}
+		else {
+			if (nDamage < 0) nDamage = 0;
+			if (nDamage >= NUM_DAMAGE_LEVELS) nDamage = NUM_DAMAGE_LEVELS-1;
+		}
+
+		if (nNitro < 0) nNitro = 0;
+		if (nNitro >= QuickRace::NUM_NITRO_LEVELS) nNitro = QuickRace::NUM_NITRO_LEVELS-1;
+
+		if (nUpgrades < 0) nUpgrades = 0;
+		if (nUpgrades >= NUM_UPGRADE_LEVELS) nUpgrades = NUM_UPGRADE_LEVELS-1;
+	}
+
+	bool IsOptionValid(int option) {
+		if (aOptions[option].name.empty()) return false;
+		if (GetGameMode() != eEventType::RACE) {
+			if (aOptions[option].value == &nTrackType) return false;
+			if (aOptions[option].value == &nLaps) return false;
+		}
+		return true;
+	}
+
+	virtual void MoveLeft() {
+		if (!aOptions[nCursorY].value) return;
+
+		(*aOptions[nCursorY].value)--;
+		CheckOptionBounds(aOptions[nCursorY].value);
+	}
+	virtual void MoveRight() {
+		if (!aOptions[nCursorY].value) return;
+
+		(*aOptions[nCursorY].value)++;
+		CheckOptionBounds(aOptions[nCursorY].value);
+	}
+	virtual void MoveUp() {
+		do {
+			nCursorY--;
+			if (nCursorY < 0) nCursorY = 0;
+		} while (!IsOptionValid(nCursorY));
+	}
+	virtual void MoveDown() {
+		int max = sizeof(aOptions)/sizeof(aOptions[0]);
+
+		do {
+			nCursorY++;
+			if (nCursorY >= max) nCursorY = max-1;
+		} while (!IsOptionValid(nCursorY));
+	}
+
+	virtual void Init() {
+		PreloadTexture("data/menu/trackselectbg_left.png");
+		PreloadTexture("data/menu/trackselectbg_right.png");
+		PreloadTexture("data/menu/track_icons.dds");
+		PreloadTexture("data/menu/track_icons_inactive.dds");
+		PreloadTexture("data/menu/common.dds");
+	}
+
+	tDrawPositions1080p gEvent = {1445, 460, 55};
+	tDrawPositions1080p gMap = {1445, 580, 80};
+	tDrawPositions1080p gOptions = {64, 250, 0.04, 600, 50};
+	tDrawPositions1080p gOptionsHover = {33, 226, 55, 890, 50};
+	float fArrowX = 0.21;
+	float fArrowYOffset = 0.003;
+	float fArrowSize = 0.02;
+
+	std::string mapPath = "data/tracks/forest/textures/map_forest1A.tga";
+	void SetMapPath(const std::string& str) {
+		mapPath = str;
+	}
+
+	void ApplyOptions() {
+		QuickRace::nNitroLevel = nNitro;
+		QuickRace::fUpgradeLevel = GetUpgradeLevel();
+		QuickRace::fDamageLevel = GetDamageLevel();
+		QuickRace::nNumLaps = nLaps;
+	}
+
+	virtual void Process() {
+		static CNyaTimer gTimer;
+		gTimer.Process();
+
+		if (!bEnabled) return;
+
+		static auto textureLeft = LoadTextureFromBFS("data/menu/trackselectbg_left.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/trackselectbg_right.png");
+		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
+		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
+		static auto textureCommon = LoadTextureFromBFS("data/menu/common.dds");
+		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
+		static auto commonData = LoadHUDData("data/menu/common.bed", "common");
+
+		Draw1080pSprite(JUSTIFY_LEFT, gOptionsHover.nPosX, gOptionsHover.nPosX + gOptionsHover.nSpacingX, gOptionsHover.nPosY + (nCursorY * gOptionsHover.nSpacingY), gOptionsHover.nPosY + (nCursorY * gOptionsHover.nSpacingY) + gOptionsHover.fSize, {0,0,0,200}, nullptr);
+
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+
+		int trackId = GetTrackId();
+		auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(trackId, "Image"));
+
+		auto data = gEvent;
+		float x1 = data.nPosX - data.fSize * 1.5;
+		float y1 = data.nPosY - data.fSize;
+		float x2 = data.nPosX + data.fSize * 1.5;
+		float y2 = data.nPosY + data.fSize;
+		DoJustify(JUSTIFY_RIGHT, x1, y1);
+		DoJustify(JUSTIFY_RIGHT, x2, y2);
+		DrawRectangle(x1, x2, y1, y2, {255,255,255,255}, 0, textureTracks, 0, trackIcon->min, trackIcon->max);
+
+		// todo!
+		if (!mapPath.empty()) {
+			auto trackMap = LoadTextureFromBFS(mapPath.c_str());
+
+			int x1 = gMap.nPosX - gMap.fSize;
+			int x2 = gMap.nPosX + gMap.fSize;
+			int y1 = gMap.nPosY - gMap.fSize;
+			int y2 = gMap.nPosY + gMap.fSize;
+			Draw1080pSprite(JUSTIFY_RIGHT, x1, x2, y1, y2, {255,255,255,255}, trackMap);
+		}
+
+		int y = 0;
+		for (auto& option : aOptions) {
+			if (option.name.empty()) {
+				y++;
+				continue;
+			}
+
+			bool valid = IsOptionValid(&option - &aOptions[0]);
+
+			tNyaStringData data;
+			data.x = gOptions.nPosX;
+			data.y = gOptions.nPosY + gOptions.nSpacingY * y++;
+			data.size = gOptions.fSize;
+			if (!valid) {
+				data.SetColor(127,127,127,255);
+			}
+			if (valid) data.SetColor(GetPaletteColor(18));
+			Draw1080pString(JUSTIFY_LEFT, data, option.name, &DrawStringFO2_Ingame12);
+			data.x += gOptions.nSpacingX;
+			data.XCenterAlign = true;
+			if (valid) data.SetColor(GetPaletteColor(17));
+
+			if (!option.value) continue;
+
+			int value = *option.value;
+			std::string valueName = std::to_string(value);
+			if (option.value == &nGameType) {
+				switch (value) {
+					case 0:
+					default:
+						valueName = "RACE";
+						break;
+					case 1:
+						valueName = "DERBY";
+						break;
+					case 2:
+						valueName = "STUNT";
+						break;
+				}
+			}
+			else if (option.value == &nTrackType) {
+				valueName = aTrackTypeNames[value-1];
+			}
+			else if (option.value == &nTrack) {
+				valueName = GetTrackValueString(trackId, "Name");
+			}
+			else if (option.value == &nLaps) {
+				if (GetGameMode() != eEventType::RACE) valueName = "N/A";
+			}
+			else if (option.value == &nDamage) {
+				switch (value) {
+					case DAMAGE_0:
+					default:
+						valueName = "0x";
+						break;
+					case DAMAGE_50:
+						valueName = "0.5x";
+						break;
+					case DAMAGE_100:
+						valueName = "1x";
+						break;
+					case DAMAGE_200:
+						valueName = "2x";
+						break;
+					case DAMAGE_500:
+						valueName = "5x";
+						break;
+					case DAMAGE_1000:
+						valueName = "10x";
+						break;
+				}
+			}
+			else if (option.value == &nNitro) {
+				switch (value) {
+					case QuickRace::NITRO_0:
+					default:
+						valueName = "0x";
+						break;
+					case QuickRace::NITRO_100:
+						valueName = "1x";
+						break;
+					case QuickRace::NITRO_INFINITE:
+						valueName = "INFINITE";
+						break;
+				}
+			}
+			else if (option.value == &nUpgrades) {
+				switch (value) {
+					case UPGRADE_0:
+					default:
+						valueName = "0%";
+						break;
+					case UPGRADE_50:
+						valueName = "50%";
+						break;
+					case UPGRADE_100:
+						valueName = "100%";
+						break;
+				}
+			}
+			Draw1080pString(JUSTIFY_LEFT, data, valueName, &DrawStringFO2_Ingame12);
+
+			if (&option - &aOptions[0] == nCursorY) {
+				DoJustify(JUSTIFY_LEFT, data.x, data.y);
+
+				static auto arrowLeft = GetHUDData(commonData, "nuolivasen");
+				static auto arrowRight = GetHUDData(commonData, "nuolioikea");
+
+				float arrowAspect = 16.0 / 29.0;
+				float posLeft = data.x - (fArrowX * GetAspectRatioInv());
+				float posRight = data.x + (fArrowX * GetAspectRatioInv());
+				data.y += fArrowYOffset;
+				DrawRectangle(posLeft - (fArrowSize * arrowAspect * GetAspectRatioInv()), posLeft + (fArrowSize * arrowAspect * GetAspectRatioInv()), data.y - fArrowSize, data.y + fArrowSize, {255,255,255,255}, 0, textureCommon, 0, arrowLeft->min, arrowLeft->max);
+				DrawRectangle(posRight - (fArrowSize * arrowAspect * GetAspectRatioInv()), posRight + (fArrowSize * arrowAspect * GetAspectRatioInv()), data.y - fArrowSize, data.y + fArrowSize, {255,255,255,255}, 0, textureCommon, 0, arrowRight->min, arrowRight->max);
+			}
+		}
+	}
+} Menu_TrackSelect;

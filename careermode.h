@@ -339,6 +339,9 @@ namespace CareerMode {
 	float GetAIUpgradeLevel() {
 		if (IsCareerTimeTrial()) return 0.0;
 
+		if (QuickRace::bIsQuickRace) {
+			return QuickRace::fUpgradeLevel;
+		}
 		if (bIsCareerRace) {
 			return GetCurrentCup()->fAIUpgradeLevel;
 		}
@@ -356,6 +359,9 @@ namespace CareerMode {
 	int nForceNumLaps = -1;
 
 	int __stdcall GetNumLapsNew(GameFlow* gameFlow) {
+		if (QuickRace::bIsQuickRace) {
+			return QuickRace::nNumLaps;
+		}
 		if (bIsCareerRace) {
 			return GetCurrentRace()->nLaps;
 		}

@@ -124,6 +124,33 @@ int ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked(void* a1) {
 	return 1;
 }
 
+int ChloeHUD_TrackSelect_GetTrackId(void* a1) {
+	lua_pushnumber(a1, Menu_TrackSelect.GetTrackId());
+	return 1;
+}
+
+int ChloeHUD_TrackSelect_GetEventType(void* a1) {
+	lua_pushnumber(a1, (int)Menu_TrackSelect.GetGameMode());
+	return 1;
+}
+
+int ChloeHUD_TrackSelect_SetMapPath(void* a1) {
+	Menu_TrackSelect.SetMapPath((const char*)lua_tolstring(a1, 1));
+	return 0;
+}
+
+int ChloeHUD_TrackSelect_IsStartRaceHovered(void* a1) {
+	if (Menu_TrackSelect.aOptions[Menu_TrackSelect.nCursorY].name == "GO RACE") {
+		Menu_TrackSelect.ApplyOptions();
+		QuickRace::bIsQuickRace = true;
+		lua_pushboolean(a1, true);
+	}
+	else {
+		lua_pushboolean(a1, false);
+	}
+	return 1;
+}
+
 int ChloeCareer_SetIsCareerRace(void* a1) {
 	CareerMode::SetIsCareerMode((int)luaL_checknumber(a1, 1));
 	return 0;
@@ -772,6 +799,11 @@ int ChloeArcade_ClearWasCarnageRace(void* a1) {
 	return 0;
 }
 
+int ChloeCollection_OnReturnToMenu(void* a1) {
+	QuickRace::bIsQuickRace = false;
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -810,6 +842,10 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorX, "ChloeHUD_CareerCupSelect_GetCursorX");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorY, "ChloeHUD_CareerCupSelect_GetCursorY");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked, "ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetTrackId, "ChloeHUD_TrackSelect_GetTrackId");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetEventType, "ChloeHUD_TrackSelect_GetEventType");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetMapPath, "ChloeHUD_TrackSelect_SetMapPath");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_IsStartRaceHovered, "ChloeHUD_TrackSelect_IsStartRaceHovered");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStatsTuned, "ChloeHUD_SetCarStatsTuned");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
@@ -902,6 +938,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsCarnageRace, "ChloeArcade_SetIsCarnageRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasCarnageRace, "ChloeArcade_WasCarnageRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_ClearWasCarnageRace, "ChloeArcade_ClearWasCarnageRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_OnReturnToMenu, "ChloeCollection_OnReturnToMenu");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

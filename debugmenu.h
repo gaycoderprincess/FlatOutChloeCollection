@@ -133,9 +133,16 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("Menu_Achievement_Description.gPos", Menu_Achievement_Description.gPos, false);
 	//QuickValueEditor("CarnageRace::gScoreHUD", CarnageRace::gScoreHUD, true);
 	//QuickValueEditor("HUD_ArcadeScore.fPosY1", CarnageRace::HUD_ArcadeScore.fPosY1);
-	QuickValueEditor("gBase", CarnageRace::HUD_ArcadeRace.gBase, true);
-	QuickValueEditor("gCheckpointBonus", CarnageRace::HUD_ArcadeRace.gCheckpointBonus, false);
-	QuickValueEditor("fElementTotalSpacing", CarnageRace::HUD_ArcadeRace.fElementTotalSpacing);
+	//QuickValueEditor("gBase", CarnageRace::HUD_ArcadeRace.gBase, true);
+	//QuickValueEditor("gCheckpointBonus", CarnageRace::HUD_ArcadeRace.gCheckpointBonus, false);
+	//QuickValueEditor("fElementTotalSpacing", CarnageRace::HUD_ArcadeRace.fElementTotalSpacing);
+	QuickValueEditor("gEvent", Menu_TrackSelect.gEvent, false);
+	QuickValueEditor("gMap", Menu_TrackSelect.gMap, false);
+	QuickValueEditor("gOptions", Menu_TrackSelect.gOptions, true);
+	QuickValueEditor("gOptionsHover", Menu_TrackSelect.gOptionsHover, true);
+	QuickValueEditor("fArrowX", Menu_TrackSelect.fArrowX);
+	QuickValueEditor("fArrowYOffset", Menu_TrackSelect.fArrowYOffset);
+	QuickValueEditor("fArrowSize", Menu_TrackSelect.fArrowSize);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

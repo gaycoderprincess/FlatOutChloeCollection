@@ -1,5 +1,5 @@
 namespace CarnageRace {
-	bool bIsCarnageRace = true;
+	bool bIsCarnageRace = false;
 
 	int aRacePositionMultiplier[] = {
 			5,
@@ -124,7 +124,6 @@ namespace CarnageRace {
 	}
 
 	void Init() {
-		SetIsCarnageRace(true);
 		ChloeEvents::OnCrashBonus.push_back(OnCrashBonus);
 	}
 

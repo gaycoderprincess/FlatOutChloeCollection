@@ -44,6 +44,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "cardealer.h"
 #include "achievements.h"
 #include "customsettings.h"
+#include "quickrace.h"
 #include "cardamage.h"
 #include "carlimitadjuster.h"
 #include "carreset.h"
