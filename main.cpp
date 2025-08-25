@@ -63,6 +63,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "nitrogain.h"
 #include "ultrawide.h"
 #include "newmap.h"
+#include "carnagerace.h"
 #include "debugmenu.h"
 
 void SetHandlingDamage() {

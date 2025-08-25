@@ -82,16 +82,14 @@ namespace CareerMode {
 	}
 
 	void SetIsCareerMode(bool apply) {
-		bNextRaceCareerRace = apply;
-		if (!apply) bIsCareerRace = false;
+		bIsCareerRace = apply;
 		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
 		NyaHookLib::Patch<uint8_t>(0x431B08, apply ? 0xEB : 0x75); // don't null upgrades
 		NyaHookLib::Patch<uint64_t>(0x43BD79, apply ? 0x418B909090909090 : 0x418B000000EC840F); // use custom upgrades
 	}
 
 	void SetIsCareerModeTimeTrial(bool apply) {
-		bNextRaceCareerRace = apply;
-		if (!apply) bIsCareerRace = false;
+		bIsCareerRace = apply;
 	}
 
 	int GetCrashBonusPrice(int type) {
@@ -269,7 +267,7 @@ namespace CareerMode {
 	}
 
 	bool IsCareerTimeTrial() {
-		if ((bNextRaceCareerRace || bIsCareerRace) && GetCurrentRace() && GetCurrentRace()->bIsTimeTrial) {
+		if (bIsCareerRace && GetCurrentRace() && GetCurrentRace()->bIsTimeTrial) {
 			return true;
 		}
 		return false;
@@ -283,12 +281,9 @@ namespace CareerMode {
 		}
 
 		if (pLoadingScreen) return;
+
 		int gameState = GetGameState();
 		if (gameState == GAME_STATE_RACE || gameState == GAME_STATE_REPLAY) {
-			if (bNextRaceCareerRace) {
-				bIsCareerRace = true;
-				bNextRaceCareerRace = false;
-			}
 			bLastRaceCareerRace = bIsCareerRace;
 		}
 
@@ -322,11 +317,10 @@ namespace CareerMode {
 				}
 			}
 		}
-		ProcessResultsFromLastRace_Prompted();
 	}
 
 	int __stdcall GetAIHandicapLevelNew(GameFlow* gameFlow) {
-		if (bNextRaceCareerRace) {
+		if (bIsCareerRace) {
 			int handicap = GetCurrentRace()->nAIHandicapLevel;
 			if (handicap >= 1) return handicap;
 		}
@@ -354,7 +348,7 @@ namespace CareerMode {
 	float GetAIUpgradeLevel() {
 		if (IsCareerTimeTrial()) return 0.0;
 
-		if (bNextRaceCareerRace) {
+		if (bIsCareerRace) {
 			return GetCurrentCup()->fAIUpgradeLevel;
 		}
 		return 0.0;
@@ -371,7 +365,7 @@ namespace CareerMode {
 	int nForceNumLaps = -1;
 
 	int __stdcall GetNumLapsNew(GameFlow* gameFlow) {
-		if (bNextRaceCareerRace) {
+		if (bIsCareerRace) {
 			return GetCurrentRace()->nLaps;
 		}
 		if (nForceNumLaps > 0) {

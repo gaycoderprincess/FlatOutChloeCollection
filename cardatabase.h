@@ -111,7 +111,7 @@ tCarTuningData GetAITuningData() {
 }
 
 tCarTuningData GetPlayerTuningData(int carId) {
-	if ((CareerMode::bNextRaceCareerRace || CareerMode::bIsCareerRace) && !CareerMode::IsCareerTimeTrial()) {
+	if (CareerMode::bIsCareerRace && !CareerMode::IsCareerTimeTrial()) {
 		return GetPlayerCareerTuningData(carId);
 	}
 

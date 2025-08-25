@@ -84,7 +84,7 @@ public:
 		// assuming a size of 640x480
 		// todo re-add this for single races after the track select menu background is fixed up
 		float aspectModifier = 0;
-		if (CareerMode::bNextRaceCareerRace) aspectModifier = (GetAspectRatio() / (4.0 / 3.0)) - 1.0;
+		if (CareerMode::bIsCareerRace) aspectModifier = (GetAspectRatio() / (4.0 / 3.0)) - 1.0;
 		DrawRectangle(0, 1, 0 - (aspectModifier * 0.5), 1 + (aspectModifier * 0.5), {255,255,255,255}, 0, tex);
 
 		const float fLoadingTimerSpeed = 0.4;
