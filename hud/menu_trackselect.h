@@ -73,6 +73,15 @@ public:
 			{"*END*", nullptr},
 	};
 
+	// todo splitscreen support! launching into a normal race works, just need to fix the controls, resets and ui
+	static inline tOption aOptionsHotSeat[] = {
+			{"TRACK", &nTrack},
+			{"UPGRADES", &nUpgrades},
+			{"", nullptr},
+			{"GO RACE", nullptr},
+			{"*END*", nullptr},
+	};
+
 	static inline tOption aOptionsTimeTrial[] = {
 			{"TRACK TYPE", &nTrackType},
 			{"TRACK", &nTrack},
@@ -280,7 +289,13 @@ public:
 	}
 
 	void ApplyOptions() {
-		if (aOptions == aOptionsTimeTrial) {
+		if (aOptions == aOptionsHotSeat) {
+			QuickRace::nNitroLevel = QuickRace::NITRO_100;
+			QuickRace::fUpgradeLevel = GetUpgradeLevel();
+			QuickRace::fDamageLevel = 0.0;
+			QuickRace::nNumLaps = 3;
+		}
+		else if (aOptions == aOptionsTimeTrial) {
 			QuickRace::nNitroLevel = QuickRace::NITRO_100;
 			QuickRace::fUpgradeLevel = GetUpgradeLevel();
 			QuickRace::fDamageLevel = 0.0;
