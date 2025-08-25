@@ -7,9 +7,6 @@ void ProcessNitroGain() {
 	if (GetGameState() != GAME_STATE_RACE) return;
 	if (pLoadingScreen) return;
 	if (pGameFlow->nEventType != eEventType::RACE) return;
-
-	auto localPlayer = GetPlayerScore<PlayerScoreRace>(1);
-	if (localPlayer->bHasFinished || localPlayer->bIsDNF) return;
 	if (pPlayerHost->nRaceTime <= 0) return;
 
 	bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode") || CarnageRace::bIsCarnageRace;
@@ -19,6 +16,9 @@ void ProcessNitroGain() {
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
+		auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+		if (score->bHasFinished || score->bIsDNF) continue;
+
 		if (QuickRace::bIsQuickRace) {
 			if (QuickRace::nNitroLevel == QuickRace::NITRO_0) {
 				ply->pCar->GetNitro() = 0.0;
@@ -34,7 +34,7 @@ void ProcessNitroGain() {
 			if (ply->pCar->GetNitro() >= ply->pCar->GetMaxNitro()) ply->pCar->GetNitro() = ply->pCar->GetMaxNitro();
 		}
 		if (bNitroRegen && pPlayerHost->nRaceTime > 5000 && ply->fNitroButton <= 0.0) {
-			ply->pCar->GetNitro() += fNitroRegenerationRate * GetPlayerScore<PlayerScoreRace>(ply->nPlayerId)->nPosition * gTimer.fDeltaTime;
+			ply->pCar->GetNitro() += fNitroRegenerationRate * score->nPosition * gTimer.fDeltaTime;
 		}
 		// make AI use nitro
 		if (ply->nPlayerType == PLAYERTYPE_AI) {
