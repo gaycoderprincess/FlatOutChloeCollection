@@ -82,6 +82,18 @@ public:
 		}
 	}
 
+	std::string GetGameModeString() {
+		switch (nGameType) {
+			case 0:
+			default:
+				return "RACE";
+			case 1:
+				return "DERBY";
+			case 2:
+				return "STUNT";
+		}
+	}
+
 	std::vector<int> GetTrackSelection() {
 		std::vector<int> aTracks;
 		for (int i = 1; i < GetNumTracks()+1; i++) {
@@ -135,6 +147,9 @@ public:
 
 	int nCursorY = 0;
 	void CheckOptionBounds(int* changedValue) {
+		if (nGameType < 0) nGameType = 2;
+		if (nGameType > 2) nGameType = 0;
+
 		if (GetGameMode() == eEventType::RACE) {
 			if (nTrackType < TRACKTYPE_FOREST) nTrackType = NUM_RACE_TRACKTYPES - 1;
 			if (nTrackType >= NUM_RACE_TRACKTYPES) nTrackType = TRACKTYPE_FOREST;
@@ -183,6 +198,10 @@ public:
 		if (GetGameMode() != eEventType::RACE) {
 			if (aOptions[option].value == &nTrackType) return false;
 			if (aOptions[option].value == &nLaps) return false;
+			if (aOptions[option].value == &nNitro) return false;
+		}
+		if (GetGameMode() == eEventType::STUNT) {
+			if (aOptions[option].value == &nDamage) return false;
 		}
 		return true;
 	}
@@ -219,6 +238,7 @@ public:
 		PreloadTexture("data/menu/trackselectbg_right.png");
 		PreloadTexture("data/menu/track_icons.dds");
 		PreloadTexture("data/menu/track_icons_inactive.dds");
+		PreloadTexture("data/menu/track_name_icons.dds");
 		PreloadTexture("data/menu/common.dds");
 	}
 
@@ -238,8 +258,29 @@ public:
 	void ApplyOptions() {
 		QuickRace::nNitroLevel = nNitro;
 		QuickRace::fUpgradeLevel = GetUpgradeLevel();
-		QuickRace::fDamageLevel = GetDamageLevel();
+		QuickRace::fDamageLevel = GetGameMode() == eEventType::STUNT ? 1.0 : GetDamageLevel();
 		QuickRace::nNumLaps = nLaps;
+	}
+
+	tDrawPositions gCarName = {0.304, 0.28, 0.062};
+	float fCarNameAspect = 171.0 / 39.0;
+
+	std::string GetTrackLogoPath(int track) {
+		auto str = GetTrackValueString(track, "TrackPath"); // data/Tracks/Forest/Forest1/
+		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::tolower(c); });
+		str.pop_back(); // remove trailing /
+		// only leave the folder name
+		while (str.find('/') != std::string::npos) {
+			str.erase(str.begin());
+		}
+		if (str.starts_with("arena")) return "arena";
+		if (str.starts_with("derby")) return "derby";
+		if (str.starts_with("stunt")) return "stunt";
+		return str;
+	}
+
+	virtual void Reset() {
+		nCursorY = 0;
 	}
 
 	virtual void Process() {
@@ -252,6 +293,7 @@ public:
 		static auto textureRight = LoadTextureFromBFS("data/menu/trackselectbg_right.png");
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
 		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
+		static auto textureTrackLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
 		static auto textureCommon = LoadTextureFromBFS("data/menu/common.dds");
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
 		static auto commonData = LoadHUDData("data/menu/common.bed", "common");
@@ -263,6 +305,16 @@ public:
 
 		int trackId = GetTrackId();
 		auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(trackId, "Image"));
+
+		static auto textureCarLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
+		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/track_name_icons.bed", "track_name_icons");
+
+		if (auto logo = GetHUDData(gCarLogos, GetTrackLogoPath(trackId))) {
+			DrawRectangle(1.0 - (gCarName.fPosX + gCarName.fSize * fCarNameAspect) * GetAspectRatioInv(),
+						  1.0 - gCarName.fPosX * GetAspectRatioInv(), gCarName.fPosY,
+						  gCarName.fPosY + gCarName.fSize, {255, 255, 255, 255}, 0, textureCarLogos, 0, logo->min,
+						  logo->max);
+		}
 
 		auto data = gEvent;
 		float x1 = data.nPosX - data.fSize * 1.5;
@@ -357,7 +409,8 @@ public:
 				}
 			}
 			else if (option.value == &nNitro) {
-				switch (value) {
+				if (GetGameMode() != eEventType::RACE) valueName = "N/A";
+				else switch (value) {
 					case QuickRace::NITRO_0:
 					default:
 						valueName = "0x";

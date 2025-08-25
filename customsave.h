@@ -67,6 +67,7 @@ struct tCustomSaveStructure {
 	int nCupsPassed;
 	int nCupsMax;
 	int nCarsUnlocked;
+	uint32_t bestLaps[256];
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];

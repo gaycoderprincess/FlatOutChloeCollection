@@ -130,7 +130,8 @@ int ChloeHUD_TrackSelect_GetTrackId(void* a1) {
 }
 
 int ChloeHUD_TrackSelect_GetEventType(void* a1) {
-	lua_pushnumber(a1, (int)Menu_TrackSelect.GetGameMode());
+	std::string str = Menu_TrackSelect.GetGameModeString();
+	lua_pushlstring(a1, (const wchar_t*)str.c_str(), (str.length() + 1));
 	return 1;
 }
 

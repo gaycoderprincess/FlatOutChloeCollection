@@ -130,8 +130,6 @@ public:
 	}
 
 	void DrawCarLogo() {
-		if (!bEnabled) return;
-
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
 		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/car_logos.bed", "car_logos");
 
