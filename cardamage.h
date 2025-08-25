@@ -23,9 +23,9 @@ float fDerbyMaxContactTimer = 40;
 float fWhammoCrashVelocity1 = 10.0;
 float fPowerHitCrashVelocity1 = 20.0;
 float fBlastOutCrashVelocity1 = 35.0;
-int nRagdollPiggybagThreshold = 1000;
-int nWreckPiggybagThreshold = 1000;
-int nFlipPiggybagThreshold = 2000;
+int nRagdollPiggybagThreshold = 3000;
+int nWreckPiggybagThreshold = 5000;
+int nFlipPiggybagThreshold = 3000;
 float fCrashVelocityMultiplier = 150;
 
 bool IsPlayerWrecked(Player* ply) {
