@@ -85,11 +85,18 @@ void __fastcall UltrawideFOV(Camera* pCam) {
 	pCam->fLeft = -v12 * fAspectRatio * mult;
 	pCam->fBottom = v12 * mult;
 	pCam->fTop = -v12 * mult;
+	if (IsInSplitScreen()) {
+		pCam->fBottom /= 2;
+		pCam->fTop /= 2;
+	}
 }
 
 uintptr_t UltrawideFOVMenuASM_jmp = 0x47E165;
 void __attribute__((naked)) UltrawideFOVMenuASM() {
 	__asm__ (
+		"fmul dword ptr [esp+0x4C]\n\t"
+		"fstp dword ptr [ebx+0xC]\n\t"
+		"fld dword ptr [esp+0x4C]\n\t"
 		"fmul st, st(1)\n\t"
 		"fstp dword ptr [ebx+8]\n\t"
 
@@ -107,6 +114,7 @@ void __attribute__((naked)) UltrawideFOVMenuASM() {
 uintptr_t UltrawideFOVIngameASM_jmp = 0x47C6D3;
 void __attribute__((naked)) UltrawideFOVIngameASM() {
 	__asm__ (
+		"fstp dword ptr [eax+0x100]\n\t"
 		"fstp dword ptr [eax+0x104]\n\t"
 
 		"pushad\n\t"
@@ -127,11 +135,17 @@ void __fastcall UltrawideFOVSky(CameraExtents* pCam, Camera* pCamera) {
 	pCam->fLeft = -v12 * fAspectRatio * fOriginalMult;
 	pCam->fBottom = v12 * fOriginalMult;
 	pCam->fTop = -v12 * fOriginalMult;
+	if (IsInSplitScreen()) {
+		pCam->fBottom /= 2;
+		pCam->fTop /= 2;
+	}
 }
 
 uintptr_t UltrawideFOVSkyASM_jmp = 0x4C8AF8;
 void __attribute__((naked)) UltrawideFOVSkyASM() {
 	__asm__ (
+		"fstp st\n\t"
+
 		"push ecx\n\t"
 		"push edx\n\t"
 		"lea ecx, [esp+8]\n\t"
@@ -150,9 +164,11 @@ void __attribute__((naked)) UltrawideFOVSkyASM() {
 }
 
 void ApplyUltrawidePatches() {
-	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47E160, &UltrawideFOVMenuASM);
-	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47C6CD, &UltrawideFOVIngameASM);
-	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4C8AF2, &UltrawideFOVSkyASM);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47E155, &UltrawideFOVMenuASM);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47C6C7, &UltrawideFOVIngameASM);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4C8AF0, &UltrawideFOVSkyASM);
+
+	return;
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4F0D00, &UltrawideTextScaleASM);
 	//NyaHookLib::Patch(0x4E3007, &fResMultWithNewHudScale); // text sizes

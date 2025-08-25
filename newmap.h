@@ -36,7 +36,7 @@ NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
 			{219,100,193,255}, // super author
 	};
 
-	int id = ply->nPlayerId - 1;
+	int id = ply->nPlayerType == PLAYERTYPE_LOCAL ? 0 : ply->nPlayerId - 1; // hack for splitscreen
 	if (CareerMode::IsCareerTimeTrial()) {
 		if (id >= 0 && id <= sizeof(aPlayerColorsTimeTrial) / sizeof(aPlayerColorsTimeTrial[0])) return aPlayerColorsTimeTrial[id];
 	}
@@ -57,6 +57,16 @@ void DrawPlayerOnIngameMap(Player* ply) {
 	auto posY = pEnvironment->pMinimap->fScreenPos[1];
 	auto sizeX = pEnvironment->pMinimap->fScreenSize[0];
 	auto sizeY = pEnvironment->pMinimap->fScreenSize[1];
+
+	if (IsInSplitScreen()) {
+		if (pPlayerHost->GetNumPlayers() > 2) {
+			posX = 360.0 - pEnvironment->pMinimap->fScreenSize[0] * 0.5;
+		}
+		else {
+			posX = 0.0;
+		}
+		posY = 240.0 - pEnvironment->pMinimap->fScreenSize[1] * 0.5;
+	}
 
 	posX /= 640.0;
 	posY /= 480.0;

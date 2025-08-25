@@ -30,3 +30,9 @@ namespace CareerMode {
 
 	bool IsCareerTimeTrial();
 }
+
+bool IsInSplitScreen() {
+	if (pGameFlow->nGameMode != eGameMode::SPLITSCREEN) return false;
+	if (pGameFlow->nEventType == eEventType::STUNT) return false;
+	return true;
+}

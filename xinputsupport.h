@@ -15,10 +15,13 @@
 
 double fTimeSincePaused = 0;
 
-bool __thiscall IsMenuInputJustPressedNew(Controller* pThis, int input) {
-	auto orig = Controller::IsMenuInputJustPressed(pThis, input);
-	if (orig || !nControllerSupport) return orig;
+bool IsControllerSupportEnabled() {
+	if (!nControllerSupport) return false;
+	if (GetGameState() != GAME_STATE_MENU && IsInSplitScreen()) return false; // disable controller on p1
+	return true;
+}
 
+bool __thiscall IsMenuInputJustPressedXInput(Controller* pThis, int input) {
 	if (input == CONTROLLER_BUTTON_UP) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_UP); }
 	if (input == CONTROLLER_BUTTON_DOWN) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_DOWN); }
 	if (input == CONTROLLER_BUTTON_LEFT) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_LEFT); }
@@ -29,10 +32,7 @@ bool __thiscall IsMenuInputJustPressedNew(Controller* pThis, int input) {
 	return false;
 }
 
-bool __thiscall IsGameInputJustPressedNew(Controller* pThis, int input) {
-	auto orig = Controller::IsGameInputJustPressed(pThis, input);
-	if (orig || !nControllerSupport) return orig;
-
+bool __thiscall IsGameInputJustPressedXInput(Controller* pThis, int input) {
 	if (input == 9) { return IsPadKeyJustPressed(NYA_PAD_KEY_START); } // pause
 	if (input == 3) { return IsPadKeyJustPressed(NYA_PAD_KEY_X); } // camera
 	if (input == 5) { return IsPadKeyJustPressed(NYA_PAD_KEY_Y); } // reset
@@ -41,11 +41,8 @@ bool __thiscall IsGameInputJustPressedNew(Controller* pThis, int input) {
 	return false;
 }
 
-int __thiscall GetAnalogInputNew(Controller* pThis, int input, float* out) {
+int __thiscall GetAnalogInputXInput(Controller* pThis, int input, float* out) {
 	*out = 0.0;
-	Controller::GetAnalogInput(pThis, input, out);
-	if (*out != 0.0 || !nControllerSupport) return *out != 0.0;
-
 	//if (aPressedAnalog[input]) { *out = 1.0; }
 	if (input == 0) { *out = GetPadKeyState(NYA_PAD_KEY_LSTICK_X) / 32767.0; } // steer
 	if (input == 1) { *out = GetPadKeyState(NYA_PAD_KEY_RT) / 255.0; } // accelerate
@@ -53,15 +50,118 @@ int __thiscall GetAnalogInputNew(Controller* pThis, int input, float* out) {
 	return *out != 0.0;
 }
 
-int __thiscall GetInputValueNew(Controller* pThis, int input) {
-	auto orig = Controller::GetInputValue(pThis, input);
-	if (orig || !nControllerSupport) return orig;
-
+int __thiscall GetInputValueXInput(Controller* pThis, int input) {
 	//if (aPressedDigital[input]) return 255;
 	if (input == 0) return GetPadKeyState(NYA_PAD_KEY_B); // handbrake
 	if (input == 1 && fTimeSincePaused > 0.75) return GetPadKeyState(NYA_PAD_KEY_A); // nitro
 	if (input == 4) return GetPadKeyState(NYA_PAD_KEY_R3); // look back
 	return 0;
+}
+
+bool __thiscall IsMenuInputJustPressedNew(Controller* pThis, int input) {
+	auto orig = Controller::IsMenuInputJustPressed(pThis, input);
+	if (orig || !IsControllerSupportEnabled()) return orig;
+	return IsMenuInputJustPressedXInput(pThis, input);
+}
+
+bool __thiscall IsGameInputJustPressedNew(Controller* pThis, int input) {
+	auto orig = Controller::IsGameInputJustPressed(pThis, input);
+	if (orig || !IsControllerSupportEnabled()) return orig;
+	return IsGameInputJustPressedXInput(pThis, input);
+}
+
+int __thiscall GetAnalogInputNew(Controller* pThis, int input, float* out) {
+	*out = 0.0;
+	Controller::GetAnalogInput(pThis, input, out);
+	if (*out != 0.0 || !IsControllerSupportEnabled()) return *out != 0.0;
+	return GetAnalogInputXInput(pThis, input, out);
+}
+
+int __thiscall GetInputValueNew(Controller* pThis, int input) {
+	auto orig = Controller::GetInputValue(pThis, input);
+	if (orig || !IsControllerSupportEnabled()) return orig;
+	return GetInputValueXInput(pThis, input);
+}
+
+void ApplyUltrawidePatches();
+namespace SplitscreenController {
+	void __thiscall dummy_sub_4FADB0(Controller* pThis, char a2) {}
+	void __thiscall dummy_Reset(Controller* pThis) {}
+	void __thiscall dummy_nullsub(Controller* pThis) {}
+	int __thiscall dummy_sub_4FB4A0(Controller* pThis, int a2, int a3) { return 0; }
+	int __thiscall dummy_sub_484CB0(Controller* pThis) { return 1; }
+	int __thiscall dummy_sub_4FB490(Controller* pThis) { MessageBoxA(0, "dummy_sub_4FB490", "", MB_ICONERROR); __debugbreak(); } // returns controller+0x130
+	int __thiscall dummy_sub_4FB480(Controller* pThis) { MessageBoxA(0, "dummy_sub_4FB480", "", MB_ICONERROR); __debugbreak(); } // returns controller+0x798
+	void __thiscall dummy_sub_4F2EB0(Controller* pThis, int a2) {} // does something with the vtable?? idk
+	float __thiscall dummy_sub_4FB5C0(Controller* pThis) { return 0.0; }
+
+	void* pVTable[] = {
+			(void*)&dummy_sub_4FADB0, // +0
+			(void*)&dummy_Reset, // +4
+			(void*)&dummy_nullsub, // +8
+			(void*)&dummy_Reset, // +C
+			(void*)&dummy_sub_4FB4A0, // +10
+			(void*)&dummy_sub_484CB0, // +14
+			(void*)&dummy_sub_4FB490, // +18
+			(void*)&dummy_sub_484CB0, // +1C
+			(void*)&dummy_sub_4FB480, // +20
+			(void*)&IsMenuInputJustPressedXInput, // +24
+			(void*)&IsGameInputJustPressedXInput, // +28
+			(void*)&GetInputValueXInput, // +2C
+			(void*)&dummy_sub_484CB0, // +30
+			(void*)&dummy_sub_4F2EB0, // +34
+			(void*)0x4FB0E0, // +38
+			(void*)0x4FB110, // +3C
+			(void*)&GetAnalogInputXInput, // +40
+			(void*)&dummy_sub_4FB5C0, // +44
+			(void*)&dummy_sub_4FB5C0, // +48
+			(void*)&dummy_sub_4FB5C0, // +4C
+			(void*)&dummy_sub_4FB5C0, // +50
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+	};
+
+	Controller* pController = nullptr;
+	void CopyController(uint8_t* data) {
+		if (pController) return;
+		pController = (Controller*)malloc(0x79C);
+		memcpy(pController, data, 0x79C);
+		pController->_4[-1] = (uint32_t)&pVTable[0];
+
+		ApplyUltrawidePatches(); // hacky fix here to override the fov from widescreen fix
+	}
 }
 
 void ProcessXInputSupport() {
@@ -71,6 +171,13 @@ void ProcessXInputSupport() {
 	if (GetGameState() == GAME_STATE_RACE) {
 		if (pGameFlow->nIsPaused) fTimeSincePaused = 0;
 		fTimeSincePaused += gTimer.fDeltaTime;
+
+		if (!pLoadingScreen) {
+			if (IsInSplitScreen()) {
+				SplitscreenController::CopyController((uint8_t*)GetPlayer(0)->pController);
+				GetPlayer(1)->pController = SplitscreenController::pController;
+			}
+		}
 	}
 	else {
 		fTimeSincePaused = 999;

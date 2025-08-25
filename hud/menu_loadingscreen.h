@@ -82,9 +82,8 @@ public:
 		static std::vector<tHUDData> loadingAnims = LoadHUDData("data/menu/loading_anim.bed", "loading_anim");
 
 		// assuming a size of 640x480
-		// todo re-add this for single races after the track select menu background is fixed up
-		float aspectModifier = 0;
-		if (CareerMode::bIsCareerRace && sTextureName != "data/menu/loading.tga") aspectModifier = (GetAspectRatio() / (4.0 / 3.0)) - 1.0;
+		float aspectModifier = (GetAspectRatio() / (4.0 / 3.0)) - 1.0;
+		if (sTextureName == "data/menu/loading.tga") aspectModifier = 0.0;
 		DrawRectangle(0, 1, 0 - (aspectModifier * 0.5), 1 + (aspectModifier * 0.5), {255,255,255,255}, 0, tex);
 
 		const float fLoadingTimerSpeed = 0.4;
