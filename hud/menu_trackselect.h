@@ -18,12 +18,12 @@ public:
 
 	static inline const char* aTrackTypeNames[] = {
 		"FOREST",
-		"FIELDS",
+		"FIELD",
 		"PIT",
-		"RACING",
+		"RACE",
 		"TOWN",
 		"WINTER",
-		"ARENA",
+		"BONUS",
 		"DERBY",
 		"STUNT",
 	};
@@ -58,6 +58,7 @@ public:
 	static inline int nNitro = QuickRace::NITRO_100;
 	static inline int nUpgrades = UPGRADE_0;
 	static inline int nTimeTrialProps = 1;
+	static inline int nTimeTrial3LapMode = 0;
 
 	static inline tOption aOptionsQuickRace[] = {
 			{"GAME TYPE", &nGameType},
@@ -78,6 +79,7 @@ public:
 			{"NITRO", &nNitro},
 			{"UPGRADES", &nUpgrades},
 			{"PROPS", &nTimeTrialProps},
+			{"MODE", &nTimeTrial3LapMode},
 			{"", nullptr},
 			{"GO RACE", nullptr},
 			{"*END*", nullptr},
@@ -208,6 +210,7 @@ public:
 		if (nUpgrades >= NUM_UPGRADE_LEVELS) nUpgrades = NUM_UPGRADE_LEVELS-1;
 
 		nTimeTrialProps = nTimeTrialProps == 1;
+		nTimeTrial3LapMode = nTimeTrial3LapMode == 1;
 	}
 
 	bool IsOptionValid(int option) {
@@ -245,7 +248,6 @@ public:
 		} while (!IsOptionValid(nCursorY));
 	}
 	virtual void MoveDown() {
-
 		do {
 			nCursorY++;
 			if (aOptions[nCursorY].name == "*END*") {
@@ -278,14 +280,24 @@ public:
 	}
 
 	void ApplyOptions() {
-		QuickRace::nNitroLevel = nNitro;
-		QuickRace::fUpgradeLevel = GetUpgradeLevel();
-		QuickRace::fDamageLevel = GetGameMode() == eEventType::STUNT ? 1.0 : GetDamageLevel();
-		QuickRace::nNumLaps = nLaps;
+		if (aOptions == aOptionsTimeTrial) {
+			QuickRace::nNitroLevel = QuickRace::NITRO_100;
+			QuickRace::fUpgradeLevel = GetUpgradeLevel();
+			QuickRace::fDamageLevel = 0.0;
+			QuickRace::nNumLaps = nTimeTrial3LapMode ? 3 : 10;
+		}
+		else {
+			QuickRace::nNitroLevel = nNitro;
+			QuickRace::fUpgradeLevel = GetUpgradeLevel();
+			QuickRace::fDamageLevel = GetGameMode() == eEventType::STUNT ? 1.0 : GetDamageLevel();
+			QuickRace::nNumLaps = nLaps;
+		}
 	}
 
 	tDrawPositions gCarName = {0.304, 0.28, 0.062};
 	float fCarNameAspect = 171.0 / 39.0;
+
+	tDrawPositions1080p gLevelPB = {1445, 852, 0.04};
 
 	std::string GetTrackLogoPath(int track) {
 		auto str = GetTrackValueString(track, "TrackPath"); // data/Tracks/Forest/Forest1/
@@ -305,6 +317,8 @@ public:
 		nCursorY = 0;
 		aOptions = aOptionsQuickRace;
 	}
+
+	std::string sStuntPB;
 
 	virtual void Process() {
 		static CNyaTimer gTimer;
@@ -347,8 +361,6 @@ public:
 		DoJustify(JUSTIFY_RIGHT, x1, y1);
 		DoJustify(JUSTIFY_RIGHT, x2, y2);
 		DrawRectangle(x1, x2, y1, y2, {255,255,255,255}, 0, textureTracks, 0, trackIcon->min, trackIcon->max);
-
-		// todo!
 		if (!mapPath.empty()) {
 			auto trackMap = LoadTextureFromBFS(mapPath.c_str());
 
@@ -357,6 +369,25 @@ public:
 			int y1 = gMap.nPosY - gMap.fSize;
 			int y2 = gMap.nPosY + gMap.fSize;
 			Draw1080pSprite(JUSTIFY_RIGHT, x1, x2, y1, y2, {255,255,255,255}, trackMap);
+		}
+		if (!sStuntPB.empty()) {
+			tNyaStringData data;
+			data.x = gLevelPB.nPosX;
+			data.y = gLevelPB.nPosY;
+			data.size = gLevelPB.fSize;
+			data.XCenterAlign = true;
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", sStuntPB), &DrawStringFO2_Ingame12);
+		}
+		else if (gCustomSave.bestLaps[trackId]) {
+			auto str = GetTimeFromMilliseconds(gCustomSave.bestLaps[trackId], true);
+			str.pop_back();
+
+			tNyaStringData data;
+			data.x = gLevelPB.nPosX;
+			data.y = gLevelPB.nPosY;
+			data.size = gLevelPB.fSize;
+			data.XCenterAlign = true;
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", str, GetCarName(gCustomSave.bestLapCars[trackId]+1)), &DrawStringFO2_Ingame12);
 		}
 
 		for (int y = 0; aOptions[y].name != "*END*"; y++) {
@@ -467,6 +498,17 @@ public:
 						break;
 					case 1:
 						valueName = "ON";
+						break;
+				}
+			}
+			else if (option.value == &nTimeTrial3LapMode) {
+				switch (value) {
+					case 0:
+					default:
+						valueName = "HOTLAPS";
+						break;
+					case 1:
+						valueName = "3 LAP RUN";
 						break;
 				}
 			}

@@ -74,6 +74,10 @@ void DrawPlayerOnIngameMap(Player* ply) {
 	plyPos.x /= startX - endX;
 	plyPos.z -= startY;
 	plyPos.z /= startY - endY;
+	if (-plyPos.x < 0) return;
+	if (-plyPos.z < 0) return;
+	if (-plyPos.x > 1) return;
+	if (-plyPos.z > 1) return;
 	float spritePosX = std::lerp(posX, posX + sizeX, -plyPos.x);
 	float spritePosY = std::lerp(posY + sizeY, posY, -plyPos.z);
 	CHUDElement::DoJustify(CHUDElement::JUSTIFY_LEFT, spritePosX, spritePosY);

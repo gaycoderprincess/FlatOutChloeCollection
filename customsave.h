@@ -68,6 +68,7 @@ struct tCustomSaveStructure {
 	int nCupsMax;
 	int nCarsUnlocked;
 	uint32_t bestLaps[256];
+	uint32_t bestLapCars[256];
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -190,6 +191,32 @@ void ProcessPlayStats() {
 			if (ply->bHasFinished) {
 				if (ply->nPosition == 1 && !gCustomSave.tracksWon[track]) {
 					gCustomSave.tracksWon[track] = true;
+					changed = true;
+				}
+			}
+		}
+
+		if (changed) {
+			DoGameSave();
+		}
+	}
+
+	if (GetGameState() == GAME_STATE_RACE) {
+		bool changed = false;
+		int track = pGameFlow->nLevel;
+
+		if (pGameFlow->nEventType == eEventType::RACE) {
+			auto ply = GetPlayerScore<PlayerScoreRace>(1);
+			for (int i = 0; i < ply->nCurrentLap; i++) {
+				auto lap = ply->nLapTimes[i];
+				if (lap <= 0) continue;
+				if (i > 0) lap -= ply->nLapTimes[i-1];
+				if (lap <= 0) continue;
+
+				if (!gCustomSave.bestLaps[track] || lap < gCustomSave.bestLaps[track]) {
+					gCustomSave.bestLaps[track] = lap;
+					gCustomSave.bestLapCars[track] = GetPlayer(0)->nCarId;
+					WriteLog(std::format("Registered new best lap of {}ms", lap));
 					changed = true;
 				}
 			}

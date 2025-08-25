@@ -143,7 +143,8 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fArrowX", Menu_TrackSelect.fArrowX);
 	//QuickValueEditor("fArrowYOffset", Menu_TrackSelect.fArrowYOffset);
 	//QuickValueEditor("fArrowSize", Menu_TrackSelect.fArrowSize);
-	QuickValueEditor("gTrackName", Menu_TrackSelect.gCarName, false);
+	//QuickValueEditor("gTrackName", Menu_TrackSelect.gCarName, false);
+	//QuickValueEditor("gLevelPB", Menu_TrackSelect.gLevelPB, false);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

@@ -150,6 +150,11 @@ int ChloeHUD_TrackSelect_GetPropsEnabled(void* a1) {
 	return 1;
 }
 
+int ChloeHUD_TrackSelect_GetTimeTrialMode(void* a1) {
+	lua_pushnumber(a1, Menu_TrackSelect.nTimeTrial3LapMode);
+	return 1;
+}
+
 int ChloeHUD_TrackSelect_SetMapPath(void* a1) {
 	Menu_TrackSelect.SetMapPath((const char*)lua_tolstring(a1, 1));
 	return 0;
@@ -168,6 +173,15 @@ int ChloeCollection_SetIsQuickRace(void* a1) {
 
 int ChloeHUD_TrackSelect_SetIsTimeTrial(void* a1) {
 	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsTimeTrial;
+	if (Menu_TrackSelect.nGameType != 0) {
+		Menu_TrackSelect.nGameType = 0;
+		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
+	}
+	return 0;
+}
+
+int ChloeHUD_TrackSelect_SetBestStuntScore(void* a1) {
+	Menu_TrackSelect.sStuntPB = GetStringNarrow(lua_tolstring(a1, 1));
 	return 0;
 }
 
@@ -508,6 +522,7 @@ int ChloeCareerDefs_BeginCareerDefs(void* a1) {
 		luaClass.aCarUnlocks.clear();
 		luaClass.aCups.clear();
 		luaClass.aEvents.clear();
+		luaClass.Finals.aRaces.clear();
 	}
 	return 0;
 }
@@ -867,9 +882,11 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetNitroType, "ChloeHUD_TrackSelect_GetNitroType");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetUpgradeLevel, "ChloeHUD_TrackSelect_GetUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetPropsEnabled, "ChloeHUD_TrackSelect_GetPropsEnabled");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetTimeTrialMode, "ChloeHUD_TrackSelect_GetTimeTrialMode");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetMapPath, "ChloeHUD_TrackSelect_SetMapPath");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_IsStartRaceHovered, "ChloeHUD_TrackSelect_IsStartRaceHovered");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsTimeTrial, "ChloeHUD_TrackSelect_SetIsTimeTrial");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetBestStuntScore, "ChloeHUD_TrackSelect_SetBestStuntScore");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStatsTuned, "ChloeHUD_SetCarStatsTuned");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
