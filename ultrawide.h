@@ -85,7 +85,7 @@ void __fastcall UltrawideFOV(Camera* pCam) {
 	pCam->fLeft = -v12 * fAspectRatio * mult;
 	pCam->fBottom = v12 * mult;
 	pCam->fTop = -v12 * mult;
-	if (IsInSplitScreen()) {
+	if (IsInHalvedSplitScreen()) {
 		pCam->fBottom /= 2;
 		pCam->fTop /= 2;
 	}
@@ -135,7 +135,7 @@ void __fastcall UltrawideFOVSky(CameraExtents* pCam, Camera* pCamera) {
 	pCam->fLeft = -v12 * fAspectRatio * fOriginalMult;
 	pCam->fBottom = v12 * fOriginalMult;
 	pCam->fTop = -v12 * fOriginalMult;
-	if (IsInSplitScreen()) {
+	if (IsInHalvedSplitScreen()) {
 		pCam->fBottom /= 2;
 		pCam->fTop /= 2;
 	}

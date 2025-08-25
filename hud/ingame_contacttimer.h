@@ -16,6 +16,7 @@ public:
 
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
+		if (IsInSplitScreen()) return;
 		if (pGameFlow->nEventType != eEventType::DERBY) return;
 
 		auto timer = fDerbyMaxContactTimer - fDerbyContactTimer[0];

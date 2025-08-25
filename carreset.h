@@ -18,7 +18,7 @@ void ProcessCarReset(int player, float delta) {
 		return;
 	}
 
-	if (!bCarResetRequested) {
+	if (!bCarResetRequested[player]) {
 		fCarResetFadeTimer[player] -= delta * 1.5;
 	}
 	else {

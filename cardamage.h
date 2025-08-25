@@ -37,6 +37,8 @@ bool IsPlayerWrecked(Player* ply) {
 }
 
 void ProcessDerbyContactTimer() {
+	if (IsInSplitScreen()) return;
+
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();
 

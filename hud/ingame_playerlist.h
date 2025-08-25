@@ -48,7 +48,7 @@ public:
 			if (!ply) continue;
 			auto string1 = std::format("{}.", ply->nPosition);
 			auto string2 = std::format("{}", GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get()));
-			if (ply->nPlayerId == 0) {
+			if (!IsInSplitScreen() && ply->nPlayerId == 0) {
 				data.SetColor(GetPaletteColor(18));
 			}
 			else {

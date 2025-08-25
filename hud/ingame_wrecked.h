@@ -42,6 +42,7 @@ public:
 
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
+		if (IsInSplitScreen()) return;
 
 		static CNyaRaceTimer gTimer;
 		gTimer.Process();

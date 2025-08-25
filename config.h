@@ -32,7 +32,19 @@ namespace CareerMode {
 }
 
 bool IsInSplitScreen() {
+	if (pLoadingScreen) return false;
+	if (GetGameState() != GAME_STATE_RACE && GetGameState() != GAME_STATE_REPLAY) return false;
 	if (pGameFlow->nGameMode != eGameMode::SPLITSCREEN) return false;
 	if (pGameFlow->nEventType == eEventType::STUNT) return false;
 	return true;
+}
+
+bool IsInHalvedSplitScreen() {
+	if (!IsInSplitScreen()) return false;
+	return pPlayerHost->GetNumPlayers() == 2;
+}
+
+bool IsInQuarteredSplitScreen() {
+	if (!IsInSplitScreen()) return false;
+	return pPlayerHost->GetNumPlayers() > 2;
 }

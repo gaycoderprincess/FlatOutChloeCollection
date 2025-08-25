@@ -21,40 +21,48 @@ bool IsControllerSupportEnabled() {
 	return true;
 }
 
+int GetControllerSplitScreenPlayer(Controller* pController) {
+	return pController->_4[0x79C/4]-1;
+}
+
 bool __thiscall IsMenuInputJustPressedXInput(Controller* pThis, int input) {
-	if (input == CONTROLLER_BUTTON_UP) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_UP); }
-	if (input == CONTROLLER_BUTTON_DOWN) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_DOWN); }
-	if (input == CONTROLLER_BUTTON_LEFT) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_LEFT); }
-	if (input == CONTROLLER_BUTTON_RIGHT) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_RIGHT); }
-	if (input == CONTROLLER_BUTTON_START) { return IsPadKeyJustPressed(NYA_PAD_KEY_START); }
-	if (input == CONTROLLER_BUTTON_A) { return IsPadKeyJustPressed(NYA_PAD_KEY_A); }
-	if (input == CONTROLLER_BUTTON_SELECT) { return IsPadKeyJustPressed(NYA_PAD_KEY_B); }
+	int padId = IsInSplitScreen() ? GetControllerSplitScreenPlayer(pThis) : -1;
+	if (input == CONTROLLER_BUTTON_UP) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_UP, padId); }
+	if (input == CONTROLLER_BUTTON_DOWN) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_DOWN, padId); }
+	if (input == CONTROLLER_BUTTON_LEFT) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_LEFT, padId); }
+	if (input == CONTROLLER_BUTTON_RIGHT) { return IsPadKeyJustPressed(NYA_PAD_KEY_DPAD_RIGHT, padId); }
+	if (input == CONTROLLER_BUTTON_START) { return IsPadKeyJustPressed(NYA_PAD_KEY_START, padId); }
+	if (input == CONTROLLER_BUTTON_A) { return IsPadKeyJustPressed(NYA_PAD_KEY_A, padId); }
+	if (input == CONTROLLER_BUTTON_SELECT) { return IsPadKeyJustPressed(NYA_PAD_KEY_B, padId); }
 	return false;
 }
 
 bool __thiscall IsGameInputJustPressedXInput(Controller* pThis, int input) {
-	if (input == 9) { return IsPadKeyJustPressed(NYA_PAD_KEY_START); } // pause
-	if (input == 3) { return IsPadKeyJustPressed(NYA_PAD_KEY_X); } // camera
-	if (input == 5) { return IsPadKeyJustPressed(NYA_PAD_KEY_Y); } // reset
-	if (input == 18) { return IsPadKeyJustPressed(NYA_PAD_KEY_LB); } // gear down
-	if (input == 19) { return IsPadKeyJustPressed(NYA_PAD_KEY_RB); } // gear up
+	int padId = IsInSplitScreen() ? GetControllerSplitScreenPlayer(pThis) : -1;
+	if (input == 9) { return IsPadKeyJustPressed(NYA_PAD_KEY_START, padId); } // pause
+	if (input == 3) { return IsPadKeyJustPressed(NYA_PAD_KEY_X, padId); } // camera
+	if (input == 5) { return IsPadKeyJustPressed(NYA_PAD_KEY_Y, padId); } // reset
+	if (input == 18) { return IsPadKeyJustPressed(NYA_PAD_KEY_LB, padId); } // gear down
+	if (input == 19) { return IsPadKeyJustPressed(NYA_PAD_KEY_RB, padId); } // gear up
 	return false;
 }
 
 int __thiscall GetAnalogInputXInput(Controller* pThis, int input, float* out) {
 	*out = 0.0;
+	int padId = IsInSplitScreen() ? GetControllerSplitScreenPlayer(pThis) : -1;
 	//if (aPressedAnalog[input]) { *out = 1.0; }
-	if (input == 0) { *out = GetPadKeyState(NYA_PAD_KEY_LSTICK_X) / 32767.0; } // steer
-	if (input == 1) { *out = GetPadKeyState(NYA_PAD_KEY_RT) / 255.0; } // accelerate
-	if (input == 2) { *out = GetPadKeyState(NYA_PAD_KEY_LT) / 255.0; } // brake
+	if (input == 0) { *out = GetPadKeyState(NYA_PAD_KEY_LSTICK_X, padId) / 32767.0; } // steer
+	if (input == 1) { *out = GetPadKeyState(NYA_PAD_KEY_RT, padId) / 255.0; } // accelerate
+	if (input == 2) { *out = GetPadKeyState(NYA_PAD_KEY_LT, padId) / 255.0; } // brake
 	return *out != 0.0;
 }
 
 int __thiscall GetInputValueXInput(Controller* pThis, int input) {
+	int padId = IsInSplitScreen() ? GetControllerSplitScreenPlayer(pThis) : -1;
 	//if (aPressedDigital[input]) return 255;
-	if (input == 0) return GetPadKeyState(NYA_PAD_KEY_B); // handbrake
-	if (input == 1 && fTimeSincePaused > 0.75) return GetPadKeyState(NYA_PAD_KEY_A); // nitro
-	if (input == 4) return GetPadKeyState(NYA_PAD_KEY_R3); // look back
+	if (input == 0) return GetPadKeyState(NYA_PAD_KEY_B, padId); // handbrake
+	if (input == 1 && fTimeSincePaused > 0.75) return GetPadKeyState(NYA_PAD_KEY_A, padId); // nitro
+	if (input == 4) return GetPadKeyState(NYA_PAD_KEY_R3, padId); // look back
 	return 0;
 }
 
@@ -153,12 +161,15 @@ namespace SplitscreenController {
 			nullptr,
 	};
 
-	Controller* pController = nullptr;
+	Controller* pControllers[4] = {};
 	void CopyController(uint8_t* data) {
-		if (pController) return;
-		pController = (Controller*)malloc(0x79C);
-		memcpy(pController, data, 0x79C);
-		pController->_4[-1] = (uint32_t)&pVTable[0];
+		for (int i = 0; i < 4; i++) {
+			if (pControllers[i]) return;
+			pControllers[i] = (Controller*)malloc(0x79C+4);
+			memcpy(pControllers[i], data, 0x79C);
+			pControllers[i]->_4[-1] = (uint32_t)&pVTable[0];
+			pControllers[i]->_4[0x79C/4] = 1; // player id
+		}
 
 		ApplyUltrawidePatches(); // hacky fix here to override the fov from widescreen fix
 	}
@@ -175,7 +186,9 @@ void ProcessXInputSupport() {
 		if (!pLoadingScreen) {
 			if (IsInSplitScreen()) {
 				SplitscreenController::CopyController((uint8_t*)GetPlayer(0)->pController);
-				GetPlayer(1)->pController = SplitscreenController::pController;
+				for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
+					GetPlayer(i)->pController = SplitscreenController::pControllers[i];
+				}
 			}
 		}
 	}

@@ -2,6 +2,8 @@ void AddCrashBonus(Player* pPlayer, int type);
 
 class CHUD_DamageMeter : public CIngameHUDElement {
 public:
+	int nPlayerId = 0;
+
 	float fHealthBarAlpha[32];
 	float fHealthBarGlow[32];
 	double fHealthBarGlowTimer[32];
@@ -23,9 +25,12 @@ public:
 	static constexpr float fCrashBonusFadeoutSpeed = 2;
 
 	void DrawCrashBonusNotif() {
+		float fXOffset = GetScreenXOffset();
+		float fYOffset = GetScreenYOffset();
+
 		tNyaStringData data;
-		data.x = fCrashBonusTextX * GetAspectRatioInv();
-		data.y = fCrashBonusTextY;
+		data.x = fCrashBonusTextX * GetAspectRatioInv() + fXOffset;
+		data.y = fCrashBonusTextY - fYOffset;
 		data.size = fCrashBonusTextSize;
 		data.XCenterAlign = true;
 		//data.SetColor(GetPaletteColor(18));
@@ -48,17 +53,34 @@ public:
 	static constexpr float fHealthBarY = 0.941;
 	static constexpr float fHealthBarSize = 0.0389;
 
-	void ProcessHealthBarAlpha() {
-		auto localPlayer = GetPlayer(0);
+	float GetScreenXOffset() {
+		if (IsInQuarteredSplitScreen()) {
+			if (nPlayerId == 1 || nPlayerId == 3) return 0.5;
+		}
+		return 0;
+	}
 
-		static CNyaRaceTimer gTimer;
-		gTimer.Process();
+	float GetScreenYOffset() {
+		if (IsInQuarteredSplitScreen()) {
+			if (nPlayerId == 2 || nPlayerId == 3) return 0.5;
+		}
+		if (IsInHalvedSplitScreen() && nPlayerId == 0) {
+			return 0.5;
+		}
+		return 0;
+	}
+
+	CNyaRaceTimer gTimer;
+	void ProcessHealthBarAlpha() {
+		auto localPlayer = GetPlayer(nPlayerId);
 
 		int closestPlayerId = -1;
 		float closestPlayerDist = 9999;
 		bool playerJustHit = false;
-		auto playerPos = GetPlayer(0)->pCar->GetMatrix()->p;
-		for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
+		auto playerPos = localPlayer->pCar->GetMatrix()->p;
+		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+			if (i == nPlayerId) continue;
+
 			auto ply = GetPlayer(i);
 			float damage = GetCarDamage(ply->pCar);
 			if (bHealthBarMatches[i] = fHealthBarGlow[i] == damage) {
@@ -122,6 +144,11 @@ public:
 		PreloadTexture("data/global/overlay/ai_damage_meter_glow.png");
 		PreloadTexture("data/global/overlay/ai_damage_meter_bg.png");
 
+		// once guard for damagemeter player2
+		static bool bInited = false;
+		if (bInited) return;
+		bInited = true;
+
 		ChloeEvents::OnCrashBonus.push_back(AddCrashBonus);
 	}
 	virtual void Reset() {
@@ -132,6 +159,13 @@ public:
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
+		auto ply = GetPlayer(nPlayerId);
+		if (!ply || ply->nPlayerType != PLAYERTYPE_LOCAL) return;
+
+		float fXOffset = GetScreenXOffset();
+		float fYOffset = GetScreenYOffset();
+		int nXOffset = fXOffset * 1920;
+		int nYOffset = fYOffset * 1080;
 
 		static auto ai_damage_meter = LoadTextureFromBFS("data/global/overlay/ai_damage_meter.png");
 		static auto ai_damage_meter_glow = LoadTextureFromBFS("data/global/overlay/ai_damage_meter_glow.png");
@@ -146,13 +180,13 @@ public:
 			if (alpha < 0) alpha = 0;
 			if (alpha > 255) alpha = 255;
 
-			Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,(uint8_t)alpha}, ai_damage_meter_bg);
+			Draw1080pSprite(JUSTIFY_LEFT, 0+fXOffset, 1920+fXOffset, 0-nYOffset, 1080-nYOffset, {255,255,255,(uint8_t)alpha}, ai_damage_meter_bg);
 
 			auto ply = GetPlayer(i);
 
 			tNyaStringData data;
-			data.x = fHealthTextX * GetAspectRatioInv();
-			data.y = fHealthTextY;
+			data.x = fHealthTextX * GetAspectRatioInv() + fXOffset;
+			data.y = fHealthTextY - fYOffset;
 			data.size = fHealthTextSize;
 			data.SetColor(GetPaletteColor(18));
 			data.a = alpha;
@@ -168,11 +202,10 @@ public:
 			float x2 = fHealthBarX + std::lerp(0, fHealthBarSize * aspect, 1 - GetCarDamage(ply->pCar));
 			float x2Glow = fHealthBarX + std::lerp(0, fHealthBarSize * aspect, 1 - fHealthBarGlow[i]);
 			float y2 = fHealthBarY + fHealthBarSize;
-			if (x2 != x2Glow) DrawRectangle(x1 * GetAspectRatioInv(), x2Glow * GetAspectRatioInv(), y1, y2, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter_glow, 0, {0,0}, {uvGlow,1});
-			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter, 0, {0,0}, {uv,1});
+			if (x2 != x2Glow) DrawRectangle(x1 * GetAspectRatioInv() + fXOffset, x2Glow * GetAspectRatioInv() + fXOffset, y1-fYOffset, y2-fYOffset, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter_glow, 0, {0,0}, {uvGlow,1});
+			DrawRectangle(x1 * GetAspectRatioInv() + fXOffset, x2 * GetAspectRatioInv() + fXOffset, y1-fYOffset, y2-fYOffset, {255,255,255,(uint8_t)alpha}, 0, ai_damage_meter, 0, {0,0}, {uv,1});
 		}
 
-		static CNyaRaceTimer gTimer;
 		gTimer.Process();
 		if (fCrashBonusTimer > 0) {
 			fCrashBonusTimer -= gTimer.fDeltaTime;
@@ -202,7 +235,7 @@ public:
 			DrawCrashBonusNotif();
 		}
 	}
-} HUD_DamageMeter;
+} HUD_DamageMeter, HUD_DamageMeter_Player2;
 
 const char* GetCrashBonusName(int type) {
 	switch (type) {
@@ -233,6 +266,9 @@ void AddCrashBonus(Player* pPlayer, int type) {
 			GetAchievement("BLAST_ALL")->fInternalProgress += 1;
 		}
 
-		if (nShowBonus) HUD_DamageMeter.aCrashBonuses.push_back(str);
+		if (nShowBonus) {
+			if (playerId == 0) HUD_DamageMeter.aCrashBonuses.push_back(str);
+			else if (playerId == 1) HUD_DamageMeter_Player2.aCrashBonuses.push_back(str);
+		}
 	}
 }
