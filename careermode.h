@@ -262,7 +262,6 @@ namespace CareerMode {
 		if (GetGameState() == GAME_STATE_MENU && !bPlayerResultsApplied) {
 			ProcessResultsFromLastRace();
 			bPlayerResultsApplied = true;
-			bIsCareerRace = false;
 		}
 	}
 
@@ -281,15 +280,9 @@ namespace CareerMode {
 		}
 
 		if (pLoadingScreen) return;
-
-		int gameState = GetGameState();
-		if (gameState == GAME_STATE_RACE || gameState == GAME_STATE_REPLAY) {
-			bLastRaceCareerRace = bIsCareerRace;
-		}
-
 		if (!bIsCareerRace) return;
 
-		if (gameState == GAME_STATE_RACE) {
+		if (GetGameState() == GAME_STATE_RACE) {
 			bPlayerResultsApplied = false;
 			memset(aPlayerResults, 0, sizeof(aPlayerResults));
 			for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {

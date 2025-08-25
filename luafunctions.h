@@ -135,7 +135,7 @@ int ChloeCareer_SetIsCareerTimeTrial(void* a1) {
 }
 
 int ChloeCareer_WasCareerRace(void* a1) {
-	lua_pushboolean(a1, CareerMode::bLastRaceCareerRace);
+	lua_pushboolean(a1, CareerMode::bIsCareerRace);
 	return 1;
 }
 
@@ -150,7 +150,7 @@ int ChloeCareer_WasCareerCupJustFinished(void* a1) {
 }
 
 int ChloeCareer_ClearWasCareerRace(void* a1) {
-	CareerMode::bLastRaceCareerRace = false;
+	CareerMode::bIsCareerRace = false;
 	CareerMode::bWasCareerCupJustFinished = false;
 	return 0;
 }

@@ -121,6 +121,8 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fCarResetSpeed", fCarResetSpeed);
 	//QuickValueEditor("nOpponentCount", nOpponentCount);
 	//QuickValueEditor("Menu_Achievement_Description.gPos", Menu_Achievement_Description.gPos, false);
+	QuickValueEditor("CarnageRace::gScoreHUD", CarnageRace::gScoreHUD, true);
+	QuickValueEditor("CarnageRace::gScoreHUD2", CarnageRace::gScoreHUD2, false);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

@@ -1,3 +1,6 @@
+void AddWreckedNotif(Player* pPlayer);
+void AddTimeoutNotif(Player* pPlayer);
+
 class CHUD_Wrecked : public CIngameHUDElement {
 public:
 	std::vector<std::string> aNotifs;
@@ -30,6 +33,11 @@ public:
 		}
 		data.SetColor(255,255,255,a);
 		DrawStringFO2_Ingame12(data, aNotifs[0]);
+	}
+
+	virtual void Init() {
+		ChloeEvents::OnPlayerWrecked.push_back(AddWreckedNotif);
+		ChloeEvents::OnDerbyTimeout.push_back(AddTimeoutNotif);
 	}
 
 	virtual void Process() {
@@ -67,18 +75,20 @@ public:
 	}
 } HUD_Wrecked;
 
-void AddWreckedNotif(const std::string& player) {
-	HUD_Wrecked.aNotifs.push_back(std::format("{}\nIS WRECKED", player));
+void AddWreckedNotif(Player* pPlayer) {
+	if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
+		HUD_Wrecked.aNotifs.push_back("YOU ARE WRECKED!");
+	}
+	else {
+		HUD_Wrecked.aNotifs.push_back(std::format("{}\nIS WRECKED", GetStringNarrow(pPlayer->sPlayerName.Get())));
+	}
 }
 
-void AddWreckedNotifSelf() {
-	HUD_Wrecked.aNotifs.push_back("YOU ARE WRECKED!");
-}
-
-void AddTimeoutNotif(const std::string& player) {
-	HUD_Wrecked.aNotifs.push_back(std::format("{}\nRAN OUT OF TIME", player));
-}
-
-void AddTimeoutNotifSelf() {
-	HUD_Wrecked.aNotifs.push_back("OUT OF TIME!");
+void AddTimeoutNotif(Player* pPlayer) {
+	if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
+		HUD_Wrecked.aNotifs.push_back("OUT OF TIME!");
+	}
+	else {
+		HUD_Wrecked.aNotifs.push_back(std::format("{}\nRAN OUT OF TIME", GetStringNarrow(pPlayer->sPlayerName.Get())));
+	}
 }

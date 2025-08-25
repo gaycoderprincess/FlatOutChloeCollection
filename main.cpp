@@ -37,6 +37,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 	return converter.to_bytes(string);
 }
 
+#include "events.h"
 #include "filereader.h"
 #include "config.h"
 #include "customsave.h"
@@ -106,6 +107,7 @@ void CustomSetterThread() {
 	SetHandlingMode();
 	ProcessCarDamage();
 	CareerMode::OnTick();
+	CarnageRace::OnTick();
 	ProcessNitroGain();
 
 	// rng buffer overrun hack-fix
@@ -182,6 +184,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyXInputPatches();
 			ApplyAIExtenderPatches();
 			CareerMode::Init();
+			CarnageRace::Init();
 			Achievements::Init();
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen

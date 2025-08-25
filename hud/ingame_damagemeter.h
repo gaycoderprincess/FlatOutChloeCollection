@@ -1,3 +1,5 @@
+void AddCrashBonus(Player* pPlayer, int type);
+
 class CHUD_DamageMeter : public CIngameHUDElement {
 public:
 	float fHealthBarAlpha[32];
@@ -119,6 +121,8 @@ public:
 		PreloadTexture("data/global/overlay/ai_damage_meter.png");
 		PreloadTexture("data/global/overlay/ai_damage_meter_glow.png");
 		PreloadTexture("data/global/overlay/ai_damage_meter_bg.png");
+
+		ChloeEvents::OnCrashBonus.push_back(AddCrashBonus);
 	}
 	virtual void Reset() {
 		memset(fHealthBarAlpha,0,sizeof(fHealthBarAlpha));
@@ -218,10 +222,11 @@ const char* GetCrashBonusName(int type) {
 	return nullptr;
 }
 
-void AddCrashBonus(int playerId, int type) {
+void AddCrashBonus(Player* pPlayer, int type) {
 	auto str = GetCrashBonusName(type);
 	if (!str) return;
 
+	int playerId = pPlayer->nPlayerId-1;
 	aCrashBonusesReceived[playerId][type]++;
 	if (GetPlayer(playerId)->nPlayerType == PLAYERTYPE_LOCAL) {
 		if (type != CRASHBONUS_SUPERFLIP && type != CRASHBONUS_WRECKED) {

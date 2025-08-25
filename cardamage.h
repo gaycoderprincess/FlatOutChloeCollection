@@ -15,12 +15,6 @@ enum eCrashBonus {
 };
 int aCrashBonusesReceived[32][NUM_CRASHBONUS_TYPES] = {};
 
-void AddWreckedNotif(const std::string& player);
-void AddWreckedNotifSelf();
-void AddTimeoutNotif(const std::string& player);
-void AddTimeoutNotifSelf();
-void AddCrashBonus(int playerId, int type);
-
 // vanilla game uses 50.0, higher is less damage
 float fDamageMultiplier = 50.0;
 float fDerbyContactTimer[32];
@@ -68,12 +62,7 @@ void ProcessDerbyContactTimer() {
 				score->bIsDNF = true;
 			}
 
-			if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
-				AddTimeoutNotifSelf();
-			}
-			else {
-				AddTimeoutNotif(GetStringNarrow(ply->sPlayerName.Get()));
-			}
+			ChloeEvents::DerbyTimeout(ply);
 		}
 	}
 }
@@ -121,13 +110,13 @@ void ProcessCrashBonuses() {
 			auto diff = data.damage;
 			diff *= fCrashVelocityMultiplier;
 			if (diff > fBlastOutCrashVelocity1) {
-				AddCrashBonus(playerId, CRASHBONUS_BLASTOUT);
+				ChloeEvents::CrashBonus(ply, CRASHBONUS_BLASTOUT);
 			}
 			else if (diff > fPowerHitCrashVelocity1) {
-				AddCrashBonus(playerId, CRASHBONUS_POWERHIT);
+				ChloeEvents::CrashBonus(ply, CRASHBONUS_POWERHIT);
 			}
 			else if (diff > fWhammoCrashVelocity1) {
-				AddCrashBonus(playerId, CRASHBONUS_SLAM);
+				ChloeEvents::CrashBonus(ply, CRASHBONUS_SLAM);
 			}
 			if (pGameFlow->nEventType != eEventType::RACE) {
 				data.damage = 0;
@@ -135,7 +124,7 @@ void ProcessCrashBonuses() {
 		}
 		if (opponent->pCar->nIsRagdolled && !isRagdolled[i] && pGameFlow->nEventType != eEventType::DERBY) {
 			if (GetPlayerLastHit(i) == ply && data.lastHitTimestamp > pPlayerHost->nRaceTime - nRagdollPiggybagThreshold) {
-				AddCrashBonus(playerId, CRASHBONUS_RAGDOLLED);
+				ChloeEvents::CrashBonus(ply, CRASHBONUS_RAGDOLLED);
 			}
 		}
 
@@ -152,7 +141,7 @@ void ProcessCrashBonuses() {
 		}
 
 		if (std::abs(rotateAmount[i]) > std::numbers::pi * 0.9) {
-			AddCrashBonus(playerId, CRASHBONUS_SUPERFLIP);
+			ChloeEvents::CrashBonus(ply, CRASHBONUS_SUPERFLIP);
 			rotateAmount[i] = 0;
 		}
 
@@ -182,7 +171,7 @@ void AwardWreck(int playerId) {
 
 	auto lastHitTimestamp = lastHitPlayer->pCar->aCarCollisions[playerId].lastHitTimestamp;
 	if (lastHitTimestamp > pPlayerHost->nRaceTime - nWreckPiggybagThreshold) {
-		AddCrashBonus(lastHitPlayer->nPlayerId-1, CRASHBONUS_WRECKED);
+		ChloeEvents::CrashBonus(lastHitPlayer, CRASHBONUS_WRECKED);
 		if (lastHitPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
 			if (pGameFlow->nEventType == eEventType::RACE) Achievements::AwardAchievement(GetAchievement("WRECK_CAR_RACE"));
 		}
@@ -219,12 +208,7 @@ void ProcessCarDamage() {
 
 				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
 
-				if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
-					AddWreckedNotifSelf();
-				}
-				else {
-					AddWreckedNotif(GetStringNarrow(ply->sPlayerName.Get()));
-				}
+				ChloeEvents::PlayerWrecked(ply);
 			}
 		}
 		else {
@@ -237,12 +221,7 @@ void ProcessCarDamage() {
 				//score->bHasFinished = true;
 				if (!score->bHasFinished) score->bIsDNF = true;
 
-				if (ply->nPlayerType == PLAYERTYPE_LOCAL) {
-					AddWreckedNotifSelf();
-				}
-				else {
-					AddWreckedNotif(GetStringNarrow(ply->sPlayerName.Get()));
-				}
+				ChloeEvents::PlayerWrecked(ply);
 			}
 		}
 	}
