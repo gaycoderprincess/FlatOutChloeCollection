@@ -57,8 +57,9 @@ public:
 	static inline int nDamage = DAMAGE_100;
 	static inline int nNitro = QuickRace::NITRO_100;
 	static inline int nUpgrades = UPGRADE_0;
+	static inline int nTimeTrialProps = 1;
 
-	static inline tOption aOptions[] = {
+	static inline tOption aOptionsQuickRace[] = {
 			{"GAME TYPE", &nGameType},
 			{"TRACK TYPE", &nTrackType},
 			{"TRACK", &nTrack},
@@ -68,7 +69,21 @@ public:
 			{"UPGRADES", &nUpgrades},
 			{"", nullptr},
 			{"GO RACE", nullptr},
+			{"*END*", nullptr},
 	};
+
+	static inline tOption aOptionsTimeTrial[] = {
+			{"TRACK TYPE", &nTrackType},
+			{"TRACK", &nTrack},
+			{"NITRO", &nNitro},
+			{"UPGRADES", &nUpgrades},
+			{"PROPS", &nTimeTrialProps},
+			{"", nullptr},
+			{"GO RACE", nullptr},
+			{"*END*", nullptr},
+	};
+
+	tOption* aOptions = aOptionsQuickRace;
 
 	eEventType GetGameMode() {
 		switch (nGameType) {
@@ -146,7 +161,7 @@ public:
 	}
 
 	int nCursorY = 0;
-	void CheckOptionBounds(int* changedValue) {
+	void CheckOptionBounds(const int* changedValue) {
 		if (nGameType < 0) nGameType = 2;
 		if (nGameType > 2) nGameType = 0;
 
@@ -191,6 +206,8 @@ public:
 
 		if (nUpgrades < 0) nUpgrades = 0;
 		if (nUpgrades >= NUM_UPGRADE_LEVELS) nUpgrades = NUM_UPGRADE_LEVELS-1;
+
+		nTimeTrialProps = nTimeTrialProps == 1;
 	}
 
 	bool IsOptionValid(int option) {
@@ -221,15 +238,20 @@ public:
 	virtual void MoveUp() {
 		do {
 			nCursorY--;
-			if (nCursorY < 0) nCursorY = 0;
+			if (nCursorY < 0) {
+				nCursorY = 0;
+				break;
+			}
 		} while (!IsOptionValid(nCursorY));
 	}
 	virtual void MoveDown() {
-		int max = sizeof(aOptions)/sizeof(aOptions[0]);
 
 		do {
 			nCursorY++;
-			if (nCursorY >= max) nCursorY = max-1;
+			if (aOptions[nCursorY].name == "*END*") {
+				nCursorY--;
+				break;
+			}
 		} while (!IsOptionValid(nCursorY));
 	}
 
@@ -281,6 +303,7 @@ public:
 
 	virtual void Reset() {
 		nCursorY = 0;
+		aOptions = aOptionsQuickRace;
 	}
 
 	virtual void Process() {
@@ -336,18 +359,15 @@ public:
 			Draw1080pSprite(JUSTIFY_RIGHT, x1, x2, y1, y2, {255,255,255,255}, trackMap);
 		}
 
-		int y = 0;
-		for (auto& option : aOptions) {
-			if (option.name.empty()) {
-				y++;
-				continue;
-			}
+		for (int y = 0; aOptions[y].name != "*END*"; y++) {
+			auto& option = aOptions[y];
+			if (option.name.empty()) continue;
 
-			bool valid = IsOptionValid(&option - &aOptions[0]);
+			bool valid = IsOptionValid(y);
 
 			tNyaStringData data;
 			data.x = gOptions.nPosX;
-			data.y = gOptions.nPosY + gOptions.nSpacingY * y++;
+			data.y = gOptions.nPosY + gOptions.nSpacingY * y;
 			data.size = gOptions.fSize;
 			if (!valid) {
 				data.SetColor(127,127,127,255);
@@ -358,6 +378,7 @@ public:
 			data.XCenterAlign = true;
 			if (valid) data.SetColor(GetPaletteColor(17));
 
+			if (option.name == "GO RACE") break;
 			if (!option.value) continue;
 
 			int value = *option.value;
@@ -386,7 +407,8 @@ public:
 				if (GetGameMode() != eEventType::RACE) valueName = "N/A";
 			}
 			else if (option.value == &nDamage) {
-				switch (value) {
+				if (GetGameMode() == eEventType::STUNT) valueName = "N/A";
+				else switch (value) {
 					case DAMAGE_0:
 					default:
 						valueName = "0x";
@@ -437,9 +459,20 @@ public:
 						break;
 				}
 			}
+			else if (option.value == &nTimeTrialProps) {
+				switch (value) {
+					case 0:
+					default:
+						valueName = "OFF";
+						break;
+					case 1:
+						valueName = "ON";
+						break;
+				}
+			}
 			Draw1080pString(JUSTIFY_LEFT, data, valueName, &DrawStringFO2_Ingame12);
 
-			if (&option - &aOptions[0] == nCursorY) {
+			if (y == nCursorY) {
 				DoJustify(JUSTIFY_LEFT, data.x, data.y);
 
 				static auto arrowLeft = GetHUDData(commonData, "nuolivasen");
