@@ -1,9 +1,11 @@
-double fCarResetFadeTimer[2] = {};
-bool bCarResetRequested[2] = {};
+double fCarResetFadeTimer[4] = {};
+bool bCarResetRequested[4] = {};
 
 float fCarResetSpeed = 15;
 
 void ProcessCarReset(int player, float delta) {
+	if (player > 0 && !IsInSplitScreen()) return;
+
 	if (!bCarResetRequested[player] && fCarResetFadeTimer[player] <= 0) return;
 	if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) {
 		fCarResetFadeTimer[player] = 0;
@@ -39,7 +41,23 @@ void ProcessCarReset(int player, float delta) {
 
 	uint8_t alpha = fCarResetFadeTimer[player]*255;
 	if (!pGameFlow->nIsPaused) {
-		if (IsInSplitScreen()) {
+		if (IsInQuarteredSplitScreen()) {
+			switch (player) {
+				case 0:
+					DrawRectangle(0, 0.5, 0, 0.5, {0, 0, 0, alpha});
+					break;
+				case 1:
+					DrawRectangle(0.5, 1, 0, 0.5, {0, 0, 0, alpha});
+					break;
+				case 2:
+					DrawRectangle(0, 0.5, 0.5, 1, {0, 0, 0, alpha});
+					break;
+				case 3:
+					DrawRectangle(0.5, 1, 0.5, 1, {0, 0, 0, alpha});
+					break;
+			}
+		}
+		else if (IsInHalvedSplitScreen()) {
 			DrawRectangle(0, 1, 0 + (player*0.5), 0.5 + (player*0.5), {0, 0, 0, alpha});
 		}
 		else {
@@ -52,8 +70,12 @@ void ProcessCarReset() {
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();
 
-	ProcessCarReset(0, gTimer.fDeltaTime);
-	if (IsInSplitScreen()) ProcessCarReset(1, gTimer.fDeltaTime);
+	for (int i = 0; i < 4; i++) {
+		auto ply = GetPlayer(i);
+		if (!ply) continue;
+		if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
+		ProcessCarReset(i, gTimer.fDeltaTime);
+	}
 }
 
 int __thiscall ResetCarNew(Player* pPlayer, int a2) {

@@ -173,6 +173,7 @@ int ChloeCollection_SetIsQuickRace(void* a1) {
 
 int ChloeHUD_TrackSelect_SetIsTimeTrial(void* a1) {
 	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsTimeTrial;
+	Menu_TrackSelect.bSplitScreen = false;
 	if (Menu_TrackSelect.nGameType != 0) {
 		Menu_TrackSelect.nGameType = 0;
 		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
@@ -182,8 +183,19 @@ int ChloeHUD_TrackSelect_SetIsTimeTrial(void* a1) {
 
 int ChloeHUD_TrackSelect_SetIsHotSeat(void* a1) {
 	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsHotSeat;
+	Menu_TrackSelect.bSplitScreen = false;
 	if (Menu_TrackSelect.nGameType != 2) {
 		Menu_TrackSelect.nGameType = 2;
+		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
+	}
+	return 0;
+}
+
+int ChloeHUD_TrackSelect_SetIsSplitScreen(void* a1) {
+	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsQuickRace;
+	Menu_TrackSelect.bSplitScreen = true;
+	if (Menu_TrackSelect.nGameType == 2) {
+		Menu_TrackSelect.nGameType = 0;
 		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
 	}
 	return 0;
@@ -896,6 +908,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_IsStartRaceHovered, "ChloeHUD_TrackSelect_IsStartRaceHovered");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsTimeTrial, "ChloeHUD_TrackSelect_SetIsTimeTrial");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsHotSeat, "ChloeHUD_TrackSelect_SetIsHotSeat");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsSplitScreen, "ChloeHUD_TrackSelect_SetIsSplitScreen");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetBestStuntScore, "ChloeHUD_TrackSelect_SetBestStuntScore");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStatsTuned, "ChloeHUD_SetCarStatsTuned");

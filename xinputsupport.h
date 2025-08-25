@@ -168,7 +168,7 @@ namespace SplitscreenController {
 			pControllers[i] = (Controller*)malloc(0x79C+4);
 			memcpy(pControllers[i], data, 0x79C);
 			pControllers[i]->_4[-1] = (uint32_t)&pVTable[0];
-			pControllers[i]->_4[0x79C/4] = 1; // player id
+			pControllers[i]->_4[0x79C/4] = i; // player id
 		}
 
 		ApplyUltrawidePatches(); // hacky fix here to override the fov from widescreen fix

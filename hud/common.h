@@ -63,7 +63,13 @@ public:
 		return nullptr;
 	}
 
+	static inline std::vector<std::string> aTexturePreloadList;
 	static void PreloadTexture(const std::string& path) {
+		for (auto& preload : aTexturePreloadList) {
+			if (path == preload) return;
+		}
+		aTexturePreloadList.push_back(path);
+
 		size_t dataSize = 0;
 		auto file = ReadTextureDataFromFile(path.c_str(), &dataSize);
 		if (dataSize <= 0x4C) return;

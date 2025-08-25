@@ -186,7 +186,7 @@ void ProcessPlayStats() {
 		bool changed = false;
 		int track = pGameFlow->nLevel;
 
-		if (pGameFlow->nSubEventType != eSubEventType::RACE_TIMETRIAL) {
+		if (!IsInSplitScreen() && pGameFlow->nSubEventType != eSubEventType::RACE_TIMETRIAL) {
 			auto ply = GetPlayerScore<PlayerScoreRace>(1);
 			if (ply->bHasFinished) {
 				if (ply->nPosition == 1 && !gCustomSave.tracksWon[track]) {
@@ -206,18 +206,22 @@ void ProcessPlayStats() {
 		int track = pGameFlow->nLevel;
 
 		if (pGameFlow->nEventType == eEventType::RACE) {
-			auto ply = GetPlayerScore<PlayerScoreRace>(1);
-			for (int i = 0; i < ply->nCurrentLap; i++) {
-				auto lap = ply->nLapTimes[i];
-				if (lap <= 0) continue;
-				if (i > 0) lap -= ply->nLapTimes[i-1];
-				if (lap <= 0) continue;
+			for (int j = 0; j < pPlayerHost->GetNumPlayers(); j++) {
+				if (GetPlayer(j)->nPlayerType != PLAYERTYPE_LOCAL) continue;
 
-				if (!gCustomSave.bestLaps[track] || lap < gCustomSave.bestLaps[track]) {
-					gCustomSave.bestLaps[track] = lap;
-					gCustomSave.bestLapCars[track] = GetPlayer(0)->nCarId;
-					WriteLog(std::format("Registered new best lap of {}ms", lap));
-					changed = true;
+				auto ply = GetPlayerScore<PlayerScoreRace>(j+1);
+				for (int i = 0; i < ply->nCurrentLap; i++) {
+					auto lap = ply->nLapTimes[i];
+					if (lap <= 0) continue;
+					if (i > 0) lap -= ply->nLapTimes[i - 1];
+					if (lap <= 0) continue;
+
+					if (!gCustomSave.bestLaps[track] || lap < gCustomSave.bestLaps[track]) {
+						gCustomSave.bestLaps[track] = lap;
+						gCustomSave.bestLapCars[track] = GetPlayer(j)->nCarId;
+						WriteLog(std::format("Registered new best lap of {}ms", lap));
+						changed = true;
+					}
 				}
 			}
 		}

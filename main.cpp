@@ -229,7 +229,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			UpdateCameraHooked_call = (void(__thiscall*)(void*, float))(*(uintptr_t*)0x662978);
 			NyaHookLib::Patch(0x662978, &UpdateCameraHooked);
 
-			HUD_DamageMeter_Player2.nPlayerId = 1;
+			for (int i = 0; i < 4; i++) {
+				HUD_DamageMeter[i].nPlayerId = i;
+			}
 		} break;
 		default:
 			break;

@@ -95,6 +95,7 @@ public:
 	};
 
 	tOption* aOptions = aOptionsQuickRace;
+	bool bSplitScreen = false;
 
 	eEventType GetGameMode() {
 		switch (nGameType) {
@@ -173,8 +174,14 @@ public:
 
 	int nCursorY = 0;
 	void CheckOptionBounds(const int* changedValue) {
-		if (nGameType < 0) nGameType = 2;
-		if (nGameType > 2) nGameType = 0;
+		if (bSplitScreen) {
+			if (nGameType < 0) nGameType = 1;
+			if (nGameType > 1) nGameType = 0;
+		}
+		else {
+			if (nGameType < 0) nGameType = 2;
+			if (nGameType > 2) nGameType = 0;
+		}
 
 		if (GetGameMode() == eEventType::RACE) {
 			if (nTrackType < TRACKTYPE_FOREST) nTrackType = NUM_RACE_TRACKTYPES - 1;
@@ -331,6 +338,7 @@ public:
 	virtual void Reset() {
 		nCursorY = 0;
 		aOptions = aOptionsQuickRace;
+		bSplitScreen = false;
 	}
 
 	std::string sStuntPB;

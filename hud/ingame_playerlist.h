@@ -42,6 +42,7 @@ public:
 		tNyaStringData data;
 		data.x = std::lerp(-0.5, fPosX * fPlayerListState * GetAspectRatioInv(), easeInOutQuart(fPlayerListState));
 		data.y = fPosY;
+		if (IsInSplitScreen()) data.y *= 0.5;
 		data.size = fSize;
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetScoreManager()->aScores[i];
