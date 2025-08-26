@@ -145,12 +145,12 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fArrowSize", Menu_TrackSelect.fArrowSize);
 	//QuickValueEditor("gTrackName", Menu_TrackSelect.gCarName, false);
 	//QuickValueEditor("gLevelPB", Menu_TrackSelect.gLevelPB, false);
-	//QuickValueEditor("gEvent", Menu_ArcadeCareer.gEvent, true);
+	QuickValueEditor("gEvent", Menu_ArcadeCareer.gEvent, true);
 	//QuickValueEditor("fEventHighlightSize", Menu_ArcadeCareer.fEventHighlightSize);
 	//QuickValueEditor("gLevelName", Menu_ArcadeCareer.gLevelName, false);
 	//QuickValueEditor("gLevelType", Menu_ArcadeCareer.gLevelType, false);
 	//QuickValueEditor("gTotalScore", Menu_ArcadeCareer.gTotalScore, false);
-	//QuickValueEditor("gTargetScoresTitle", Menu_ArcadeCareer.gTargetScoresTitle, false);
+	QuickValueEditor("gTargetScoresTitle", Menu_ArcadeCareer.gTargetScoresTitle, false);
 	//QuickValueEditor("gTargetScores", Menu_ArcadeCareer.gTargetScores, true);
 	//QuickValueEditor("gYourScoreTitle", Menu_ArcadeCareer.gYourScoreTitle, false);
 	//QuickValueEditor("gYourScore", Menu_ArcadeCareer.gYourScore, false);

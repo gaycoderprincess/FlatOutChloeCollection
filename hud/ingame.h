@@ -10,6 +10,50 @@ public:
 		if (GetScoreManager()->nHideRaceHUD) return false;
 		return true;
 	}
+
+	static inline tDrawPositions gElementBase = {0.008, 0.029, 0.042, 0, 0.034};
+	static inline float fElementTotalSpacing = 0.092;
+
+	static void DrawElement(float y, const std::string& title, const std::string& value, const NyaDrawing::CNyaRGBA32 rgb = {255,255,255,255}) {
+		tNyaStringData data;
+		data.x = gElementBase.fPosX * GetAspectRatioInv();
+		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
+		data.size = gElementBase.fSize;
+		data.SetColor(GetPaletteColor(18));
+		data.a = rgb.a;
+		DrawStringFO2_Ingame12(data, title);
+		data.y += gElementBase.fSpacingY;
+		data.SetColor(rgb);
+		DrawStringFO2_Ingame24(data, value);
+	}
+
+	static void DrawElementCenter(float y, const std::string& title, const std::string& value, const NyaDrawing::CNyaRGBA32 rgb = {255,255,255,255}) {
+		tNyaStringData data;
+		data.x = 0.5;
+		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
+		data.size = gElementBase.fSize;
+		data.XCenterAlign = true;
+		data.SetColor(GetPaletteColor(18));
+		data.a = rgb.a;
+		DrawStringFO2_Ingame12(data, title);
+		data.y += gElementBase.fSpacingY;
+		data.SetColor(rgb);
+		DrawStringFO2_Ingame24(data, value);
+	}
+
+	static void DrawElementRight(float y, const std::string& title, const std::string& value, const NyaDrawing::CNyaRGBA32 rgb = {255,255,255,255}) {
+		tNyaStringData data;
+		data.x = 1.0 - (gElementBase.fPosX * GetAspectRatioInv());
+		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
+		data.size = gElementBase.fSize;
+		data.XRightAlign = true;
+		data.SetColor(GetPaletteColor(18));
+		data.a = rgb.a;
+		DrawStringFO2_Ingame12(data, title);
+		data.y += gElementBase.fSpacingY;
+		data.SetColor(rgb);
+		DrawStringFO2_Ingame24(data, value);
+	}
 };
 
 namespace NewGameHud {
@@ -73,3 +117,4 @@ namespace NewGameHud {
 #include "ingame_damagemeter.h"
 #include "ingame_contacttimer.h"
 #include "ingame_wrecked.h"
+#include "ingame_arcademode.h"

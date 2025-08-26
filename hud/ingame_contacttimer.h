@@ -20,17 +20,6 @@ public:
 		if (pGameFlow->nEventType != eEventType::DERBY) return;
 
 		auto timer = fDerbyMaxContactTimer - fDerbyContactTimer[0];
-
-		tNyaStringData data;
-		data.x = fPosX * GetAspectRatioInv();
-		data.y = fPosY1;
-		data.size = fSize1;
-		data.SetColor(GetPaletteColor(18));
-		DrawStringFO2_Ingame12(data, "CONTACT TIMER");
-		data.x = fPosX * GetAspectRatioInv();
-		data.y += fPosY2;
-		data.size = fSize2;
-		data.SetColor({255,255,255,255});
-		DrawStringFO2_Ingame24(data, GetContactTimerString(timer * 1000));
+		DrawElement(1, "CONTACT TIMER", GetContactTimerString(timer * 1000));
 	}
 } HUD_ContactTimer;

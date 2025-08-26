@@ -30,13 +30,13 @@ public:
 		PreloadTexture("data/menu/common.dds");
 	}
 
-	tDrawPositions gEvent = {0.05, 0.25, 0.1, 0.14, 0.09};
+	tDrawPositions gEvent = {0.05, 0.26, 0.1, 0.14, 0.09};
 	float fEventHighlightSize = 0.094;
 
 	tDrawPositions1080p gLevelName = {1445, 163, 0.035};
 	tDrawPositions1080p gLevelType = {1445, 214, 0.025};
 	tDrawPositions1080p gTotalScore = {1445, 818, 0.04};
-	tDrawPositions1080p gTargetScoresTitle = {675, 240, 0.03};
+	tDrawPositions1080p gTargetScoresTitle = {680, 240, 0.03};
 	tDrawPositions1080p gTargetScores = {805, 307, 0.03, 0, 79};
 	tDrawPositions1080p gYourScoreTitle = {675, 640, 0.03};
 	tDrawPositions1080p gYourScore = {675, 710, 0.03};
@@ -125,12 +125,27 @@ public:
 		data.x = gYourScoreTitle.nPosX;
 		data.y = gYourScoreTitle.nPosY;
 		data.size = gYourScoreTitle.fSize;
-		Draw1080pString(JUSTIFY_LEFT, data, "YOUR SCORE", &DrawStringFO2_Small);
+		if (unlocked) {
+			Draw1080pString(JUSTIFY_LEFT, data, "YOUR SCORE", &DrawStringFO2_Small);
+		}
+		else {
+			auto data2 = data;
+			data2.SetColor(GetPaletteColor(22));
+			Draw1080pString(JUSTIFY_LEFT, data2, "LOCKED", &DrawStringFO2_Small);
+		}
 
 		data.x = gYourScore.nPosX;
 		data.y = gYourScore.nPosY;
 		data.size = gYourScore.fSize;
-		Draw1080pString(JUSTIFY_LEFT, data, std::to_string(score), &DrawStringFO2_Small);
+		if (unlocked) {
+			Draw1080pString(JUSTIFY_LEFT, data, FormatScore(score), &DrawStringFO2_Small);
+		}
+		else {
+			auto data2 = data;
+			data2.y -= 16;
+			data2.SetColor(GetPaletteColor(22));
+			Draw1080pString(JUSTIFY_LEFT, data2, std::format("{} POINTS\nTO UNLOCK", FormatScore(event->nPointsToUnlock)), &DrawStringFO2_Small);
+		}
 
 		for (int i = 0; i < 4; i++) {
 			int target = i == 0 ? event->nPlatinumScore : event->aGoalScores[i-1];
@@ -139,7 +154,7 @@ public:
 			data.size = gTargetScores.fSize;
 			data.XCenterAlign = false;
 			data.XRightAlign = true;
-			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(target), &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_LEFT, data, FormatScore(target), &DrawStringFO2_Small);
 		}
 
 		data.x = gLevelName.nPosX;
@@ -151,10 +166,10 @@ public:
 		data.x = gLevelType.nPosX;
 		data.y = gLevelType.nPosY;
 		data.size = gLevelType.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsArcadeRace ? "ARCADE RACE" : "DESTRUCTION", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION RUSH", &DrawStringFO2_Small);
 		data.x = gTotalScore.nPosX;
 		data.y = gTotalScore.nPosY;
 		data.size = gTotalScore.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, std::format("TOTAL SCORE: {}", totalScore), &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_RIGHT, data, std::format("TOTAL SCORE: {}", FormatScore(totalScore)), &DrawStringFO2_Small);
 	}
 } Menu_ArcadeCareer;

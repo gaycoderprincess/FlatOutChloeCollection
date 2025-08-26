@@ -37,6 +37,17 @@ std::string GetStringNarrow(const wchar_t* string) {
 	return converter.to_bytes(string);
 }
 
+std::string FormatScore(int a1) {
+	if (a1 < 1000) {
+		return std::to_string(a1);
+	}
+	auto v4 = a1 / 1000;
+	if (a1 >= 1000000) {
+		return std::format("{},{:03},{:03}", a1 / 1000000, v4 % 1000, a1 % 1000);
+	}
+	return std::format("{},{:03}", v4, a1 % 1000);
+}
+
 #include "events.h"
 #include "filereader.h"
 #include "config.h"

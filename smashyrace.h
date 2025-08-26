@@ -20,6 +20,9 @@ namespace SmashyRace {
 	}
 
 	void ProcessSceneryCrashes() {
+		auto score = GetPlayerScore<PlayerScoreRace>(1);
+		if (score->bHasFinished || score->bIsDNF) return;
+
 		nPlayerScore = 0;
 		auto ply = GetPlayer(0);
 		for (int i = 0; i < 10; i++) {
@@ -49,7 +52,7 @@ namespace SmashyRace {
 		fPlayerTimeLeft -= gTimer.fDeltaTime;
 
 		auto ply = GetPlayerScore<PlayerScoreRace>(1);
-		if (fPlayerTimeLeft <= 0 && !ply->bHasFinished) {
+		if (fPlayerTimeLeft <= 0 && !ply->bHasFinished && !ply->bIsDNF) {
 			ply->bHasFinished = true;
 			ply->nFinishTime = pPlayerHost->nRaceTime;
 		}
@@ -59,33 +62,6 @@ namespace SmashyRace {
 	public:
 
 		tDrawPositions1080p gCheckpointBonus = {240, 85, 0.03};
-		static inline tDrawPositions gBase = {0.008, 0.029, 0.042, 0, 0.034};
-		float fElementTotalSpacing = 0.092;
-
-		void DrawElement(int id, const std::string& title, const std::string& value) {
-			tNyaStringData data;
-			data.x = gBase.fPosX * GetAspectRatioInv();
-			data.y = gBase.fPosY + id * fElementTotalSpacing;
-			data.size = gBase.fSize;
-			data.SetColor(GetPaletteColor(18));
-			DrawStringFO2_Ingame12(data, title);
-			data.y += gBase.fSpacingY;
-			data.SetColor({255,255,255,255});
-			DrawStringFO2_Ingame24(data, value);
-		}
-
-		void DrawElementCenter(int id, const std::string& title, const std::string& value) {
-			tNyaStringData data;
-			data.x = 0.5;
-			data.y = gBase.fPosY + id * fElementTotalSpacing;
-			data.size = gBase.fSize;
-			data.XCenterAlign = true;
-			data.SetColor(GetPaletteColor(18));
-			DrawStringFO2_Ingame12(data, title);
-			data.y += gBase.fSpacingY;
-			data.SetColor({255,255,255,255});
-			DrawStringFO2_Ingame24(data, value);
-		}
 
 		virtual void Process() {
 			if (!IsRaceHUDUp()) return;
@@ -102,7 +78,7 @@ namespace SmashyRace {
 			}
 
 			DrawElement(0, "TIME LEFT", timeLeftString);
-			DrawElementCenter(1, "SCORE", std::to_string(nPlayerScore));
+			DrawElementCenter(1, "SCORE", FormatScore(nPlayerScore));
 		}
 	} HUD_SmashyRace;
 }

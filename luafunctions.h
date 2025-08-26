@@ -916,6 +916,11 @@ int ChloeArcade_CarnageRace_SetCheckpointTimeDecay(void* a1) {
 	return 0;
 }
 
+int ChloeArcade_CarnageRace_SetCheckpointInterval(void* a1) {
+	CarnageRace::nCheckpointInterval = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int ChloeCollection_OnReturnToMenu(void* a1) {
 	QuickRace::bIsQuickRace = false;
 	ArcadeMode::SetIsArcadeMode(false);
@@ -1140,6 +1145,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_CarnageRace_SetTimeLimit, "ChloeArcade_CarnageRace_SetTimeLimit");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_CarnageRace_SetCheckpointTimeBonus, "ChloeArcade_CarnageRace_SetCheckpointTimeBonus");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_CarnageRace_SetCheckpointTimeDecay, "ChloeArcade_CarnageRace_SetCheckpointTimeDecay");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_CarnageRace_SetCheckpointInterval, "ChloeArcade_CarnageRace_SetCheckpointInterval");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SmashyRace_SetTimeLimit, "ChloeArcade_SmashyRace_SetTimeLimit");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SmashyRace_SetScoreMultiplier, "ChloeArcade_SmashyRace_SetScoreMultiplier");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_BeginArcadeDefs, "ChloeArcadeDefs_BeginArcadeDefs");

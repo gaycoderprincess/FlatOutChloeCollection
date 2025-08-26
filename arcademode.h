@@ -37,6 +37,7 @@ namespace ArcadeMode {
 		if (pCurrentEvent->bIsArcadeRace || pCurrentEvent->bIsSmashySmash)  {
 			if (nCurrentEventScore > gCustomSave.aArcadeCareerScores[nCurrentEventId]) {
 				gCustomSave.aArcadeCareerScores[nCurrentEventId] = nCurrentEventScore;
+				gCustomSave.Save();
 			}
 		}
 	}

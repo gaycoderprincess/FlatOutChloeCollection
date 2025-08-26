@@ -17,6 +17,7 @@ namespace CarnageRace {
 	double fPlayerGivenTime;
 	double fCheckpointTimeBonus;
 	double fCheckpointTimeDecay;
+	int nCheckpointInterval;
 
 	struct tScoreEntry {
 		std::string name;
@@ -79,6 +80,7 @@ namespace CarnageRace {
 
 		if (aScoreHUD.size() >= 10) {
 			fScoreTimer = fScoreMaxTimeFull;
+			Achievements::AwardAchievement(GetAchievement("CARNAGE_FILL_BOARD"));
 		}
 		if (aScoreHUD.size() >= 15) {
 			fScoreTimer = 0.5;
@@ -114,6 +116,7 @@ namespace CarnageRace {
 		fPlayerGivenTime = 120;
 		fCheckpointTimeBonus = 7;
 		fCheckpointTimeDecay = 0.75;
+		nCheckpointInterval = 5;
 
 		// hud changes
 		NyaHookLib::Patch<uint64_t>(0x454AFC, apply ? 0xE0A190000001EEE9 : 0xE0A1000001ED850F); // remove total time
@@ -189,7 +192,7 @@ namespace CarnageRace {
 			return;
 		}
 
-		auto current = GetPlayer(0)->nCurrentSplit / 5;
+		auto current = GetPlayer(0)->nCurrentSplit / nCheckpointInterval;
 		if (current > last) {
 			AddScore("CHECKPOINT!", nCheckpointScore);
 			OnCheckpointPassed();
@@ -225,7 +228,7 @@ namespace CarnageRace {
 		fCheckpointNotifTimer -= gTimer.fDeltaTime;
 
 		auto ply = GetPlayerScore<PlayerScoreRace>(1);
-		if (fPlayerTimeLeft <= 0 && !ply->bHasFinished) {
+		if (fPlayerTimeLeft <= 0 && !ply->bHasFinished && !ply->bIsDNF) {
 			ply->bHasFinished = true;
 			ply->nFinishTime = pPlayerHost->nRaceTime;
 		}
@@ -241,20 +244,6 @@ namespace CarnageRace {
 	public:
 
 		tDrawPositions1080p gCheckpointBonus = {240, 85, 0.03};
-		static inline tDrawPositions gBase = {0.008, 0.029, 0.042, 0, 0.034};
-		float fElementTotalSpacing = 0.092;
-
-		void DrawElement(int id, const std::string& title, const std::string& value) {
-			tNyaStringData data;
-			data.x = gBase.fPosX * GetAspectRatioInv();
-			data.y = gBase.fPosY + id * fElementTotalSpacing;
-			data.size = gBase.fSize;
-			data.SetColor(GetPaletteColor(18));
-			DrawStringFO2_Ingame12(data, title);
-			data.y += gBase.fSpacingY;
-			data.SetColor({255,255,255,255});
-			DrawStringFO2_Ingame24(data, value);
-		}
 
 		virtual void Process() {
 			if (!IsRaceHUDUp()) return;
@@ -271,7 +260,7 @@ namespace CarnageRace {
 			}
 
 			DrawElement(0, "TIME LEFT", timeLeftString);
-			DrawElement(1, "SCORE", std::to_string(nPlayerScore));
+			DrawElement(1, "SCORE", FormatScore(nPlayerScore));
 
 			if (fCheckpointNotifTimer > 0) {
 				tNyaStringData data;
