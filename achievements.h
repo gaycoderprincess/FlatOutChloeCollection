@@ -18,9 +18,10 @@ namespace Achievements {
 		CAT_SINGLEPLAYER = 2,
 		CAT_MULTIPLAYER = 4,
 		CAT_CAREER = 8,
-		CAT_GAMEMODES = 16,
-		CAT_TRACKS = 32,
-		CAT_HIDDEN = 64,
+		CAT_CARNAGE = 16,
+		CAT_GAMEMODES = 32,
+		CAT_TRACKS = 64,
+		CAT_HIDDEN = 128,
 	};
 
 	class CAchievement {
@@ -61,6 +62,8 @@ namespace Achievements {
 		new CAchievement("ALL_CARS", "Car Collector", "Unlock all cars in the game", CAT_GENERAL),
 		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete career mode", CAT_CAREER),
 		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete career mode with all gold", CAT_CAREER),
+		new CAchievement("COMPLETE_CARNAGE", "Carnage Master", "Complete career mode", CAT_CARNAGE),
+		new CAchievement("COMPLETE_CARNAGE_GOLD", "Carnage Wizard", "Complete career mode with all gold", CAT_CARNAGE),
 		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_GENERAL),
 		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_GENERAL),
 		new CAchievement("CASH_DESTRUCTION", "Big Earner", "Earn over $4000 from a single career race", CAT_CAREER),

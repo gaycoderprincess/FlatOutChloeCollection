@@ -1,3 +1,5 @@
+float fCarnageModeMassFudge = 0.75;
+
 toml::table GetCarPerformanceTable(int id) {
 	return ReadTOMLFromBfs(std::format("data/database/cars/car{}.toml", GetDealerCar(id)->performanceId));
 }
@@ -117,6 +119,7 @@ tCarTuningData GetPlayerTuningData(int carId) {
 
 	auto data = GetAITuningData(true);
 	data.fDurability = CareerMode::GetPlayerUpgradeLevel();
+	if (CarnageRace::bIsCarnageRace) data.fDurability = 1.0;
 	return data;
 }
 
@@ -279,6 +282,10 @@ void __fastcall LoadCarBody(Car* car) {
 	CAR_PERFORMANCE(body->nFrontTraction, "Body", "FrontTraction");
 	CAR_PERFORMANCE(body->nRearTraction, "Body", "RearTraction");
 	CAR_PERFORMANCE_TUNE(fCarDurability[car->pPlayer->nPlayerId-1], "Body", "Body_Max", "Durability", tuning.fDurability);
+
+	if (CarnageRace::bIsCarnageRace && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
+		body->fMass *= fCarnageModeMassFudge;
+	}
 
 	body->fTireTurnAngleIn *= 0.017453292;
 	body->fTireTurnAngleOut *= 0.017453292;

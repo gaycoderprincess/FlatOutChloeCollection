@@ -9,7 +9,7 @@ void ProcessNitroGain() {
 	if (pGameFlow->nEventType != eEventType::RACE) return;
 	if (pPlayerHost->nRaceTime <= 0) return;
 
-	bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode") || CarnageRace::bIsCarnageRace;
+	bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode") || CarnageRace::bIsCarnageRace || SmashyRace::bIsSmashyRace;
 
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();

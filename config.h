@@ -48,6 +48,14 @@ namespace CareerMode {
 	bool IsCareerTimeTrial();
 }
 
+namespace CarnageRace {
+	bool bIsCarnageRace = false;
+}
+
+namespace SmashyRace {
+	bool bIsSmashyRace = false;
+}
+
 bool IsInSplitScreen() {
 	if (pLoadingScreen) return false;
 	if (GetGameState() != GAME_STATE_RACE && GetGameState() != GAME_STATE_REPLAY) return false;

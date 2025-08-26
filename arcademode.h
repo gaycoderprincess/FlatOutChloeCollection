@@ -34,7 +34,7 @@ namespace ArcadeMode {
 		// don't proceed if we quit the race
 		if (!bLastRaceCompleted) return;
 
-		if (pCurrentEvent->bIsArcadeRace)  {
+		if (pCurrentEvent->bIsArcadeRace || pCurrentEvent->bIsSmashySmash)  {
 			if (nCurrentEventScore > gCustomSave.aArcadeCareerScores[nCurrentEventId]) {
 				gCustomSave.aArcadeCareerScores[nCurrentEventId] = nCurrentEventScore;
 			}

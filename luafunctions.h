@@ -871,6 +871,11 @@ int ChloeArcade_SetIsCarnageRace(void* a1) {
 	return 0;
 }
 
+int ChloeArcade_SetIsSmashyRace(void* a1) {
+	SmashyRace::SetIsSmashyRace(true);
+	return 0;
+}
+
 int ChloeArcade_WasArcadeEvent(void* a1) {
 	lua_pushboolean(a1, ArcadeMode::bIsArcadeMode);
 	return 1;
@@ -886,10 +891,36 @@ int ChloeArcade_ProcessResultsFromLastRace(void* a1) {
 	return 0;
 }
 
+int ChloeArcade_SmashyRace_SetTimeLimit(void* a1) {
+	SmashyRace::fPlayerGivenTime = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcade_SmashyRace_SetScoreMultiplier(void* a1) {
+	SmashyRace::nScoreMultiplier = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcade_CarnageRace_SetTimeLimit(void* a1) {
+	CarnageRace::fPlayerGivenTime = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcade_CarnageRace_SetCheckpointTimeBonus(void* a1) {
+	CarnageRace::fCheckpointTimeBonus = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcade_CarnageRace_SetCheckpointTimeDecay(void* a1) {
+	CarnageRace::fCheckpointTimeDecay = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int ChloeCollection_OnReturnToMenu(void* a1) {
 	QuickRace::bIsQuickRace = false;
 	ArcadeMode::SetIsArcadeMode(false);
 	CarnageRace::SetIsCarnageRace(false);
+	SmashyRace::SetIsSmashyRace(false);
 	return 0;
 }
 
@@ -1102,9 +1133,15 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsQuickRace, "ChloeCollection_SetIsQuickRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsArcadeCareer, "ChloeArcade_SetIsArcadeCareer");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsCarnageRace, "ChloeArcade_SetIsCarnageRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsSmashyRace, "ChloeArcade_SetIsSmashyRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasArcadeEvent, "ChloeArcade_WasArcadeEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasCarnageRace, "ChloeArcade_WasCarnageRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_ProcessResultsFromLastRace, "ChloeArcade_ProcessResultsFromLastRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_CarnageRace_SetTimeLimit, "ChloeArcade_CarnageRace_SetTimeLimit");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_CarnageRace_SetCheckpointTimeBonus, "ChloeArcade_CarnageRace_SetCheckpointTimeBonus");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_CarnageRace_SetCheckpointTimeDecay, "ChloeArcade_CarnageRace_SetCheckpointTimeDecay");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_SmashyRace_SetTimeLimit, "ChloeArcade_SmashyRace_SetTimeLimit");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_SmashyRace_SetScoreMultiplier, "ChloeArcade_SmashyRace_SetScoreMultiplier");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_BeginArcadeDefs, "ChloeArcadeDefs_BeginArcadeDefs");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_BeginEvent, "ChloeArcadeDefs_BeginEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventName, "ChloeArcadeDefs_SetEventName");
@@ -1121,6 +1158,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");
 	RegisterLUAEnum(a1, Achievements::CAT_MULTIPLAYER, "ACHIEVEMENTS_MULTIPLAYER");
 	RegisterLUAEnum(a1, Achievements::CAT_CAREER, "ACHIEVEMENTS_CAREER");
+	RegisterLUAEnum(a1, Achievements::CAT_CARNAGE, "ACHIEVEMENTS_CARNAGE");
 	RegisterLUAEnum(a1, Achievements::CAT_GAMEMODES, "ACHIEVEMENTS_GAMEMODES");
 	RegisterLUAEnum(a1, Achievements::CAT_TRACKS, "ACHIEVEMENTS_TRACKS");
 	RegisterLUAEnum(a1, Achievements::CAT_HIDDEN, "ACHIEVEMENTS_HIDDEN");

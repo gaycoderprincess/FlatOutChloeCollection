@@ -3,6 +3,7 @@ int nNumAIProfiles = 7;
 
 int nOpponentCount = 7;
 int __cdecl GetCarCount(int, int) {
+	if (SmashyRace::bIsSmashyRace) return 1;
 	return nOpponentCount + 1;
 }
 

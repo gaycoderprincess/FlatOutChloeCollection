@@ -130,8 +130,6 @@ public:
 		data.x = gYourScore.nPosX;
 		data.y = gYourScore.nPosY;
 		data.size = gYourScore.fSize;
-		data.XCenterAlign = false;
-		data.XRightAlign = true;
 		Draw1080pString(JUSTIFY_LEFT, data, std::to_string(score), &DrawStringFO2_Small);
 
 		for (int i = 0; i < 4; i++) {
@@ -139,6 +137,8 @@ public:
 			data.x = gTargetScores.nPosX;
 			data.y = gTargetScores.nPosY + gTargetScores.nSpacingY * i;
 			data.size = gTargetScores.fSize;
+			data.XCenterAlign = false;
+			data.XRightAlign = true;
 			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(target), &DrawStringFO2_Small);
 		}
 

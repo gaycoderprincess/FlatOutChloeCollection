@@ -1,6 +1,4 @@
 namespace CarnageRace {
-	bool bIsCarnageRace = false;
-
 	int aRacePositionMultiplier[] = {
 			5,
 			4,
@@ -16,9 +14,9 @@ namespace CarnageRace {
 	int nAirtimeScore = 10;
 	int nCheckpointScore = 200;
 
-	double fPlayerGivenTime = 120;
-	double fCheckpointTimeBonus = 7;
-	double fCheckpointTimeDecay = 0.75;
+	double fPlayerGivenTime;
+	double fCheckpointTimeBonus;
+	double fCheckpointTimeDecay;
 
 	struct tScoreEntry {
 		std::string name;
@@ -113,6 +111,9 @@ namespace CarnageRace {
 
 	void SetIsCarnageRace(bool apply) {
 		bIsCarnageRace = apply;
+		fPlayerGivenTime = 120;
+		fCheckpointTimeBonus = 7;
+		fCheckpointTimeDecay = 0.75;
 
 		// hud changes
 		NyaHookLib::Patch<uint64_t>(0x454AFC, apply ? 0xE0A190000001EEE9 : 0xE0A1000001ED850F); // remove total time
@@ -121,6 +122,8 @@ namespace CarnageRace {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4553FA, apply ? 0x4F0843 : 0x4F0810); // remove lap count title
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x455543, apply ? 0x4F0843 : 0x4F0810); // remove lap count number
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x455597, apply ? 0x4F0843 : 0x4F0810); // remove lap count max
+
+		NyaHookLib::Patch(0x416748 + 2, apply ? -1 : -100); // minimum crash bonus interval, default -500
 	}
 
 	void Init() {
