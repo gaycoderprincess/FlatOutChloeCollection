@@ -111,10 +111,10 @@ public:
 		auto score = gCustomSave.aArcadeCareerScores[nCursorPos];
 		bool unlocked = totalScore >= event->nPointsToUnlock;
 		int position = 0;
-		// todo author position
 		if (score >= event->aGoalScores[2]) position = 3;
 		if (score >= event->aGoalScores[1]) position = 2;
 		if (score >= event->aGoalScores[0]) position = 1;
+		if (score >= event->nPlatinumScore) position = 4;
 
 		tNyaStringData data;
 		data.x = gTargetScoresTitle.nPosX;
@@ -138,7 +138,9 @@ public:
 		data.y = gYourScore.nPosY;
 		data.size = gYourScore.fSize;
 		if (unlocked) {
-			Draw1080pString(JUSTIFY_LEFT, data, FormatScore(score), &DrawStringFO2_Small);
+			auto data2 = data;
+			data2.SetColor(CHUD_ArcadeMode::GetMedalRGB(position));
+			Draw1080pString(JUSTIFY_LEFT, data2, FormatScore(score), &DrawStringFO2_Small);
 		}
 		else {
 			auto data2 = data;

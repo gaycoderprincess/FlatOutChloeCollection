@@ -108,7 +108,7 @@ tCarTuningData GetPlayerCareerTuningData(int carId) {
 tCarTuningData GetAITuningData(bool usePlayerUpgradeLevel) {
 	tCarTuningData data;
 	data.SetAllUpgrades(usePlayerUpgradeLevel ? CareerMode::GetPlayerUpgradeLevel() : CareerMode::GetAIUpgradeLevel());
-	WriteLogDebug("HANDLING", std::format("Using AI upgrade level {}", data.fHorsepower));
+	WriteLogDebug("HANDLING", std::format("Using lerp upgrade level {}", data.fHorsepower));
 	return data;
 }
 

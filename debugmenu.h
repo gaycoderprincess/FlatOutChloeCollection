@@ -145,15 +145,17 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fArrowSize", Menu_TrackSelect.fArrowSize);
 	//QuickValueEditor("gTrackName", Menu_TrackSelect.gCarName, false);
 	//QuickValueEditor("gLevelPB", Menu_TrackSelect.gLevelPB, false);
-	QuickValueEditor("gEvent", Menu_ArcadeCareer.gEvent, true);
+	//QuickValueEditor("gEvent", Menu_ArcadeCareer.gEvent, true);
 	//QuickValueEditor("fEventHighlightSize", Menu_ArcadeCareer.fEventHighlightSize);
 	//QuickValueEditor("gLevelName", Menu_ArcadeCareer.gLevelName, false);
 	//QuickValueEditor("gLevelType", Menu_ArcadeCareer.gLevelType, false);
 	//QuickValueEditor("gTotalScore", Menu_ArcadeCareer.gTotalScore, false);
-	QuickValueEditor("gTargetScoresTitle", Menu_ArcadeCareer.gTargetScoresTitle, false);
+	//QuickValueEditor("gTargetScoresTitle", Menu_ArcadeCareer.gTargetScoresTitle, false);
 	//QuickValueEditor("gTargetScores", Menu_ArcadeCareer.gTargetScores, true);
 	//QuickValueEditor("gYourScoreTitle", Menu_ArcadeCareer.gYourScoreTitle, false);
 	//QuickValueEditor("gYourScore", Menu_ArcadeCareer.gYourScore, false);
+	QuickValueEditor("gGamemodeLabel", HUD_ArcadeMode.gGamemodeLabel, false);
+	QuickValueEditor("gGamemodeDescription", HUD_ArcadeMode.gGamemodeDescription, false);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();
@@ -279,6 +281,7 @@ void ProcessDebugMenu() {
 		DrawDebugMenuViewerOption(std::format("Player Pointer - {:X}", (uintptr_t)ply));
 		DrawDebugMenuViewerOption(std::format("Player Car Pointer - {:X}", (uintptr_t)ply->pCar));
 		DrawDebugMenuViewerOption(std::format("Player Score Pointer - {:X}", (uintptr_t)GetPlayerScore<PlayerScoreRace>(1)));
+		DrawDebugMenuViewerOption(std::format("Race Time - {}", pPlayerHost->nRaceTime));
 	}
 
 	ChloeMenuLib::EndMenu();
