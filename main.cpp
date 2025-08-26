@@ -104,6 +104,7 @@ void SetHandlingDamage() {
 void SetHandlingMode() {
 	int handlingMode = nHandlingMode;
 	if (CareerMode::IsCareerTimeTrial()) handlingMode = HANDLING_NORMAL;
+	if (bIsInMultiplayer) handlingMode = nMultiplayerHandlingMode;
 
 	static int nLast = -1;
 	if (nLast != handlingMode) {

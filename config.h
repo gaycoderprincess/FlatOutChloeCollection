@@ -42,18 +42,15 @@ uint32_t nHighCarCam = 0;
 uint32_t nSplitScreenController[4] = { SPLITSCREEN_P1_KEYBOARD, SPLITSCREEN_PAD1, SPLITSCREEN_PAD2, SPLITSCREEN_PAD3 };
 uint32_t nSplitScreenDamageMeter = 1;
 
+uint32_t nMultiplayerHandlingMode = HANDLING_NORMAL;
+
+bool bIsInMultiplayer = false;
+bool bIsCareerRace = false;
+bool bIsCarnageRace = false;
+bool bIsSmashyRace = false;
+
 namespace CareerMode {
-	bool bIsCareerRace = false;
-
 	bool IsCareerTimeTrial();
-}
-
-namespace CarnageRace {
-	bool bIsCarnageRace = false;
-}
-
-namespace SmashyRace {
-	bool bIsSmashyRace = false;
 }
 
 bool IsInSplitScreen() {

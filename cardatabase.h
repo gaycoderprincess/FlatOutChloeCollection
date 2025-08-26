@@ -113,13 +113,13 @@ tCarTuningData GetAITuningData(bool usePlayerUpgradeLevel) {
 }
 
 tCarTuningData GetPlayerTuningData(int carId) {
-	if (CareerMode::bIsCareerRace && !CareerMode::IsCareerTimeTrial()) {
+	if (bIsCareerRace && !CareerMode::IsCareerTimeTrial()) {
 		return GetPlayerCareerTuningData(carId);
 	}
 
 	auto data = GetAITuningData(true);
 	data.fDurability = CareerMode::GetPlayerUpgradeLevel();
-	if (CarnageRace::bIsCarnageRace) data.fDurability = 1.0;
+	if (bIsCarnageRace) data.fDurability = 1.0;
 	return data;
 }
 
@@ -283,7 +283,7 @@ void __fastcall LoadCarBody(Car* car) {
 	CAR_PERFORMANCE(body->nRearTraction, "Body", "RearTraction");
 	CAR_PERFORMANCE_TUNE(fCarDurability[car->pPlayer->nPlayerId-1], "Body", "Body_Max", "Durability", tuning.fDurability);
 
-	if (CarnageRace::bIsCarnageRace && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
+	if (bIsCarnageRace && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
 		body->fMass *= fCarnageModeMassFudge;
 	}
 

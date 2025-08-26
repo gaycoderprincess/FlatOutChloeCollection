@@ -238,7 +238,7 @@ int ChloeCareer_SetIsCareerTimeTrial(void* a1) {
 }
 
 int ChloeCareer_WasCareerRace(void* a1) {
-	lua_pushboolean(a1, CareerMode::bIsCareerRace);
+	lua_pushboolean(a1, bIsCareerRace);
 	return 1;
 }
 
@@ -882,7 +882,7 @@ int ChloeArcade_WasArcadeEvent(void* a1) {
 }
 
 int ChloeArcade_WasCarnageRace(void* a1) {
-	lua_pushboolean(a1, CarnageRace::bIsCarnageRace);
+	lua_pushboolean(a1, bIsCarnageRace);
 	return 1;
 }
 
@@ -988,6 +988,16 @@ int ChloeArcadeDefs_SetEventAIUpgradeLevel(void* a1) {
 
 int ChloeArcadeDefs_SetEventAIHandicapLevel(void* a1) {
 	ArcadeMode::luaDefs_currentRace->nAIHandicapLevel = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCollection_SetIsInMultiplayer(void* a1) {
+	bIsInMultiplayer = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCollection_SetHandlingMode(void* a1) {
+	nMultiplayerHandlingMode = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -1159,6 +1169,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventUpgradeLevel, "ChloeArcadeDefs_SetEventUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventAIUpgradeLevel, "ChloeArcadeDefs_SetEventAIUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventAIHandicapLevel, "ChloeArcadeDefs_SetEventAIHandicapLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsInMultiplayer, "ChloeCollection_SetIsInMultiplayer");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetHandlingMode, "ChloeCollection_SetHandlingMode");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

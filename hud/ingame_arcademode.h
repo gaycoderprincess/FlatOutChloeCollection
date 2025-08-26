@@ -39,11 +39,11 @@ public:
 
 	void DrawTutorial() {
 		std::string gamemodeName, gamemodeDescription;
-		if (CarnageRace::bIsCarnageRace) {
+		if (bIsCarnageRace) {
 			gamemodeName = "ARCADE RACE";
 			gamemodeDescription = "Ultimate destruction is the name of the game.\nEarn points by wrecking competitors, destroying scenery, catching huge air and passing checkpoints.\nPassing checkpoints will also give you extra time.\nYour position gives you a score multiplier that affects everything, so try to keep in the lead.";
 		}
-		else if (SmashyRace::bIsSmashyRace) {
+		else if (bIsSmashyRace) {
 			gamemodeName = "DEMOLITION RUSH";
 			gamemodeDescription = "Cause extreme amounts of vandalism as quickly as possible!\nEarn points by crashing into as much scenery as you can before the time runs out.\nSome objects give more points than others, search for high-reward objects and larger groups if you can!";
 		}
@@ -110,7 +110,7 @@ public:
 		}
 
 		int uiId = 1;
-		if (CarnageRace::bIsCarnageRace) uiId = 2;
+		if (bIsCarnageRace) uiId = 2;
 		DrawElement(uiId, "TARGET", FormatScore(targetScore), rgb);
 
 		static CNyaTimer gTimer;
