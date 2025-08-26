@@ -45,6 +45,30 @@ public:
 		NUM_UPGRADE_LEVELS
 	};
 
+	enum eCarClass {
+		CARCLASS_ANY,
+		CARCLASS_BRONZE,
+		CARCLASS_SILVER,
+		CARCLASS_GOLD,
+		CARCLASS_SAMEASHOST,
+		NUM_CAR_CLASSES
+	};
+
+	enum eAIClass {
+		AI_CLASS_BRONZE,
+		AI_CLASS_SILVER,
+		AI_CLASS_GOLD,
+		AI_CLASS_SAMEASHOST,
+		NUM_AI_CLASSES
+	};
+
+	enum eMultiplayerNitro {
+		MULTIPLAYER_NITRO_0,
+		MULTIPLAYER_NITRO_100,
+		MULTIPLAYER_NITRO_100_REGEN,
+		NUM_MULTIPLAYER_NITRO_LEVELS
+	};
+
 	struct tOption {
 		std::string name;
 		int* value;
@@ -57,8 +81,15 @@ public:
 	static inline int nDamage = DAMAGE_100;
 	static inline int nNitro = QuickRace::NITRO_100;
 	static inline int nUpgrades = UPGRADE_0;
+
 	static inline int nTimeTrialProps = 1;
 	static inline int nTimeTrial3LapMode = 0;
+
+	static inline int nMultiplayerNitro = MULTIPLAYER_NITRO_100;
+	static inline int nMultiplayerHandling = 0;
+	static inline int nMultiplayerCarClass = CARCLASS_ANY;
+	static inline int nMultiplayerAIClass = 0;
+	static inline int nMultiplayerAICount = 0;
 
 	static inline tOption aOptionsQuickRace[] = {
 			{"GAME TYPE", &nGameType},
@@ -70,6 +101,22 @@ public:
 			{"UPGRADES", &nUpgrades},
 			{"", nullptr},
 			{"GO RACE", nullptr},
+			{"*END*", nullptr},
+	};
+
+	static inline tOption aOptionsMultiplayer[] = {
+			//{"GAME TYPE", &nGameType},
+			{"TRACK TYPE", &nTrackType},
+			{"TRACK", &nTrack},
+			{"LAPS", &nLaps},
+			{"CAR CLASS", &nMultiplayerCarClass},
+			{"DAMAGE", &nDamage},
+			{"NITRO", &nMultiplayerNitro},
+			{"UPGRADES", &nUpgrades},
+			{"HANDLING", &nMultiplayerHandling},
+			{"AI CLASS", &nMultiplayerAIClass},
+			{"AI COUNT", &nMultiplayerAICount},
+			{"APPLY SETTINGS", nullptr},
 			{"*END*", nullptr},
 	};
 
@@ -95,6 +142,7 @@ public:
 
 	tOption* aOptions = aOptionsQuickRace;
 	bool bSplitScreen = false;
+	bool bMultiplayerCreateGame = false;
 
 	eEventType GetGameMode() {
 		switch (nGameType) {
@@ -221,8 +269,23 @@ public:
 		if (nNitro < 0) nNitro = 0;
 		if (nNitro >= QuickRace::NUM_NITRO_LEVELS) nNitro = QuickRace::NUM_NITRO_LEVELS-1;
 
+		if (nMultiplayerNitro < 0) nMultiplayerNitro = 0;
+		if (nMultiplayerNitro >= NUM_MULTIPLAYER_NITRO_LEVELS) nMultiplayerNitro = NUM_MULTIPLAYER_NITRO_LEVELS;
+
 		if (nUpgrades < 0) nUpgrades = 0;
 		if (nUpgrades >= NUM_UPGRADE_LEVELS) nUpgrades = NUM_UPGRADE_LEVELS-1;
+
+		if (nMultiplayerCarClass < 0) nMultiplayerCarClass = NUM_CAR_CLASSES-1;
+		if (nMultiplayerCarClass >= NUM_CAR_CLASSES) nMultiplayerCarClass = 0;
+
+		if (nMultiplayerHandling < 0) nMultiplayerHandling = NUM_HANDLING_MODES-1;
+		if (nMultiplayerHandling >= NUM_HANDLING_MODES) nMultiplayerHandling = 0;
+
+		if (nMultiplayerAIClass < 0) nMultiplayerAIClass = NUM_AI_CLASSES-1;
+		if (nMultiplayerAIClass >= NUM_AI_CLASSES) nMultiplayerAIClass = 0;
+
+		if (nMultiplayerAICount < 0) nMultiplayerAICount = 0;
+		if (nMultiplayerAICount > 7) nMultiplayerAICount = 7;
 
 		nTimeTrialProps = nTimeTrialProps == 1;
 		nTimeTrial3LapMode = nTimeTrial3LapMode == 1;
@@ -234,6 +297,7 @@ public:
 			if (aOptions[option].value == &nTrackType) return false;
 			if (aOptions[option].value == &nLaps) return false;
 			if (aOptions[option].value == &nNitro) return false;
+			if (aOptions[option].value == &nMultiplayerNitro) return false;
 		}
 		if (GetGameMode() == eEventType::STUNT) {
 			if (aOptions[option].value == &nDamage) return false;
@@ -429,12 +493,12 @@ public:
 				data.SetColor(127,127,127,255);
 			}
 			if (valid) data.SetColor(GetPaletteColor(18));
-			Draw1080pString(JUSTIFY_LEFT, data, option.name, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_LEFT, data, option.name == "APPLY SETTINGS" && bMultiplayerCreateGame ? "CREATE GAME" : option.name, &DrawStringFO2_Ingame12);
 			data.x += gOptions.nSpacingX;
 			data.XCenterAlign = true;
 			if (valid) data.SetColor(GetPaletteColor(17));
 
-			if (option.name == "GO RACE") break;
+			if (option.name == "GO RACE" || option.name == "APPLY SETTINGS") break;
 			if (!option.value) continue;
 
 			int value = *option.value;
@@ -501,6 +565,21 @@ public:
 						break;
 				}
 			}
+			else if (option.value == &nMultiplayerNitro) {
+				if (GetGameMode() != eEventType::RACE) valueName = "N/A";
+				else switch (value) {
+					case MULTIPLAYER_NITRO_0:
+					default:
+						valueName = "OFF";
+						break;
+					case MULTIPLAYER_NITRO_100:
+						valueName = "ON";
+						break;
+					case MULTIPLAYER_NITRO_100_REGEN:
+						valueName = "ON + REGEN";
+						break;
+				}
+			}
 			else if (option.value == &nUpgrades) {
 				switch (value) {
 					case UPGRADE_0:
@@ -534,6 +613,57 @@ public:
 						break;
 					case 1:
 						valueName = "3 LAP RUN";
+						break;
+				}
+			}
+			else if (option.value == &nMultiplayerHandling) {
+				switch (value) {
+					case HANDLING_NORMAL:
+					default:
+						valueName = "NORMAL";
+						break;
+					case HANDLING_PROFESSIONAL:
+						valueName = "PROFESSIONAL";
+						break;
+					case HANDLING_HARDCORE:
+						valueName = "HARDCORE";
+						break;
+				}
+			}
+			else if (option.value == &nMultiplayerAIClass) {
+				switch (value) {
+					case AI_CLASS_BRONZE:
+					default:
+						valueName = "BRONZE";
+						break;
+					case AI_CLASS_SILVER:
+						valueName = "SILVER";
+						break;
+					case AI_CLASS_GOLD:
+						valueName = "GOLD";
+						break;
+					case AI_CLASS_SAMEASHOST:
+						valueName = "SAME AS HOST";
+						break;
+				}
+			}
+			else if (option.value == &nMultiplayerCarClass) {
+				switch (value) {
+					case CARCLASS_ANY:
+					default:
+						valueName = "ANY";
+						break;
+					case CARCLASS_BRONZE:
+						valueName = "BRONZE";
+						break;
+					case CARCLASS_SILVER:
+						valueName = "SILVER";
+						break;
+					case CARCLASS_GOLD:
+						valueName = "GOLD";
+						break;
+					case CARCLASS_SAMEASHOST:
+						valueName = "SAME AS HOST";
 						break;
 				}
 			}

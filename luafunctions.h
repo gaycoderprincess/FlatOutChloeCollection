@@ -182,7 +182,8 @@ int ChloeHUD_TrackSelect_SetMapPath(void* a1) {
 }
 
 int ChloeHUD_TrackSelect_IsStartRaceHovered(void* a1) {
-	lua_pushboolean(a1, Menu_TrackSelect.aOptions[Menu_TrackSelect.nCursorY].name == "GO RACE");
+	auto name = Menu_TrackSelect.aOptions[Menu_TrackSelect.nCursorY].name;
+	lua_pushboolean(a1, name == "GO RACE" || name == "APPLY SETTINGS");
 	return 1;
 }
 
@@ -218,6 +219,34 @@ int ChloeHUD_TrackSelect_SetIsSplitScreen(void* a1) {
 	if (Menu_TrackSelect.nGameType == 2) {
 		Menu_TrackSelect.nGameType = 0;
 		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
+	}
+	return 0;
+}
+
+int ChloeHUD_TrackSelect_SetIsMultiplayer(void* a1) {
+	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsMultiplayer;
+	Menu_TrackSelect.bSplitScreen = false;
+	Menu_TrackSelect.bMultiplayerCreateGame = false;
+	if (Menu_TrackSelect.nGameType != 0) {
+		Menu_TrackSelect.nGameType = 0;
+		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
+	}
+	return 0;
+}
+
+int ChloeHUD_TrackSelect_SetIsMultiplayerCreate(void* a1) {
+	Menu_TrackSelect.bMultiplayerCreateGame = true;
+	return 0;
+}
+
+int ChloeHUD_TrackSelect_GetOptionValue(void* a1) {
+	auto str = (const char*)lua_tolstring(a1, 1);
+	for (int y = 0; Menu_TrackSelect.aOptions[y].name != "*END*"; y++) {
+		auto opt = &Menu_TrackSelect.aOptions[y];
+		if (opt->name == str) {
+			lua_pushnumber(a1, *opt->value);
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -1054,6 +1083,9 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsTimeTrial, "ChloeHUD_TrackSelect_SetIsTimeTrial");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsHotSeat, "ChloeHUD_TrackSelect_SetIsHotSeat");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsSplitScreen, "ChloeHUD_TrackSelect_SetIsSplitScreen");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsMultiplayer, "ChloeHUD_TrackSelect_SetIsMultiplayer");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsMultiplayerCreate, "ChloeHUD_TrackSelect_SetIsMultiplayerCreate");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetOptionValue, "ChloeHUD_TrackSelect_GetOptionValue");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetBestStuntScore, "ChloeHUD_TrackSelect_SetBestStuntScore");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStatsTuned, "ChloeHUD_SetCarStatsTuned");
