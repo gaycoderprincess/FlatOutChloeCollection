@@ -258,7 +258,6 @@ void ProcessPlayStats() {
 					if (!gCustomSave.bestLaps[track] || lap < gCustomSave.bestLaps[track]) {
 						gCustomSave.bestLaps[track] = lap;
 						gCustomSave.bestLapCars[track] = GetPlayer(j)->nCarId;
-						WriteLog(std::format("Registered new best lap of {}ms", lap));
 						changed = true;
 					}
 				}

@@ -62,12 +62,14 @@ namespace Achievements {
 		new CAchievement("ALL_CARS", "Car Collector", "Unlock all cars in the game", CAT_GENERAL),
 		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete career mode", CAT_CAREER),
 		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete career mode with all gold", CAT_CAREER),
-		new CAchievement("COMPLETE_CARNAGE", "Carnage Master", "Complete Carnage Mode", CAT_CARNAGE),
-		new CAchievement("COMPLETE_CARNAGE_GOLD", "Carnage Wizard", "Complete Carnage Mode with all gold", CAT_CARNAGE),
+		new CAchievement("COMPLETE_CARNAGE", "Carnage Master", "Complete Arcade Mode", CAT_CARNAGE),
+		new CAchievement("COMPLETE_CARNAGE_GOLD", "Carnage Wizard", "Complete Arcade Mode with all gold", CAT_CARNAGE),
+		new CAchievement("COMPLETE_CARNAGE_AUTHOR", "Carnage Legend", "Complete Arcade Mode with all author", CAT_CARNAGE, true),
 		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_GENERAL),
 		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_GENERAL),
 		new CAchievement("CASH_DESTRUCTION", "Big Earner", "Earn over $4000 from a single career race", CAT_CAREER),
 		new CAchievement("CARNAGE_FILL_BOARD", "Overkill", "Get 10 separate bonuses in a single combo", CAT_CARNAGE),
+		new CAchievement("CARNAGE_MILLIONAIRE", "Carnage Millionaire", "Earn 1,000,000 points in Arcade Mode", CAT_CARNAGE),
 	};
 
 	std::vector<CAchievement*> GetAchievementsInCategory(uint32_t category) {
@@ -430,6 +432,9 @@ namespace Achievements {
 		pThis->fInternalProgress = numUnlocked;
 		pThis->fMaxInternalProgress = aDealerCars.size();
 	}
+	void OnTick_CarnageMillionaire(CAchievement* pThis, double delta) {
+		pThis->fInternalProgress = gCustomSave.GetArcadeCareerScore();
+	}
 	std::string OnTrack_GenericProgress(CAchievement* pThis) {
 		return std::format("Progress: {:.0f}/{}", pThis->fInternalProgress, pThis->fMaxInternalProgress);
 	}
@@ -546,12 +551,14 @@ namespace Achievements {
 		GetAchievement("TRACKMASTER")->pTickFunction = OnTick_Trackmaster;
 		GetAchievement("BUY_CUSTOM_SKIN")->pTickFunction = OnTick_BuyCustomSkin;
 		GetAchievement("ALL_CARS")->pTickFunction = OnTick_AllCars;
+		GetAchievement("CARNAGE_MILLIONAIRE")->pTickFunction = OnTick_CarnageMillionaire;
 
 		GetAchievement("LOW_HP")->pTrackFunction = OnTrack_LowHP;
 		GetAchievement("BLAST_ALL")->pTrackFunction = OnTrack_GenericProgress;
 
 		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
 		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 4000;
+		GetAchievement("CARNAGE_MILLIONAIRE")->fMaxInternalProgress = 1000000;
 	}
 }
 

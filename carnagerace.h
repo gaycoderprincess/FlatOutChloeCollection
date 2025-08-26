@@ -227,6 +227,8 @@ namespace CarnageRace {
 		fCashoutNotifTimer -= gTimer.fDeltaTime;
 		fCheckpointNotifTimer -= gTimer.fDeltaTime;
 
+		ArcadeMode::ProcessTimerTick(fPlayerTimeLeft*1000);
+
 		auto ply = GetPlayerScore<PlayerScoreRace>(1);
 		if (fPlayerTimeLeft <= 0 && !ply->bHasFinished && !ply->bIsDNF) {
 			ply->bHasFinished = true;
@@ -259,7 +261,8 @@ namespace CarnageRace {
 				timeLeftString = "0" + timeLeftString;
 			}
 
-			DrawElement(0, "TIME LEFT", timeLeftString);
+			DrawElement(0, "TIME LEFT", timeLeftString, timeLeft <= 4500 ? NyaDrawing::CNyaRGBA32(200,0,0,255) : NyaDrawing::CNyaRGBA32(255,255,255,255));
+			//DrawElement(0, "TIME LEFT", timeLeftString, timeLeft <= 4500 ? GetPaletteColor(22) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			DrawElement(1, "SCORE", FormatScore(nPlayerScore));
 
 			if (fCheckpointNotifTimer > 0) {

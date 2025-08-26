@@ -1,5 +1,54 @@
 namespace ArcadeMode {
 	bool bIsArcadeMode = false;
+	void PlayTimeTick() {
+		// load the audio file 8 times so it won't cancel the previous tick to play the next tick
+		static int counter = 0;
+		static NyaAudio::NyaSound aSounds[8] = {};
+		if (!aSounds[0]) {
+			for (int i = 0; i < 8; i++) {
+				aSounds[i] = NyaAudio::LoadFile("data/sound/time_bleep.wav");
+			}
+		}
+		auto sound = aSounds[counter++];
+		if (counter >= 8) counter = 0;
+
+		if (sound) {
+			NyaAudio::SetVolume(sound, nIngameSfxVolume / 100.0);
+			NyaAudio::Play(sound);
+		}
+	}
+	void ProcessTimerTick(int32_t timeLeft) {
+		if (timeLeft < 0) return;
+
+		static CNyaTimer gTimer;
+		gTimer.Process();
+
+		static int32_t lastTimeLeft = 0;
+		if (timeLeft == lastTimeLeft) return;
+		lastTimeLeft = timeLeft;
+
+		if (timeLeft > 5000) {
+			gTimer.fTotalTime = 0.5;
+			return;
+		}
+
+		double frequency = 1.0;
+		if (timeLeft <= 5000) {
+			frequency = 0.5;
+		}
+		if (timeLeft <= 3000) {
+			frequency = 0.25;
+		}
+		if (timeLeft <= 1000) {
+			frequency = 0.1;
+		}
+		if (gTimer.fTotalTime >= frequency) {
+			PlayTimeTick();
+			while (gTimer.fTotalTime >= frequency) {
+				gTimer.fTotalTime -= frequency;
+			}
+		}
+	}
 
 	bool bLastRaceCompleted = false;
 
@@ -61,12 +110,16 @@ namespace ArcadeMode {
 	void OnSave() {
 		float eventsCompleted = 0;
 		int eventsCompletedCount = 0;
+		int eventsCompletedAuthor = 0;
 		int eventsTotal = 0;
 		for (auto& event : aArcadeRaces) {
 			int points = gCustomSave.aArcadeCareerScores[eventsTotal];
 			if (points >= event.aGoalScores[0]) {
 				eventsCompleted += 1;
 				eventsCompletedCount++;
+				if (points >= event.nPlatinumScore) {
+					eventsCompletedAuthor++;
+				}
 			}
 			else if (points >= event.aGoalScores[1]) {
 				eventsCompleted += 0.5;
@@ -85,6 +138,10 @@ namespace ArcadeMode {
 		}
 		if (auto achievement = GetAchievement("COMPLETE_CARNAGE_GOLD")) {
 			achievement->fInternalProgress = eventsCompleted;
+			achievement->fMaxInternalProgress = eventsTotal;
+		}
+		if (auto achievement = GetAchievement("COMPLETE_CARNAGE_AUTHOR")) {
+			achievement->fInternalProgress = eventsCompletedAuthor;
 			achievement->fMaxInternalProgress = eventsTotal;
 		}
 	}
