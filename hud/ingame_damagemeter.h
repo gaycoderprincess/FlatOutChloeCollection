@@ -161,6 +161,7 @@ public:
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
 		auto ply = GetPlayer(nPlayerId);
 		if (!ply || ply->nPlayerType != PLAYERTYPE_LOCAL) return;
+		if (!nSplitScreenDamageMeter && IsInSplitScreen()) return;
 
 		float fXOffset = GetScreenXOffset();
 		float fYOffset = GetScreenYOffset();

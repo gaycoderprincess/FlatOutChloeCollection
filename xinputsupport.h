@@ -17,12 +17,13 @@ double fTimeSincePaused = 0;
 
 bool IsControllerSupportEnabled() {
 	if (!nControllerSupport) return false;
-	if (GetGameState() != GAME_STATE_MENU && IsInSplitScreen()) return false; // disable controller on p1
+	if (GetGameState() != GAME_STATE_MENU && IsInSplitScreen() && nSplitScreenController[0] == 0) return false; // disable controller on p1
 	return true;
 }
 
 int GetControllerSplitScreenPlayer(Controller* pController) {
-	return pController->_4[0x79C/4]-1;
+	if (pController == GetPlayer(0)->pController) return nSplitScreenController[0]-1;
+	return nSplitScreenController[pController->_4[0x79C/4]];
 }
 
 bool __thiscall IsMenuInputJustPressedXInput(Controller* pThis, int input) {

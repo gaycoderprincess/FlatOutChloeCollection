@@ -11,6 +11,21 @@ enum eHandlingDamage {
 	HANDLINGDAMAGE_ON,
 };
 
+enum eSplitScreenControllerP1 {
+	SPLITSCREEN_P1_KEYBOARD,
+	SPLITSCREEN_P1_PAD1,
+	SPLITSCREEN_P1_PAD2,
+	SPLITSCREEN_P1_PAD3,
+	SPLITSCREEN_P1_PAD4,
+};
+
+enum eSplitScreenController {
+	SPLITSCREEN_PAD1,
+	SPLITSCREEN_PAD2,
+	SPLITSCREEN_PAD3,
+	SPLITSCREEN_PAD4,
+};
+
 uint32_t nMenuSoundtrack = 0;
 uint32_t nIngameSoundtrack = 0;
 uint32_t nIngameDerbySoundtrack = 0;
@@ -24,6 +39,8 @@ uint32_t nFO2CarsEnabled = 1;
 uint32_t nShowBonus = 1;
 uint32_t nControllerSupport = 1;
 uint32_t nHighCarCam = 0;
+uint32_t nSplitScreenController[4] = { SPLITSCREEN_P1_KEYBOARD, SPLITSCREEN_PAD1, SPLITSCREEN_PAD2, SPLITSCREEN_PAD3 };
+uint32_t nSplitScreenDamageMeter = 1;
 
 namespace CareerMode {
 	bool bIsCareerRace = false;

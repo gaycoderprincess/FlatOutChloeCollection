@@ -89,4 +89,5 @@ int __thiscall ResetCarNew(Player* pPlayer, int a2) {
 
 void ApplyCarResetPatches() {
 	NyaHookLib::Patch(0x6605CC, &ResetCarNew);
+	NyaHookLib::Patch<uint8_t>(0x44872F, 0xEB); // allow resetting immediately upon ragdoll
 }
