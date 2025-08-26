@@ -63,6 +63,11 @@ public:
 		data.size = gGamemodeDescription.fSize;
 		data.SetColor(GetPaletteColor(17));
 		Draw1080pString(JUSTIFY_LEFT, data, gamemodeDescription, &DrawStringFO2_Ingame12);
+		data.x = 960;
+		data.y = 960;
+		data.size = 0.035;
+		data.XCenterAlign = true;
+		Draw1080pString(JUSTIFY_LEFT, data, "Press START button", &DrawStringFO2_Small);
 	}
 
 	virtual void Process() {

@@ -154,8 +154,8 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gTargetScores", Menu_ArcadeCareer.gTargetScores, true);
 	//QuickValueEditor("gYourScoreTitle", Menu_ArcadeCareer.gYourScoreTitle, false);
 	//QuickValueEditor("gYourScore", Menu_ArcadeCareer.gYourScore, false);
-	QuickValueEditor("gGamemodeLabel", HUD_ArcadeMode.gGamemodeLabel, false);
-	QuickValueEditor("gGamemodeDescription", HUD_ArcadeMode.gGamemodeDescription, false);
+	//QuickValueEditor("gGamemodeLabel", HUD_ArcadeMode.gGamemodeLabel, false);
+	//QuickValueEditor("gGamemodeDescription", HUD_ArcadeMode.gGamemodeDescription, false);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

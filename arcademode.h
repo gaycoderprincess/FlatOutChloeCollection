@@ -91,7 +91,8 @@ namespace ArcadeMode {
 }
 
 void tCustomSaveStructure::CreateArcadeVerify() {
-	for (int i = 0; i < nNumArcadeRaces; i++) {
+	memset(aArcadeRaceVerify, 0, sizeof(aArcadeRaceVerify));
+	for (int i = 0; i < ArcadeMode::aArcadeRaces.size(); i++) {
 		auto verify = &aArcadeRaceVerify[i];
 		auto race = &ArcadeMode::aArcadeRaces[i];
 		verify->car = race->nCar;
@@ -99,10 +100,14 @@ void tCustomSaveStructure::CreateArcadeVerify() {
 	}
 }
 void tCustomSaveStructure::WriteArcadeScore(int car, int level, int score) {
-	for (int i = 0; i < nNumArcadeRaces; i++) {
+	if (score <= 0) return;
+
+	for (int i = 0; i < ArcadeMode::aArcadeRaces.size(); i++) {
 		auto race = &ArcadeMode::aArcadeRaces[i];
 		if (race->nLevel != level) continue;
-		//if (race->nRules != GR_STUNT && race->nCar != car) continue; // don't verify car if it's a stunt event
+		if (race->nCar != car) continue;
 		aArcadeCareerScores[i] = score;
+		return;
 	}
+	WriteLog(std::format("Failed to write arcade score for {} on {} ({}pts), event possibly missing", GetCarName(car), GetTrackName(level), score));
 }
