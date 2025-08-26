@@ -65,6 +65,8 @@ public:
 
 	static inline std::vector<std::string> aTexturePreloadList;
 	static void PreloadTexture(const std::string& path) {
+		if (bNoPreload) return;
+
 		for (auto& preload : aTexturePreloadList) {
 			if (path == preload) return;
 		}

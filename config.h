@@ -44,6 +44,8 @@ uint32_t nSplitScreenDamageMeter = 1;
 
 uint32_t nMultiplayerHandlingMode = HANDLING_NORMAL;
 
+bool bNoPreload = false;
+
 bool bIsInMultiplayer = false;
 bool bIsCareerRace = false;
 bool bIsCarnageRace = false;
