@@ -10,6 +10,7 @@ const int nNumCareerClasses = 4;
 const int nNumCareerEvents = 16;
 const int nNumCareerEventsPerCup = 16;
 const int nNumCareerMaxPlayers = 12;
+const int nNumArcadeRaces = 128;
 
 std::string GetCustomSavePath(int id) {
 	return std::format("Savegame/customsave{:03}.sav", id);
@@ -69,7 +70,11 @@ struct tCustomSaveStructure {
 	int nCarsUnlocked;
 	uint32_t bestLaps[256];
 	uint32_t bestLapCars[256];
-	uint32_t aArcadeCareerScores[128];
+	uint32_t aArcadeCareerScores[nNumArcadeRaces];
+	struct {
+		uint16_t car;
+		uint16_t level;
+	} aArcadeRaceVerify[nNumArcadeRaces];
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -105,10 +110,33 @@ struct tCustomSaveStructure {
 
 	uint32_t GetArcadeCareerScore() {
 		uint32_t score = 0;
-		for (int i = 0; i < 128; i++) {
+		for (int i = 0; i < nNumArcadeRaces; i++) {
 			score += aArcadeCareerScores[i];
 		}
 		return score;
+	}
+	void CreateArcadeVerify();
+	void WriteArcadeScore(int car, int level, int score);
+	void CheckArcadeVerify() {
+		uint32_t data[nNumArcadeRaces];
+		memcpy(data, aArcadeCareerScores, sizeof(data));
+		memset(aArcadeCareerScores, 0, sizeof(aArcadeCareerScores)); // null all old data so random events don't get overridden
+
+		bool hasData = false;
+		for (int i = 0; i < nNumArcadeRaces; i++) {
+			if (aArcadeRaceVerify[i].car != 0) hasData = true;
+			if (aArcadeRaceVerify[i].level != 0) hasData = true;
+		}
+		if (!hasData) return;
+
+		// write all saved events into any found equivalent in the current version's event list
+		for (int i = 0; i < nNumArcadeRaces; i++) {
+			auto verify = &aArcadeRaceVerify[i];
+			WriteArcadeScore(verify->car, verify->level, data[i]);
+		}
+
+		// update verification data afterwards
+		CreateArcadeVerify();
 	}
 
 	tCustomSaveStructure() {
@@ -154,6 +182,7 @@ struct tCustomSaveStructure {
 		for (auto& data : aCareerClasses) {
 			data.aCups[0].bUnlocked = true;
 		}
+		CheckArcadeVerify();
 	}
 	void Save() {
 		if (!bInitialized) return;
@@ -168,6 +197,7 @@ struct tCustomSaveStructure {
 		}
 
 		ReadPlayerSettings();
+		CreateArcadeVerify();
 
 		auto file = std::ofstream(GetCustomSavePath(saveSlot+1), std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
