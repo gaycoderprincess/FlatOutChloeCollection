@@ -1025,8 +1025,28 @@ int ChloeCollection_SetIsInMultiplayer(void* a1) {
 	return 0;
 }
 
-int ChloeCollection_SetHandlingMode(void* a1) {
+int ChloeCollection_SetMultiplayerHandlingMode(void* a1) {
 	nMultiplayerHandlingMode = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCollection_SetMultiplayerNitroOn(void* a1) {
+	bMultiplayerNitroOn = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCollection_SetMultiplayerNitroRegen(void* a1) {
+	bMultiplayerNitroRegen = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCollection_SetMultiplayerUpgradeLevel(void* a1) {
+	fMultiplayerUpgradeLevel = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCollection_SetMultiplayerDamageLevel(void* a1) {
+	fMultiplayerDamageLevel = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -1202,7 +1222,11 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventAIUpgradeLevel, "ChloeArcadeDefs_SetEventAIUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventAIHandicapLevel, "ChloeArcadeDefs_SetEventAIHandicapLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsInMultiplayer, "ChloeCollection_SetIsInMultiplayer");
-	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetHandlingMode, "ChloeCollection_SetHandlingMode");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerHandlingMode, "ChloeCollection_SetMultiplayerHandlingMode");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerNitroOn, "ChloeCollection_SetMultiplayerNitroOn");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerNitroRegen, "ChloeCollection_SetMultiplayerNitroRegen");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerUpgradeLevel, "ChloeCollection_SetMultiplayerUpgradeLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerDamageLevel, "ChloeCollection_SetMultiplayerDamageLevel");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

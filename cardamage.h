@@ -242,6 +242,14 @@ float fCarDurability[32] = {};
 void OnCarDamage(Car* pCar) {
 	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 40.0 : 90.0;
 	fDamageMultiplier *= 1 + fCarDurability[pCar->pPlayer->nPlayerId-1];
+	if (bIsInMultiplayer) {
+		if (fMultiplayerDamageLevel > 0) {
+			fDamageMultiplier /= fMultiplayerDamageLevel;
+		}
+		else {
+			fDamageMultiplier = 999999.0;
+		}
+	}
 	if (QuickRace::bIsQuickRace) {
 		if (QuickRace::fDamageLevel > 0) {
 			fDamageMultiplier /= QuickRace::fDamageLevel;

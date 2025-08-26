@@ -51,6 +51,11 @@ bool bIsCareerRace = false;
 bool bIsCarnageRace = false;
 bool bIsSmashyRace = false;
 
+bool bMultiplayerNitroOn = true;
+bool bMultiplayerNitroRegen = false;
+float fMultiplayerUpgradeLevel = 0.0;
+float fMultiplayerDamageLevel = 1.0;
+
 namespace CareerMode {
 	bool IsCareerTimeTrial();
 }

@@ -341,6 +341,9 @@ namespace CareerMode {
 	float GetAIUpgradeLevel() {
 		if (IsCareerTimeTrial()) return 0.0;
 
+		if (bIsInMultiplayer) {
+			return fMultiplayerUpgradeLevel;
+		}
 		if (ArcadeMode::bIsArcadeMode) {
 			return ArcadeMode::pCurrentEvent->fAIUpgradeLevel;
 		}
@@ -364,6 +367,9 @@ namespace CareerMode {
 	float GetPlayerUpgradeLevel() {
 		if (IsCareerTimeTrial()) return 0.0;
 
+		if (bIsInMultiplayer) {
+			return fMultiplayerUpgradeLevel;
+		}
 		if (ArcadeMode::bIsArcadeMode) {
 			return ArcadeMode::pCurrentEvent->fUpgradeLevel;
 		}

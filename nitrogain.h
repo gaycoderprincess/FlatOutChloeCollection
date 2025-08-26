@@ -9,7 +9,7 @@ void ProcessNitroGain() {
 	if (pGameFlow->nEventType != eEventType::RACE) return;
 	if (pPlayerHost->nRaceTime <= 0) return;
 
-	bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode") || bIsCarnageRace || bIsSmashyRace;
+	bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode") || bIsCarnageRace || bIsSmashyRace || (bIsInMultiplayer && bMultiplayerNitroRegen);
 
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();
@@ -18,6 +18,13 @@ void ProcessNitroGain() {
 		auto ply = GetPlayer(i);
 		auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 		if (score->bHasFinished || score->bIsDNF) continue;
+
+		if (bIsInMultiplayer) {
+			if (!bMultiplayerNitroOn) {
+				ply->pCar->GetNitro() = 0.0;
+				return;
+			}
+		}
 
 		if (QuickRace::bIsQuickRace) {
 			if (QuickRace::nNitroLevel == QuickRace::NITRO_0) {

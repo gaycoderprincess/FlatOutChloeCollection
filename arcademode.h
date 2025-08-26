@@ -1,16 +1,16 @@
 namespace ArcadeMode {
 	bool bIsArcadeMode = false;
 	void PlayTimeTick() {
-		// load the audio file 8 times so it won't cancel the previous tick to play the next tick
+		// load the audio file multiple times so it won't cancel the previous tick to play the next tick
 		static int counter = 0;
-		static NyaAudio::NyaSound aSounds[8] = {};
+		static NyaAudio::NyaSound aSounds[16] = {};
 		if (!aSounds[0]) {
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < 16; i++) {
 				aSounds[i] = NyaAudio::LoadFile("data/sound/time_bleep.wav");
 			}
 		}
 		auto sound = aSounds[counter++];
-		if (counter >= 8) counter = 0;
+		if (counter >= 16) counter = 0;
 
 		if (sound) {
 			NyaAudio::SetVolume(sound, nIngameSfxVolume / 100.0);
