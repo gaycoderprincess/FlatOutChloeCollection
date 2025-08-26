@@ -38,8 +38,8 @@ public:
 	tDrawPositions1080p gTotalScore = {1445, 818, 0.04};
 	tDrawPositions1080p gTargetScoresTitle = {680, 240, 0.03};
 	tDrawPositions1080p gTargetScores = {805, 307, 0.03, 0, 79};
-	tDrawPositions1080p gYourScoreTitle = {675, 640, 0.03};
-	tDrawPositions1080p gYourScore = {675, 710, 0.03};
+	tDrawPositions1080p gYourScoreTitle = {680, 640, 0.03};
+	tDrawPositions1080p gYourScore = {680, 710, 0.03};
 
 	int GetTrackId() {
 		return ArcadeMode::aArcadeRaces[nCursorPos].nLevel;
