@@ -48,6 +48,7 @@ std::string GetStringNarrow(const wchar_t* string) {
 #include "cardamage.h"
 #include "carlimitadjuster.h"
 #include "carreset.h"
+#include "arcademode.h"
 #include "careermode.h"
 #include "cardatabase.h"
 #include "aiextender.h"
@@ -109,6 +110,7 @@ void CustomSetterThread() {
 	SetHandlingMode();
 	ProcessCarDamage();
 	CareerMode::OnTick();
+	ArcadeMode::OnTick();
 	CarnageRace::OnTick();
 	ProcessNitroGain();
 

@@ -202,6 +202,8 @@ namespace CarnageRace {
 		if (!bIsCarnageRace) return;
 		if (GetGameState() != GAME_STATE_RACE) return;
 
+		ArcadeMode::nCurrentEventScore = nPlayerScore;
+
 		ProcessSceneryCrashes();
 		ProcessAirtime();
 		ProcessCheckpoints();

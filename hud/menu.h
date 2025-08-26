@@ -78,5 +78,6 @@ namespace ChloeMenuHud {
 #include "menu_cardealer_sell.h"
 #include "menu_crashresult.h"
 #include "menu_trackselect.h"
+#include "menu_arcadecareer.h"
 #include "menu_achievement_description.h"
 #include "menu_loadingscreen.h"

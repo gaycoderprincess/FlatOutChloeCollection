@@ -73,7 +73,6 @@ public:
 			{"*END*", nullptr},
 	};
 
-	// todo splitscreen support! launching into a normal race works, just need to fix the controls, resets and ui
 	static inline tOption aOptionsHotSeat[] = {
 			{"TRACK", &nTrack},
 			{"UPGRADES", &nUpgrades},
@@ -282,16 +281,16 @@ public:
 		PreloadTexture("data/menu/common.dds");
 	}
 
-	tDrawPositions1080p gEvent = {1445, 460, 55};
-	tDrawPositions1080p gMap = {1445, 580, 80};
-	tDrawPositions1080p gOptions = {64, 250, 0.04, 600, 50};
-	tDrawPositions1080p gOptionsHover = {33, 226, 55, 890, 50};
-	float fArrowX = 0.21;
-	float fArrowYOffset = 0.003;
-	float fArrowSize = 0.02;
+	static inline tDrawPositions1080p gEvent = {1445, 460, 55};
+	static inline tDrawPositions1080p gMap = {1445, 580, 80};
+	static inline tDrawPositions1080p gOptions = {64, 250, 0.04, 600, 50};
+	static inline tDrawPositions1080p gOptionsHover = {33, 226, 55, 890, 50};
+	static inline float fArrowX = 0.21;
+	static inline float fArrowYOffset = 0.003;
+	static inline float fArrowSize = 0.02;
 
-	std::string mapPath = "data/tracks/forest/textures/map_forest1A.tga";
-	void SetMapPath(const std::string& str) {
+	static inline std::string mapPath = "data/tracks/forest/textures/map_forest1A.tga";
+	static void SetMapPath(const std::string& str) {
 		mapPath = str;
 	}
 
@@ -316,12 +315,12 @@ public:
 		}
 	}
 
-	tDrawPositions gCarName = {0.304, 0.28, 0.062};
-	float fCarNameAspect = 171.0 / 39.0;
+	static inline tDrawPositions gCarName = {0.304, 0.28, 0.062};
+	static inline float fCarNameAspect = 171.0 / 39.0;
 
-	tDrawPositions1080p gLevelPB = {1445, 852, 0.04};
+	static inline tDrawPositions1080p gLevelPB = {1445, 852, 0.04};
 
-	std::string GetTrackLogoPath(int track) {
+	static std::string GetTrackLogoPath(int track) {
 		auto str = GetTrackValueString(track, "TrackPath"); // data/Tracks/Forest/Forest1/
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::tolower(c); });
 		str.pop_back(); // remove trailing /
@@ -335,35 +334,10 @@ public:
 		return str;
 	}
 
-	virtual void Reset() {
-		nCursorY = 0;
-		aOptions = aOptionsQuickRace;
-		bSplitScreen = false;
-	}
-
-	std::string sStuntPB;
-
-	virtual void Process() {
-		static CNyaTimer gTimer;
-		gTimer.Process();
-
-		if (!bEnabled) return;
-
-		static auto textureLeft = LoadTextureFromBFS("data/menu/trackselectbg_left.png");
-		static auto textureRight = LoadTextureFromBFS("data/menu/trackselectbg_right.png");
+	static void DisplayTrackInfo(int trackId) {
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
-		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
 		static auto textureTrackLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
-		static auto textureCommon = LoadTextureFromBFS("data/menu/common.dds");
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
-		static auto commonData = LoadHUDData("data/menu/common.bed", "common");
-
-		Draw1080pSprite(JUSTIFY_LEFT, gOptionsHover.nPosX, gOptionsHover.nPosX + gOptionsHover.nSpacingX, gOptionsHover.nPosY + (nCursorY * gOptionsHover.nSpacingY), gOptionsHover.nPosY + (nCursorY * gOptionsHover.nSpacingY) + gOptionsHover.fSize, {0,0,0,200}, nullptr);
-
-		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
-		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
-
-		int trackId = GetTrackId();
 		auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(trackId, "Image"));
 
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
@@ -393,6 +367,34 @@ public:
 			int y2 = gMap.nPosY + gMap.fSize;
 			Draw1080pSprite(JUSTIFY_RIGHT, x1, x2, y1, y2, {255,255,255,255}, trackMap);
 		}
+	}
+
+	virtual void Reset() {
+		nCursorY = 0;
+		aOptions = aOptionsQuickRace;
+		bSplitScreen = false;
+	}
+
+	std::string sStuntPB;
+
+	virtual void Process() {
+		static CNyaTimer gTimer;
+		gTimer.Process();
+
+		if (!bEnabled) return;
+
+		static auto textureLeft = LoadTextureFromBFS("data/menu/trackselectbg_left.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/trackselectbg_right.png");
+		static auto textureCommon = LoadTextureFromBFS("data/menu/common.dds");
+		static auto commonData = LoadHUDData("data/menu/common.bed", "common");
+
+		Draw1080pSprite(JUSTIFY_LEFT, gOptionsHover.nPosX, gOptionsHover.nPosX + gOptionsHover.nSpacingX, gOptionsHover.nPosY + (nCursorY * gOptionsHover.nSpacingY), gOptionsHover.nPosY + (nCursorY * gOptionsHover.nSpacingY) + gOptionsHover.fSize, {0,0,0,200}, nullptr);
+
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+
+		int trackId = GetTrackId();
+		DisplayTrackInfo(trackId);
 		if (!sStuntPB.empty()) {
 			tNyaStringData data;
 			data.x = gLevelPB.nPosX;

@@ -84,8 +84,6 @@ namespace CareerMode {
 	void SetIsCareerMode(bool apply) {
 		bIsCareerRace = apply;
 		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
-		NyaHookLib::Patch<uint8_t>(0x431B08, apply ? 0xEB : 0x75); // don't null upgrades
-		NyaHookLib::Patch<uint64_t>(0x43BD79, apply ? 0x418B909090909090 : 0x418B000000EC840F); // use custom upgrades
 	}
 
 	void SetIsCareerModeTimeTrial(bool apply) {
@@ -311,6 +309,10 @@ namespace CareerMode {
 	}
 
 	int __stdcall GetAIHandicapLevelNew(GameFlow* gameFlow) {
+		if (ArcadeMode::bIsArcadeMode) {
+			int handicap = ArcadeMode::pCurrentEvent->nAIHandicapLevel;
+			if (handicap >= 1) return handicap;
+		}
 		if (bIsCareerRace) {
 			int handicap = GetCurrentRace()->nAIHandicapLevel;
 			if (handicap >= 1) return handicap;
@@ -339,6 +341,9 @@ namespace CareerMode {
 	float GetAIUpgradeLevel() {
 		if (IsCareerTimeTrial()) return 0.0;
 
+		if (ArcadeMode::bIsArcadeMode) {
+			return ArcadeMode::pCurrentEvent->fAIUpgradeLevel;
+		}
 		if (QuickRace::bIsQuickRace) {
 			return QuickRace::fUpgradeLevel;
 		}
@@ -356,9 +361,21 @@ namespace CareerMode {
 		return 0.0;
 	}
 
+	float GetPlayerUpgradeLevel() {
+		if (IsCareerTimeTrial()) return 0.0;
+
+		if (ArcadeMode::bIsArcadeMode) {
+			return ArcadeMode::pCurrentEvent->fUpgradeLevel;
+		}
+		return GetAIUpgradeLevel();
+	}
+
 	int nForceNumLaps = -1;
 
 	int __stdcall GetNumLapsNew(GameFlow* gameFlow) {
+		if (ArcadeMode::bIsArcadeMode) {
+			return ArcadeMode::pCurrentEvent->nLaps;
+		}
 		if (QuickRace::bIsQuickRace) {
 			return QuickRace::nNumLaps;
 		}
@@ -386,7 +403,7 @@ namespace CareerMode {
 		int eventsCompletedCount = 0;
 		int eventsTotal = 0;
 		for (int classId = 0; classId < 3; classId++) {
-			auto careerClass = &CareerMode::aLUACareerClasses[classId];
+			auto careerClass = &aLUACareerClasses[classId];
 			if (careerClass->aCups.empty()) continue;
 
 			cupsTotal += careerClass->aCups.size()+1;

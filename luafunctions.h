@@ -10,6 +10,7 @@ auto GetStringNarrow(const std::wstring& string) {
 
 void DoGameSave() {
 	CareerMode::OnSave();
+	ArcadeMode::OnSave();
 	gCustomSave.Save();
 }
 
@@ -121,6 +122,26 @@ int ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked(void* a1) {
 		return 1;
 	}
 	lua_pushboolean(a1, false);
+	return 1;
+}
+
+int ChloeHUD_ArcadeCareer_IsSelectedCupUnlocked(void* a1) {
+	lua_pushboolean(a1, gCustomSave.GetArcadeCareerScore() >= ArcadeMode::aArcadeRaces[Menu_ArcadeCareer.nCursorPos].nPointsToUnlock);
+	return 1;
+}
+
+int ChloeHUD_ArcadeCareer_GetTrackId(void* a1) {
+	lua_pushnumber(a1, Menu_ArcadeCareer.GetTrackId());
+	return 1;
+}
+
+int ChloeHUD_ArcadeCareer_GetCarId(void* a1) {
+	lua_pushnumber(a1, Menu_ArcadeCareer.GetCarId());
+	return 1;
+}
+
+int ChloeHUD_ArcadeCareer_GetHighlight(void* a1) {
+	lua_pushnumber(a1, Menu_ArcadeCareer.nCursorPos+1);
 	return 1;
 }
 
@@ -840,9 +861,19 @@ int ChloeDatabase_GetCarDataString(void* a1) {
 	return 1;
 }
 
-int ChloeArcade_SetIsCarnageRace(void* a1) {
-	CarnageRace::SetIsCarnageRace((int)luaL_checknumber(a1, 1));
+int ChloeArcade_SetIsArcadeCareer(void* a1) {
+	ArcadeMode::SetIsArcadeMode(true);
 	return 0;
+}
+
+int ChloeArcade_SetIsCarnageRace(void* a1) {
+	CarnageRace::SetIsCarnageRace(true);
+	return 0;
+}
+
+int ChloeArcade_WasArcadeEvent(void* a1) {
+	lua_pushboolean(a1, ArcadeMode::bIsArcadeMode);
+	return 1;
 }
 
 int ChloeArcade_WasCarnageRace(void* a1) {
@@ -850,13 +881,77 @@ int ChloeArcade_WasCarnageRace(void* a1) {
 	return 1;
 }
 
-int ChloeArcade_ClearWasCarnageRace(void* a1) {
-	CarnageRace::SetIsCarnageRace(false);
+int ChloeArcade_ProcessResultsFromLastRace(void* a1) {
+	ArcadeMode::ProcessResultsFromLastRace_Prompted();
 	return 0;
 }
 
 int ChloeCollection_OnReturnToMenu(void* a1) {
 	QuickRace::bIsQuickRace = false;
+	ArcadeMode::SetIsArcadeMode(false);
+	CarnageRace::SetIsCarnageRace(false);
+	return 0;
+}
+
+int ChloeArcadeDefs_BeginArcadeDefs(void* a1) {
+	ArcadeMode::aArcadeRaces.clear();
+	return 0;
+}
+
+int ChloeArcadeDefs_BeginEvent(void* a1) {
+	ArcadeMode::aArcadeRaces.push_back({});
+	ArcadeMode::luaDefs_currentRace = &ArcadeMode::aArcadeRaces[ArcadeMode::aArcadeRaces.size()-1];
+	ArcadeMode::luaDefs_currentRace->nLaps = 10;
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventName(void* a1) {
+	ArcadeMode::luaDefs_currentRace->sName = (const char*)lua_tolstring(a1, 1);
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventLevel(void* a1) {
+	ArcadeMode::luaDefs_currentRace->nLevel = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventCar(void* a1) {
+	ArcadeMode::luaDefs_currentRace->nCar = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventRules(void* a1) {
+	std::string str = (const char*)lua_tolstring(a1, 1);
+	ArcadeMode::luaDefs_currentRace->bIsArcadeRace = str == "ARCADE_RACE";
+	ArcadeMode::luaDefs_currentRace->bIsSmashySmash = str == "SMASHYSMASH";
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventGoalScores(void* a1) {
+	ArcadeMode::luaDefs_currentRace->aGoalScores[0] = luaL_checknumber(a1, 1);
+	ArcadeMode::luaDefs_currentRace->aGoalScores[1] = luaL_checknumber(a1, 2);
+	ArcadeMode::luaDefs_currentRace->aGoalScores[2] = luaL_checknumber(a1, 3);
+	ArcadeMode::luaDefs_currentRace->nPlatinumScore = luaL_checknumber(a1, 4);
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventPointsToUnlock(void* a1) {
+	ArcadeMode::luaDefs_currentRace->nPointsToUnlock = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventUpgradeLevel(void* a1) {
+	ArcadeMode::luaDefs_currentRace->fUpgradeLevel = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventAIUpgradeLevel(void* a1) {
+	ArcadeMode::luaDefs_currentRace->fAIUpgradeLevel = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcadeDefs_SetEventAIHandicapLevel(void* a1) {
+	ArcadeMode::luaDefs_currentRace->nAIHandicapLevel = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -898,6 +993,10 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorX, "ChloeHUD_CareerCupSelect_GetCursorX");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorY, "ChloeHUD_CareerCupSelect_GetCursorY");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked, "ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_IsSelectedCupUnlocked, "ChloeHUD_ArcadeCareer_IsSelectedCupUnlocked");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetTrackId, "ChloeHUD_ArcadeCareer_GetTrackId");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetCarId, "ChloeHUD_ArcadeCareer_GetCarId");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetHighlight, "ChloeHUD_ArcadeCareer_GetHighlight");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetTrackId, "ChloeHUD_TrackSelect_GetTrackId");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetEventType, "ChloeHUD_TrackSelect_GetEventType");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetNitroType, "ChloeHUD_TrackSelect_GetNitroType");
@@ -999,11 +1098,24 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataValue, "ChloeDatabase_GetCarDataValue");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarPerformanceString, "ChloeDatabase_GetCarPerformanceString");
 	RegisterLUAFunction(a1, (void*)&ChloeDatabase_GetCarDataString, "ChloeDatabase_GetCarDataString");
-	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsCarnageRace, "ChloeArcade_SetIsCarnageRace");
-	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasCarnageRace, "ChloeArcade_WasCarnageRace");
-	RegisterLUAFunction(a1, (void*)&ChloeArcade_ClearWasCarnageRace, "ChloeArcade_ClearWasCarnageRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_OnReturnToMenu, "ChloeCollection_OnReturnToMenu");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsQuickRace, "ChloeCollection_SetIsQuickRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsArcadeCareer, "ChloeArcade_SetIsArcadeCareer");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsCarnageRace, "ChloeArcade_SetIsCarnageRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasArcadeEvent, "ChloeArcade_WasArcadeEvent");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasCarnageRace, "ChloeArcade_WasCarnageRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_ProcessResultsFromLastRace, "ChloeArcade_ProcessResultsFromLastRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_BeginArcadeDefs, "ChloeArcadeDefs_BeginArcadeDefs");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_BeginEvent, "ChloeArcadeDefs_BeginEvent");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventName, "ChloeArcadeDefs_SetEventName");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventLevel, "ChloeArcadeDefs_SetEventLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventCar, "ChloeArcadeDefs_SetEventCar");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventRules, "ChloeArcadeDefs_SetEventRules");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventGoalScores, "ChloeArcadeDefs_SetEventGoalScores");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventPointsToUnlock, "ChloeArcadeDefs_SetEventPointsToUnlock");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventUpgradeLevel, "ChloeArcadeDefs_SetEventUpgradeLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventAIUpgradeLevel, "ChloeArcadeDefs_SetEventAIUpgradeLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventAIHandicapLevel, "ChloeArcadeDefs_SetEventAIHandicapLevel");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

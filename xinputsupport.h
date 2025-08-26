@@ -166,7 +166,7 @@ namespace SplitscreenController {
 	void CopyController(uint8_t* data) {
 		for (int i = 0; i < 4; i++) {
 			if (pControllers[i]) return;
-			pControllers[i] = (Controller*)malloc(0x79C+4);
+			pControllers[i] = (Controller*)malloc(0x79C+16);
 			memcpy(pControllers[i], data, 0x79C);
 			pControllers[i]->_4[-1] = (uint32_t)&pVTable[0];
 			pControllers[i]->_4[0x79C/4] = i; // player id

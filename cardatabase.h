@@ -103,9 +103,9 @@ tCarTuningData GetPlayerCareerTuningData(int carId) {
 	return data;
 }
 
-tCarTuningData GetAITuningData() {
+tCarTuningData GetAITuningData(bool usePlayerUpgradeLevel) {
 	tCarTuningData data;
-	data.SetAllUpgrades(CareerMode::GetAIUpgradeLevel());
+	data.SetAllUpgrades(usePlayerUpgradeLevel ? CareerMode::GetPlayerUpgradeLevel() : CareerMode::GetAIUpgradeLevel());
 	WriteLogDebug("HANDLING", std::format("Using AI upgrade level {}", data.fHorsepower));
 	return data;
 }
@@ -115,14 +115,14 @@ tCarTuningData GetPlayerTuningData(int carId) {
 		return GetPlayerCareerTuningData(carId);
 	}
 
-	auto data = GetAITuningData();
-	data.fDurability = CareerMode::GetAIUpgradeLevel();
+	auto data = GetAITuningData(true);
+	data.fDurability = CareerMode::GetPlayerUpgradeLevel();
 	return data;
 }
 
 tCarTuningData GetTuningDataForCar(Car* pCar) {
 	if (pCar->pPlayer->nPlayerType == PLAYERTYPE_LOCAL) return GetPlayerTuningData(pCar->pPlayer->nCarId+1);
-	return GetAITuningData();
+	return GetAITuningData(false);
 }
 
 #define CAR_PERFORMANCE(value, category, name) value = config[category][name].value_or(-99999.0f); if (value == -99999.0f) { MessageBoxA(0, std::format("Failed to read {} from {}", name, category).c_str(), "Fatal error", MB_ICONERROR); } WriteLogDebug("HANDLING", std::format("{}.{} = {}", category, name, value));

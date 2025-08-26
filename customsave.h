@@ -69,6 +69,7 @@ struct tCustomSaveStructure {
 	int nCarsUnlocked;
 	uint32_t bestLaps[256];
 	uint32_t bestLapCars[256];
+	uint32_t aArcadeCareerScores[128];
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -100,6 +101,14 @@ struct tCustomSaveStructure {
 			aCupPlayersByPosition[i] = players[i].playerId;
 			aCupPlayerPosition[players[i].playerId] = i;
 		}
+	}
+
+	uint32_t GetArcadeCareerScore() {
+		uint32_t score = 0;
+		for (int i = 0; i < 128; i++) {
+			score += aArcadeCareerScores[i];
+		}
+		return score;
 	}
 
 	tCustomSaveStructure() {
