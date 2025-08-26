@@ -85,6 +85,10 @@ void SetHandlingDamage() {
 	int handlingDamage = nHandlingDamage;
 	if (CareerMode::IsCareerTimeTrial()) handlingDamage = HANDLINGDAMAGE_REDUCED;
 	if (QuickRace::bIsQuickRace && QuickRace::fDamageLevel == 0.0) handlingDamage = HANDLINGDAMAGE_OFF;
+	if (bIsInMultiplayer) {
+		handlingDamage = HANDLINGDAMAGE_REDUCED;
+		if (fMultiplayerDamageLevel == 0.0) handlingDamage = HANDLINGDAMAGE_OFF;
+	}
 
 	if (handlingDamage == HANDLINGDAMAGE_ON) return;
 	if (pLoadingScreen) return;
