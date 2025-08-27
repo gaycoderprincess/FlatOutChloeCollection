@@ -48,6 +48,7 @@ std::string FormatScore(int a1) {
 	return std::format("{},{:03}", v4, a1 % 1000);
 }
 
+#include "mallochook.h"
 #include "events.h"
 #include "filereader.h"
 #include "config.h"
@@ -85,6 +86,7 @@ void SetHandlingDamage() {
 	int handlingDamage = nHandlingDamage;
 	if (CareerMode::IsCareerTimeTrial()) handlingDamage = HANDLINGDAMAGE_REDUCED;
 	if (QuickRace::bIsQuickRace && QuickRace::fDamageLevel == 0.0) handlingDamage = HANDLINGDAMAGE_OFF;
+	if (ArcadeMode::bIsArcadeMode) handlingDamage = HANDLINGDAMAGE_OFF;
 	if (bIsInMultiplayer) {
 		handlingDamage = HANDLINGDAMAGE_REDUCED;
 		if (fMultiplayerDamageLevel == 0.0) handlingDamage = HANDLINGDAMAGE_OFF;
@@ -191,6 +193,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaFO2Hooks::PlaceWndProcHook();
 			NyaFO2Hooks::aWndProcFuncs.push_back(WndProcHook);
 
+			//HookMalloc();
 			ApplyBFSLoadingPatches();
 			ApplyWindowedModePatches();
 			ApplyLUAPatches();

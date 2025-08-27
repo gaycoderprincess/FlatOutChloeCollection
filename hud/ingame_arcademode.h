@@ -96,6 +96,7 @@ public:
 
 		NyaDrawing::CNyaRGBA32 rgb = GetMedalRGB(3);
 		uint32_t targetScore = event->aGoalScores[2]; // bronze
+		std::string scoreTitle = "TARGET";
 		if (score >= targetScore) { // silver
 			targetScore = event->aGoalScores[1];
 			rgb = GetMedalRGB(2);
@@ -108,10 +109,15 @@ public:
 			targetScore = event->nPlatinumScore;
 			rgb = GetMedalRGB(4);
 		}
+		if (score >= targetScore && gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId] > event->nPlatinumScore) { // PB
+			targetScore = gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId];
+			rgb = {255,255,255,255};
+			scoreTitle = "PERSONAL BEST";
+		}
 
 		int uiId = 1;
 		if (bIsCarnageRace) uiId = 2;
-		DrawElement(uiId, "TARGET", FormatScore(targetScore), rgb);
+		DrawElement(uiId, scoreTitle, FormatScore(targetScore), rgb);
 
 		static CNyaTimer gTimer;
 		gTimer.Process();

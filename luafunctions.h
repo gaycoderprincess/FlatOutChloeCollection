@@ -1241,6 +1241,32 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, HANDLING_PROFESSIONAL, "HANDLING_PROFESSIONAL");
 	RegisterLUAEnum(a1, HANDLING_HARDCORE, "HANDLING_HARDCORE");
 
+	RegisterLUAEnum(a1, CMenu_TrackSelect::CARCLASS_ANY, "CARCLASS_ANY");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::CARCLASS_BRONZE, "CARCLASS_BRONZE");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::CARCLASS_SILVER, "CARCLASS_SILVER");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::CARCLASS_GOLD, "CARCLASS_GOLD");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::CARCLASS_SAMEASHOST, "CARCLASS_SAMEASHOST");
+
+	RegisterLUAEnum(a1, CMenu_TrackSelect::AI_CLASS_BRONZE, "AI_CLASS_BRONZE");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::AI_CLASS_SILVER, "AI_CLASS_SILVER");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::AI_CLASS_GOLD, "AI_CLASS_GOLD");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::AI_CLASS_SAMEASHOST, "AI_CLASS_SAMEASHOST");
+
+	RegisterLUAEnum(a1, CMenu_TrackSelect::UPGRADE_0, "UPGRADE_0");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::UPGRADE_50, "UPGRADE_50");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::UPGRADE_100, "UPGRADE_100");
+
+	RegisterLUAEnum(a1, CMenu_TrackSelect::DAMAGE_0, "DAMAGE_0");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::DAMAGE_50, "DAMAGE_50");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::DAMAGE_100, "DAMAGE_100");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::DAMAGE_200, "DAMAGE_200");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::DAMAGE_500, "DAMAGE_500");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::DAMAGE_1000, "DAMAGE_1000");
+
+	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_0, "NITRO_0");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100, "NITRO_100");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100_REGEN, "NITRO_100_REGEN");
+
 	static auto sVersionString = "Chloe Collection v1.08 - Splitscreen Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
 	lua_setglobal(a1, sVersionString);

@@ -193,6 +193,7 @@ void ProcessCarDamage() {
 	if (pPlayerHost->nRaceTime <= 0) {
 		memset(fDerbyContactTimer,0,sizeof(fDerbyContactTimer));
 		memset(aCrashBonusesReceived,0,sizeof(aCrashBonusesReceived));
+		return;
 	}
 
 	if (pGameFlow->nEventType == eEventType::DERBY) {

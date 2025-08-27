@@ -215,6 +215,9 @@ namespace CarnageRace {
 		ProcessCheckpoints();
 		if (pPlayerHost->nRaceTime < 0) {
 			fPlayerTimeLeft = fPlayerGivenTime;
+			fScoreTimer = 0;
+			fCashoutNotifTimer = 0;
+			fCheckpointNotifTimer = 0;
 			aScoreHUD.clear();
 			nPlayerScore = 0;
 			return;
