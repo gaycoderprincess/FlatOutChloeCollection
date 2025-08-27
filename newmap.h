@@ -156,7 +156,10 @@ void __stdcall D3DIngameMap(int) {
 	D3DHookMain();
 }
 
-const char* __cdecl GetMapPath(void* a1, int a2) {
+const char* __cdecl OnMapLoad(void* a1, int a2) {
+	LoadResetPoints(GetResetPointFilename());
+	ReverseTrackStartpoints();
+
 	auto path = (const char*)lua_tolstring(a1, a2);
 	pIngameMapTexture = CHUDElement::LoadTextureFromBFS(path);
 	return path;
@@ -164,5 +167,5 @@ const char* __cdecl GetMapPath(void* a1, int a2) {
 
 void ApplyIngameMapPatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DIngameMap);
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4694E5, &GetMapPath);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4694E5, &OnMapLoad);
 }

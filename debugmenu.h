@@ -156,20 +156,20 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gYourScore", Menu_ArcadeCareer.gYourScore, false);
 	//QuickValueEditor("gGamemodeLabel", HUD_ArcadeMode.gGamemodeLabel, false);
 	//QuickValueEditor("gGamemodeDescription", HUD_ArcadeMode.gGamemodeDescription, false);
-	QuickValueEditor("nPlayerReadyX", Menu_Multiplayer_Lobby.nPlayerReadyX);
-	QuickValueEditor("nPlayerNameX", Menu_Multiplayer_Lobby.nPlayerNameX);
-	QuickValueEditor("nPlayerCarX", Menu_Multiplayer_Lobby.nPlayerCarX);
-	QuickValueEditor("nPlayerPingX", Menu_Multiplayer_Lobby.nPlayerPingX);
-	QuickValueEditor("nPlayerStartY", Menu_Multiplayer_Lobby.nPlayerStartY);
-	QuickValueEditor("nPlayerListSpacing", Menu_Multiplayer_Lobby.nPlayerListSpacing);
-	QuickValueEditor("fPlayerListTextSize", Menu_Multiplayer_Lobby.fPlayerListTextSize);
-	QuickValueEditor("nOptionX", Menu_Multiplayer_Lobby.nOptionX);
-	QuickValueEditor("nOptionStartY", Menu_Multiplayer_Lobby.nOptionStartY);
-	QuickValueEditor("nOptionSpacing", Menu_Multiplayer_Lobby.nOptionSpacing);
-	QuickValueEditor("nOptionSpacing2", Menu_Multiplayer_Lobby.nOptionSpacing2);
-	QuickValueEditor("fOptionTextSize", Menu_Multiplayer_Lobby.fOptionTextSize);
-	QuickValueEditor("fTrackPreviewX", Menu_Multiplayer_Lobby.fTrackPreviewX);
-	QuickValueEditor("nTrackPreviewX", Menu_Multiplayer_Lobby.nTrackPreviewX);
+	//QuickValueEditor("nPlayerReadyX", Menu_Multiplayer_Lobby.nPlayerReadyX);
+	//QuickValueEditor("nPlayerNameX", Menu_Multiplayer_Lobby.nPlayerNameX);
+	//QuickValueEditor("nPlayerCarX", Menu_Multiplayer_Lobby.nPlayerCarX);
+	//QuickValueEditor("nPlayerPingX", Menu_Multiplayer_Lobby.nPlayerPingX);
+	//QuickValueEditor("nPlayerStartY", Menu_Multiplayer_Lobby.nPlayerStartY);
+	//QuickValueEditor("nPlayerListSpacing", Menu_Multiplayer_Lobby.nPlayerListSpacing);
+	//QuickValueEditor("fPlayerListTextSize", Menu_Multiplayer_Lobby.fPlayerListTextSize);
+	//QuickValueEditor("nOptionX", Menu_Multiplayer_Lobby.nOptionX);
+	//QuickValueEditor("nOptionStartY", Menu_Multiplayer_Lobby.nOptionStartY);
+	//QuickValueEditor("nOptionSpacing", Menu_Multiplayer_Lobby.nOptionSpacing);
+	//QuickValueEditor("nOptionSpacing2", Menu_Multiplayer_Lobby.nOptionSpacing2);
+	//QuickValueEditor("fOptionTextSize", Menu_Multiplayer_Lobby.fOptionTextSize);
+	//QuickValueEditor("fTrackPreviewX", Menu_Multiplayer_Lobby.fTrackPreviewX);
+	//QuickValueEditor("nTrackPreviewX", Menu_Multiplayer_Lobby.nTrackPreviewX);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();
@@ -254,6 +254,52 @@ void ProcessDebugMenu() {
 		ChloeMenuLib::EndMenu();
 	}
 
+	if (DrawMenuOption("Track Helpers")) {
+		ChloeMenuLib::BeginMenu();
+		if (DrawMenuOption("Resetpoint Editor")) {
+			ChloeMenuLib::BeginMenu();
+			if (GetGameState() == GAME_STATE_RACE) {
+				if (DrawMenuOption("Add Reset")) {
+					auto ply = GetPlayer(0);
+					tResetpoint point;
+					point.matrix = *ply->pCar->GetMatrix();
+					point.split = ply->nCurrentSplit % pEnvironment->nNumSplitpoints;
+					aNewResetPoints.push_back(point);
+				}
+				if (!aNewResetPoints.empty()) {
+					if (DrawMenuOption(std::format("Edit Resetpoints ({})", aNewResetPoints.size()))) {
+						ChloeMenuLib::BeginMenu();
+						for (auto& reset: aNewResetPoints) {
+							if (DrawMenuOption(std::to_string((&reset - &aNewResetPoints[0]) + 1))) {
+								ChloeMenuLib::BeginMenu();
+								if (DrawMenuOption("Teleport to Node", "", false, false)) {
+									auto ply = GetPlayer(0);
+									Car::Reset(ply->pCar, &reset.matrix.p.x, &reset.matrix.x.x);
+									break;
+								}
+								if (DrawMenuOption("Delete Resetpoint", "", false, false)) {
+									aNewResetPoints.erase(aNewResetPoints.begin() + (&reset - &aNewResetPoints[0]));
+									ChloeMenuLib::BackOut();
+									break;
+								}
+								ChloeMenuLib::EndMenu();
+							}
+						}
+						ChloeMenuLib::EndMenu();
+					}
+					if (DrawMenuOption("Save Resetpoints", "", false, false)) {
+						SaveResetPoints(GetResetPointFilename());
+					}
+				}
+			}
+			else {
+				DrawDebugMenuViewerOption("Not in a race");
+			}
+			ChloeMenuLib::EndMenu();
+		}
+		ChloeMenuLib::EndMenu();
+	}
+
 	if (DrawMenuOption("Palette Editor")) {
 		ChloeMenuLib::BeginMenu();
 		for (int i = 0; i < 256; i++) {
@@ -295,7 +341,12 @@ void ProcessDebugMenu() {
 		DrawDebugMenuViewerOption(std::format("Player Pointer - {:X}", (uintptr_t)ply));
 		DrawDebugMenuViewerOption(std::format("Player Car Pointer - {:X}", (uintptr_t)ply->pCar));
 		DrawDebugMenuViewerOption(std::format("Player Score Pointer - {:X}", (uintptr_t)GetPlayerScore<PlayerScoreRace>(1)));
+		auto plyPos = ply->pCar->GetMatrix()->p;
+		DrawDebugMenuViewerOption(std::format("Player Position - {:.1f} {:.1f} {:.1f}", plyPos.x, plyPos.y, plyPos.z));
 		DrawDebugMenuViewerOption(std::format("Race Time - {}", pPlayerHost->nRaceTime));
+		if (auto reset = pPlayerResetpoint) {
+			DrawDebugMenuViewerOption(std::format("Closest Resetpoint - {:.1f}m", (reset->p - ply->pCar->GetMatrix()->p).length()));
+		}
 	}
 
 	ChloeMenuLib::EndMenu();

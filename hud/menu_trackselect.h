@@ -77,6 +77,7 @@ public:
 	static inline int nGameType = 0;
 	static inline int nTrackType = TRACKTYPE_FOREST;
 	static inline int nTrack = 0;
+	static inline int nTrackReversed = 0;
 	static inline int nLaps = 3;
 	static inline int nDamage = DAMAGE_100;
 	static inline int nNitro = QuickRace::NITRO_100;
@@ -96,6 +97,7 @@ public:
 			{"TRACK TYPE", &nTrackType},
 			{"TRACK", &nTrack},
 			{"LAPS", &nLaps},
+			{"REVERSED", &nTrackReversed},
 			{"DAMAGE", &nDamage},
 			{"NITRO", &nNitro},
 			{"UPGRADES", &nUpgrades},
@@ -131,6 +133,7 @@ public:
 	static inline tOption aOptionsTimeTrial[] = {
 			{"TRACK TYPE", &nTrackType},
 			{"TRACK", &nTrack},
+			{"REVERSED", &nTrackReversed},
 			{"NITRO", &nNitro},
 			{"UPGRADES", &nUpgrades},
 			{"PROPS", &nTimeTrialProps},
@@ -287,6 +290,7 @@ public:
 		if (nMultiplayerAICount < 0) nMultiplayerAICount = 0;
 		if (nMultiplayerAICount > 7) nMultiplayerAICount = 7;
 
+		nTrackReversed = nTrackReversed == 1;
 		nTimeTrialProps = nTimeTrialProps == 1;
 		nTimeTrial3LapMode = nTimeTrial3LapMode == 1;
 	}
@@ -296,6 +300,7 @@ public:
 		if (GetGameMode() != eEventType::RACE) {
 			if (aOptions[option].value == &nTrackType) return false;
 			if (aOptions[option].value == &nLaps) return false;
+			if (aOptions[option].value == &nTrackReversed) return false;
 			if (aOptions[option].value == &nNitro) return false;
 			if (aOptions[option].value == &nMultiplayerNitro) return false;
 		}
@@ -676,6 +681,17 @@ public:
 						break;
 					case CARCLASS_SAMEASHOST:
 						valueName = "SAME AS HOST";
+						break;
+				}
+			}
+			else if (option.value == &nTrackReversed) {
+				switch (value) {
+					case 0:
+					default:
+						valueName = "OFF";
+						break;
+					case 1:
+						valueName = "ON";
 						break;
 				}
 			}

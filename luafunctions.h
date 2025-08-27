@@ -1005,6 +1005,7 @@ int ChloeCollection_OnReturnToMenu(void* a1) {
 	ArcadeMode::SetIsArcadeMode(false);
 	CarnageRace::SetIsCarnageRace(false);
 	SmashyRace::SetIsSmashyRace(false);
+	SetTrackReversed(false);
 	return 0;
 }
 
@@ -1097,6 +1098,11 @@ int ChloeCollection_SetMultiplayerUpgradeLevel(void* a1) {
 
 int ChloeCollection_SetMultiplayerDamageLevel(void* a1) {
 	fMultiplayerDamageLevel = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCollection_SetTrackReversed(void* a1) {
+	SetTrackReversed(luaL_checknumber(a1, 1));
 	return 0;
 }
 
@@ -1284,6 +1290,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerNitroRegen, "ChloeCollection_SetMultiplayerNitroRegen");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerUpgradeLevel, "ChloeCollection_SetMultiplayerUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerDamageLevel, "ChloeCollection_SetMultiplayerDamageLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetTrackReversed, "ChloeCollection_SetTrackReversed");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

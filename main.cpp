@@ -60,6 +60,7 @@ std::string FormatScore(int a1) {
 #include "quickrace.h"
 #include "cardamage.h"
 #include "carlimitadjuster.h"
+#include "reversetracks.h"
 #include "carreset.h"
 #include "arcademode.h"
 #include "careermode.h"
@@ -219,6 +220,8 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			CarnageRace::Init();
 			Achievements::Init();
 			NewIngameMenu::Init();
+
+			SetTrackReversed(true);
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
 			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos

@@ -1,3 +1,65 @@
+struct tResetpoint {
+	NyaMat4x4 matrix;
+	int split = -1;
+};
+std::vector<tResetpoint> aNewResetPoints;
+
+std::string GetResetPointFilename() {
+	return (std::string)"Config/Resets/" + GetTrackName(pGameFlow->nLevel) + (".rst2");
+}
+
+void SaveResetPoints(const std::string& filename) {
+	std::filesystem::create_directory("Config");
+	std::filesystem::create_directory("Config/Resets");
+
+	std::ofstream fout(filename, std::ios::out | std::ios::binary );
+	if (!fout.is_open()) return;
+
+	uint32_t count = aNewResetPoints.size();
+	fout.write((char*)&count, 4);
+	for (int i = 0; i < count; i++) {
+		fout.write((char*)&aNewResetPoints[i], sizeof(tResetpoint));
+	}
+}
+
+bool LoadResetPoints(const std::string& filename) {
+	aNewResetPoints.clear();
+
+	std::ifstream fin(filename, std::ios::in | std::ios::binary );
+	if (!fin.is_open()) return false;
+
+	uint32_t count = 0;
+	fin.read((char*)&count, 4);
+	aNewResetPoints.reserve(count);
+	for (int i = 0; i < count; i++) {
+		if (fin.eof()) return true;
+
+		tResetpoint reset;
+		fin.read((char*)&reset.matrix, sizeof(reset.matrix));
+		fin.read((char*)&reset.split, sizeof(reset.split));
+		aNewResetPoints.push_back(reset);
+	}
+	return true;
+}
+
+NyaMat4x4* pPlayerResetpoint = nullptr;
+NyaMat4x4* GetClosestResetpoint(NyaVec3 pos, int split, float maxDist = 99999) {
+	if (aNewResetPoints.empty()) return nullptr;
+
+	float dist = maxDist;
+	NyaMat4x4* out = nullptr;
+	for (auto& reset : aNewResetPoints) {
+		if (reset.split >= 0 && reset.split != split) continue;
+
+		auto d = (reset.matrix.p - pos).length();
+		if (d < dist) {
+			out = &reset.matrix;
+			dist = d;
+		}
+	}
+	return out;
+}
+
 double fCarResetFadeTimer[4] = {};
 bool bCarResetRequested[4] = {};
 
@@ -28,6 +90,18 @@ void ProcessCarReset(int player, float delta) {
 		if (fCarResetFadeTimer[player] >= 1) {
 			if (!IsPlayerWrecked(ply)) {
 				ply->ResetCar(ply, 0);
+				if (player == 0 && pPlayerResetpoint && !bIsTrackReversed) {
+					auto reset = *pPlayerResetpoint;
+					if (bIsTrackReversed) {
+						reset.x.x *= -1; // x.x
+						reset.x.y *= -1; // x.y
+						reset.x.z *= -1; // x.z
+						reset.z.x *= -1; // z.x
+						reset.z.y *= -1; // z.y
+						reset.z.z *= -1; // z.z
+					}
+					Car::Reset(ply->pCar, &reset.p.x, &reset.x.x);
+				}
 				if (pGameFlow->nEventType != eEventType::DERBY) {
 					*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * fCarResetSpeed;
 				}
@@ -75,6 +149,21 @@ void ProcessCarReset() {
 		if (!ply) continue;
 		if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
 		ProcessCarReset(i, gTimer.fDeltaTime);
+	}
+
+	if (GetGameState() == GAME_STATE_MENU) {
+		aNewResetPoints.clear();
+	}
+
+	if (!pLoadingScreen && GetGameState() == GAME_STATE_RACE) {
+		float fResetpointMaxDist = 15;
+
+		auto ply = GetPlayer(0);
+		auto reset = GetClosestResetpoint(ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, fResetpointMaxDist);
+		if (reset) pPlayerResetpoint = reset;
+	}
+	else {
+		pPlayerResetpoint = nullptr;
 	}
 }
 
