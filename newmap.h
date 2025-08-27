@@ -119,6 +119,8 @@ void DrawPlayerOnIngameMap(Player* ply) {
 }
 
 void DrawIngameMap() {
+	if (!nIngameMap) return;
+
 	if (pIngameMapTexture) {
 		float left, right, top, bottom;
 		GetIngameMapExtents(&left, &right, &top, &bottom);

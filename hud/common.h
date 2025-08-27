@@ -75,7 +75,12 @@ public:
 		size_t dataSize = 0;
 		auto file = ReadTextureDataFromFile(path.c_str(), &dataSize);
 		if (dataSize <= 0x4C) return;
-		std::thread(LoadTextureFromMemory, path, file, dataSize).detach();
+		if (bAsyncPreload) {
+			std::thread(LoadTextureFromMemory, path, file, dataSize).detach();
+		}
+		else {
+			LoadTextureFromMemory(path, file, dataSize);
+		}
 	}
 
 	enum eJustify {

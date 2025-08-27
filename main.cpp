@@ -150,6 +150,7 @@ void CommandlineArgReader(void* a1, const char* a2) {
 	auto str = (std::string)a2;
 	if (str == "-debug") bDebugLog = true;
 	if (str == "-nopreload") bNoPreload = true;
+	if (str == "-asyncpreload") bAsyncPreload = true;
 	WriteLogDebug("INIT", std::format("Commandline argument {}", a2));
 
 	return lua_setglobal(a1, a2);
