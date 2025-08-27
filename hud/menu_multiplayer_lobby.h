@@ -26,7 +26,7 @@ public:
 	int nPlayerPingX = 860;
 
 	int nPlayerStartY = 220;
-	int nPlayerListSpacing = 48;
+	int nPlayerListSpacing = 55;
 	float fPlayerListTextSize = 0.042;
 
 	int nOptionX = 1095;

@@ -181,7 +181,7 @@ void AwardWreck(int playerId) {
 }
 
 void ProcessCarDamage() {
-	NyaHookLib::Patch<uint8_t>(0x4167E8, pGameFlow->nEventType == eEventType::DERBY ? 0xEB : 0x75); // disable auto-ragdolling in derby
+	NyaHookLib::Patch<uint8_t>(0x4167E8, pGameFlow->nEventType == eEventType::DERBY || bIsInMultiplayer ? 0xEB : 0x75); // disable auto-ragdolling in multiplayer and derby
 
 	if (GetGameState() != GAME_STATE_RACE) return;
 	if (pLoadingScreen) return;
