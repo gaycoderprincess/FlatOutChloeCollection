@@ -261,6 +261,16 @@ int ChloeHUD_MultiplayerLobby_SetNumPlayers(void* a1) {
 	return 0;
 }
 
+int ChloeHUD_MultiplayerLobby_SetNumPlayersReady(void* a1) {
+	Menu_Multiplayer_Lobby.nNumPlayersReady = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeHUD_MultiplayerLobby_SetTrackId(void* a1) {
+	Menu_Multiplayer_Lobby.nTrackId = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 int ChloeHUD_MultiplayerLobby_ClearPlayerInfo(void* a1) {
 	for (auto& ply : Menu_Multiplayer_Lobby.aPlayers) {
 		ply.name = "";
@@ -277,6 +287,12 @@ int ChloeHUD_MultiplayerLobby_SetPlayerInfo(void* a1) {
 	ply->car = luaL_checknumber(a1, 3)+1;
 	ply->ready = luaL_checknumber(a1, 4);
 	ply->ping = luaL_checknumber(a1, 5);
+	if (lua_type(a1, 6)) {
+		ply->carTitle = (const char *) lua_tolstring(a1, 6);
+	}
+	else {
+		ply->carTitle = "";
+	}
 	return 0;
 }
 
@@ -1142,6 +1158,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetOptionValue, "ChloeHUD_TrackSelect_GetOptionValue");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetBestStuntScore, "ChloeHUD_TrackSelect_SetBestStuntScore");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_SetNumPlayers, "ChloeHUD_MultiplayerLobby_SetNumPlayers");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_SetNumPlayersReady, "ChloeHUD_MultiplayerLobby_SetNumPlayersReady");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_SetTrackId, "ChloeHUD_MultiplayerLobby_SetTrackId");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_ClearPlayerInfo, "ChloeHUD_MultiplayerLobby_ClearPlayerInfo");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_SetPlayerInfo, "ChloeHUD_MultiplayerLobby_SetPlayerInfo");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_ClearOptions, "ChloeHUD_MultiplayerLobby_ClearOptions");

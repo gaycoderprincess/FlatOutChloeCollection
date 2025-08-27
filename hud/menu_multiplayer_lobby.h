@@ -7,7 +7,9 @@ public:
 		int car = 1;
 		bool ready = false;
 		int ping = 0;
+		std::string carTitle;
 	} aPlayers[8] = {};
+	int nNumPlayersReady = 0;
 	int nNumPlayers = 0;
 
 	struct tGameOption {
@@ -15,6 +17,8 @@ public:
 		std::string value;
 	};
 	std::vector<tGameOption> aOptions;
+
+	int nTrackId = 1;
 
 	int nPlayerReadyX = 60;
 	int nPlayerNameX = 260;
@@ -55,11 +59,13 @@ public:
 		if (!bEnabled) return;
 		if (!bIsInMultiplayer) return;
 
+		CMenu_TrackSelect::DisplayTrackInfo(nTrackId);
+
 		int y = 0;
-		DrawPlayerInfo(y++, "READY", "NAME", "CAR", "PING");
+		DrawPlayerInfo(y++, std::format("{}/{} READY", nNumPlayersReady, nNumPlayers), "NAME", "CAR", "PING");
 		for (auto& ply : aPlayers) {
 			if (ply.name.empty()) continue;
-			DrawPlayerInfo(y++, &ply == &aPlayers[0] ? "HOST" : (ply.ready ? "X" : ""), ply.name, GetCarName(ply.car), std::to_string(ply.ping));
+			DrawPlayerInfo(y++, &ply == &aPlayers[0] ? "HOST" : (ply.ready ? "X" : ""), ply.name, ply.carTitle.empty() ? GetCarName(ply.car) : ply.carTitle, std::to_string(ply.ping));
 		}
 
 		tNyaStringData data;
