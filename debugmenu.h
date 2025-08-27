@@ -156,6 +156,18 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gYourScore", Menu_ArcadeCareer.gYourScore, false);
 	//QuickValueEditor("gGamemodeLabel", HUD_ArcadeMode.gGamemodeLabel, false);
 	//QuickValueEditor("gGamemodeDescription", HUD_ArcadeMode.gGamemodeDescription, false);
+	QuickValueEditor("nPlayerReadyX", Menu_Multiplayer_Lobby.nPlayerReadyX);
+	QuickValueEditor("nPlayerNameX", Menu_Multiplayer_Lobby.nPlayerNameX);
+	QuickValueEditor("nPlayerCarX", Menu_Multiplayer_Lobby.nPlayerCarX);
+	QuickValueEditor("nPlayerPingX", Menu_Multiplayer_Lobby.nPlayerPingX);
+	QuickValueEditor("nPlayerStartY", Menu_Multiplayer_Lobby.nPlayerStartY);
+	QuickValueEditor("nPlayerListSpacing", Menu_Multiplayer_Lobby.nPlayerListSpacing);
+	QuickValueEditor("fPlayerListTextSize", Menu_Multiplayer_Lobby.fPlayerListTextSize);
+	QuickValueEditor("nOptionX", Menu_Multiplayer_Lobby.nOptionX);
+	QuickValueEditor("nOptionStartY", Menu_Multiplayer_Lobby.nOptionStartY);
+	QuickValueEditor("nOptionSpacing", Menu_Multiplayer_Lobby.nOptionSpacing);
+	QuickValueEditor("nOptionSpacing2", Menu_Multiplayer_Lobby.nOptionSpacing2);
+	QuickValueEditor("fOptionTextSize", Menu_Multiplayer_Lobby.fOptionTextSize);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

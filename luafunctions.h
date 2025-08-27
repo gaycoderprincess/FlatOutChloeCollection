@@ -256,6 +256,40 @@ int ChloeHUD_TrackSelect_SetBestStuntScore(void* a1) {
 	return 0;
 }
 
+int ChloeHUD_MultiplayerLobby_SetNumPlayers(void* a1) {
+	Menu_Multiplayer_Lobby.nNumPlayers = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeHUD_MultiplayerLobby_ClearPlayerInfo(void* a1) {
+	for (auto& ply : Menu_Multiplayer_Lobby.aPlayers) {
+		ply.name = "";
+		ply.car = 0;
+		ply.ready = false;
+		ply.ping = 0;
+	}
+	return 0;
+}
+
+int ChloeHUD_MultiplayerLobby_SetPlayerInfo(void* a1) {
+	auto ply = &Menu_Multiplayer_Lobby.aPlayers[(int)luaL_checknumber(a1, 1)-1];
+	ply->name = GetStringNarrow(lua_tolstring(a1, 2));
+	ply->car = luaL_checknumber(a1, 3)+1;
+	ply->ready = luaL_checknumber(a1, 4);
+	ply->ping = luaL_checknumber(a1, 5);
+	return 0;
+}
+
+int ChloeHUD_MultiplayerLobby_ClearOptions(void* a1) {
+	Menu_Multiplayer_Lobby.aOptions.clear();
+	return 0;
+}
+
+int ChloeHUD_MultiplayerLobby_AddOption(void* a1) {
+	Menu_Multiplayer_Lobby.aOptions.push_back({(const char*)lua_tolstring(a1, 1), (const char*)lua_tolstring(a1, 2)});
+	return 0;
+}
+
 int ChloeCareer_SetIsCareerRace(void* a1) {
 	CareerMode::SetIsCareerMode((int)luaL_checknumber(a1, 1));
 	return 0;
@@ -1107,6 +1141,11 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsMultiplayerCreate, "ChloeHUD_TrackSelect_SetIsMultiplayerCreate");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetOptionValue, "ChloeHUD_TrackSelect_GetOptionValue");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetBestStuntScore, "ChloeHUD_TrackSelect_SetBestStuntScore");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_SetNumPlayers, "ChloeHUD_MultiplayerLobby_SetNumPlayers");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_ClearPlayerInfo, "ChloeHUD_MultiplayerLobby_ClearPlayerInfo");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_SetPlayerInfo, "ChloeHUD_MultiplayerLobby_SetPlayerInfo");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_ClearOptions, "ChloeHUD_MultiplayerLobby_ClearOptions");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_AddOption, "ChloeHUD_MultiplayerLobby_AddOption");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStats, "ChloeHUD_SetCarStats");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarStatsTuned, "ChloeHUD_SetCarStatsTuned");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
