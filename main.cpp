@@ -80,6 +80,7 @@ std::string FormatScore(int a1) {
 #include "nitrogain.h"
 #include "ultrawide.h"
 #include "newmap.h"
+#include "newingamemenu.h"
 #include "debugmenu.h"
 
 void SetHandlingDamage() {
@@ -212,6 +213,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			CareerMode::Init();
 			CarnageRace::Init();
 			Achievements::Init();
+			NewIngameMenu::Init();
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
 			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos

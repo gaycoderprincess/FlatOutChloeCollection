@@ -171,7 +171,7 @@ void ApplyUltrawidePatches() {
 	NyaHookLib::Patch(0x4E0192 + 2, &fResMultWithNewHudScale); // menu title text
 	NyaHookLib::Patch(0x4E28B4 + 2, &fResMultWithNewHudScale); // fix TITLE_CENTER_X in menus
 	NyaHookLib::Patch(0x4DFDDE + 2, &fTextCenteringMult); // centered menu items
-	NyaHookLib::Patch(0x457AC3 + 2, &f43AspectCorrection_inv_flt); // credits text
+	NyaHookLib::Patch(0x457AC1 + 2, &f43AspectCorrection_inv_flt); // credits text
 
 	// ingame hud
 	NyaHookLib::Patch(0x450F6A + 2, &f43AspectCorrection_inv_flt); // speedometer scaling
