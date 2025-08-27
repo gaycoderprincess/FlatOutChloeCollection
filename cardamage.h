@@ -203,7 +203,9 @@ void ProcessCarDamage() {
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
-		if (GetCarDamage(ply->pCar) < 1.0) continue;
+		bool shouldWreck = GetCarDamage(ply->pCar) >= 1.0;
+		if (bIsInMultiplayer && ChloeNet::IsReplicatedPlayer(ply)) shouldWreck = ChloeNet::IsReplicatedPlayerWrecked(ply);
+		if (!shouldWreck) continue;
 
 		if (pGameFlow->nEventType == eEventType::DERBY) {
 			if (!ply->pCar->nIsRagdolled) {

@@ -18,4 +18,10 @@ namespace ChloeNet {
 		if (!funcPtr) return false;
 		return funcPtr(player);
 	}
+
+	bool IsReplicatedPlayerWrecked(Player* player) {
+		static auto funcPtr = GetFuncPtr<bool(__cdecl*)(Player*)>("ChloeNet_IsReplicatedPlayerWrecked");
+		if (!funcPtr) return false;
+		return funcPtr(player);
+	}
 }
