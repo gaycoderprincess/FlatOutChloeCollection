@@ -1,3 +1,4 @@
+IDirect3DTexture9* pIngameMapTexture = nullptr;
 float fIngameMapSize = 0.011;
 
 NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
@@ -45,23 +46,17 @@ NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
 	return aPlayerColors[0];
 }
 
-void DrawPlayerOnIngameMap(Player* ply) {
-	static auto arrow = CHUDElement::LoadTextureFromBFS("data/global/overlay/playerarrow.png");
-	static auto arrowPlayer = CHUDElement::LoadTextureFromBFS("data/global/overlay/playerarrow_local.png");
-
-	auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
-	auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
-	auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
-	auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
-
+void GetIngameMapExtents(float* left, float* right, float* top, float* bottom) {
 	auto posX = pEnvironment->pMinimap->fScreenPos[0];
 	auto posY = pEnvironment->pMinimap->fScreenPos[1];
 	auto sizeX = pEnvironment->pMinimap->fScreenSize[0];
 	auto sizeY = pEnvironment->pMinimap->fScreenSize[1];
 
+	auto justify = CHUDElement::JUSTIFY_LEFT;
 	if (IsInSplitScreen()) {
 		if (pPlayerHost->GetNumPlayers() > 2) {
 			posX = 320.0 - pEnvironment->pMinimap->fScreenSize[0] * 0.5;
+			justify = CHUDElement::JUSTIFY_CENTER;
 		}
 		else {
 			posX = 0.0;
@@ -73,10 +68,39 @@ void DrawPlayerOnIngameMap(Player* ply) {
 	posY /= 480.0;
 	sizeX /= 640.0;
 	sizeY /= 480.0;
-	posX *= 1440.0;
-	posY *= 1080.0;
-	sizeX *= 1440.0;
-	sizeY *= 1080.0;
+	if (IsInSplitScreen() && pPlayerHost->GetNumPlayers() > 2) {
+		posX *= 1920.0;
+		posY *= 1080.0;
+		sizeX *= 1920.0;
+		sizeY *= 1080.0;
+	}
+	else {
+		posX *= 1440.0;
+		posY *= 1080.0;
+		sizeX *= 1440.0;
+		sizeY *= 1080.0;
+	}
+
+	CHUDElement::DoJustify(justify, posX, posY);
+	CHUDElement::DoJustify(justify, sizeX, sizeY);
+
+	*left = posX;
+	*right = posX + sizeX;
+	*top = posY;
+	*bottom = posY + sizeY;
+}
+
+void DrawPlayerOnIngameMap(Player* ply) {
+	static auto arrow = CHUDElement::LoadTextureFromBFS("data/global/overlay/playerarrow.png");
+	static auto arrowPlayer = CHUDElement::LoadTextureFromBFS("data/global/overlay/playerarrow_local.png");
+
+	auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
+	auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
+	auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
+	auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
+
+	float left, right, top, bottom;
+	GetIngameMapExtents(&left, &right, &top, &bottom);
 
 	auto plyMatrix = ply->pCar->GetMatrix();
 	auto plyPos = plyMatrix->p;
@@ -89,46 +113,53 @@ void DrawPlayerOnIngameMap(Player* ply) {
 	if (-plyPos.z < 0) return;
 	if (-plyPos.x > 1) return;
 	if (-plyPos.z > 1) return;
-	float spritePosX = std::lerp(posX, posX + sizeX, -plyPos.x);
-	float spritePosY = std::lerp(posY + sizeY, posY, -plyPos.z);
-	CHUDElement::DoJustify(CHUDElement::JUSTIFY_LEFT, spritePosX, spritePosY);
+	float spritePosX = std::lerp(left, right, -plyPos.x);
+	float spritePosY = std::lerp(bottom, top, -plyPos.z);
 	DrawRectangle(spritePosX - (fIngameMapSize * GetAspectRatioInv()), spritePosX + (fIngameMapSize * GetAspectRatioInv()), spritePosY - fIngameMapSize, spritePosY + fIngameMapSize, GetPlayerColor(ply), 0, ply->nPlayerType == PLAYERTYPE_LOCAL ? arrowPlayer : arrow, plyDir);
 }
 
 void DrawIngameMap() {
+	if (pIngameMapTexture) {
+		float left, right, top, bottom;
+		GetIngameMapExtents(&left, &right, &top, &bottom);
+		DrawRectangle(left, right, top, bottom, {255,255,255,255}, 0, pIngameMapTexture);
+	}
+
 	// draw wrecked players first, opponents after, local player on top
-	for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
 		if (!ply) continue;
+		if (ply->nPlayerType == PLAYERTYPE_LOCAL) continue;
 		if (!IsPlayerWrecked(ply)) continue;
 		DrawPlayerOnIngameMap(ply);
 	}
-	for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
 		if (!ply) continue;
+		if (ply->nPlayerType == PLAYERTYPE_LOCAL) continue;
 		if (IsPlayerWrecked(ply)) continue;
 		DrawPlayerOnIngameMap(ply);
 	}
-	DrawPlayerOnIngameMap(GetPlayer(0));
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		auto ply = GetPlayer(i);
+		if (!ply) continue;
+		if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
+		DrawPlayerOnIngameMap(ply);
+	}
 }
 
-void D3DIngameMap() {
+void __stdcall D3DIngameMap(int) {
 	bIsDrawingMap = true;
 	D3DHookMain();
 }
 
-uintptr_t DrawIngameMapASM_jmp = 0x478371;
-void __attribute__((naked)) DrawIngameMapASM() {
-	__asm__ (
-		"pushad\n\t"
-		"call %1\n\t"
-		"popad\n\t"
-		"jmp %0\n\t"
-			:
-			:  "m" (DrawIngameMapASM_jmp), "i" (D3DIngameMap)
-	);
+const char* __cdecl GetMapPath(void* a1, int a2) {
+	auto path = (const char*)lua_tolstring(a1, a2);
+	pIngameMapTexture = CHUDElement::LoadTextureFromBFS(path);
+	return path;
 }
 
 void ApplyIngameMapPatches() {
-	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47823D, &DrawIngameMapASM);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DIngameMap);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4694E5, &GetMapPath);
 }

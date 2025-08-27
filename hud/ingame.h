@@ -33,7 +33,7 @@ public:
 		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
 		data.size = gElementBase.fSize;
 		data.XCenterAlign = true;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(2));
 		data.a = rgb.a;
 		DrawStringFO2_Ingame12(data, title);
 		data.y += gElementBase.fSpacingY;
@@ -47,7 +47,7 @@ public:
 		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
 		data.size = gElementBase.fSize;
 		data.XRightAlign = true;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(2));
 		data.a = rgb.a;
 		DrawStringFO2_Ingame12(data, title);
 		data.y += gElementBase.fSpacingY;

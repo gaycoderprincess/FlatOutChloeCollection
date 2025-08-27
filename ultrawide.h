@@ -1,18 +1,16 @@
 double fAspectRatio = 16.0 / 9.0;
-double fSpacingFixAmount43 = (4.0 / 3.0) / fAspectRatio;
 double f43AspectCorrection = 480 * fAspectRatio; // 853
-double f43AspectCorrectionCenter = f43AspectCorrection * 0.5; // 426
-float f43AspectCorrection_flt = f43AspectCorrection;
-float f43AspectCorrectionCenter_flt = f43AspectCorrectionCenter;
-float fTextCenteringMult = 0.5 * fSpacingFixAmount43;
+double f43AspectCorrection_inv = 1.0 / f43AspectCorrection;
+float f43AspectCorrection_inv_flt = f43AspectCorrection_inv;
+float fTextCenteringMult = 0.5 * ((4.0 / 3.0) / fAspectRatio);
+float fResMultWithNewHudScale = 2.25;
 void RecalculateAspectRatio() {
 	fAspectRatio = (double)nGameResolutionX / (double)nGameResolutionY;
 	f43AspectCorrection = 480 * fAspectRatio;
-	fSpacingFixAmount43 = (4.0 / 3.0) / fAspectRatio;
-	f43AspectCorrection_flt = f43AspectCorrection;
-	f43AspectCorrectionCenter = f43AspectCorrection * 0.5;
-	f43AspectCorrectionCenter_flt = f43AspectCorrectionCenter;
-	fTextCenteringMult = 0.5 * fSpacingFixAmount43;
+	f43AspectCorrection_inv = 1.0 / f43AspectCorrection;
+	f43AspectCorrection_inv_flt = f43AspectCorrection_inv;
+	fResMultWithNewHudScale = nGameResolutionX * (1.0 / f43AspectCorrection);
+	fTextCenteringMult = 0.5 * ((4.0 / 3.0) / fAspectRatio);
 
 	static float resX, resY;
 	resX = nGameResolutionX;
@@ -167,12 +165,20 @@ void ApplyUltrawidePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47E155, &UltrawideFOVMenuASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47C6C7, &UltrawideFOVIngameASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4C8AF0, &UltrawideFOVSkyASM);
-
-	return;
-
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4F0D00, &UltrawideTextScaleASM);
-	//NyaHookLib::Patch(0x4E3007, &fResMultWithNewHudScale); // text sizes
-	NyaHookLib::Patch(0x4DFDDE + 2, &fTextCenteringMult); // center text mult
+
+	// menu
+	NyaHookLib::Patch(0x4E0192 + 2, &fResMultWithNewHudScale); // menu title text
+	NyaHookLib::Patch(0x4E28B4 + 2, &fResMultWithNewHudScale); // fix TITLE_CENTER_X in menus
+	NyaHookLib::Patch(0x4DFDDE + 2, &fTextCenteringMult); // centered menu items
+	NyaHookLib::Patch(0x457AC3 + 2, &f43AspectCorrection_inv_flt); // credits text
+
+	// ingame hud
+	NyaHookLib::Patch(0x450F6A + 2, &f43AspectCorrection_inv_flt); // speedometer scaling
+	NyaHookLib::Patch(0x45B237 + 2, &f43AspectCorrection_inv_flt); // countdown scaling
+	NyaHookLib::Patch(0x454D82 + 2, &f43AspectCorrection_inv_flt); // text justify
+	NyaHookLib::Patch(0x454B2F + 2, &f43AspectCorrection_inv_flt); // total time text
+	return;
 
 	std::ifstream t("Config/WindowFunctions.bed");
 	if (t.is_open()) {

@@ -205,7 +205,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarResetPatches();
 			ApplyCarDatabasePatches();
 			ApplyNitroGainPatches();
-			//ApplyUltrawidePatches(); // todo finish this
+			ApplyUltrawidePatches();
 			ApplyIngameMapPatches();
 			ApplyXInputPatches();
 			ApplyAIExtenderPatches();
