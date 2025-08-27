@@ -267,6 +267,10 @@ void AddCrashBonus(Player* pPlayer, int type) {
 			GetAchievement("BLAST_ALL")->fInternalProgress += 1;
 		}
 
+		if (bIsInMultiplayer) {
+			ChloeNet::OnCrashBonus(type);
+		}
+
 		if (nShowBonus) {
 			HUD_DamageMeter[playerId].aCrashBonuses.push_back(str);
 		}

@@ -87,6 +87,37 @@ int __thiscall ResetCarNew(Player* pPlayer, int a2) {
 	return 1;
 }
 
+float fMaxSpeedWhenResetAllowed = 10;
+uint32_t __fastcall ResetSpeedCheck(Car* car) {
+	return car->GetVelocity()->Length() > fMaxSpeedWhenResetAllowed;
+}
+
+uintptr_t ResetSpeedCheckASM_jmp = 0x448764;
+void __attribute__((naked)) ResetSpeedCheckASM() {
+	__asm__ (
+		//"push eax\n\t"
+		"push ecx\n\t"
+		"push edx\n\t"
+		"push ebx\n\t"
+		"push ebp\n\t"
+		"push esi\n\t"
+		"push edi\n\t"
+		"mov ecx, ebp\n\t"
+		"call %1\n\t"
+		"pop edi\n\t"
+		"pop esi\n\t"
+		"pop ebp\n\t"
+		"pop ebx\n\t"
+		"pop edx\n\t"
+		"pop ecx\n\t"
+		//"pop eax\n\t"
+		"cmp eax, 1\n\t"
+		"jmp %0\n\t"
+			:
+			:  "m" (ResetSpeedCheckASM_jmp), "i" (ResetSpeedCheck)
+	);
+}
+
 void ApplyCarResetPatches() {
 	NyaHookLib::Patch(0x6605CC, &ResetCarNew);
 
@@ -94,4 +125,7 @@ void ApplyCarResetPatches() {
 	// nTimeRagdolled > 2000 -> nIsRagdolled > 0
 	NyaHookLib::Patch(0x448727, 0x33C);
 	NyaHookLib::Patch(0x448727 + 4, 0);
+
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x448731, &ResetSpeedCheckASM);
+	NyaHookLib::Patch<uint8_t>(0x448764, 0x74);
 }

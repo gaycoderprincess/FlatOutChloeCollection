@@ -6,7 +6,7 @@ public:
 		aGameHUD.push_back(this);
 	}
 
-	bool IsRaceHUDUp() {
+	static bool IsRaceHUDUp() {
 		if (GetScoreManager()->nHideRaceHUD) return false;
 		return true;
 	}

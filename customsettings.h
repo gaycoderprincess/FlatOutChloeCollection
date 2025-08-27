@@ -3,7 +3,6 @@ tGameSetting aNewGameSettings[] = {
 		{ "Game", "ImperialUnits", (void*)0x6C027C, 1, 0, 0 },
 		{ "Game", "OverlayGauges", (void*)0x6C0280, 1, 0, 0 },
 		{ "Game", "IngameMap", (void*)0x6C0284, 1, 0, 0 },
-		{ "Game", "Ragdoll", (void*)0x6C0288, 1, 0, 0 },
 		{ "Game", "DefaultPlayerName", (void*)0x6C02B0, 3, 0, 0 },
 		{ "Game", "Camera", (void*)0x6C029C, 0, 0, 9 },
 		{ "Game", "UseNewLoadingScreen", &nUseNewLoadingScreen, 1, 0, 0 },

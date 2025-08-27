@@ -107,6 +107,7 @@ namespace CarnageRace {
 	}
 
 	void OnCrashBonus(Player* pPlayer, int type) {
+		if (!bIsCarnageRace) return;
 		if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) return;
 		AddScore(GetCrashBonusName(type), GetCrashBonusPrice(type));
 	}

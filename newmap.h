@@ -120,6 +120,7 @@ void DrawPlayerOnIngameMap(Player* ply) {
 
 void DrawIngameMap() {
 	if (!nIngameMap) return;
+	if (!bIsInMultiplayer && !CIngameHUDElement::IsRaceHUDUp()) return;
 
 	if (pIngameMapTexture) {
 		float left, right, top, bottom;

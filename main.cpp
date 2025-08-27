@@ -11,6 +11,7 @@
 #include "../nya-common-fouc/fo2versioncheck.h"
 #include "../FlatOutTimeTrialGhosts/include/chloetimetrial.h"
 #include "chloemenulib.h"
+#include "include/chloenet.h"
 
 void WriteLog(const std::string& str) {
 	static auto file = std::ofstream("FlatOutChloeCollection_gcp.log");
@@ -124,6 +125,7 @@ void SetHandlingMode() {
 
 void CustomSetterThread() {
 	pGameFlow->nAutoTransmission = !nTransmission;
+	nRagdoll = 1;
 
 	SetWindowedMode();
 	SetHandlingDamage();
@@ -144,6 +146,12 @@ void CustomSetterThread() {
 void OnFilesystemInit() {
 	NewMusicPlayer::Init();
 	ApplyCarDealerPatches();
+
+	// d3d hooks done later so the custommp chat ui has priority
+	NyaFO2Hooks::PlaceD3DHooks();
+	NyaFO2Hooks::aEndSceneFuncs.push_back(CustomSetterThread);
+	NyaFO2Hooks::aEndSceneFuncs.push_back(D3DHookMain);
+	NyaFO2Hooks::aD3DResetFuncs.push_back(OnD3DReset);
 }
 
 void CommandlineArgReader(void* a1, const char* a2) {
@@ -188,10 +196,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 			srand(time(0));
 
-			NyaFO2Hooks::PlaceD3DHooks();
-			NyaFO2Hooks::aEndSceneFuncs.push_back(CustomSetterThread);
-			NyaFO2Hooks::aEndSceneFuncs.push_back(D3DHookMain);
-			NyaFO2Hooks::aD3DResetFuncs.push_back(OnD3DReset);
 			NyaFO2Hooks::PlaceWndProcHook();
 			NyaFO2Hooks::aWndProcFuncs.push_back(WndProcHook);
 
