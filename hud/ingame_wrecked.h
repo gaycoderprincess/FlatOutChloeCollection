@@ -74,22 +74,27 @@ public:
 			DrawWreckedNotif();
 		}
 	}
+
+	void AddNotif(const std::string& notif) {
+		if (!aNotifs.empty() && aNotifs[aNotifs.size()-1] == notif) return; // ignore immediate duplicates
+		aNotifs.push_back(notif);
+	}
 } HUD_Wrecked;
 
 void AddWreckedNotif(Player* pPlayer) {
 	if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
-		HUD_Wrecked.aNotifs.push_back("YOU ARE WRECKED!");
+		HUD_Wrecked.AddNotif("YOU ARE WRECKED!");
 	}
 	else {
-		HUD_Wrecked.aNotifs.push_back(std::format("{}\nIS WRECKED", GetStringNarrow(pPlayer->sPlayerName.Get())));
+		HUD_Wrecked.AddNotif(std::format("{}\nIS WRECKED", GetStringNarrow(pPlayer->sPlayerName.Get())));
 	}
 }
 
 void AddTimeoutNotif(Player* pPlayer) {
 	if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
-		HUD_Wrecked.aNotifs.push_back("OUT OF TIME!");
+		HUD_Wrecked.AddNotif("OUT OF TIME!");
 	}
 	else {
-		HUD_Wrecked.aNotifs.push_back(std::format("{}\nRAN OUT OF TIME", GetStringNarrow(pPlayer->sPlayerName.Get())));
+		HUD_Wrecked.AddNotif(std::format("{}\nRAN OUT OF TIME", GetStringNarrow(pPlayer->sPlayerName.Get())));
 	}
 }
