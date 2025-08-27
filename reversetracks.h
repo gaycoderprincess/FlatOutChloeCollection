@@ -1,12 +1,17 @@
 bool bIsTrackReversed = false;
 
+int GetReversedSplitID(int id, int max) {
+	if (id != max) return max - id;
+	return id;
+}
+
 void __cdecl GetSplitpointIDReversed(void* a1, int a2, int a3) {
 	if (bIsTrackReversed) {
 		// count 5
 		// 1 2 3 4 5
 		// 4 3 2 1 5
 
-		if (a3 != pEnvironment->nNumSplitpoints) a3 = pEnvironment->nNumSplitpoints - a3;
+		a3 = GetReversedSplitID(a3, pEnvironment->nNumSplitpoints);
 	}
 	lua_rawgeti(a1, a2, a3);
 }

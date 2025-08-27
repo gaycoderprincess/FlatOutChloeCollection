@@ -694,11 +694,33 @@ int ChloeCareerDefs_SetCupWinnings(void* a1) {
 	return 0;
 }
 
+int nNumNormalTracks[128] = {};
+int nNumReverseTracks[128] = {};
+
 int ChloeCareerDefs_AddRace(void* a1) {
 	CareerMode::tLUAClass::tCup::tRace race;
 	race.nLevel = luaL_checknumber(a1, 1);
+	if (nNumNormalTracks[race.nLevel]++) {
+		WriteLog(std::format("Career dev note: {} appears {} times", GetTrackName(race.nLevel), nNumNormalTracks[race.nLevel]));
+	}
 	race.nLaps = luaL_checknumber(a1, 2);
 	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
+	race.bReversed = false;
+	race.bIsDerby = false;
+	race.bIsTimeTrial = false;
+	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
+	return 0;
+}
+
+int ChloeCareerDefs_AddRaceReversed(void* a1) {
+	CareerMode::tLUAClass::tCup::tRace race;
+	race.nLevel = luaL_checknumber(a1, 1);
+	if (nNumNormalTracks[race.nLevel]++) {
+		WriteLog(std::format("Career dev note: Reversed {} appears {} times", GetTrackName(race.nLevel), nNumNormalTracks[race.nLevel]));
+	}
+	race.nLaps = luaL_checknumber(a1, 2);
+	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
+	race.bReversed = true;
 	race.bIsDerby = false;
 	race.bIsTimeTrial = false;
 	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
@@ -710,6 +732,7 @@ int ChloeCareerDefs_AddDerby(void* a1) {
 	race.nLevel = luaL_checknumber(a1, 1);
 	race.nLaps = luaL_checknumber(a1, 2);
 	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
+	race.bReversed = false;
 	race.bIsDerby = true;
 	race.bIsTimeTrial = false;
 	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
@@ -721,6 +744,7 @@ int ChloeCareerDefs_AddTimeTrial(void* a1) {
 	race.nLevel = luaL_checknumber(a1, 1);
 	race.nLaps = luaL_checknumber(a1, 2);
 	race.nAIHandicapLevel = 1;
+	race.bReversed = false;
 	race.bIsDerby = false;
 	race.bIsTimeTrial = true;
 	race.nTimeTrialCar = luaL_checknumber(a1, 3);
@@ -1233,6 +1257,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetAIUpgradeLevel, "ChloeCareerDefs_SetAIUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_SetCupWinnings, "ChloeCareerDefs_SetCupWinnings");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddRace, "ChloeCareerDefs_AddRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddRaceReversed, "ChloeCareerDefs_AddRaceReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddDerby, "ChloeCareerDefs_AddDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddTimeTrial, "ChloeCareerDefs_AddTimeTrial");
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCupsCompleted, "ChloeProfiles_GetProfileCupsCompleted");

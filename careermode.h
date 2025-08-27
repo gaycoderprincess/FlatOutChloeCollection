@@ -11,6 +11,7 @@ namespace CareerMode {
 				int nLevel;
 				int nLaps;
 				int nAIHandicapLevel; // NOTE this can be -1 for derbies!!
+				bool bReversed : 1;
 				bool bIsDerby : 1;
 				bool bIsTimeTrial : 1;
 				int nTimeTrialCar;

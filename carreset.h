@@ -46,6 +46,8 @@ NyaMat4x4* pPlayerResetpoint = nullptr;
 NyaMat4x4* GetClosestResetpoint(NyaVec3 pos, int split, float maxDist = 99999) {
 	if (aNewResetPoints.empty()) return nullptr;
 
+	if (bIsTrackReversed) split = GetReversedSplitID(split, pEnvironment->nNumSplitpoints);
+
 	float dist = maxDist;
 	NyaMat4x4* out = nullptr;
 	for (auto& reset : aNewResetPoints) {
@@ -90,7 +92,7 @@ void ProcessCarReset(int player, float delta) {
 		if (fCarResetFadeTimer[player] >= 1) {
 			if (!IsPlayerWrecked(ply)) {
 				ply->ResetCar(ply, 0);
-				if (player == 0 && pPlayerResetpoint && !bIsTrackReversed) {
+				if (player == 0 && pPlayerResetpoint) {
 					auto reset = *pPlayerResetpoint;
 					if (bIsTrackReversed) {
 						reset.x.x *= -1; // x.x
