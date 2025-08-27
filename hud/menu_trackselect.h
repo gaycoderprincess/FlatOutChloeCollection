@@ -398,7 +398,7 @@ public:
 		return str;
 	}
 
-	static void DisplayTrackInfo(int trackId) {
+	static void DisplayTrackInfo(int trackId, float fXOffset = 0, int nXOffset = 0) {
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
 		static auto textureTrackLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
@@ -406,6 +406,14 @@ public:
 
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
 		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/track_name_icons.bed", "track_name_icons");
+
+		auto bakCarName = gCarName;
+		auto bakEvent = gEvent;
+		auto bakMap = gMap;
+
+		gCarName.fPosX += fXOffset;
+		gEvent.nPosX += nXOffset;
+		gMap.nPosX += nXOffset;
 
 		if (auto logo = GetHUDData(gCarLogos, GetTrackLogoPath(trackId))) {
 			DrawRectangle(1.0 - (gCarName.fPosX + gCarName.fSize * fCarNameAspect) * GetAspectRatioInv(),
@@ -431,6 +439,10 @@ public:
 			int y2 = gMap.nPosY + gMap.fSize;
 			Draw1080pSprite(JUSTIFY_RIGHT, x1, x2, y1, y2, {255,255,255,255}, trackMap);
 		}
+
+		gCarName = bakCarName;
+		gEvent = bakEvent;
+		gMap = bakMap;
 	}
 
 	virtual void Reset() {

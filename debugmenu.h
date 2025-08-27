@@ -168,6 +168,8 @@ void ProcessDebugMenu() {
 	QuickValueEditor("nOptionSpacing", Menu_Multiplayer_Lobby.nOptionSpacing);
 	QuickValueEditor("nOptionSpacing2", Menu_Multiplayer_Lobby.nOptionSpacing2);
 	QuickValueEditor("fOptionTextSize", Menu_Multiplayer_Lobby.fOptionTextSize);
+	QuickValueEditor("fTrackPreviewX", Menu_Multiplayer_Lobby.fTrackPreviewX);
+	QuickValueEditor("nTrackPreviewX", Menu_Multiplayer_Lobby.nTrackPreviewX);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

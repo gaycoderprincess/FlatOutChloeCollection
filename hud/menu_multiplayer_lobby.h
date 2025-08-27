@@ -25,18 +25,21 @@ public:
 	int nPlayerCarX = 560;
 	int nPlayerPingX = 860;
 
-	int nPlayerStartY = 200;
+	int nPlayerStartY = 220;
 	int nPlayerListSpacing = 48;
-	float fPlayerListTextSize = 0.045;
+	float fPlayerListTextSize = 0.042;
 
-	int nOptionX = 1150;
-	int nOptionStartY = 200;
-	int nOptionSpacing = 32;
-	int nOptionSpacing2 = 48;
+	int nOptionX = 1095;
+	int nOptionStartY = 219;
+	int nOptionSpacing = 30;
+	int nOptionSpacing2 = 39;
 	float fOptionTextSize = 0.04;
 
-	virtual void Init() {
+	float fTrackPreviewX = -0.149;
+	int nTrackPreviewX = 160;
 
+	virtual void Init() {
+		PreloadTexture("data/menu/mpmenubg.png");
 	}
 
 	void DrawPlayerInfo(int y, const std::string& ready, const std::string& name, const std::string& car, const std::string& ping) {
@@ -59,7 +62,10 @@ public:
 		if (!bEnabled) return;
 		if (!bIsInMultiplayer) return;
 
-		CMenu_TrackSelect::DisplayTrackInfo(nTrackId);
+		static auto textureRight = LoadTextureFromBFS("data/menu/mpmenubg.png");
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+
+		CMenu_TrackSelect::DisplayTrackInfo(nTrackId, fTrackPreviewX, nTrackPreviewX);
 
 		int y = 0;
 		DrawPlayerInfo(y++, std::format("{}/{} READY", nNumPlayersReady, nNumPlayers), "NAME", "CAR", "PING");

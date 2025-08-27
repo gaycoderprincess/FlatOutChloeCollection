@@ -288,7 +288,7 @@ int ChloeHUD_MultiplayerLobby_SetPlayerInfo(void* a1) {
 	ply->ready = luaL_checknumber(a1, 4);
 	ply->ping = luaL_checknumber(a1, 5);
 	if (lua_type(a1, 6)) {
-		ply->carTitle = (const char *) lua_tolstring(a1, 6);
+		ply->carTitle = (const char*)lua_tolstring(a1, 6);
 	}
 	else {
 		ply->carTitle = "";
