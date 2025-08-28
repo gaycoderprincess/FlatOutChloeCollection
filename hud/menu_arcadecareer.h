@@ -170,7 +170,7 @@ public:
 		data.x = gLevelType.nPosX;
 		data.y = gLevelType.nPosY;
 		data.size = gLevelType.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION RUSH", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION", &DrawStringFO2_Small);
 		data.x = gTotalScore.nPosX;
 		data.y = gTotalScore.nPosY;
 		data.size = gTotalScore.fSize;

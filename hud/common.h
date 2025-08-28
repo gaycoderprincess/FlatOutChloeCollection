@@ -86,7 +86,10 @@ public:
 	enum eJustify {
 		JUSTIFY_LEFT,
 		JUSTIFY_CENTER,
-		JUSTIFY_RIGHT
+		JUSTIFY_RIGHT,
+		JUSTIFY_480P_LEFT,
+		JUSTIFY_480P_CENTER,
+		JUSTIFY_480P_RIGHT
 	};
 
 	static void DoJustify(eJustify justify, float& x, float& y) {
@@ -119,6 +122,38 @@ public:
 
 				// aspect correction
 				x *= 16.0 / 9.0;
+				x /= GetAspectRatio();
+
+				// recenter
+				x = 1 - x;
+				break;
+			case JUSTIFY_480P_LEFT:
+				x /= 640.0;
+				y /= 480.0;
+
+				// aspect correction
+				x *= 4.0 / 3.0;
+				x /= GetAspectRatio();
+				break;
+			case JUSTIFY_480P_CENTER:
+				x -= 320;
+				x /= 640.0;
+				y /= 480.0;
+
+				// aspect correction
+				x *= 4.0 / 3.0;
+				x /= GetAspectRatio();
+
+				// recenter
+				x += 0.5;
+				break;
+			case JUSTIFY_480P_RIGHT:
+				x = 640 - x;
+				x /= 640.0;
+				y /= 480.0;
+
+				// aspect correction
+				x *= 4.0 / 3.0;
 				x /= GetAspectRatio();
 
 				// recenter
@@ -202,6 +237,7 @@ public:
 	}
 
 	virtual void Init() {}
+	virtual void InitHooks() {}
 	virtual void Reset() {}
 	virtual void Process() = 0;
 };

@@ -10,7 +10,8 @@ void HookLoop() {
 		return;
 	}
 
-	ChloeMenuHud::Init();
+	if (Menu_LoadingScreen.bHasRun) ChloeMenuHud::Init();
+	ChloeMenuHud::InitHooks();
 	ChloeMenuHud::OnTick();
 	NewGameHud::Init();
 	NewGameHud::OnTick();

@@ -31,6 +31,16 @@ namespace ChloeMenuHud {
 		}
 	}
 
+	void InitHooks() {
+		static bool bInited = false;
+		if (bInited) return;
+		bInited = true;
+
+		for (auto& hud : CMenuHUDElement::aMenuHUD) {
+			hud->InitHooks();
+		}
+	}
+
 	void EnterMenu(CMenuHUDElement* menu) {
 		for (auto& hud : CMenuHUDElement::aMenuHUD) {
 			hud->bEnabled = false;

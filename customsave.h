@@ -75,6 +75,8 @@ struct tCustomSaveStructure {
 		uint16_t car;
 		uint16_t level;
 	} aArcadeRaceVerify[nNumArcadeRaces];
+	uint32_t bestLapsReversed[256];
+	uint32_t bestLapCarsReversed[256];
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -215,6 +217,7 @@ struct tCustomSaveStructure {
 	}
 } gCustomSave;
 
+bool bLapRecordJustRegistered = false;
 void ProcessPlayStats() {
 	static CNyaTimer gTimer;
 	gTimer.Process();
@@ -246,18 +249,20 @@ void ProcessPlayStats() {
 
 		if (pGameFlow->nEventType == eEventType::RACE) {
 			for (int j = 0; j < pPlayerHost->GetNumPlayers(); j++) {
-				if (GetPlayer(j)->nPlayerType != PLAYERTYPE_LOCAL) continue;
+				auto ply = GetPlayer(j);
+				if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
 
-				auto ply = GetPlayerScore<PlayerScoreRace>(j+1);
+				auto bestLaps = bIsTrackReversed ? gCustomSave.bestLapsReversed : gCustomSave.bestLaps;
+				auto bestLapCars = bIsTrackReversed ? gCustomSave.bestLapCarsReversed : gCustomSave.bestLapCars;
+
 				for (int i = 0; i < ply->nCurrentLap; i++) {
-					auto lap = ply->nLapTimes[i];
-					if (lap <= 0) continue;
-					if (i > 0) lap -= ply->nLapTimes[i - 1];
+					auto lap = GetPlayerLapTime(ply, i);
 					if (lap <= 0) continue;
 
-					if (!gCustomSave.bestLaps[track] || lap < gCustomSave.bestLaps[track]) {
-						gCustomSave.bestLaps[track] = lap;
-						gCustomSave.bestLapCars[track] = GetPlayer(j)->nCarId;
+					if (!bestLaps[track] || lap < bestLaps[track]) {
+						bestLaps[track] = lap;
+						bestLapCars[track] = ply->nCarId;
+						bLapRecordJustRegistered = true;
 						changed = true;
 					}
 				}

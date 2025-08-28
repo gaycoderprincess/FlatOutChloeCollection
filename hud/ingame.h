@@ -27,6 +27,22 @@ public:
 		DrawStringFO2_Ingame24(data, value);
 	}
 
+	static void DrawElementCustomX(eJustify justify, int x, float y, const std::string& title, const std::string& value, const NyaDrawing::CNyaRGBA32 rgb = {255,255,255,255}) {
+		float x2 = x, tmp;
+		DoJustify(justify, x2, tmp);
+
+		tNyaStringData data;
+		data.x = x2;
+		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
+		data.size = gElementBase.fSize;
+		data.SetColor(GetPaletteColor(18));
+		data.a = rgb.a;
+		DrawStringFO2_Ingame12(data, title);
+		data.y += gElementBase.fSpacingY;
+		data.SetColor(rgb);
+		DrawStringFO2_Ingame24(data, value);
+	}
+
 	static void DrawElementCenter(float y, const std::string& title, const std::string& value, const NyaDrawing::CNyaRGBA32 rgb = {255,255,255,255}) {
 		tNyaStringData data;
 		data.x = 0.5;
@@ -118,3 +134,4 @@ namespace NewGameHud {
 #include "ingame_contacttimer.h"
 #include "ingame_wrecked.h"
 #include "ingame_arcademode.h"
+#include "ingame_laptime.h"

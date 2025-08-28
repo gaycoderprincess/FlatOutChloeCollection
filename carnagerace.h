@@ -121,8 +121,6 @@ namespace CarnageRace {
 
 		// hud changes
 		NyaHookLib::Patch<uint64_t>(0x454AFC, apply ? 0xE0A190000001EEE9 : 0xE0A1000001ED850F); // remove total time
-		NyaHookLib::Patch<uint8_t>(0x4551E9, apply ? 0xEB : 0x74); // remove lap time title
-		NyaHookLib::Patch<uint8_t>(0x45578E, apply ? 0xEB : 0x74); // remove lap time counter
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4553FA, apply ? 0x4F0843 : 0x4F0810); // remove lap count title
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x455543, apply ? 0x4F0843 : 0x4F0810); // remove lap count number
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x455597, apply ? 0x4F0843 : 0x4F0810); // remove lap count max
@@ -259,14 +257,7 @@ namespace CarnageRace {
 			int timeLeft = fPlayerTimeLeft*1000;
 			if (timeLeft < 0) timeLeft = 0;
 
-			std::string timeLeftString = GetTimeFromMilliseconds(timeLeft, true);
-			timeLeftString.pop_back();
-			// leading zero
-			if (fPlayerTimeLeft < 60 * 10) {
-				timeLeftString = "0" + timeLeftString;
-			}
-
-			DrawElement(0, "TIME LEFT", timeLeftString, timeLeft <= 4500 ? NyaDrawing::CNyaRGBA32(200,0,0,255) : NyaDrawing::CNyaRGBA32(255,255,255,255));
+			DrawElement(0, "TIME LEFT", FormatGameTime(timeLeft), timeLeft <= 4500 ? NyaDrawing::CNyaRGBA32(200,0,0,255) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			//DrawElement(0, "TIME LEFT", timeLeftString, timeLeft <= 4500 ? GetPaletteColor(22) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			DrawElement(1, "SCORE", FormatScore(nPlayerScore));
 

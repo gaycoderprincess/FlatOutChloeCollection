@@ -2,6 +2,8 @@ class CMenu_LoadingScreen : public CMenuHUDElement {
 public:
 	virtual const char* GetName() { return "menu_loadingscreen"; }
 
+	bool bHasRun = false;
+
 	static constexpr float fLoadingSpriteX = 0.07;
 	static constexpr float fLoadingSpriteY = 0.8;
 	static constexpr float fLoadingSpriteSize = 0.15;
@@ -69,6 +71,16 @@ public:
 	}
 
 	virtual void Process() {
+		if (!bHasRun) {
+			static auto tex = LoadTextureFromBFS("data/menu/copyright_cc.png");
+			if (tex) {
+				DrawRectangle(0, 1, 0, 1, {0,0,0,255});
+				Draw1080pSprite(JUSTIFY_480P_CENTER, 0, 640, 0, 480, {255, 255, 255, 255}, tex);
+			}
+			bHasRun = true;
+			return;
+		}
+
 		if (!nUseNewLoadingScreen) return;
 
 		if (!pLoadingScreen) return;
@@ -101,7 +113,9 @@ public:
 
 		DrawRectangle(1.0 - ((fLoadingSpriteX + fLoadingSpriteSize) * GetAspectRatioInv()), 1.0 - (fLoadingSpriteX * GetAspectRatioInv()), fLoadingSpriteY, fLoadingSpriteY + fLoadingSpriteSize, {255,255,255,255}, 0, loadingAnim, 0, loadingAnims[nLoadingSprite].min, loadingAnims[nLoadingSprite].max);
 
-		Draw1080pSprite(JUSTIFY_CENTER, 960 - 256, 960 + 256, nLoadingLogoY, nLoadingLogoY + 166, {255,255,255,255}, gameLogo);
+		int nLoadingLogoSizeX = 512;
+		int nLoadingLogoSizeY = 166;
+		Draw1080pSprite(JUSTIFY_CENTER, 960 - (nLoadingLogoSizeX/2), 960 + (nLoadingLogoSizeX/2), nLoadingLogoY, nLoadingLogoY + nLoadingLogoSizeY, {255,255,255,255}, gameLogo);
 
 		tNyaStringData data;
 		data.x = nLoadingTextX;
@@ -150,7 +164,7 @@ public:
 		);
 	}
 
-	virtual void Init() {
+	virtual void InitHooks() {
 		OnLoadToMenuASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x452458, &OnLoadToMenuASM);
 		OnLoadToRaceASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x451CAE, &OnLoadToRaceASM);
 	}

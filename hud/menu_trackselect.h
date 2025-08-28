@@ -487,7 +487,18 @@ public:
 			data.XCenterAlign = true;
 			Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", sStuntPB), &DrawStringFO2_Ingame12);
 		}
-		else if (gCustomSave.bestLaps[trackId]) {
+		else if (nTrackReversed && gCustomSave.bestLapsReversed[trackId]) {
+			auto str = GetTimeFromMilliseconds(gCustomSave.bestLapsReversed[trackId], true);
+			str.pop_back();
+
+			tNyaStringData data;
+			data.x = gLevelPB.nPosX;
+			data.y = gLevelPB.nPosY;
+			data.size = gLevelPB.fSize;
+			data.XCenterAlign = true;
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", str, GetCarName(gCustomSave.bestLapCarsReversed[trackId]+1)), &DrawStringFO2_Ingame12);
+		}
+		else if (!nTrackReversed && gCustomSave.bestLaps[trackId]) {
 			auto str = GetTimeFromMilliseconds(gCustomSave.bestLaps[trackId], true);
 			str.pop_back();
 

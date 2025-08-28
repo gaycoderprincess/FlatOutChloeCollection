@@ -49,6 +49,27 @@ std::string FormatScore(int a1) {
 	return std::format("{},{:03}", v4, a1 % 1000);
 }
 
+std::string FormatGameTime(int ms) {
+	if (ms < 0) ms = 0;
+	std::string str = GetTimeFromMilliseconds(ms, true);
+	str.pop_back(); // remove trailing zero
+	// add leading zero
+	if (ms < 60 * 10 * 1000) {
+		str = "0" + str;
+	}
+	return str;
+}
+
+int32_t GetPlayerLapTime(Player* ply, int lapId) {
+	if (lapId > ply->nCurrentLap) return 0;
+
+	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+	auto lap = score->nLapTimes[lapId];
+	if (lap <= 0) return 0;
+	if (lapId > 0) lap -= score->nLapTimes[lapId - 1];
+	return lap;
+}
+
 #include "mallochook.h"
 #include "events.h"
 #include "filereader.h"

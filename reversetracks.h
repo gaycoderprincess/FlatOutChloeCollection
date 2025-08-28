@@ -1,5 +1,3 @@
-bool bIsTrackReversed = false;
-
 int GetReversedSplitID(int id, int max) {
 	if (id != max) return max - id;
 	return id;

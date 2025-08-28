@@ -54,7 +54,7 @@ namespace CareerMode {
 	tPlayerResult aPlayerResults[nNumCareerMaxPlayers];
 	bool bPlayerResultsApplied = false;
 
-	auto GetCurrentCup() {
+	tLUAClass::tCup* GetCurrentCup() {
 		if (gCustomSave.nCareerClass < 1 || gCustomSave.nCareerClass > 3) {
 			WriteLog(std::format("FATAL: gCustomSave.nCareerClass has invalid value {}", gCustomSave.nCareerClass));
 			return nullptr;

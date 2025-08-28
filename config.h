@@ -57,6 +57,8 @@ bool bMultiplayerNitroRegen = false;
 float fMultiplayerUpgradeLevel = 0.0;
 float fMultiplayerDamageLevel = 1.0;
 
+bool bIsTrackReversed = false;
+
 namespace CareerMode {
 	bool IsCareerTimeTrial();
 }
