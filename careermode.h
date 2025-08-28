@@ -55,6 +55,21 @@ namespace CareerMode {
 	bool bPlayerResultsApplied = false;
 
 	auto GetCurrentCup() {
+		if (gCustomSave.nCareerClass < 1 || gCustomSave.nCareerClass > 3) {
+			WriteLog(std::format("FATAL: gCustomSave.nCareerClass has invalid value {}", gCustomSave.nCareerClass));
+			return nullptr;
+		}
+
+		if (gCustomSave.nCareerEvent > aLUACareerClasses[gCustomSave.nCareerClass-1].aEvents.size()) {
+			WriteLog(std::format("FATAL: gCustomSave.nCareerEvent has invalid value {}", gCustomSave.nCareerEvent));
+			return nullptr;
+		}
+
+		if (gCustomSave.nCareerCup != 64 && gCustomSave.nCareerCup > aLUACareerClasses[gCustomSave.nCareerClass-1].aCups.size()) {
+			WriteLog(std::format("FATAL: gCustomSave.nCareerCup has invalid value {}", gCustomSave.nCareerCup));
+			return nullptr;
+		}
+
 		if (gCustomSave.nCareerEvent > 0) return &aLUACareerClasses[gCustomSave.nCareerClass-1].aEvents[gCustomSave.nCareerEvent-1];
 		if (gCustomSave.nCareerCup == 64) return &aLUACareerClasses[gCustomSave.nCareerClass-1].Finals;
 		return &aLUACareerClasses[gCustomSave.nCareerClass-1].aCups[gCustomSave.nCareerCup-1];
@@ -63,7 +78,11 @@ namespace CareerMode {
 	tLUAClass::tCup::tRace* GetCurrentRace() {
 		auto cup = GetCurrentCup();
 		if (!cup) return nullptr;
-		return &GetCurrentCup()->aRaces[gCustomSave.nCareerCupNextEvent];
+		if (gCustomSave.nCareerCupNextEvent >= cup->aRaces.size()) {
+			WriteLog(std::format("FATAL: gCustomSave.nCareerCupNextEvent has invalid value {}", gCustomSave.nCareerCupNextEvent));
+			return nullptr;
+		}
+		return &cup->aRaces[gCustomSave.nCareerCupNextEvent];
 	}
 
 	tCustomSaveStructure::tCareerClass::tCareerCup* GetCurrentSaveCup() {

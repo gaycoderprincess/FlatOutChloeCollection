@@ -723,6 +723,17 @@ int ChloeCareerDefs_AddRaceReversed(void* a1) {
 	return 0;
 }
 
+bool bCareerDefsFinished = false;
+int ChloeCareerDefs_FinishCareerDefs(void* a1) {
+	bCareerDefsFinished = true;
+	return 0;
+}
+
+int ChloeCareerDefs_AreCareerDefsRegistered(void* a1) {
+	lua_pushboolean(a1, bCareerDefsFinished);
+	return 1;
+}
+
 int ChloeCareerDefs_TallyUsage(void* a1) {
 	static bool bOnce = false;
 	if (bOnce) return 0;
@@ -1108,6 +1119,17 @@ int ChloeArcadeDefs_SetEventAIHandicapLevel(void* a1) {
 	return 0;
 }
 
+bool bArcadeDefsFinished = false;
+int ChloeArcadeDefs_FinishArcadeDefs(void* a1) {
+	bArcadeDefsFinished = true;
+	return 0;
+}
+
+int ChloeArcadeDefs_AreArcadeDefsRegistered(void* a1) {
+	lua_pushboolean(a1, bArcadeDefsFinished);
+	return 1;
+}
+
 int ChloeCollection_SetIsInMultiplayer(void* a1) {
 	bIsInMultiplayer = luaL_checknumber(a1, 1);
 	return 0;
@@ -1278,6 +1300,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddRaceReversed, "ChloeCareerDefs_AddRaceReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddDerby, "ChloeCareerDefs_AddDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddTimeTrial, "ChloeCareerDefs_AddTimeTrial");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_FinishCareerDefs, "ChloeCareerDefs_FinishCareerDefs");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AreCareerDefsRegistered, "ChloeCareerDefs_AreCareerDefsRegistered");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_TallyUsage, "ChloeCareerDefs_TallyUsage");
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCupsCompleted, "ChloeProfiles_GetProfileCupsCompleted");
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCupsMax, "ChloeProfiles_GetProfileCupsMax");
@@ -1328,6 +1352,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventUpgradeLevel, "ChloeArcadeDefs_SetEventUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventAIUpgradeLevel, "ChloeArcadeDefs_SetEventAIUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventAIHandicapLevel, "ChloeArcadeDefs_SetEventAIHandicapLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_FinishArcadeDefs, "ChloeArcadeDefs_FinishArcadeDefs");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_AreArcadeDefsRegistered, "ChloeArcadeDefs_AreArcadeDefsRegistered");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsInMultiplayer, "ChloeCollection_SetIsInMultiplayer");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerHandlingMode, "ChloeCollection_SetMultiplayerHandlingMode");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerNitroOn, "ChloeCollection_SetMultiplayerNitroOn");

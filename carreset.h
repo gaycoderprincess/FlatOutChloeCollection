@@ -46,7 +46,7 @@ NyaMat4x4* pPlayerResetpoint = nullptr;
 NyaMat4x4* GetClosestResetpoint(NyaVec3 pos, int split, float maxDist = 99999) {
 	if (aNewResetPoints.empty()) return nullptr;
 
-	if (bIsTrackReversed) split = GetReversedSplitID(split, pEnvironment->nNumSplitpoints);
+	if (bIsTrackReversed) split = (pEnvironment->nNumSplitpoints - 1) - split;
 
 	float dist = maxDist;
 	NyaMat4x4* out = nullptr;
