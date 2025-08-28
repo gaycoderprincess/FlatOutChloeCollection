@@ -5,7 +5,9 @@ struct tResetpoint {
 std::vector<tResetpoint> aNewResetPoints;
 
 std::string GetResetPointFilename() {
-	return (std::string)"Config/Resets/" + GetTrackName(pGameFlow->nLevel) + (".rst2");
+	auto base = (std::string)"Config/Resets/" + GetTrackName(pGameFlow->nLevel);
+	if (bIsTrackReversed) base += " REVERSED";
+	return base + ".rst2";
 }
 
 void SaveResetPoints(const std::string& filename) {
@@ -45,8 +47,6 @@ void LoadResetPoints() {
 NyaMat4x4* pPlayerResetpoint = nullptr;
 NyaMat4x4* GetClosestResetpoint(NyaVec3 pos, int split, float maxDist = 99999) {
 	if (aNewResetPoints.empty()) return nullptr;
-
-	if (bIsTrackReversed) split = (pEnvironment->nNumSplitpoints - 1) - split;
 
 	float dist = maxDist;
 	NyaMat4x4* out = nullptr;
@@ -93,16 +93,7 @@ void ProcessCarReset(int player, float delta) {
 			if (!IsPlayerWrecked(ply)) {
 				ply->ResetCar(ply, 0);
 				if (player == 0 && pPlayerResetpoint) {
-					auto reset = *pPlayerResetpoint;
-					if (bIsTrackReversed) {
-						reset.x.x *= -1; // x.x
-						reset.x.y *= -1; // x.y
-						reset.x.z *= -1; // x.z
-						reset.z.x *= -1; // z.x
-						reset.z.y *= -1; // z.y
-						reset.z.z *= -1; // z.z
-					}
-					Car::Reset(ply->pCar, &reset.p.x, &reset.x.x);
+					Car::Reset(ply->pCar, &pPlayerResetpoint->p.x, &pPlayerResetpoint->x.x);
 				}
 				if (pGameFlow->nEventType != eEventType::DERBY) {
 					*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * fCarResetSpeed;
