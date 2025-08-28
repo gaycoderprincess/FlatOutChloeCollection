@@ -120,7 +120,7 @@ int ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked(void* a1) {
 }
 
 int ChloeHUD_ArcadeCareer_IsSelectedCupUnlocked(void* a1) {
-	lua_pushboolean(a1, gCustomSave.GetArcadeCareerScore() >= ArcadeMode::aArcadeRaces[Menu_ArcadeCareer.nCursorPos].nPointsToUnlock);
+	lua_pushboolean(a1, ArcadeMode::bAllUnlocked || gCustomSave.GetArcadeCareerScore() >= ArcadeMode::aArcadeRaces[Menu_ArcadeCareer.nCursorPos].nPointsToUnlock);
 	return 1;
 }
 
@@ -1174,6 +1174,32 @@ int ChloeCollection_SetNumSplitScreenCars(void* a1) {
 	return 0;
 }
 
+int ChloeCollection_CheckCheatCode(void* a1) {
+	if (!pMenuEventManager->wsKeyboardInput.Get()) return 0;
+	std::wstring str = pMenuEventManager->wsKeyboardInput.Get();
+	std::transform(str.begin(), str.end(), str.begin(), [](wchar_t c){ return std::tolower(c); });
+	WriteLog(std::format("Cheat entered - {}", GetStringNarrow(str)));
+	if (str == L"givecash") {
+		pGameFlow->Profile.nMoney += 40000;
+	}
+	if (str == L"giveall") {
+		for (auto& classData : gCustomSave.aCareerClasses) {
+			for (auto& cup : classData.aCups) {
+				cup.bUnlocked = true;
+			}
+			for (auto& event : classData.aEvents) {
+				event.bUnlocked = true;
+			}
+			classData.Finals.bUnlocked = true;
+		}
+		for (auto& b : gCustomSave.bCareerClassUnlocked) {
+			b = true;
+		}
+		ArcadeMode::bAllUnlocked = true;
+	}
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -1367,6 +1393,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_CanTrackBeReversed, "ChloeCollection_CanTrackBeReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetTrackReversed, "ChloeCollection_SetTrackReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetNumSplitScreenCars, "ChloeCollection_SetNumSplitScreenCars");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_CheckCheatCode, "ChloeCollection_CheckCheatCode");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

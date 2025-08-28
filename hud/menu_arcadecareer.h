@@ -90,7 +90,7 @@ public:
 		for (int i = 0; i < ArcadeMode::aArcadeRaces.size(); i++) {
 			auto event = &ArcadeMode::aArcadeRaces[i];
 			auto score = gCustomSave.aArcadeCareerScores[i];
-			bool unlocked = totalScore >= event->nPointsToUnlock;
+			bool unlocked = ArcadeMode::bAllUnlocked || totalScore >= event->nPointsToUnlock;
 			int position = 0;
 			if (score >= event->aGoalScores[2]) position = 3;
 			if (score >= event->aGoalScores[1]) position = 2;
@@ -128,7 +128,7 @@ public:
 
 		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
 		auto score = gCustomSave.aArcadeCareerScores[nCursorPos];
-		bool unlocked = totalScore >= event->nPointsToUnlock;
+		bool unlocked = ArcadeMode::bAllUnlocked || totalScore >= event->nPointsToUnlock;
 		int position = 0;
 		if (score >= event->aGoalScores[2]) position = 3;
 		if (score >= event->aGoalScores[1]) position = 2;

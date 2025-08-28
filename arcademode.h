@@ -1,5 +1,6 @@
 namespace ArcadeMode {
 	bool bIsArcadeMode = false;
+	bool bAllUnlocked = false;
 
 	int __fastcall DrawPressStartMenu(IngameMenu* menu) {
 		//if (!ArcadeMode::bIsArcadeMode) return menu->DrawPressStart();

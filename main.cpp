@@ -219,6 +219,8 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::Patch<uint8_t>(0x45A70C, 0x75);
 			NyaHookLib::Patch<uint8_t>(0x45A70F, 0x74);
 
+			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4DA47F, 0x4DA5AB); // disable vanilla cheats system
+
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4D9A93, &CommandlineArgReader);
 			OnFilesystemInitASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A7261, &OnFilesystemInitASM);
 
