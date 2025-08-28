@@ -228,7 +228,9 @@ public:
 			data.y = hud.nPosY;
 			data.size = hud.fSize;
 			for (auto& race : cup->aRaces) {
-				Draw1080pString(JUSTIFY_RIGHT, data, GetTrackName(race.nLevel), &DrawStringFO2_Ingame12);
+				auto name = GetTrackName(race.nLevel);
+				if (race.bReversed) name = "REV " + name;
+				Draw1080pString(JUSTIFY_RIGHT, data, name, &DrawStringFO2_Ingame12);
 				data.y += hud.nSpacingY;
 			}
 		}
