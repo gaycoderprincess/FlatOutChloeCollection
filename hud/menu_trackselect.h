@@ -171,12 +171,25 @@ public:
 		}
 	}
 
-	std::vector<int> GetTrackSelection() {
-		std::vector<int> aTracks;
+	struct tTrackEntry {
+		int level;
+		bool reversed;
+	};
+	std::vector<tTrackEntry> GetTrackSelection() {
+		std::vector<tTrackEntry> aTracks;
 		for (int i = 1; i < GetNumTracks()+1; i++) {
 			if (!DoesTrackExist(i)) continue;
 			if (GetTrackValueNumber(i, "TrackType") == nTrackType) {
-				aTracks.push_back(i);
+				aTracks.push_back({i, false});
+			}
+		}
+		if (aOptions == aOptionsMultiplayer) {
+			for (int i = 1; i < GetNumTracks() + 1; i++) {
+				if (!DoesTrackExist(i)) continue;
+				if (!DoesTrackSupportReversing(i)) continue;
+				if (GetTrackValueNumber(i, "TrackType") == nTrackType) {
+					aTracks.push_back({i, true});
+				}
 			}
 		}
 		return aTracks;
@@ -188,8 +201,12 @@ public:
 			WriteLog(std::format("No tracks available for category {}!", aTrackTypeNames[nTrackType-1]));
 			return 1;
 		}
-		if (nTrack <= 0 || nTrack >= aTracks.size()) return aTracks[0];
-		return aTracks[nTrack];
+		if (nTrack <= 0 || nTrack >= aTracks.size()) {
+			if (aOptions == aOptionsMultiplayer) nTrackReversed = aTracks[0].reversed;
+			return aTracks[0].level;
+		}
+		if (aOptions == aOptionsMultiplayer) nTrackReversed = aTracks[nTrack].reversed;
+		return aTracks[nTrack].level;
 	}
 
 	float GetDamageLevel() {
@@ -254,7 +271,7 @@ public:
 
 		// reset lap count
 		if (changedValue == &nGameType || changedValue == &nTrackType || changedValue == &nTrack) {
-			nLaps = DoesTrackValueExist(tracks[nTrack], "Laps") ? GetTrackValueNumber(tracks[nTrack], "Laps") : 3;
+			nLaps = DoesTrackValueExist(tracks[nTrack].level, "Laps") ? GetTrackValueNumber(tracks[nTrack].level, "Laps") : 3;
 		}
 
 		if (nLaps < 1) nLaps = 1;
@@ -553,6 +570,7 @@ public:
 			}
 			else if (option.value == &nTrack) {
 				valueName = GetTrackValueString(trackId, "Name");
+				if (aOptions == aOptionsMultiplayer && nTrackReversed) valueName = "REV " + valueName;
 			}
 			else if (option.value == &nLaps) {
 				if (GetGameMode() != eEventType::RACE) valueName = "N/A";

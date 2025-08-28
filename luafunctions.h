@@ -224,7 +224,12 @@ int ChloeHUD_TrackSelect_SetIsMultiplayerCreate(void* a1) {
 }
 
 int ChloeHUD_TrackSelect_GetOptionValue(void* a1) {
-	auto str = (const char*)lua_tolstring(a1, 1);
+	std::string str = (const char*)lua_tolstring(a1, 1);
+	// hack for multiplayer reversed bool
+	if (str == "REVERSED") {
+		lua_pushnumber(a1, Menu_TrackSelect.nTrackReversed);
+		return 1;
+	}
 	for (int y = 0; Menu_TrackSelect.aOptions[y].name != "*END*"; y++) {
 		auto opt = &Menu_TrackSelect.aOptions[y];
 		if (opt->name == str) {
