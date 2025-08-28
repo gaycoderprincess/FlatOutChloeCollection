@@ -62,6 +62,10 @@ namespace SmashyRace {
 		}
 	}
 
+	void Init() {
+		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
+	}
+
 	class CHUD_SmashyRace : public CIngameHUDElement {
 	public:
 

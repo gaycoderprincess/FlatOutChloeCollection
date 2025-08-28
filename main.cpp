@@ -13,6 +13,7 @@
 #include "chloemenulib.h"
 #include "include/chloenet.h"
 
+#include "consts.h"
 #include "utils.h"
 #include "mallochook.h"
 #include "events.h"
@@ -93,15 +94,10 @@ void CustomSetterThread() {
 	pGameFlow->nAutoTransmission = !nTransmission;
 	nRagdoll = 1;
 
-	SetWindowedMode();
 	SetHandlingDamage();
 	SetHandlingMode();
-	ProcessCarDamage();
-	CareerMode::OnTick();
-	ArcadeMode::OnTick();
-	CarnageRace::OnTick();
-	SmashyRace::OnTick();
-	ProcessNitroGain();
+	ProcessPlayStats();
+	ChloeEvents::FinishFrameEvent.OnHit();
 
 	// rng buffer overrun hack-fix
 	if (RNGGenerator::nNumValuesLeft <= 1) {
@@ -185,6 +181,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			CareerMode::Init();
 			ArcadeMode::Init();
 			CarnageRace::Init();
+			SmashyRace::Init();
 			Achievements::Init();
 			NewIngameMenu::Init();
 			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
@@ -216,7 +213,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			UpdateCameraHooked_call = (void(__thiscall*)(void*, float))(*(uintptr_t*)0x662978);
 			NyaHookLib::Patch(0x662978, &UpdateCameraHooked);
 
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < nMaxSplitscreenPlayers; i++) {
 				HUD_DamageMeter[i].nPlayerId = i;
 			}
 		} break;

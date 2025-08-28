@@ -28,6 +28,14 @@ auto GetStringNarrow(const std::wstring& string) {
 	return converter.to_bytes(string);
 }
 
+std::string GetCustomSavePath(int id) {
+	return std::format("Savegame/customsave{:03}.sav", id);
+}
+
+std::string GetAchievementSavePath(int id) {
+	return std::format("Savegame/customsave{:03}.ach", id);
+}
+
 std::string FormatScore(int a1) {
 	if (a1 < 1000) {
 		return std::to_string(a1);

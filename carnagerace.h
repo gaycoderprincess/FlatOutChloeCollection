@@ -131,10 +131,6 @@ namespace CarnageRace {
 		NyaHookLib::Patch(0x416748 + 2, apply ? -1 : -100); // minimum crash bonus interval, default -500
 	}
 
-	void Init() {
-		ChloeEvents::CrashBonusEvent.AddHandler(OnCrashBonus);
-	}
-
 	void CashOutCombo() {
 		double pointsAwarded = 0;
 		for (auto& score : aScoreHUD) {
@@ -245,6 +241,11 @@ namespace CarnageRace {
 				CashOutCombo();
 			}
 		}
+	}
+
+	void Init() {
+		ChloeEvents::CrashBonusEvent.AddHandler(OnCrashBonus);
+		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 	}
 
 	class CHUD_ArcadeRace : public CIngameHUDElement {

@@ -1,4 +1,3 @@
-const int nMaxPlayers = 32;
 int nNumAIProfiles = 7;
 
 int nOpponentCount = 7;

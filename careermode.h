@@ -488,5 +488,6 @@ namespace CareerMode {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4404A0, &GetNumLapsNew);
 
 		ChloeEvents::SaveCreatedEvent.AddHandler(OnSave);
+		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 	}
 }

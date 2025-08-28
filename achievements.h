@@ -9,10 +9,6 @@ namespace Achievements {
 	int nTotalProgression = 0;
 	int nCurrentSaveSlot = 0;
 
-	std::string GetAchievementSavePath(int id) {
-		return std::format("Savegame/customsave{:03}.ach", id);
-	}
-
 	enum eAchievementCategory {
 		CAT_GENERAL = 1,
 		CAT_SINGLEPLAYER = 2,
@@ -563,6 +559,7 @@ namespace Achievements {
 		ChloeEvents::SaveLoadedEvent.AddHandler(Load);
 		ChloeEvents::SaveCreatedEvent.AddHandler(Save);
 		ChloeEvents::SaveDeletedEvent.AddHandler(Delete);
+		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
 	}
 }
 

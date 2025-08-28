@@ -36,6 +36,7 @@ namespace ChloeMenuHud {
 		if (bInited) return;
 		bInited = true;
 
+		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
 		for (auto& hud : CMenuHUDElement::aMenuHUD) {
 			hud->InitHooks();
 		}

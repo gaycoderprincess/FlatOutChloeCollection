@@ -1,6 +1,15 @@
+enum class eHUDLayer {
+	BASE, // normal UI
+	FADE, // car reset fade
+	OVERLAY, // pause menu, tutorial screen, etc.
+	NUM_LAYERS
+};
+
 class CIngameHUDElement : public CHUDElement {
 public:
 	static inline std::vector<CIngameHUDElement*> aGameHUD;
+
+	eHUDLayer nHUDLayer = eHUDLayer::BASE;
 
 	CIngameHUDElement() {
 		aGameHUD.push_back(this);
@@ -74,16 +83,22 @@ public:
 
 namespace NewGameHud {
 	void OnTick() {
-		if (pLoadingScreen) return;
-		if (GetGameState() != GAME_STATE_RACE) {
-			for (auto& hud : CIngameHUDElement::aGameHUD) {
-				hud->Reset();
-			}
-			return;
-		}
+		if (GetGameState() == GAME_STATE_RACE) return;
 
 		for (auto& hud : CIngameHUDElement::aGameHUD) {
-			hud->Process();
+			hud->Reset();
+		}
+	}
+
+	void OnHUDTick() {
+		if (pLoadingScreen) return;
+		if (GetGameState() != GAME_STATE_RACE) return;
+
+		for (int i = 0; i < (int)eHUDLayer::NUM_LAYERS; i++) {
+			for (auto& hud: CIngameHUDElement::aGameHUD) {
+				if (hud->nHUDLayer != (eHUDLayer)i) continue;
+				hud->Process();
+			}
 		}
 	}
 
@@ -126,6 +141,8 @@ namespace NewGameHud {
 		NyaHookLib::Patch(0x4539D4 + 2, &fMusicPlayer416);
 		NyaHookLib::Patch(0x4539F4 + 2, &fMusicPlayer480);
 		NyaHookLib::Patch(0x453A52 + 2, &fMusicPlayer428);
+		ChloeEvents::DrawUIEvent.AddHandler(OnHUDTick);
+		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 	}
 }
 
@@ -134,4 +151,5 @@ namespace NewGameHud {
 #include "ingame_contacttimer.h"
 #include "ingame_wrecked.h"
 #include "ingame_arcademode.h"
+#include "ingame_arcadetutorial.h"
 #include "ingame_laptime.h"

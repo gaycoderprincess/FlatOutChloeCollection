@@ -236,7 +236,7 @@ public:
 			DrawCrashBonusNotif();
 		}
 	}
-} HUD_DamageMeter[4] = {};
+} HUD_DamageMeter[nMaxSplitscreenPlayers] = {};
 
 const char* GetCrashBonusName(int type) {
 	switch (type) {

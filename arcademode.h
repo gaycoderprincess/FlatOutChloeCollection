@@ -168,6 +168,7 @@ namespace ArcadeMode {
 
 	void Init() {
 		ChloeEvents::SaveCreatedEvent.AddHandler(OnSave);
+		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 	}
 }
 

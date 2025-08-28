@@ -1,19 +1,3 @@
-namespace Achievements {
-	void Load(int saveSlot);
-	void Save(int saveSlot);
-	void Delete(int saveSlot);
-}
-
-const int nNumCareerClasses = 4;
-const int nNumCareerEvents = 16;
-const int nNumCareerEventsPerCup = 16;
-const int nNumCareerMaxPlayers = 12;
-const int nNumArcadeRaces = 128;
-
-std::string GetCustomSavePath(int id) {
-	return std::format("Savegame/customsave{:03}.sav", id);
-}
-
 struct tCustomSaveStructure {
 	struct {
 		uint32_t bIsLocked : 1;

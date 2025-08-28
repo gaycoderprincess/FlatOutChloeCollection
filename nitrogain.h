@@ -75,4 +75,6 @@ void ApplyNitroGainPatches() {
 	// enable car-to-car damage tracking for ai
 	NyaHookLib::Patch<uint16_t>(0x416718, 0x9090);
 	NyaHookLib::Patch<uint16_t>(0x41671D, 0x9090);
+
+	ChloeEvents::FinishFrameEvent.AddHandler(ProcessNitroGain);
 }

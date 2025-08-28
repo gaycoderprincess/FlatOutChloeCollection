@@ -347,4 +347,6 @@ void ApplyCarDamagePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4166AA, &IsPlayerWreckedASM);
 
 	NyaHookLib::Patch(0x416748 + 2, -100); // minimum crash bonus interval, default -500
+
+	ChloeEvents::FinishFrameEvent.AddHandler(ProcessCarDamage);
 }

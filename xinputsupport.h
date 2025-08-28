@@ -162,9 +162,9 @@ namespace SplitscreenController {
 			nullptr,
 	};
 
-	Controller* pControllers[4] = {};
+	Controller* pControllers[nMaxSplitscreenPlayers] = {};
 	void CopyController(uint8_t* data) {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < nMaxSplitscreenPlayers; i++) {
 			if (pControllers[i]) return;
 			pControllers[i] = (Controller*)malloc(0x79C+16);
 			memcpy(pControllers[i], data, 0x79C);
@@ -188,7 +188,9 @@ void ProcessXInputSupport() {
 			if (IsInSplitScreen()) {
 				SplitscreenController::CopyController((uint8_t*)GetPlayer(0)->pController);
 				for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
-					GetPlayer(i)->pController = SplitscreenController::pControllers[i];
+					auto ply = GetPlayer(i);
+					if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
+					ply->pController = SplitscreenController::pControllers[i];
 				}
 			}
 		}
@@ -206,4 +208,6 @@ void ApplyXInputPatches() {
 	NyaHookLib::Patch(0x66749C, &GetInputValueNew);
 	NyaHookLib::Patch(0x6674B0, &GetAnalogInputNew);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4F13D3, 0x4F147D); // never allocate more controllers
+
+	ChloeEvents::FinishFrameEvent.AddHandler(ProcessXInputSupport);
 }

@@ -62,8 +62,8 @@ NyaMat4x4* GetClosestResetpoint(NyaVec3 pos, int split, float maxDist = 99999) {
 	return out;
 }
 
-double fCarResetFadeTimer[4] = {};
-bool bCarResetRequested[4] = {};
+double fCarResetFadeTimer[nMaxSplitscreenPlayers] = {};
+bool bCarResetRequested[nMaxSplitscreenPlayers] = {};
 
 float fCarResetSpeed = 15;
 
@@ -116,7 +116,7 @@ void ProcessCarReset(int player, float delta) {
 	if (fCarResetFadeTimer[player] > 1) fCarResetFadeTimer[player] = 1;
 
 	uint8_t alpha = fCarResetFadeTimer[player]*255;
-	if (!pGameFlow->nIsPaused) {
+	//if (!pGameFlow->nIsPaused) {
 		if (IsInQuarteredSplitScreen()) {
 			switch (player) {
 				case 0:
@@ -139,14 +139,14 @@ void ProcessCarReset(int player, float delta) {
 		else {
 			DrawRectangle(0, 1, 0, 1, {0, 0, 0, alpha});
 		}
-	}
+	//}
 }
 
 void ProcessCarReset() {
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < nMaxSplitscreenPlayers; i++) {
 		auto ply = GetPlayer(i);
 		if (!ply) continue;
 		if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;

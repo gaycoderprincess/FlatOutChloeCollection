@@ -63,4 +63,6 @@ void ApplyWindowedModePatches() {
 	// always run in windowed - this'll be borderless
 	NyaHookLib::Patch<uint16_t>(0x438B5C, 0x9090);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x504EF0, &SetWindowedModeASM);
+
+	ChloeEvents::FinishFrameEvent.AddHandler(SetWindowedMode);
 }

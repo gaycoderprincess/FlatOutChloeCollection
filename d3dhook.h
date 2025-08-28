@@ -2,6 +2,7 @@ bool bIsDrawingGameUI = false;
 void HookLoop() {
 	if (bIsDrawingGameUI) {
 		ChloeEvents::DrawUIEvent.OnHit();
+		ProcessCarReset(); // always process fadeout last
 		bDontRefreshInputsThisLoop = true;
 		CommonMain();
 		bIsDrawingGameUI = false;
@@ -10,13 +11,8 @@ void HookLoop() {
 
 	if (Menu_LoadingScreen.bHasRun) ChloeMenuHud::Init();
 	ChloeMenuHud::InitHooks();
-	ChloeMenuHud::OnTick();
 	NewGameHud::Init();
-	NewMusicPlayer::OnTick();
-	Achievements::OnTick();
-	ProcessPlayStats();
-	ProcessCarReset();
-	ProcessXInputSupport();
+	ChloeEvents::DrawAboveUIEvent.OnHit();
 	CommonMain();
 }
 

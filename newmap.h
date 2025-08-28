@@ -168,5 +168,4 @@ void ApplyIngameMapPatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4694E5, &OnMapLoad);
 	ChloeEvents::DrawUIEvent.AddHandler(DrawIngameMap);
-	ChloeEvents::DrawUIEvent.AddHandler(NewGameHud::OnTick);
 }

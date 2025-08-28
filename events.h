@@ -75,7 +75,25 @@ namespace ChloeEvents {
 				func();
 			}
 		}
-	} DrawUIEvent;
+	} DrawUIEvent; // used for ingame race UI
+
+	class EventDrawAboveUI : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} DrawAboveUIEvent; // loosely used for drawing per-frame stuff
+
+	class EventFinishFrame : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} FinishFrameEvent; // loosely used for non-drawing per-frame stuff
 
 	class EventSaveCreated : public ChloeEvent<void(*)(int)> {
 	public:

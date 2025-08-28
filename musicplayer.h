@@ -338,6 +338,7 @@ namespace NewMusicPlayer {
 		bInited = true;
 
 		NyaAudio::Init(ghWnd);
+		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
 
 		NyaHookLib::Patch<uint8_t>(0x410CB0, 0xC3);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);
