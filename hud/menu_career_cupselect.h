@@ -211,7 +211,7 @@ public:
 			data.size = hud.fSize;
 			for (auto& race : cup->aRaces) {
 				auto name = GetTrackName(race.nLevel);
-				if (race.bReversed) name = "REV. " + name;
+				if (race.bReversed) name = "REV " + name;
 				Draw1080pString(JUSTIFY_RIGHT, data, name, &DrawStringFO2_Ingame12);
 				data.y += hud.nSpacingY;
 			}

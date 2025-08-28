@@ -83,3 +83,72 @@ void ReverseTrackStartpoints() {
 		pEnvironment->aStartpoints[i].fMatrix[10] *= -1; // z.z
 	}
 }
+
+bool DoesTrackSupportReversing(int level) {
+	if (level == TRACK_FOREST1A) return true;
+	if (level == TRACK_FOREST1C) return true;
+	if (level == TRACK_TOWN3A) return true;
+	if (level == TRACK_TOWN3B) return true;
+	if (level == TRACK_TOWN3C) return true;
+	if (level == TRACK_PIT1A) return true;
+	if (level == TRACK_PIT3A) return true;
+	if (level == TRACK_PIT3B) return true;
+	if (level == TRACK_PIT3C) return true;
+	if (level == TRACK_RACING1A) return true;
+	if (level == TRACK_RACING1B) return true;
+	if (level == TRACK_RACING1C) return true;
+	if (level == TRACK_RACING2B) return true;
+	if (level == TRACK_TOWN2A) return true;
+	if (level == TRACK_TOWN2C) return true;
+	if (level == TRACK_WINTER1A) return true;
+	if (level == TRACK_WINTER1B) return true;
+	if (level == TRACK_WINTER1C) return true;
+	if (level == TRACK_WINTER2A) return true;
+	if (level == TRACK_WINTER2B) return true;
+	if (level == TRACK_WINTER2C) return true;
+	return false;
+
+	// working ones:
+	/*
+	woodland havoc
+	woodland challenge
+	hayville havoc
+	hayville haystakker
+	hayville farmdash
+	bunker challenge
+	mound mayhem
+	gravel supersmash
+	gravel rock run
+	bay amateur run
+	bay challenge
+	bay cup run
+	fairgrass run
+	whattahoo wham
+	whattahoo roadrun
+	redpine race dash
+	whitefish rally
+	redpine zero course
+	whitefish ice run
+	redpine run
+	whitefish run
+	*/
+
+	// broken ones:
+	/*
+	finchley trial run
+	pinewood crashcup
+	woodland mayhem
+	finchley challenge
+	pinewood qualifier
+	finchley timberdash
+	pinewood challenge
+	brad's pit crash
+	bunker hill havoc
+	brad's sandrun
+	bunker bigbang run
+	brad's super dustup
+	fairgrass cup
+	fairgrass challenge
+	whattahoo rush hour
+	*/
+}

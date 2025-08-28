@@ -700,9 +700,7 @@ int nNumReverseTracks[128] = {};
 int ChloeCareerDefs_AddRace(void* a1) {
 	CareerMode::tLUAClass::tCup::tRace race;
 	race.nLevel = luaL_checknumber(a1, 1);
-	if (nNumNormalTracks[race.nLevel]++) {
-		WriteLog(std::format("Career dev note: {} appears {} times", GetTrackName(race.nLevel), nNumNormalTracks[race.nLevel]));
-	}
+	nNumNormalTracks[race.nLevel]++;
 	race.nLaps = luaL_checknumber(a1, 2);
 	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
 	race.bReversed = false;
@@ -715,15 +713,30 @@ int ChloeCareerDefs_AddRace(void* a1) {
 int ChloeCareerDefs_AddRaceReversed(void* a1) {
 	CareerMode::tLUAClass::tCup::tRace race;
 	race.nLevel = luaL_checknumber(a1, 1);
-	if (nNumNormalTracks[race.nLevel]++) {
-		WriteLog(std::format("Career dev note: Reversed {} appears {} times", GetTrackName(race.nLevel), nNumNormalTracks[race.nLevel]));
-	}
+	nNumReverseTracks[race.nLevel]++;
 	race.nLaps = luaL_checknumber(a1, 2);
 	race.nAIHandicapLevel = luaL_checknumber(a1, 3);
 	race.bReversed = true;
 	race.bIsDerby = false;
 	race.bIsTimeTrial = false;
 	CareerMode::luaDefs_currentCup->aRaces.push_back(race);
+	return 0;
+}
+
+int ChloeCareerDefs_TallyUsage(void* a1) {
+	static bool bOnce = false;
+	if (bOnce) return 0;
+	bOnce = true;
+
+	for (int i = 1; i < GetNumTracks(); i++) {
+		if (!DoesTrackExist(i)) continue;
+		if (DoesTrackValueExist(i, "ArenaMode")) continue;
+		if (DoesTrackValueExist(i, "StuntMode")) continue;
+		if ((int)GetTrackValueNumber(i, "TrackType") == CMenu_TrackSelect::TRACKTYPE_DERBY) continue;
+
+		if (nNumNormalTracks[i] != 1) WriteLog(std::format("{} appears {} times", GetTrackName(i), nNumNormalTracks[i]));
+		if (nNumReverseTracks[i] != 1 && DoesTrackSupportReversing(i)) WriteLog(std::format("Reversed {} appears {} times", GetTrackName(i), nNumReverseTracks[i]));
+	}
 	return 0;
 }
 
@@ -1125,6 +1138,11 @@ int ChloeCollection_SetMultiplayerDamageLevel(void* a1) {
 	return 0;
 }
 
+int ChloeCollection_CanTrackBeReversed(void* a1) {
+	lua_pushboolean(a1, DoesTrackSupportReversing(luaL_checknumber(a1, 1)));
+	return 1;
+}
+
 int ChloeCollection_SetTrackReversed(void* a1) {
 	SetTrackReversed(luaL_checknumber(a1, 1));
 	return 0;
@@ -1260,6 +1278,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddRaceReversed, "ChloeCareerDefs_AddRaceReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddDerby, "ChloeCareerDefs_AddDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_AddTimeTrial, "ChloeCareerDefs_AddTimeTrial");
+	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_TallyUsage, "ChloeCareerDefs_TallyUsage");
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCupsCompleted, "ChloeProfiles_GetProfileCupsCompleted");
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCupsMax, "ChloeProfiles_GetProfileCupsMax");
 	RegisterLUAFunction(a1, (void*)&ChloeProfiles_GetProfileCarsUnlocked, "ChloeProfiles_GetProfileCarsUnlocked");
@@ -1315,6 +1334,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerNitroRegen, "ChloeCollection_SetMultiplayerNitroRegen");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerUpgradeLevel, "ChloeCollection_SetMultiplayerUpgradeLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerDamageLevel, "ChloeCollection_SetMultiplayerDamageLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_CanTrackBeReversed, "ChloeCollection_CanTrackBeReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetTrackReversed, "ChloeCollection_SetTrackReversed");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
@@ -1356,7 +1376,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100, "NITRO_100");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100_REGEN, "NITRO_100_REGEN");
 
-	static auto sVersionString = "Chloe Collection v1.08 - Splitscreen Edition";
+	static auto sVersionString = "Chloe Collection v1.09 - Multiplayer Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
 	lua_setglobal(a1, sVersionString);
 	lua_settable(a1, LUA_ENVIRONINDEX);

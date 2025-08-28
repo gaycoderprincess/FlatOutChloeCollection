@@ -293,10 +293,13 @@ public:
 		nTrackReversed = nTrackReversed == 1;
 		nTimeTrialProps = nTimeTrialProps == 1;
 		nTimeTrial3LapMode = nTimeTrial3LapMode == 1;
+
+		if (!DoesTrackSupportReversing(GetTrackId())) nTrackReversed = 0;
 	}
 
 	bool IsOptionValid(int option) {
 		if (aOptions[option].name.empty()) return false;
+		if (aOptions[option].value == &nTrackReversed && !DoesTrackSupportReversing(GetTrackId())) return false;
 		if (GetGameMode() != eEventType::RACE) {
 			if (aOptions[option].value == &nTrackType) return false;
 			if (aOptions[option].value == &nLaps) return false;
