@@ -121,6 +121,8 @@ namespace CarnageRace {
 
 		// hud changes
 		NyaHookLib::Patch<uint64_t>(0x454AFC, apply ? 0xE0A190000001EEE9 : 0xE0A1000001ED850F); // remove total time
+		NyaHookLib::Patch<uint8_t>(0x4551E9, apply ? 0xEB : 0x74); // remove lap time title
+		NyaHookLib::Patch<uint8_t>(0x45578E, apply ? 0xEB : 0x74); // remove lap time counter
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4553FA, apply ? 0x4F0843 : 0x4F0810); // remove lap count title
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x455543, apply ? 0x4F0843 : 0x4F0810); // remove lap count number
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x455597, apply ? 0x4F0843 : 0x4F0810); // remove lap count max
@@ -130,7 +132,7 @@ namespace CarnageRace {
 	}
 
 	void Init() {
-		ChloeEvents::OnCrashBonus.push_back(OnCrashBonus);
+		ChloeEvents::CrashBonusEvent.AddHandler(OnCrashBonus);
 	}
 
 	void CashOutCombo() {

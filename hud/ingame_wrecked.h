@@ -36,8 +36,8 @@ public:
 	}
 
 	virtual void Init() {
-		ChloeEvents::OnPlayerWrecked.push_back(AddWreckedNotif);
-		ChloeEvents::OnDerbyTimeout.push_back(AddTimeoutNotif);
+		ChloeEvents::PlayerWreckedEvent.AddHandler(AddWreckedNotif);
+		ChloeEvents::DerbyTimeoutEvent.AddHandler(AddTimeoutNotif);
 	}
 
 	virtual void Process() {

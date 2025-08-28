@@ -1,21 +1,39 @@
 namespace ChloeEvents {
-	std::vector<void(*)(Player* pPlayer, int type)> OnCrashBonus;
-	std::vector<void(*)(Player* pPlayer)> OnPlayerWrecked;
-	std::vector<void(*)(Player* pPlayer)> OnDerbyTimeout;
+	template<typename T>
+	class ChloeEvent {
+	protected:
+		std::vector<T> functions;
 
-	void CrashBonus(Player* pPlayer, int type) {
-		for (auto& event : OnCrashBonus) {
-			event(pPlayer, type);
+	public:
+		void AddHandler(T function) {
+			functions.push_back(function);
 		}
-	}
-	void PlayerWrecked(Player* pPlayer) {
-		for (auto& event : OnPlayerWrecked) {
-			event(pPlayer);
+	};
+
+	class EventCrashBonus : public ChloeEvent<void(*)(Player*, int)> {
+	public:
+		void OnHit(Player* pPlayer, int type) {
+			for (auto& func : functions) {
+				func(pPlayer, type);
+			}
 		}
-	}
-	void DerbyTimeout(Player* pPlayer) {
-		for (auto& event : OnDerbyTimeout) {
-			event(pPlayer);
+	} CrashBonusEvent;
+
+	class EventPlayerWrecked : public ChloeEvent<void(*)(Player*)> {
+	public:
+		void OnHit(Player* pPlayer) {
+			for (auto& func : functions) {
+				func(pPlayer);
+			}
 		}
-	}
+	} PlayerWreckedEvent;
+
+	class EventDerbyTimeout : public ChloeEvent<void(*)(Player*)> {
+	public:
+		void OnHit(Player* pPlayer) {
+			for (auto& func : functions) {
+				func(pPlayer);
+			}
+		}
+	} DerbyTimeoutEvent;
 }

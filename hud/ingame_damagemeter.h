@@ -149,7 +149,7 @@ public:
 		if (bInited) return;
 		bInited = true;
 
-		ChloeEvents::OnCrashBonus.push_back(AddCrashBonus);
+		ChloeEvents::CrashBonusEvent.AddHandler(AddCrashBonus);
 	}
 	virtual void Reset() {
 		memset(fHealthBarAlpha,0,sizeof(fHealthBarAlpha));

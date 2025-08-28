@@ -3,11 +3,6 @@ public:
 	float fAlpha = 0;
 	int nNonCenterX = 851;
 
-	virtual void Init() {
-		NyaHookLib::Patch<uint8_t>(0x4551E9, 0xEB); // remove lap time title
-		NyaHookLib::Patch<uint8_t>(0x45578E, 0xEB); // remove lap time counter
-	}
-
 	virtual void Process() {
 		static CNyaRaceTimer gTimer;
 		gTimer.Process();

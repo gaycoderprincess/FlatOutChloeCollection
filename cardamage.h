@@ -64,7 +64,7 @@ void ProcessDerbyContactTimer() {
 				score->bIsDNF = true;
 			}
 
-			ChloeEvents::DerbyTimeout(ply);
+			ChloeEvents::DerbyTimeoutEvent.OnHit(ply);
 		}
 	}
 }
@@ -112,13 +112,13 @@ void ProcessCrashBonuses() {
 			auto diff = data.damage;
 			diff *= fCrashVelocityMultiplier;
 			if (diff > fBlastOutCrashVelocity1) {
-				ChloeEvents::CrashBonus(ply, CRASHBONUS_BLASTOUT);
+				ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_BLASTOUT);
 			}
 			else if (diff > fPowerHitCrashVelocity1) {
-				ChloeEvents::CrashBonus(ply, CRASHBONUS_POWERHIT);
+				ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_POWERHIT);
 			}
 			else if (diff > fWhammoCrashVelocity1) {
-				ChloeEvents::CrashBonus(ply, CRASHBONUS_SLAM);
+				ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_SLAM);
 			}
 			if (pGameFlow->nEventType != eEventType::RACE) {
 				data.damage = 0;
@@ -126,7 +126,7 @@ void ProcessCrashBonuses() {
 		}
 		if (opponent->pCar->nIsRagdolled && !isRagdolled[i] && pGameFlow->nEventType != eEventType::DERBY) {
 			if (GetPlayerLastHit(i) == ply && data.lastHitTimestamp > pPlayerHost->nRaceTime - nRagdollPiggybagThreshold) {
-				ChloeEvents::CrashBonus(ply, CRASHBONUS_RAGDOLLED);
+				ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_RAGDOLLED);
 			}
 		}
 
@@ -143,7 +143,7 @@ void ProcessCrashBonuses() {
 		}
 
 		if (std::abs(rotateAmount[i]) > std::numbers::pi * 0.9) {
-			ChloeEvents::CrashBonus(ply, CRASHBONUS_SUPERFLIP);
+			ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_SUPERFLIP);
 			rotateAmount[i] = 0;
 		}
 
@@ -173,7 +173,7 @@ void AwardWreck(int playerId) {
 
 	auto lastHitTimestamp = lastHitPlayer->pCar->aCarCollisions[playerId].lastHitTimestamp;
 	if (lastHitTimestamp > pPlayerHost->nRaceTime - nWreckPiggybagThreshold) {
-		ChloeEvents::CrashBonus(lastHitPlayer, CRASHBONUS_WRECKED);
+		ChloeEvents::CrashBonusEvent.OnHit(lastHitPlayer, CRASHBONUS_WRECKED);
 		if (lastHitPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
 			if (pGameFlow->nEventType == eEventType::RACE) Achievements::AwardAchievement(GetAchievement("WRECK_CAR_RACE"));
 		}
@@ -213,7 +213,7 @@ void ProcessCarDamage() {
 
 				Car::LaunchRagdoll(ply->pCar, ply->pCar->fRagdollVelocity);
 
-				ChloeEvents::PlayerWrecked(ply);
+				ChloeEvents::PlayerWreckedEvent.OnHit(ply);
 			}
 		}
 		else {
@@ -226,7 +226,7 @@ void ProcessCarDamage() {
 				//score->bHasFinished = true;
 				if (!score->bHasFinished) score->bIsDNF = true;
 
-				ChloeEvents::PlayerWrecked(ply);
+				ChloeEvents::PlayerWreckedEvent.OnHit(ply);
 			}
 		}
 	}
