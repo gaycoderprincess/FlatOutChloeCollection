@@ -165,6 +165,11 @@ public:
 		for (int i = 0; i < careerClass->aEvents.size(); i++) {
 			auto cup = &careerClass->aEvents[i];
 			auto cupSave = &careerSaveClass->aEvents[i];
+			bool unlocked = cupSave->bUnlocked;
+			if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {
+				if (cup->aRaces[0].bIsTimeTrial) unlocked = false; // no time trials in splitscreen
+				if (DoesTrackValueExist(cup->aRaces[0].nLevel, "StuntType")) unlocked = false; // no stunts in splitscreen
+			}
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
@@ -174,7 +179,7 @@ public:
 			float y1 = data.fPosY + data.fSpacingY * 2;
 			float x2 = x1 + data.fSize * 1.5;
 			float y2 = y1 + data.fSize;
-			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
+			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, unlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (i == nCursorX && nCursorY == 2) {
 				auto rgb = GetPaletteColor(18);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
@@ -258,7 +263,7 @@ public:
 							FormatGameTime(targets[2], false),
 					};
 					auto pb = ChloeTimeTrial::GetCareerPBTime(cup->aRaces[0].nLevel, cup->aRaces[0].nTimeTrialCar-1);
-					std::string pbString = pb != UINT_MAX ? FormatGameTime(pb, false) : "N/A.";
+					std::string pbString = pb != UINT_MAX ? FormatGameTime(pb, false) : "N/A";
 					if (targets[3] != UINT_MAX) {
 						auto authorString = FormatGameTime(targets[3], false);
 						sEventDescription = std::format("TARGETS\nAUTHOR - {}\nGOLD - {}\nSILVER - {}\nBRONZE - {}\n\nPERSONAL BEST: {}", authorString, targetStrings[0], targetStrings[1], targetStrings[2], pbString);

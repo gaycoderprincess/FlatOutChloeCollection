@@ -87,18 +87,15 @@ public:
 		CMenu_TrackSelect::DisplayTrackInfo(GetTrackId());
 
 		auto totalScore = gCustomSave.GetArcadeCareerScore();
-		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
-		auto score = gCustomSave.aArcadeCareerScores[nCursorPos];
-		bool unlocked = totalScore >= event->nPointsToUnlock;
-		int position = 0;
-		if (score >= event->aGoalScores[2]) position = 3;
-		if (score >= event->aGoalScores[1]) position = 2;
-		if (score >= event->aGoalScores[0]) position = 1;
-		if (score >= event->nPlatinumScore) position = 4;
-
 		for (int i = 0; i < ArcadeMode::aArcadeRaces.size(); i++) {
 			auto event = &ArcadeMode::aArcadeRaces[i];
+			auto score = gCustomSave.aArcadeCareerScores[i];
 			bool unlocked = totalScore >= event->nPointsToUnlock;
+			int position = 0;
+			if (score >= event->aGoalScores[2]) position = 3;
+			if (score >= event->aGoalScores[1]) position = 2;
+			if (score >= event->aGoalScores[0]) position = 1;
+			if (score >= event->nPlatinumScore) position = 4;
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(event->nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", event->nLevel).c_str(), "Fatal error", MB_ICONERROR);
@@ -128,6 +125,15 @@ public:
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
 			}
 		}
+
+		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
+		auto score = gCustomSave.aArcadeCareerScores[nCursorPos];
+		bool unlocked = totalScore >= event->nPointsToUnlock;
+		int position = 0;
+		if (score >= event->aGoalScores[2]) position = 3;
+		if (score >= event->aGoalScores[1]) position = 2;
+		if (score >= event->aGoalScores[0]) position = 1;
+		if (score >= event->nPlatinumScore) position = 4;
 
 		tNyaStringData data;
 		data.x = gTargetScoresTitle.nPosX;

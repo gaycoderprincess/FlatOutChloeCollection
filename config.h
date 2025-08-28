@@ -73,10 +73,10 @@ bool IsInSplitScreen() {
 
 bool IsInHalvedSplitScreen() {
 	if (!IsInSplitScreen()) return false;
-	return pPlayerHost->GetNumPlayers() == 2;
+	return pGameFlow->nNumSplitScreenPlayers == 2;
 }
 
 bool IsInQuarteredSplitScreen() {
 	if (!IsInSplitScreen()) return false;
-	return pPlayerHost->GetNumPlayers() > 2;
+	return pGameFlow->nNumSplitScreenPlayers > 2;
 }

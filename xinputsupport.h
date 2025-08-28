@@ -69,12 +69,14 @@ int __thiscall GetInputValueXInput(Controller* pThis, int input) {
 
 bool __thiscall IsMenuInputJustPressedNew(Controller* pThis, int input) {
 	auto orig = Controller::IsMenuInputJustPressed(pThis, input);
+	if (IsInSplitScreen() && nSplitScreenController[0] != 0) orig = 0;
 	if (orig || !IsControllerSupportEnabled()) return orig;
 	return IsMenuInputJustPressedXInput(pThis, input);
 }
 
 bool __thiscall IsGameInputJustPressedNew(Controller* pThis, int input) {
 	auto orig = Controller::IsGameInputJustPressed(pThis, input);
+	if (IsInSplitScreen() && nSplitScreenController[0] != 0) orig = 0;
 	if (orig || !IsControllerSupportEnabled()) return orig;
 	return IsGameInputJustPressedXInput(pThis, input);
 }
@@ -82,12 +84,14 @@ bool __thiscall IsGameInputJustPressedNew(Controller* pThis, int input) {
 int __thiscall GetAnalogInputNew(Controller* pThis, int input, float* out) {
 	*out = 0.0;
 	Controller::GetAnalogInput(pThis, input, out);
+	if (IsInSplitScreen() && nSplitScreenController[0] != 0) *out = 0;
 	if (*out != 0.0 || !IsControllerSupportEnabled()) return *out != 0.0;
 	return GetAnalogInputXInput(pThis, input, out);
 }
 
 int __thiscall GetInputValueNew(Controller* pThis, int input) {
 	auto orig = Controller::GetInputValue(pThis, input);
+	if (IsInSplitScreen() && nSplitScreenController[0] != 0) orig = 0;
 	if (orig || !IsControllerSupportEnabled()) return orig;
 	return GetInputValueXInput(pThis, input);
 }

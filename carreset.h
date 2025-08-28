@@ -147,7 +147,7 @@ int __thiscall ResetCarNew(Player* pPlayer, int a2) {
 	if (bIsSmashyRace && !pPlayer->pCar->nIsRagdolled) return 1;
 	if (pGameFlow->nEventType == eEventType::STUNT) return 1;
 	if (pPlayerHost->nRaceTime < 3000) return 1;
-	auto score = GetPlayerScore<PlayerScoreRace>(1);
+	auto score = GetPlayerScore<PlayerScoreRace>(pPlayer->nPlayerId);
 	if (score->bIsDNF || score->bHasFinished) return 1;
 	bCarResetRequested[pPlayer->nPlayerId-1] = true;
 	return 1;

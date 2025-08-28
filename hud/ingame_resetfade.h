@@ -10,6 +10,8 @@ public:
 
 		// repeat for all 4 players
 		for (int i = 0; i < 4; i++) {
+			if (!GetPlayer(i) || GetPlayer(i)->nPlayerType != PLAYERTYPE_LOCAL) continue;
+
 			uint8_t alpha = fCarResetFadeTimer[i]*255;
 			if (IsInQuarteredSplitScreen()) {
 				switch (i) {

@@ -1,3 +1,10 @@
+int GetHandlingMode() {
+	int handlingMode = nHandlingMode;
+	if (CareerMode::IsCareerTimeTrial()) handlingMode = HANDLING_NORMAL;
+	if (bIsInMultiplayer) handlingMode = nMultiplayerHandlingMode;
+	return handlingMode;
+}
+
 float fCarnageModeMassFudge = 0.75;
 
 toml::table GetCarPerformanceTable(int id) {
@@ -345,6 +352,13 @@ void __stdcall LoadCarTires(Car* car) {
 	CAR_PERFORMANCE(fSlideControl, "TireDynamics", "SlideControl");
 	CAR_PERFORMANCE(fUnderSteer, "TireDynamics", "UnderSteer");
 	CAR_PERFORMANCE(fSlowDown, "TireDynamics", "SlowDown");
+
+	if (GetHandlingMode() == HANDLING_HARDCORE) {
+		fXFriction[0] = 1;
+		fXFriction[1] = 0;
+		fZFriction[0] = 1;
+		fZFriction[1] = 0;
+	}
 
 	auto v22 = car->Body.fMass * 2.4525001;
 	auto v105 = fOptimalSlipLoad * v22 * 2.6800001 / std::tan(fOptimalSlipAngle * 0.017453292);

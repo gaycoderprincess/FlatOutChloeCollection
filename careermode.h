@@ -93,6 +93,7 @@ namespace CareerMode {
 	void SetIsCareerMode(bool apply) {
 		bIsCareerRace = apply;
 		NyaHookLib::Patch<uint8_t>(0x43F505, apply ? 0xEB : 0x74); // use career car
+		NyaHookLib::Patch<uint64_t>(0x43F490, apply ? 0x448B909090909090 : 0x448B000004BC850F); // use sp player spawning for splitscreen career
 	}
 
 	void SetIsCareerModeTimeTrial(bool apply) {
@@ -119,17 +120,20 @@ namespace CareerMode {
 	}
 
 	void OnRaceFinished() {
-		for (int i = 0; i < 10; i++) {
-			auto cashSceneryBonuses = aPlayerResults[0].aSceneryBonuses[i] * fBonusTypePrice[i];
-			pGameFlow->Profile.nMoney += cashSceneryBonuses;
-			pGameFlow->Profile.nMoneyGained += cashSceneryBonuses;
-			nLastRaceAwardTotal += cashSceneryBonuses;
-		}
-		for (int i = 0; i < NUM_CRASHBONUS_TYPES; i++) {
-			auto cashCrashBonuses = aPlayerResults[0].aCrashBonuses[i] * GetCrashBonusPrice(i);
-			pGameFlow->Profile.nMoney += cashCrashBonuses;
-			pGameFlow->Profile.nMoneyGained += cashCrashBonuses;
-			nLastRaceAwardTotal += cashCrashBonuses;
+		int numLocalPlayers = pGameFlow->nGameMode == eGameMode::SPLITSCREEN ? pGameFlow->nNumSplitScreenPlayers : 1;
+		for (int j = 0; j < numLocalPlayers; j++) {
+			for (int i = 0; i < 10; i++) {
+				auto cashSceneryBonuses = aPlayerResults[j].aSceneryBonuses[i] * fBonusTypePrice[i];
+				pGameFlow->Profile.nMoney += cashSceneryBonuses;
+				pGameFlow->Profile.nMoneyGained += cashSceneryBonuses;
+				nLastRaceAwardTotal += cashSceneryBonuses;
+			}
+			for (int i = 0; i < NUM_CRASHBONUS_TYPES; i++) {
+				auto cashCrashBonuses = aPlayerResults[j].aCrashBonuses[i] * GetCrashBonusPrice(i);
+				pGameFlow->Profile.nMoney += cashCrashBonuses;
+				pGameFlow->Profile.nMoneyGained += cashCrashBonuses;
+				nLastRaceAwardTotal += cashCrashBonuses;
+			}
 		}
 
 		if (auto achievement = GetAchievement("CASH_DESTRUCTION")) {
@@ -239,7 +243,40 @@ namespace CareerMode {
 		if (!aPlayerResults[0].bDNF && !aPlayerResults[0].bFinished) return;
 
 		int eventNumber = gCustomSave.nCareerCupNextEvent++;
-		for (int i = 0; i < nNumCareerMaxPlayers; i++) {
+		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {
+			// add up and average all players in splitscreen career
+			auto player = &gCustomSave.aCareerCupPlayers[0];
+			for (int i = 0; i < pGameFlow->nNumSplitScreenPlayers; i++) {
+				auto results = &aPlayerResults[i];
+				player->eventPosition[eventNumber] += results->nPosition;
+				if (pGameFlow->nEventType == eEventType::RACE && results->bDNF) {
+					player->eventPosition[eventNumber] += 8;
+				}
+				else {
+					player->eventPoints[eventNumber] += aPointsPerPosition[results->nPosition-1];
+				}
+			}
+			// average out the results, this might end up weird
+			player->eventPosition[eventNumber] /= pGameFlow->nNumSplitScreenPlayers;
+			player->eventPoints[eventNumber] /= pGameFlow->nNumSplitScreenPlayers;
+			player->points += player->eventPoints[eventNumber];
+
+			// calculate the rest as normal AI
+			for (int i = pGameFlow->nNumSplitScreenPlayers; i < nNumCareerMaxPlayers; i++) {
+				auto results = &aPlayerResults[i];
+				auto player = &gCustomSave.aCareerCupPlayers[i];
+				player->eventPosition[eventNumber] = results->nPosition;
+				if (pGameFlow->nEventType == eEventType::RACE && results->bDNF) {
+					player->eventPosition[eventNumber] = 8;
+					player->eventPoints[eventNumber] = 0;
+				}
+				else {
+					player->eventPoints[eventNumber] = aPointsPerPosition[results->nPosition-1];
+				}
+				player->points += player->eventPoints[eventNumber];
+			}
+		}
+		else for (int i = 0; i < nNumCareerMaxPlayers; i++) {
 			auto results = &aPlayerResults[i];
 			auto player = &gCustomSave.aCareerCupPlayers[i];
 			player->eventPosition[eventNumber] = results->nPosition;
@@ -249,8 +286,8 @@ namespace CareerMode {
 			}
 			else {
 				player->eventPoints[eventNumber] = aPointsPerPosition[results->nPosition-1];
-				player->points += aPointsPerPosition[results->nPosition-1];
 			}
+			player->points += player->eventPoints[eventNumber];
 		}
 		gCustomSave.CalculateCupPlayersByPosition();
 		OnRaceFinished();
@@ -472,9 +509,27 @@ namespace CareerMode {
 		}
 	}
 
+	uint32_t nNumSplitscreenCars = 2;
+	uintptr_t GetSplitscreenAICountASM_jmp = 0x43F0CC;
+	void __attribute__((naked)) GetSplitscreenAICountASM() {
+		__asm__ (
+			"mov edi, %1\n"
+			"mov [esp+0x1C], edi\n"
+			"mov edi, [ebp+0x12C]\n"
+			"mov [esp+0x14], edi\n"
+			"mov [ebp+0x28F4], edx\n\t"
+			"jmp %0\n\t"
+				:
+				:  "m" (GetSplitscreenAICountASM_jmp), "m" (nNumSplitscreenCars)
+		);
+	}
+
 	void Init() {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x440560, &GetAIHandicapLevelNew);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4404A0, &GetNumLapsNew);
+
+		// splitscreen career stuff
+		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43F0B8, &GetSplitscreenAICountASM);
 
 		ChloeEvents::SaveCreatedEvent.AddHandler(OnSave);
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);

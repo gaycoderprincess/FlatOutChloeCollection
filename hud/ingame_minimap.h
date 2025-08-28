@@ -1,7 +1,7 @@
 class CHUD_Minimap : public CIngameHUDElement {
 public:
 	IDirect3DTexture9* pMapTexture = nullptr;
-	const static inline float fArrowSize = 0.011;
+	static constexpr float fArrowSize = 0.011;
 
 	NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
 		if (IsPlayerWrecked(ply)) return {0,0,0,127};
@@ -40,7 +40,7 @@ public:
 		};
 
 		int id = ply->nPlayerId - 1;
-		if (IsInSplitScreen() && ply->nPlayerType == PLAYERTYPE_LOCAL) id++; // never use white arrow in splitscreen
+		if (IsInSplitScreen() && !bIsCareerRace && ply->nPlayerType == PLAYERTYPE_LOCAL) id++; // never use white arrow in splitscreen
 		if (CareerMode::IsCareerTimeTrial()) {
 			if (id >= 0 && id <= sizeof(aPlayerColorsTimeTrial) / sizeof(aPlayerColorsTimeTrial[0])) return aPlayerColorsTimeTrial[id];
 		}
@@ -56,7 +56,7 @@ public:
 
 		auto justify = CHUDElement::JUSTIFY_LEFT;
 		if (IsInSplitScreen()) {
-			if (pPlayerHost->GetNumPlayers() > 2) {
+			if (IsInQuarteredSplitScreen()) {
 				posX = 320.0 - pEnvironment->pMinimap->fScreenSize[0] * 0.5;
 				justify = CHUDElement::JUSTIFY_CENTER;
 			}

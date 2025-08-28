@@ -85,24 +85,34 @@ int ChloeHUD_CareerCupSelect_GetCursorY(void* a1) {
 }
 
 int ChloeHUD_CareerCupSelect_IsSelectedCupUnlocked(void* a1) {
-	if (Menu_CareerCupSelect.nCursorY == 0) {
-		auto cup = &gCustomSave.aCareerClasses[Menu_CareerCupSelect.nClass].aCups[Menu_CareerCupSelect.nCursorX];
+	int classId = Menu_CareerCupSelect.nClass;
+	int x = Menu_CareerCupSelect.nCursorX;
+	int y = Menu_CareerCupSelect.nCursorY;
+	if (y == 0) {
+		auto cup = &gCustomSave.aCareerClasses[classId].aCups[x];
 		lua_pushboolean(a1, cup->bUnlocked);
 		return 1;
 	}
-	else if (Menu_CareerCupSelect.nCursorY == 1) {
-		auto cup = &gCustomSave.aCareerClasses[Menu_CareerCupSelect.nClass].Finals;
+	else if (y == 1) {
+		auto cup = &gCustomSave.aCareerClasses[classId].Finals;
 		lua_pushboolean(a1, cup->bUnlocked);
 		return 1;
 	}
-	else if (Menu_CareerCupSelect.nCursorY == 2) {
-		if (Menu_CareerCupSelect.nCursorX >= CareerMode::aLUACareerClasses[Menu_CareerCupSelect.nClass].aEvents.size()) {
+	else if (y == 2) {
+		if (x >= CareerMode::aLUACareerClasses[classId].aEvents.size()) {
 			lua_pushboolean(a1, false);
 			return 1;
 		}
 
-		auto cup = &gCustomSave.aCareerClasses[Menu_CareerCupSelect.nClass].aEvents[Menu_CareerCupSelect.nCursorX];
-		lua_pushboolean(a1, cup->bUnlocked);
+		bool unlocked = gCustomSave.aCareerClasses[classId].aEvents[x].bUnlocked;
+		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {
+			auto cup = &CareerMode::aLUACareerClasses[classId].aCups[x];
+			if (cup->aRaces[0].bIsTimeTrial) unlocked = false; // no time trials in splitscreen
+			if (DoesTrackValueExist(cup->aRaces[0].nLevel, "StuntType")) unlocked = false; // no stunts in splitscreen
+		}
+
+		auto cup = &gCustomSave.aCareerClasses[classId].aEvents[x];
+		lua_pushboolean(a1, unlocked);
 		return 1;
 	}
 	lua_pushboolean(a1, false);
@@ -1159,6 +1169,11 @@ int ChloeCollection_SetTrackReversed(void* a1) {
 	return 0;
 }
 
+int ChloeCollection_SetNumSplitScreenCars(void* a1) {
+	CareerMode::nNumSplitscreenCars = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -1351,6 +1366,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetMultiplayerDamageLevel, "ChloeCollection_SetMultiplayerDamageLevel");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_CanTrackBeReversed, "ChloeCollection_CanTrackBeReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetTrackReversed, "ChloeCollection_SetTrackReversed");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetNumSplitScreenCars, "ChloeCollection_SetNumSplitScreenCars");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");
