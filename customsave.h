@@ -1,5 +1,3 @@
-void DoGameSave();
-
 namespace Achievements {
 	void Load(int saveSlot);
 	void Save(int saveSlot);
@@ -177,14 +175,16 @@ struct tCustomSaveStructure {
 
 		file.read((char*)this, sizeof(*this));
 
-		if (loadAll) Achievements::Load(saveSlot+1);
-
 		// force unlock first career bits in case of save corruption
 		bCareerClassUnlocked[0] = true;
 		for (auto& data : aCareerClasses) {
 			data.aCups[0].bUnlocked = true;
 		}
 		CheckArcadeVerify();
+
+		if (loadAll) {
+			ChloeEvents::SaveLoadedEvent.OnHit(saveSlot+1);
+		}
 	}
 	void Save() {
 		if (!bInitialized) return;
@@ -204,7 +204,7 @@ struct tCustomSaveStructure {
 		auto file = std::ofstream(GetCustomSavePath(saveSlot+1), std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
 
-		Achievements::Save(saveSlot+1);
+		ChloeEvents::SaveCreatedEvent.OnHit(saveSlot+1);
 
 		file.write((char*)this, sizeof(*this));
 	}
@@ -213,7 +213,7 @@ struct tCustomSaveStructure {
 		if (std::filesystem::exists(save)) {
 			std::filesystem::remove(save);
 		}
-		Achievements::Delete(slot+1);
+		ChloeEvents::SaveDeletedEvent.OnHit(slot+1);
 	}
 } gCustomSave;
 
@@ -238,7 +238,7 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			DoGameSave();
+			gCustomSave.Save();
 		}
 	}
 
@@ -269,13 +269,13 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			DoGameSave();
+			gCustomSave.Save();
 		}
 	}
 
 	static auto lastGameState = GetGameState();
 	if ((lastGameState == GAME_STATE_RACE || lastGameState == GAME_STATE_REPLAY) && GetGameState() == GAME_STATE_MENU) {
-		DoGameSave();
+		gCustomSave.Save();
 	}
 	lastGameState = GetGameState();
 }

@@ -50,6 +50,15 @@ namespace ChloeEvents {
 		}
 	} NewLapRecordEvent;
 
+	class EventFilesystemInit : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} FilesystemInitEvent;
+
 	class EventMapLoaded : public ChloeEvent<void(*)()> {
 	public:
 		void OnHit() {
@@ -67,4 +76,31 @@ namespace ChloeEvents {
 			}
 		}
 	} DrawUIEvent;
+
+	class EventSaveCreated : public ChloeEvent<void(*)(int)> {
+	public:
+		void OnHit(int saveSlot) {
+			for (auto& func : functions) {
+				func(saveSlot);
+			}
+		}
+	} SaveCreatedEvent;
+
+	class EventSaveLoaded : public ChloeEvent<void(*)(int)> {
+	public:
+		void OnHit(int saveSlot) {
+			for (auto& func : functions) {
+				func(saveSlot);
+			}
+		}
+	} SaveLoadedEvent;
+
+	class EventSaveDeleted : public ChloeEvent<void(*)(int)> {
+	public:
+		void OnHit(int saveSlot) {
+			for (auto& func : functions) {
+				func(saveSlot);
+			}
+		}
+	} SaveDeletedEvent;
 }

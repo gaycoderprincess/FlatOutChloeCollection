@@ -421,7 +421,7 @@ namespace CareerMode {
 		return 4;
 	}
 
-	void OnSave() {
+	void OnSave(int saveSlot) {
 		float cupsCompleted = 0;
 		int cupsCompletedCount = 0;
 		int cupsTotal = 0;
@@ -486,5 +486,7 @@ namespace CareerMode {
 	void Init() {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x440560, &GetAIHandicapLevelNew);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4404A0, &GetNumLapsNew);
+
+		ChloeEvents::SaveCreatedEvent.AddHandler(OnSave);
 	}
 }

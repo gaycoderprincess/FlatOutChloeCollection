@@ -13,63 +13,7 @@
 #include "chloemenulib.h"
 #include "include/chloenet.h"
 
-void WriteLog(const std::string& str) {
-	static auto file = std::ofstream("FlatOutChloeCollection_gcp.log");
-
-	file << str;
-	file << "\n";
-	file.flush();
-}
-
-bool bDebugLog = false;
-void WriteLogDebug(const std::string& title, const std::string& str) {
-	if (!bDebugLog) return;
-
-	static auto file = std::ofstream("FlatOutChloeCollection_gcp_debug.log");
-
-	file << "[" + title + "] ";
-	file << str;
-	file << "\n";
-	file.flush();
-}
-
-std::string GetStringNarrow(const wchar_t* string) {
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	return converter.to_bytes(string);
-}
-
-std::string FormatScore(int a1) {
-	if (a1 < 1000) {
-		return std::to_string(a1);
-	}
-	auto v4 = a1 / 1000;
-	if (a1 >= 1000000) {
-		return std::format("{},{:03},{:03}", a1 / 1000000, v4 % 1000, a1 % 1000);
-	}
-	return std::format("{},{:03}", v4, a1 % 1000);
-}
-
-std::string FormatGameTime(int ms) {
-	if (ms < 0) ms = 0;
-	std::string str = GetTimeFromMilliseconds(ms, true);
-	str.pop_back(); // remove trailing zero
-	// add leading zero
-	if (ms < 60 * 10 * 1000) {
-		str = "0" + str;
-	}
-	return str;
-}
-
-int32_t GetPlayerLapTime(Player* ply, int lapId) {
-	if (lapId > ply->nCurrentLap) return 0;
-
-	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
-	auto lap = score->nLapTimes[lapId];
-	if (lap <= 0) return 0;
-	if (lapId > 0) lap -= score->nLapTimes[lapId - 1];
-	return lap;
-}
-
+#include "utils.h"
 #include "mallochook.h"
 #include "events.h"
 #include "filereader.h"
@@ -165,15 +109,16 @@ void CustomSetterThread() {
 	}
 }
 
-void OnFilesystemInit() {
-	NewMusicPlayer::Init();
-	ApplyCarDealerPatches();
-
+void InitD3D() {
 	// d3d hooks done later so the custommp chat ui has priority
 	NyaFO2Hooks::PlaceD3DHooks();
 	NyaFO2Hooks::aEndSceneFuncs.push_back(CustomSetterThread);
 	NyaFO2Hooks::aEndSceneFuncs.push_back(D3DHookMain);
 	NyaFO2Hooks::aD3DResetFuncs.push_back(OnD3DReset);
+}
+
+void OnFilesystemInit() {
+	ChloeEvents::FilesystemInitEvent.OnHit();
 }
 
 void CommandlineArgReader(void* a1, const char* a2) {
@@ -238,9 +183,13 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyXInputPatches();
 			ApplyAIExtenderPatches();
 			CareerMode::Init();
+			ArcadeMode::Init();
 			CarnageRace::Init();
 			Achievements::Init();
 			NewIngameMenu::Init();
+			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
+			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
+			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
 			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos

@@ -8,12 +8,6 @@ auto GetStringNarrow(const std::wstring& string) {
 	return converter.to_bytes(string);
 }
 
-void DoGameSave() {
-	CareerMode::OnSave();
-	ArcadeMode::OnSave();
-	gCustomSave.Save();
-}
-
 int ChloeSkins_GetNumSkinsForCar(void* a1) {
 	lua_pushnumber(a1, GetNumSkinsForCar(luaL_checknumber(a1, 1)));
 	return 1;
@@ -523,7 +517,7 @@ int ChloeSave_LoadCustomData(void* a1) {
 }
 
 int ChloeSave_SaveCustomData(void* a1) {
-	DoGameSave();
+	gCustomSave.Save();
 	return 0;
 }
 
@@ -634,7 +628,7 @@ int ChloeCareer_ResignCup(void* a1) {
 	gCustomSave.nCareerCupNextEvent = 0;
 	gCustomSave.nCareerEvent = 0;
 	memset(gCustomSave.aCareerCupPlayers, 0, sizeof(gCustomSave.aCareerCupPlayers));
-	DoGameSave();
+	gCustomSave.Save();
 	return 0;
 }
 

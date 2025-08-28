@@ -559,6 +559,10 @@ namespace Achievements {
 		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
 		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 4000;
 		GetAchievement("CARNAGE_MILLIONAIRE")->fMaxInternalProgress = 1000000;
+
+		ChloeEvents::SaveLoadedEvent.AddHandler(Load);
+		ChloeEvents::SaveCreatedEvent.AddHandler(Save);
+		ChloeEvents::SaveDeletedEvent.AddHandler(Delete);
 	}
 }
 

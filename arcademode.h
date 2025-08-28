@@ -127,7 +127,7 @@ namespace ArcadeMode {
 		}
 	}
 
-	void OnSave() {
+	void OnSave(int saveSlot) {
 		float eventsCompleted = 0;
 		int eventsCompletedCount = 0;
 		int eventsCompletedAuthor = 0;
@@ -164,6 +164,10 @@ namespace ArcadeMode {
 			achievement->fInternalProgress = eventsCompletedAuthor;
 			achievement->fMaxInternalProgress = eventsTotal;
 		}
+	}
+
+	void Init() {
+		ChloeEvents::SaveCreatedEvent.AddHandler(OnSave);
 	}
 }
 
