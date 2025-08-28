@@ -47,7 +47,6 @@
 #include "luafunctions.h"
 #include "nitrogain.h"
 #include "ultrawide.h"
-#include "newmap.h"
 #include "newingamemenu.h"
 #include "debugmenu.h"
 
@@ -152,6 +151,19 @@ void __fastcall UpdateCameraHooked(void* a1, void*, float a2) {
 	}
 }
 
+void __stdcall D3DGameUI(int) {
+	bIsDrawingGameUI = true;
+	D3DHookMain();
+}
+
+const char* __cdecl OnMapLoad(void* a1, int a2) {
+	ChloeEvents::MapLoadedEvent.OnHit();
+
+	auto path = (const char*)lua_tolstring(a1, a2);
+	HUD_Minimap.pMapTexture = CHUDElement::LoadTextureFromBFS(path);
+	return path;
+}
+
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
@@ -175,7 +187,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyCarDatabasePatches();
 			ApplyNitroGainPatches();
 			ApplyUltrawidePatches();
-			ApplyIngameMapPatches();
 			ApplyXInputPatches();
 			ApplyAIExtenderPatches();
 			CareerMode::Init();
@@ -187,6 +198,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
 			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
 			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
+
+			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
+			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4694E5, &OnMapLoad);
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
 			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos

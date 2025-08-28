@@ -114,32 +114,6 @@ void ProcessCarReset(int player, float delta) {
 
 	if (fCarResetFadeTimer[player] < 0) fCarResetFadeTimer[player] = 0;
 	if (fCarResetFadeTimer[player] > 1) fCarResetFadeTimer[player] = 1;
-
-	uint8_t alpha = fCarResetFadeTimer[player]*255;
-	//if (!pGameFlow->nIsPaused) {
-		if (IsInQuarteredSplitScreen()) {
-			switch (player) {
-				case 0:
-					DrawRectangle(0, 0.5, 0, 0.5, {0, 0, 0, alpha});
-					break;
-				case 1:
-					DrawRectangle(0.5, 1, 0, 0.5, {0, 0, 0, alpha});
-					break;
-				case 2:
-					DrawRectangle(0, 0.5, 0.5, 1, {0, 0, 0, alpha});
-					break;
-				case 3:
-					DrawRectangle(0.5, 1, 0.5, 1, {0, 0, 0, alpha});
-					break;
-			}
-		}
-		else if (IsInHalvedSplitScreen()) {
-			DrawRectangle(0, 1, 0 + (player*0.5), 0.5 + (player*0.5), {0, 0, 0, alpha});
-		}
-		else {
-			DrawRectangle(0, 1, 0, 1, {0, 0, 0, alpha});
-		}
-	//}
 }
 
 void ProcessCarReset() {
@@ -222,4 +196,5 @@ void ApplyCarResetPatches() {
 	NyaHookLib::Patch<uint8_t>(0x448764, 0x74);
 
 	ChloeEvents::MapLoadedEvent.AddHandler(LoadResetPoints);
+	ChloeEvents::FinishFrameEvent.AddHandler(ProcessCarReset);
 }

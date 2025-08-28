@@ -153,3 +153,5 @@ namespace NewGameHud {
 #include "ingame_arcademode.h"
 #include "ingame_arcadetutorial.h"
 #include "ingame_laptime.h"
+#include "ingame_resetfade.h"
+#include "ingame_minimap.h"

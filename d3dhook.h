@@ -2,7 +2,6 @@ bool bIsDrawingGameUI = false;
 void HookLoop() {
 	if (bIsDrawingGameUI) {
 		ChloeEvents::DrawUIEvent.OnHit();
-		ProcessCarReset(); // always process fadeout last
 		bDontRefreshInputsThisLoop = true;
 		CommonMain();
 		bIsDrawingGameUI = false;
