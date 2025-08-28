@@ -184,6 +184,21 @@ void __attribute__((naked)) ResetSpeedCheckASM() {
 	);
 }
 
+// remove out of track popup if you've passed a split after it appeared
+void OutOfTrackChecker() {
+	static int nLastCheckpoint[nMaxPlayers] = {};
+	if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) {
+		memset(nLastCheckpoint, 0, sizeof(nLastCheckpoint));
+		return;
+	}
+
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		auto ply = GetPlayer(i);
+		if (ply->nIsOutOfTrack && ply->nCurrentSplit > nLastCheckpoint[i]) ply->nIsOutOfTrack = 0;
+		nLastCheckpoint[i] = ply->nCurrentSplit;
+	}
+}
+
 void ApplyCarResetPatches() {
 	NyaHookLib::Patch(0x6605CC, &ResetCarNew);
 
@@ -197,4 +212,5 @@ void ApplyCarResetPatches() {
 
 	ChloeEvents::MapLoadedEvent.AddHandler(LoadResetPoints);
 	ChloeEvents::FinishFrameEvent.AddHandler(ProcessCarReset);
+	ChloeEvents::FinishFrameEvent.AddHandler(OutOfTrackChecker);
 }

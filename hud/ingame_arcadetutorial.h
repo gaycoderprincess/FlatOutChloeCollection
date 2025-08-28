@@ -20,7 +20,7 @@ public:
 		}
 		else if (bIsSmashyRace) {
 			gamemodeName = "DEMOLITION";
-			gamemodeDescription = "Cause extreme amounts of vandalism as quickly as possible!\nEarn points by crashing into as much scenery as you can before the time runs out.\nSome objects give more points than others, search for high-reward objects and larger groups if you can!";
+			gamemodeDescription = "Cause extreme amounts of vandalism as quickly as possible!\nEarn points by crashing into as much scenery as you can before the time runs out.\nSome objects give more points than others, search for high-reward objects and larger groups if you can, track limits are a suggestion!";
 		}
 
 		DrawRectangle(0, 1, 0, 1, {0,0,0,200}); // background box

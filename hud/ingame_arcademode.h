@@ -79,7 +79,7 @@ public:
 		if (bIsCarnageRace) uiId = 2;
 		DrawElement(uiId, scoreTitle, FormatScore(targetScore), rgb);
 
-		static CNyaTimer gTimer;
+		static CNyaRaceTimer gTimer;
 		gTimer.Process();
 		if (fEarnPopupTime > 0) {
 			auto rgb = nEarnPopupRGB;

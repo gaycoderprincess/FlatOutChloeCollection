@@ -20,6 +20,7 @@ namespace SmashyRace {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x455597, apply ? 0x4F0843 : 0x4F0810); // remove lap count max
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459F79, apply ? (uintptr_t)&ArcadeMode::DrawPressStartMenuASM : 0x45AC50); // remove vanilla press start menu
 		NyaHookLib::Patch<uint8_t>(0x44FE9D, apply ? 0xEB : 0x74); // remove out of map popup
+		NyaHookLib::Patch<uint8_t>(0x450B20, apply ? 0xC3 : 0x55); // remove out of map arrow
 	}
 
 	void ProcessSceneryCrashes() {

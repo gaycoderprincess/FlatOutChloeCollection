@@ -88,7 +88,7 @@ Player* GetPlayerLastHit(int playerId) {
 
 template<int playerId>
 void ProcessCrashBonuses() {
-	static CNyaTimer gTimer;
+	static CNyaRaceTimer gTimer;
 	gTimer.Process();
 
 	static int32_t lastHitTimestamps[32] = {};

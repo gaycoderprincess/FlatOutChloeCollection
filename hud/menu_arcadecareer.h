@@ -23,6 +23,10 @@ public:
 	}
 
 	virtual void Init() {
+		PreloadTexture("data/menu/carnageoverlay_gold.png"),
+		PreloadTexture("data/menu/carnageoverlay_silver.png"),
+		PreloadTexture("data/menu/carnageoverlay_bronze.png"),
+		PreloadTexture("data/menu/carnageoverlay_author.png"),
 		PreloadTexture("data/menu/carnagebg_left.png");
 		PreloadTexture("data/menu/carnagebg_right.png");
 		PreloadTexture("data/menu/track_icons.dds");
@@ -63,6 +67,12 @@ public:
 
 		if (!bEnabled) return;
 
+		static IDirect3DTexture9* texturePlacement[] = {
+				LoadTextureFromBFS("data/menu/carnageoverlay_gold.png"),
+				LoadTextureFromBFS("data/menu/carnageoverlay_silver.png"),
+				LoadTextureFromBFS("data/menu/carnageoverlay_bronze.png"),
+				LoadTextureFromBFS("data/menu/carnageoverlay_author.png"),
+		};
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carnagebg_left.png");
 		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_right.png");
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
@@ -77,6 +87,14 @@ public:
 		CMenu_TrackSelect::DisplayTrackInfo(GetTrackId());
 
 		auto totalScore = gCustomSave.GetArcadeCareerScore();
+		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
+		auto score = gCustomSave.aArcadeCareerScores[nCursorPos];
+		bool unlocked = totalScore >= event->nPointsToUnlock;
+		int position = 0;
+		if (score >= event->aGoalScores[2]) position = 3;
+		if (score >= event->aGoalScores[1]) position = 2;
+		if (score >= event->aGoalScores[0]) position = 1;
+		if (score >= event->nPlatinumScore) position = 4;
 
 		for (int i = 0; i < ArcadeMode::aArcadeRaces.size(); i++) {
 			auto event = &ArcadeMode::aArcadeRaces[i];
@@ -99,6 +117,9 @@ public:
 			float x2 = x1 + data.fSize * 1.5;
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, unlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
+			if (position >= 1 && position <= 4) {
+				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, texturePlacement[position-1]);
+			}
 			if (i == nCursorPos) {
 				auto rgb = GetPaletteColor(18);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
@@ -107,15 +128,6 @@ public:
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
 			}
 		}
-
-		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
-		auto score = gCustomSave.aArcadeCareerScores[nCursorPos];
-		bool unlocked = totalScore >= event->nPointsToUnlock;
-		int position = 0;
-		if (score >= event->aGoalScores[2]) position = 3;
-		if (score >= event->aGoalScores[1]) position = 2;
-		if (score >= event->aGoalScores[0]) position = 1;
-		if (score >= event->nPlatinumScore) position = 4;
 
 		tNyaStringData data;
 		data.x = gTargetScoresTitle.nPosX;
