@@ -170,11 +170,11 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fOptionTextSize", Menu_Multiplayer_Lobby.fOptionTextSize);
 	//QuickValueEditor("fTrackPreviewX", Menu_Multiplayer_Lobby.fTrackPreviewX);
 	//QuickValueEditor("nTrackPreviewX", Menu_Multiplayer_Lobby.nTrackPreviewX);
-	if (DrawMenuOption(std::format("bCentered - {}", HUD_LapTime.bCentered))) {
-		HUD_LapTime.bCentered = !HUD_LapTime.bCentered;
-	}
-	QuickValueEditor("nNonCenterX", HUD_LapTime.nNonCenterX);
-	QuickValueEditor("nNonCenterX_1", HUD_LapTime.nNonCenterX_1);
+	//if (DrawMenuOption(std::format("bCentered - {}", HUD_LapTime.bCentered))) {
+	//	HUD_LapTime.bCentered = !HUD_LapTime.bCentered;
+	//}
+	//QuickValueEditor("nNonCenterX", HUD_LapTime.nNonCenterX);
+	//QuickValueEditor("nNonCenterX_1", HUD_LapTime.nNonCenterX_1);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

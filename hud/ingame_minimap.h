@@ -3,7 +3,7 @@ public:
 	IDirect3DTexture9* pMapTexture = nullptr;
 	static constexpr float fArrowSize = 0.011;
 
-	NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
+	static NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
 		if (IsPlayerWrecked(ply)) return {0,0,0,127};
 
 		//NyaDrawing::CNyaRGBA32 aPlayerColors[] = {
@@ -48,7 +48,7 @@ public:
 		return aPlayerColors[0];
 	}
 
-	void GetMapExtents(float* left, float* right, float* top, float* bottom) {
+	static void GetMapExtents(float* left, float* right, float* top, float* bottom) {
 		auto posX = pEnvironment->pMinimap->fScreenPos[0];
 		auto posY = pEnvironment->pMinimap->fScreenPos[1];
 		auto sizeX = pEnvironment->pMinimap->fScreenSize[0];
@@ -92,9 +92,9 @@ public:
 		*bottom = posY + sizeY;
 	}
 
-	void DrawPlayerOnMap(Player* ply) {
-		static auto arrow = CHUDElement::LoadTextureFromBFS("data/global/overlay/playerarrow.png");
-		static auto arrowPlayer = CHUDElement::LoadTextureFromBFS("data/global/overlay/playerarrow_local.png");
+	static void DrawPlayerOnMap(Player* ply) {
+		static auto arrow = CHUDElement::LoadTextureFromBFS("data/global/overlay/map_playerarrow.png");
+		static auto arrowPlayer = CHUDElement::LoadTextureFromBFS("data/global/overlay/map_playerarrow_local.png");
 
 		auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
 		auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
@@ -120,6 +120,31 @@ public:
 		DrawRectangle(spritePosX - (fArrowSize * GetAspectRatioInv()), spritePosX + (fArrowSize * GetAspectRatioInv()), spritePosY - fArrowSize, spritePosY + fArrowSize, GetPlayerColor(ply), 0, ply->nPlayerType == PLAYERTYPE_LOCAL ? arrowPlayer : arrow, plyDir);
 	}
 
+	NyaVec3 gArcadeCheckpoint;
+	static void DrawCheckpointOnMap(NyaVec3 pos) {
+		static auto texture = CHUDElement::LoadTextureFromBFS("data/global/overlay/map_checkpoint.tga");
+
+		auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
+		auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
+		auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
+		auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
+
+		float left, right, top, bottom;
+		GetMapExtents(&left, &right, &top, &bottom);
+
+		pos.x -= startX;
+		pos.x /= startX - endX;
+		pos.z -= startY;
+		pos.z /= startY - endY;
+		if (-pos.x < 0) return;
+		if (-pos.z < 0) return;
+		if (-pos.x > 1) return;
+		if (-pos.z > 1) return;
+		float spritePosX = std::lerp(left, right, -pos.x);
+		float spritePosY = std::lerp(bottom, top, -pos.z);
+		DrawRectangle(spritePosX - (fArrowSize * GetAspectRatioInv()), spritePosX + (fArrowSize * GetAspectRatioInv()), spritePosY - fArrowSize, spritePosY + fArrowSize, {8,200,8,255}, 0, texture);
+	}
+
 	virtual void Process() {
 		if (!nIngameMap) return;
 		if (!bIsInMultiplayer && !CIngameHUDElement::IsRaceHUDUp()) return;
@@ -130,7 +155,7 @@ public:
 			DrawRectangle(left, right, top, bottom, {255,255,255,255}, 0, pMapTexture);
 		}
 
-		// draw wrecked players first, opponents after, local player on top
+		// draw wrecked players first, opponents after, then arcade checkpoint, local player on top
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetPlayer(i);
 			if (!ply) continue;
@@ -145,6 +170,11 @@ public:
 			if (IsPlayerWrecked(ply)) continue;
 			DrawPlayerOnMap(ply);
 		}
+
+		if (bIsCarnageRace) {
+			DrawCheckpointOnMap(gArcadeCheckpoint);
+		}
+
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetPlayer(i);
 			if (!ply) continue;

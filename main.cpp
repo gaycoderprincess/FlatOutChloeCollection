@@ -47,7 +47,6 @@
 #include "luafunctions.h"
 #include "nitrogain.h"
 #include "ultrawide.h"
-#include "newingamemenu.h"
 #include "debugmenu.h"
 
 void SetHandlingDamage() {
@@ -194,7 +193,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			CarnageRace::Init();
 			SmashyRace::Init();
 			Achievements::Init();
-			NewIngameMenu::Init();
 			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
 			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
 			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);

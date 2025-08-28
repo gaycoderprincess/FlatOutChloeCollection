@@ -141,7 +141,7 @@ namespace NewGameHud {
 		NyaHookLib::Patch(0x4539D4 + 2, &fMusicPlayer416);
 		NyaHookLib::Patch(0x4539F4 + 2, &fMusicPlayer480);
 		NyaHookLib::Patch(0x453A52 + 2, &fMusicPlayer428);
-		ChloeEvents::DrawUIEvent.AddHandler(OnHUDTick);
+		ChloeEvents::DrawRaceUIEvent.AddHandler(OnHUDTick);
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 	}
 }

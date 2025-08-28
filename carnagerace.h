@@ -183,7 +183,17 @@ namespace CarnageRace {
 		last = current;
 	}
 
+	NyaVec3 GetCheckpointPosition() {
+		auto split = GetPlayer(0)->nCurrentSplit;
+		split += (nCheckpointInterval - (split % nCheckpointInterval));
+		split %= pEnvironment->nNumSplitpoints;
+		auto splitData = pEnvironment->aSplitpoints[split-1];
+		return {splitData.fPosition[0], splitData.fPosition[1], splitData.fPosition[2]};
+	}
+
 	void ProcessCheckpoints() {
+		HUD_Minimap.gArcadeCheckpoint = GetCheckpointPosition();
+
 		static int last = 0;
 		if (pPlayerHost->nRaceTime < 0) {
 			last = 0;

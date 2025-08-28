@@ -1,7 +1,7 @@
 bool bIsDrawingGameUI = false;
 void HookLoop() {
 	if (bIsDrawingGameUI) {
-		ChloeEvents::DrawUIEvent.OnHit();
+		ChloeEvents::DrawRaceUIEvent.OnHit();
 		bDontRefreshInputsThisLoop = true;
 		CommonMain();
 		bIsDrawingGameUI = false;
