@@ -23,7 +23,7 @@ public:
 		if (IsInSplitScreen()) return;
 		if (bIsSmashyRace) return;
 		if (pGameFlow->nEventType != eEventType::RACE) return;
-		if (pPlayerHost->nRaceTime < 0) {
+		if (pPlayerHost->nRaceTime < 0 || !HUD_Wrecked.aNotifs.empty()) {
 			fAlpha = 0;
 			bNewLapRecord = false;
 			return;

@@ -102,7 +102,10 @@ namespace ArcadeMode {
 
 	void ProcessResultsFromLastRace() {
 		// don't proceed if we quit the race
-		if (!bLastRaceCompleted) return;
+		if (!bLastRaceCompleted) {
+			nCurrentEventScore = 0;
+			return;
+		}
 
 		if (pCurrentEvent->bIsArcadeRace || pCurrentEvent->bIsSmashySmash)  {
 			if (nCurrentEventScore > gCustomSave.aArcadeCareerScores[nCurrentEventId]) {
@@ -110,6 +113,7 @@ namespace ArcadeMode {
 				gCustomSave.Save();
 			}
 		}
+		nCurrentEventScore = 0;
 	}
 
 	void ProcessResultsFromLastRace_Prompted() {

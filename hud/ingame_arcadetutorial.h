@@ -42,6 +42,6 @@ public:
 		data.y = 960;
 		data.size = 0.035;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_LEFT, data, "Press START button", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, "Press START button", &DrawStringFO2_Small);
 	}
 } HUD_ArcadeTutorial;
