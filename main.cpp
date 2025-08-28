@@ -196,21 +196,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 			NyaHookLib::Patch(0x68BDE0, "gamesave"); // change savefile name
 
-			/*uintptr_t addresses[] = {
-				0x438482,
-				0x43991B,
-				0x43A702,
-				0x43A721,
-				0x444FBA,
-				0x445267,
-				0x4A6DFC,
-				0x4A7258,
-				0x4A75A1,
-			};
-			for (auto& addr : addresses) {
-				NyaHookLib::Patch(addr, "SaveGame/gameoptions.cfg"); // change options save name
-			}*/
-
 			// 004E3CDD disable menu ui
 
 			// use multithreaded flag for preloading textures

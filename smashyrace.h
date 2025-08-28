@@ -74,14 +74,7 @@ namespace SmashyRace {
 			int timeLeft = fPlayerTimeLeft*1000;
 			if (timeLeft < 0) timeLeft = 0;
 
-			std::string timeLeftString = GetTimeFromMilliseconds(timeLeft, true);
-			timeLeftString.pop_back();
-			// leading zero
-			if (fPlayerTimeLeft < 60 * 10) {
-				timeLeftString = "0" + timeLeftString;
-			}
-
-			DrawElement(0, "TIME LEFT", timeLeftString, timeLeft <= 4500 ? NyaDrawing::CNyaRGBA32(200,0,0,255) : NyaDrawing::CNyaRGBA32(255,255,255,255));
+			DrawElement(0, "TIME LEFT", FormatGameTime(timeLeft), timeLeft <= 4500 ? NyaDrawing::CNyaRGBA32(200,0,0,255) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			//DrawElement(0, "TIME LEFT", timeLeftString, timeLeft <= 4500 ? GetPaletteColor(22) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			DrawElementCenter(1, "SCORE", FormatScore(nPlayerScore));
 		}

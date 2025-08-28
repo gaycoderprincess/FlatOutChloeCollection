@@ -1,13 +1,3 @@
-auto GetStringWide(const std::string& string) {
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	return converter.from_bytes(string);
-}
-
-auto GetStringNarrow(const std::wstring& string) {
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	return converter.to_bytes(string);
-}
-
 int ChloeSkins_GetNumSkinsForCar(void* a1) {
 	lua_pushnumber(a1, GetNumSkinsForCar(luaL_checknumber(a1, 1)));
 	return 1;

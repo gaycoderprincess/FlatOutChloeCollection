@@ -253,19 +253,14 @@ public:
 					int targets[5] = {};
 					ChloeTimeTrial::GetCareerMedalTimes(cup->aRaces[0].nLevel, cup->aRaces[0].nTimeTrialCar-1, targets);
 					std::string targetStrings[] = {
-							GetTimeFromMilliseconds(targets[0], true),
-							GetTimeFromMilliseconds(targets[1], true),
-							GetTimeFromMilliseconds(targets[2], true),
+							FormatGameTime(targets[0], false),
+							FormatGameTime(targets[1], false),
+							FormatGameTime(targets[2], false),
 					};
-					for (auto& str : targetStrings) {
-						str.pop_back();
-					}
 					auto pb = ChloeTimeTrial::GetCareerPBTime(cup->aRaces[0].nLevel, cup->aRaces[0].nTimeTrialCar-1);
-					std::string pbString = pb != UINT_MAX ? GetTimeFromMilliseconds(pb, true) : "N/A.";
-					pbString.pop_back();
+					std::string pbString = pb != UINT_MAX ? FormatGameTime(pb, false) : "N/A.";
 					if (targets[3] != UINT_MAX) {
-						auto authorString = GetTimeFromMilliseconds(targets[3], true);
-						authorString.pop_back();
+						auto authorString = FormatGameTime(targets[3], false);
 						sEventDescription = std::format("TARGETS\nAUTHOR - {}\nGOLD - {}\nSILVER - {}\nBRONZE - {}\n\nPERSONAL BEST: {}", authorString, targetStrings[0], targetStrings[1], targetStrings[2], pbString);
 					}
 					else {

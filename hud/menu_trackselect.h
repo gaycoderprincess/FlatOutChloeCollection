@@ -313,6 +313,14 @@ public:
 		return true;
 	}
 
+	int GetNumOptions() {
+		int count = 0;
+		while (true) {
+			count++;
+			if (aOptions[count].name == "*END*") return count;
+		};
+	}
+
 	virtual void MoveLeft() {
 		if (!aOptions[nCursorY].value) return;
 
@@ -329,8 +337,7 @@ public:
 		do {
 			nCursorY--;
 			if (nCursorY < 0) {
-				nCursorY = 0;
-				break;
+				nCursorY = GetNumOptions()-1;
 			}
 		} while (!IsOptionValid(nCursorY));
 	}
@@ -338,8 +345,7 @@ public:
 		do {
 			nCursorY++;
 			if (aOptions[nCursorY].name == "*END*") {
-				nCursorY--;
-				break;
+				nCursorY = 0;
 			}
 		} while (!IsOptionValid(nCursorY));
 	}
@@ -488,26 +494,20 @@ public:
 			Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", sStuntPB), &DrawStringFO2_Ingame12);
 		}
 		else if (nTrackReversed && gCustomSave.bestLapsReversed[trackId]) {
-			auto str = GetTimeFromMilliseconds(gCustomSave.bestLapsReversed[trackId], true);
-			str.pop_back();
-
 			tNyaStringData data;
 			data.x = gLevelPB.nPosX;
 			data.y = gLevelPB.nPosY;
 			data.size = gLevelPB.fSize;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", str, GetCarName(gCustomSave.bestLapCarsReversed[trackId]+1)), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", FormatGameTime(gCustomSave.bestLapsReversed[trackId], false), GetCarName(gCustomSave.bestLapCarsReversed[trackId]+1)), &DrawStringFO2_Ingame12);
 		}
 		else if (!nTrackReversed && gCustomSave.bestLaps[trackId]) {
-			auto str = GetTimeFromMilliseconds(gCustomSave.bestLaps[trackId], true);
-			str.pop_back();
-
 			tNyaStringData data;
 			data.x = gLevelPB.nPosX;
 			data.y = gLevelPB.nPosY;
 			data.size = gLevelPB.fSize;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", str, GetCarName(gCustomSave.bestLapCars[trackId]+1)), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", FormatGameTime(gCustomSave.bestLaps[trackId], false), GetCarName(gCustomSave.bestLapCars[trackId]+1)), &DrawStringFO2_Ingame12);
 		}
 
 		for (int y = 0; aOptions[y].name != "*END*"; y++) {

@@ -18,7 +18,12 @@ void WriteLogDebug(const std::string& title, const std::string& str) {
 	file.flush();
 }
 
-std::string GetStringNarrow(const wchar_t* string) {
+auto GetStringWide(const std::string& string) {
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	return converter.from_bytes(string);
+}
+
+auto GetStringNarrow(const std::wstring& string) {
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	return converter.to_bytes(string);
 }
@@ -34,12 +39,12 @@ std::string FormatScore(int a1) {
 	return std::format("{},{:03}", v4, a1 % 1000);
 }
 
-std::string FormatGameTime(int ms) {
+std::string FormatGameTime(int ms, bool leadingZero = true) {
 	if (ms < 0) ms = 0;
 	std::string str = GetTimeFromMilliseconds(ms, true);
 	str.pop_back(); // remove trailing zero
 	// add leading zero
-	if (ms < 60 * 10 * 1000) {
+	if (leadingZero && ms < 60 * 10 * 1000) {
 		str = "0" + str;
 	}
 	return str;
