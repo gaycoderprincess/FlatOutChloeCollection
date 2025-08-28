@@ -22,24 +22,24 @@ void SaveResetPoints(const std::string& filename) {
 	}
 }
 
-bool LoadResetPoints(const std::string& filename) {
+void LoadResetPoints() {
 	aNewResetPoints.clear();
 
-	std::ifstream fin(filename, std::ios::in | std::ios::binary );
-	if (!fin.is_open()) return false;
+	std::ifstream fin(GetResetPointFilename(), std::ios::in | std::ios::binary );
+	if (!fin.is_open()) return;
 
 	uint32_t count = 0;
 	fin.read((char*)&count, 4);
 	aNewResetPoints.reserve(count);
 	for (int i = 0; i < count; i++) {
-		if (fin.eof()) return true;
+		if (fin.eof()) return;
 
 		tResetpoint reset;
 		fin.read((char*)&reset.matrix, sizeof(reset.matrix));
 		fin.read((char*)&reset.split, sizeof(reset.split));
 		aNewResetPoints.push_back(reset);
 	}
-	return true;
+	return;
 }
 
 NyaMat4x4* pPlayerResetpoint = nullptr;
@@ -220,4 +220,6 @@ void ApplyCarResetPatches() {
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x448731, &ResetSpeedCheckASM);
 	NyaHookLib::Patch<uint8_t>(0x448764, 0x74);
+
+	ChloeEvents::MapLoadedEvent.AddHandler(LoadResetPoints);
 }

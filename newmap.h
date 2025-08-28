@@ -151,14 +151,13 @@ void DrawIngameMap() {
 	}
 }
 
-void __stdcall D3DIngameMap(int) {
-	bIsDrawingMap = true;
+void __stdcall D3DGameUI(int) {
+	bIsDrawingGameUI = true;
 	D3DHookMain();
 }
 
 const char* __cdecl OnMapLoad(void* a1, int a2) {
-	LoadResetPoints(GetResetPointFilename());
-	ReverseTrackStartpoints();
+	ChloeEvents::MapLoadedEvent.OnHit();
 
 	auto path = (const char*)lua_tolstring(a1, a2);
 	pIngameMapTexture = CHUDElement::LoadTextureFromBFS(path);
@@ -166,6 +165,8 @@ const char* __cdecl OnMapLoad(void* a1, int a2) {
 }
 
 void ApplyIngameMapPatches() {
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DIngameMap);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4694E5, &OnMapLoad);
+	ChloeEvents::DrawUIEvent.AddHandler(DrawIngameMap);
+	ChloeEvents::DrawUIEvent.AddHandler(NewGameHud::OnTick);
 }

@@ -217,7 +217,6 @@ struct tCustomSaveStructure {
 	}
 } gCustomSave;
 
-bool bLapRecordJustRegistered = false;
 void ProcessPlayStats() {
 	static CNyaTimer gTimer;
 	gTimer.Process();
@@ -262,7 +261,7 @@ void ProcessPlayStats() {
 					if (!bestLaps[track] || lap < bestLaps[track]) {
 						bestLaps[track] = lap;
 						bestLapCars[track] = ply->nCarId;
-						bLapRecordJustRegistered = true;
+						ChloeEvents::NewLapRecordEvent.OnHit(ply, lap);
 						changed = true;
 					}
 				}

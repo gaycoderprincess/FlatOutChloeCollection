@@ -49,6 +49,19 @@ void __cdecl GetBorderLineRightIDReversed(void* a1, int a2, int a3) {
 	lua_rawgeti(a1, a2, a3);
 }
 
+void ReverseTrackStartpoints() {
+	if (!bIsTrackReversed) return;
+
+	for (int i = 0; i < 8; i++) {
+		pEnvironment->aStartpoints[i].fMatrix[0] *= -1; // x.x
+		pEnvironment->aStartpoints[i].fMatrix[1] *= -1; // x.y
+		pEnvironment->aStartpoints[i].fMatrix[2] *= -1; // x.z
+		pEnvironment->aStartpoints[i].fMatrix[8] *= -1; // z.x
+		pEnvironment->aStartpoints[i].fMatrix[9] *= -1; // z.y
+		pEnvironment->aStartpoints[i].fMatrix[10] *= -1; // z.z
+	}
+}
+
 void SetTrackReversed(bool apply) {
 	bIsTrackReversed = apply;
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4697F7, &GetSplitpointIDReversed);
@@ -67,19 +80,7 @@ void SetTrackReversed(bool apply) {
 	NyaHookLib::Patch(0x402595 + 1, apply ? "AIBorderLineLeft" : "AIBorderLineRight");
 	NyaHookLib::Patch(0x469857 + 1, apply ? "Right" : "Left");
 	NyaHookLib::Patch(0x4698A5 + 1, apply ? "Left" : "Right");
-}
-
-void ReverseTrackStartpoints() {
-	if (!bIsTrackReversed) return;
-
-	for (int i = 0; i < 8; i++) {
-		pEnvironment->aStartpoints[i].fMatrix[0] *= -1; // x.x
-		pEnvironment->aStartpoints[i].fMatrix[1] *= -1; // x.y
-		pEnvironment->aStartpoints[i].fMatrix[2] *= -1; // x.z
-		pEnvironment->aStartpoints[i].fMatrix[8] *= -1; // z.x
-		pEnvironment->aStartpoints[i].fMatrix[9] *= -1; // z.y
-		pEnvironment->aStartpoints[i].fMatrix[10] *= -1; // z.z
-	}
+	ChloeEvents::MapLoadedEvent.AddHandler(ReverseTrackStartpoints);
 }
 
 bool DoesTrackSupportReversing(int level) {

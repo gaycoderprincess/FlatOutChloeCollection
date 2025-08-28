@@ -6,6 +6,10 @@ namespace ChloeEvents {
 
 	public:
 		void AddHandler(T function) {
+			// check for duplicates
+			for (auto& func : functions) {
+				if (func == function) return;
+			}
 			functions.push_back(function);
 		}
 	};
@@ -36,4 +40,31 @@ namespace ChloeEvents {
 			}
 		}
 	} DerbyTimeoutEvent;
+
+	class EventNewLapRecord : public ChloeEvent<void(*)(Player*, uint32_t)> {
+	public:
+		void OnHit(Player* pPlayer, uint32_t lapTime) {
+			for (auto& func : functions) {
+				func(pPlayer, lapTime);
+			}
+		}
+	} NewLapRecordEvent;
+
+	class EventMapLoaded : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} MapLoadedEvent;
+
+	class EventDrawUI : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} DrawUIEvent;
 }

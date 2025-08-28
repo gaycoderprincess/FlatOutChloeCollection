@@ -1,12 +1,10 @@
-bool bIsDrawingMap = false;
-void DrawIngameMap();
-
+bool bIsDrawingGameUI = false;
 void HookLoop() {
-	if (bIsDrawingMap) {
-		DrawIngameMap();
+	if (bIsDrawingGameUI) {
+		ChloeEvents::DrawUIEvent.OnHit();
 		bDontRefreshInputsThisLoop = true;
 		CommonMain();
-		bIsDrawingMap = false;
+		bIsDrawingGameUI = false;
 		return;
 	}
 
@@ -14,7 +12,6 @@ void HookLoop() {
 	ChloeMenuHud::InitHooks();
 	ChloeMenuHud::OnTick();
 	NewGameHud::Init();
-	NewGameHud::OnTick();
 	NewMusicPlayer::OnTick();
 	Achievements::OnTick();
 	ProcessPlayStats();
