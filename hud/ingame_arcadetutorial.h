@@ -31,12 +31,12 @@ public:
 		data.x = gGamemodeLabel.nPosX;
 		data.y = gGamemodeLabel.nPosY;
 		data.size = gGamemodeLabel.fSize;
-		data.SetColor(GetPaletteColor(13));
+		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
 		Draw1080pString(JUSTIFY_LEFT, data, gamemodeName, &DrawStringFO2_Small);
 		data.x = gGamemodeDescription.nPosX;
 		data.y = gGamemodeDescription.nPosY;
 		data.size = gGamemodeDescription.fSize;
-		data.SetColor(GetPaletteColor(17));
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		Draw1080pString(JUSTIFY_LEFT, data, gamemodeDescription, &DrawStringFO2_Ingame12);
 		data.x = 960;
 		data.y = 960;

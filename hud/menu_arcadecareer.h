@@ -118,7 +118,7 @@ public:
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, texturePlacement[position-1]);
 			}
 			if (i == nCursorPos) {
-				auto rgb = GetPaletteColor(18);
+				auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
 				x2 = x1 + fEventHighlightSize * 1.5;
 				y2 = y1 + fEventHighlightSize;
@@ -149,7 +149,7 @@ public:
 		}
 		else {
 			auto data2 = data;
-			data2.SetColor(GetPaletteColor(22));
+			data2.SetColor(GetPaletteColor(COLOR_MENU_RED));
 			Draw1080pString(JUSTIFY_LEFT, data2, "LOCKED", &DrawStringFO2_Small);
 		}
 
@@ -165,7 +165,7 @@ public:
 			auto data2 = data;
 			data2.y -= 16;
 			data2.size = gYourScoreLocked.fSize;
-			data2.SetColor(GetPaletteColor(22));
+			data2.SetColor(GetPaletteColor(COLOR_MENU_RED));
 			Draw1080pString(JUSTIFY_LEFT, data2, std::format("{} POINTS\nTO UNLOCK", FormatScore(event->nPointsToUnlock)), &DrawStringFO2_Small);
 		}
 

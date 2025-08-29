@@ -5,7 +5,7 @@ namespace ArcadeMode {
 	int __fastcall DrawPressStartMenu(IngameMenu* menu) {
 		//if (!ArcadeMode::bIsArcadeMode) return menu->DrawPressStart();
 
-		if (pInputManager->IsKeyJustPressed(0) || pInputManager->IsKeyJustPressed(8)) {
+		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_A) || pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_START)) {
 			pPlayerHost->StartRace();
 			return IngameMenu::MENU_RACE_COUNTDOWN;
 		}

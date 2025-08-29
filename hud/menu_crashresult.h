@@ -23,7 +23,7 @@ public:
 		float baseY = data.y = gTitles.nPosY + gTitles.nSpacingY * y;
 		data.size = gTitles.fSize;
 		data.XCenterAlign = true;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		Draw1080pString(JUSTIFY_CENTER, data, name, &DrawStringFO2_Ingame12);
 		data.x = baseX + fNumberOffset;
 		data.y = baseY - fBottomOffset;
@@ -31,15 +31,15 @@ public:
 		data.XCenterAlign = false;
 		Draw1080pString(JUSTIFY_CENTER, data, "#", &DrawStringFO2_Ingame12);
 		data.y = baseY + fBottomOffset;
-		data.SetColor(GetPaletteColor(17));
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		Draw1080pString(JUSTIFY_CENTER, data, std::to_string(count), &DrawStringFO2_Ingame12);
 		data.x = baseX + fCashOffset;
 		data.y = baseY - fBottomOffset;
 		data.XCenterAlign = true;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL", &DrawStringFO2_Ingame12);
 		data.y = baseY + fBottomOffset;
-		data.SetColor(GetPaletteColor(17));
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", price), &DrawStringFO2_Ingame12);
 	}
 
@@ -73,12 +73,12 @@ public:
 		data.y = gTotalTitle.nPosY;
 		data.size = gTotalTitle.fSize;
 		data.XCenterAlign = true;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		Draw1080pString(JUSTIFY_CENTER, data, "CRASH BONUS TOTAL", &DrawStringFO2_Small);
 		data.x = gTotalAmount.nPosX;
 		data.y = gTotalAmount.nPosY;
 		data.size = gTotalAmount.fSize;
-		data.SetColor(GetPaletteColor(17));
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", total), &DrawStringFO2_Small);
 	}
 } Menu_CrashResult;

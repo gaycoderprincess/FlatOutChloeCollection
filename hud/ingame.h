@@ -28,7 +28,7 @@ public:
 		data.x = gElementBase.fPosX * GetAspectRatioInv();
 		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
 		data.size = gElementBase.fSize;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 		data.a = rgb.a;
 		DrawStringFO2_Ingame12(data, title);
 		data.y += gElementBase.fSpacingY;
@@ -44,7 +44,7 @@ public:
 		data.x = x2;
 		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
 		data.size = gElementBase.fSize;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 		data.a = rgb.a;
 		DrawStringFO2_Ingame12(data, title);
 		data.y += gElementBase.fSpacingY;
@@ -58,7 +58,7 @@ public:
 		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
 		data.size = gElementBase.fSize;
 		data.XCenterAlign = true;
-		data.SetColor(GetPaletteColor(2));
+		data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 		data.a = rgb.a;
 		DrawStringFO2_Ingame12(data, title);
 		data.y += gElementBase.fSpacingY;
@@ -72,7 +72,7 @@ public:
 		data.y = gElementBase.fPosY + y * fElementTotalSpacing;
 		data.size = gElementBase.fSize;
 		data.XRightAlign = true;
-		data.SetColor(GetPaletteColor(2));
+		data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 		data.a = rgb.a;
 		DrawStringFO2_Ingame12(data, title);
 		data.y += gElementBase.fSpacingY;
@@ -155,3 +155,4 @@ namespace NewGameHud {
 #include "ingame_laptime.h"
 #include "ingame_resetfade.h"
 #include "ingame_minimap.h"
+#include "ingame_pausemenu.h"

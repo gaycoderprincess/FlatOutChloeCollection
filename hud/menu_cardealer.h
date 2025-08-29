@@ -118,10 +118,10 @@ public:
 			}
 
 			if (skinId == skin) {
-				data.SetColor(GetPaletteColor(18));
+				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 			}
 			else {
-				data.SetColor(GetPaletteColor(17));
+				data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 			}
 
 			DrawString(data, GetSkinName(car, skinId, skinLoop), &DrawStringFO2_Ingame12);

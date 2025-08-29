@@ -51,10 +51,10 @@ public:
 			auto string1 = std::format("{}.", ply->nPosition);
 			auto string2 = std::format("{}", GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get()));
 			if (!IsInSplitScreen() && ply->nPlayerId == 0) {
-				data.SetColor(GetPaletteColor(18));
+				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 			}
 			else {
-				data.SetColor(GetPaletteColor(17));
+				data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 			}
 			if (ply->bIsDNF) {
 				data.SetColor(64,64,64,255);

@@ -540,11 +540,11 @@ public:
 			if (!valid) {
 				data.SetColor(127,127,127,255);
 			}
-			if (valid) data.SetColor(GetPaletteColor(18));
+			if (valid) data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 			Draw1080pString(JUSTIFY_LEFT, data, option.name == "APPLY SETTINGS" && bMultiplayerCreateGame ? "CREATE GAME" : option.name, &DrawStringFO2_Ingame12);
 			data.x += gOptions.nSpacingX;
 			data.XCenterAlign = true;
-			if (valid) data.SetColor(GetPaletteColor(17));
+			if (valid) data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 
 			if (option.name == "GO RACE" || option.name == "APPLY SETTINGS") break;
 			if (!option.value) continue;

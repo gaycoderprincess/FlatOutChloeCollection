@@ -91,7 +91,7 @@ public:
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 
-		auto rgb = GetPaletteColor(18);
+		auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
 		rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
 
 		float x1 = nHighlightX;

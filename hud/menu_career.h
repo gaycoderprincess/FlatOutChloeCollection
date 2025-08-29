@@ -46,7 +46,7 @@ public:
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 
 		tNyaStringData data;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		data.x = nListPositionX;
 		data.y = nListTopY;
 		data.size = fListSize;
@@ -57,7 +57,7 @@ public:
 		data.XCenterAlign = true;
 		Draw1080pString(JUSTIFY_LEFT, data, "POINTS", &DrawStringFO2_Ingame12);
 		data.y = nListStartY;
-		data.SetColor(GetPaletteColor(17));
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		for (int i = 0; i < 8; i++) {
 			gCustomSave.CalculateCupPlayersByPosition();
 			int playerId = gCustomSave.aCupPlayersByPosition[i];

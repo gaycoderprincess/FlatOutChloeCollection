@@ -162,10 +162,10 @@ public:
 		}
 	}
 
-	static bool Draw1080pSprite(eJustify justify, float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, TEXTURE_TYPE* texture) {
+	static bool Draw1080pSprite(eJustify justify, float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, TEXTURE_TYPE* texture, ImVec2 uvMin = {0,0}, ImVec2 uvMax = {1,1}) {
 		DoJustify(justify, left, top);
 		DoJustify(justify, right, bottom);
-		return DrawRectangle(left, right, top, bottom, rgb, 0, texture);
+		return DrawRectangle(left, right, top, bottom, rgb, 0, texture, 0, uvMin, uvMax);
 	}
 
 	static void Draw1080pString(eJustify justify, tNyaStringData data, const std::string& text, void(*drawFunc)(const tNyaStringData&, const std::string&)) {

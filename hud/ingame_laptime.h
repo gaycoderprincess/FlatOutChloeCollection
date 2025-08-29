@@ -71,7 +71,7 @@ public:
 		}
 
 		if (showingLastLap && bNewLapRecord) {
-			DrawElementCenter(1.5, "NEW LAP RECORD!", "", rgb);
+			DrawElementCenter(1.4, "NEW LAP RECORD!", "", rgb);
 		}
 	}
 } HUD_LapTime;

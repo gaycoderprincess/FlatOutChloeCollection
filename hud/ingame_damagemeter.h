@@ -189,7 +189,7 @@ public:
 			data.x = fHealthTextX * GetAspectRatioInv() + fXOffset;
 			data.y = fHealthTextY + fYOffset;
 			data.size = fHealthTextSize;
-			data.SetColor(GetPaletteColor(18));
+			data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 			data.a = alpha;
 			//DrawStringFO2_Ingame12(data, GetStringNarrow(ply->sPlayerName.Get()));
 			DrawStringFO2_Small(data, GetStringNarrow(ply->sPlayerName.Get()));

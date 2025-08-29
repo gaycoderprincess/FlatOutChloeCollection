@@ -46,7 +46,7 @@ public:
 		tNyaStringData data;
 		data.y = nPlayerStartY + y * nPlayerListSpacing;
 		data.size = fPlayerListTextSize;
-		if (y == 0) data.SetColor(GetPaletteColor(18));
+		if (y == 0) data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 
 		data.x = nPlayerReadyX;
 		if (!ready.empty()) Draw1080pString(JUSTIFY_LEFT, data, ready, &DrawStringFO2_Ingame12);
@@ -79,10 +79,10 @@ public:
 		data.y = nOptionStartY;
 		data.size = fOptionTextSize;
 		for (auto& option : aOptions) {
-			data.SetColor(GetPaletteColor(18));
+			data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 			Draw1080pString(JUSTIFY_RIGHT, data, option.name, &DrawStringFO2_Ingame12);
 			data.y += nOptionSpacing;
-			data.SetColor(GetPaletteColor(17));
+			data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 			Draw1080pString(JUSTIFY_RIGHT, data, option.value, &DrawStringFO2_Ingame12);
 			data.y += nOptionSpacing2;
 		}

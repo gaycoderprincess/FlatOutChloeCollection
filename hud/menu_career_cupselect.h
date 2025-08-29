@@ -114,7 +114,7 @@ public:
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (i == nCursorX && nCursorY == 0) {
-				auto rgb = GetPaletteColor(18);
+				auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
 				x2 = x1 + fEventHighlightSize * 1.5;
 				y2 = y1 + fEventHighlightSize;
@@ -145,7 +145,7 @@ public:
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, cupSave->bUnlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (nCursorY == 1) {
-				auto rgb = GetPaletteColor(18);
+				auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
 				x2 = x1 + fEventHighlightSize * 1.5;
 				y2 = y1 + fEventHighlightSize;
@@ -181,7 +181,7 @@ public:
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, unlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (i == nCursorX && nCursorY == 2) {
-				auto rgb = GetPaletteColor(18);
+				auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
 				x2 = x1 + fEventHighlightSize * 1.5;
 				y2 = y1 + fEventHighlightSize;
@@ -297,7 +297,7 @@ public:
 		data.x = gEventsTitle.nPosX;
 		data.y = gEventsTitle.nPosY;
 		data.size = gEventsTitle.fSize;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		Draw1080pString(JUSTIFY_RIGHT, data, "EVENTS", &DrawStringFO2_Ingame12);
 	}
 } Menu_CareerCupSelect;

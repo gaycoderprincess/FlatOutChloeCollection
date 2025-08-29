@@ -23,19 +23,19 @@ public:
 		data.x = gUnlockTitle.nPosX;
 		data.y = gUnlockTitle.nPosY;
 		data.size = gUnlockTitle.fSize;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		Draw1080pString(JUSTIFY_RIGHT, data, "Car:", &DrawStringFO2_Small);
 		data.x = gUnlockSubtitle.nPosX;
 		data.y = gUnlockSubtitle.nPosY;
 		data.size = gUnlockSubtitle.fSize;
-		data.SetColor(GetPaletteColor(17));
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		Draw1080pString(JUSTIFY_RIGHT, data, GetCarName(pGameFlow->pMenuInterface->pMenuScene->nCar), &DrawStringFO2_Small);
 
 		data.x = gBottomTitle.nPosX;
 		data.y = gBottomTitle.nPosY;
 		data.size = gBottomTitle.fSize;
 		data.XCenterAlign = true;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		Draw1080pString(JUSTIFY_CENTER, data, "YOU HAVE UNLOCKED A NEW CAR!", &DrawStringFO2_Small);
 		//data.x = gBottomAmount.nPosX;
 		//data.y = gBottomAmount.nPosY;

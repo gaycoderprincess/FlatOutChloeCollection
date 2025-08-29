@@ -175,6 +175,12 @@ void ProcessDebugMenu() {
 	//}
 	//QuickValueEditor("nNonCenterX", HUD_LapTime.nNonCenterX);
 	//QuickValueEditor("nNonCenterX_1", HUD_LapTime.nNonCenterX_1);
+	QuickValueEditor("gMenuTitle", HUD_PauseMenu.gMenuTitle, false);
+	QuickValueEditor("gMenuOptions", HUD_PauseMenu.gMenuOptions, true);
+	QuickValueEditor("nSliderLeft", HUD_PauseMenu.nSliderLeft);
+	QuickValueEditor("nSliderRight", HUD_PauseMenu.nSliderRight);
+	QuickValueEditor("nSliderTop", HUD_PauseMenu.nSliderTop);
+	QuickValueEditor("nSliderBottom", HUD_PauseMenu.nSliderBottom);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

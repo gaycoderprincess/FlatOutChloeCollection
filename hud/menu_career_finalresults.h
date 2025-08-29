@@ -29,7 +29,7 @@ public:
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 
 		tNyaStringData data;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		data.x = CMenu_Career::nListPositionX;
 		data.y = CMenu_Career::nListTopY;
 		data.size = CMenu_Career::fListSize;
@@ -48,7 +48,7 @@ public:
 		data.XCenterAlign = true;
 		Draw1080pString(JUSTIFY_LEFT, data, "POINTS", &DrawStringFO2_Ingame12);
 		data.y = CMenu_Career::nListStartY;
-		data.SetColor(GetPaletteColor(17));
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		for (int i = 0; i < 8; i++) {
 			gCustomSave.CalculateCupPlayersByPosition();
 			int playerId = gCustomSave.aCupPlayersByPosition[i];
@@ -74,12 +74,12 @@ public:
 		data.x = gTitle.nPosX;
 		data.y = gTitle.nPosY;
 		data.size = gTitle.fSize;
-		data.SetColor(GetPaletteColor(18));
+		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		Draw1080pString(JUSTIFY_RIGHT, data, "Final Results", &DrawStringFO2_Ingame12);
 		data.x = gCupName.nPosX;
 		data.y = gCupName.nPosY;
 		data.size = gCupName.fSize;
-		data.SetColor(GetPaletteColor(17));
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::sLastCupName, &DrawStringFO2_Small);
 		const char* placementStrings[] = {
 				"You finished first!",
