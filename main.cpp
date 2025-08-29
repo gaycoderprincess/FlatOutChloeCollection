@@ -200,6 +200,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
 
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
+			NyaHookLib::Patch<uint16_t>(0x45314F, 0x9090); // enable map drawing in stunt maps
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4694E5, &OnMapLoad);
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen

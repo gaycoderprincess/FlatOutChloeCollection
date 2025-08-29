@@ -18,7 +18,28 @@ namespace NewIngameMenu {
 		);
 	}
 
+	int __fastcall DrawPressStartMenu(IngameMenu* menu) {
+		if (bIsInMultiplayer) return IngameMenu::MENU_RACE_COUNTDOWN;
+
+		HUD_StartMenu.bMenuUp = true;
+		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_A) || pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_START)) {
+			pPlayerHost->StartRace();
+			return IngameMenu::MENU_RACE_COUNTDOWN;
+		}
+		return IngameMenu::MENU_PRESS_START;
+	}
+
+	void __attribute__((naked)) DrawPressStartMenuASM() {
+		__asm__ (
+			"mov ecx, ebx\n\t"
+			"jmp %0\n\t"
+				:
+				:  "i" (DrawPressStartMenu)
+		);
+	}
+
 	void Init() {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459FCF, &DrawPauseMenuASM);
+		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459F79, &DrawPressStartMenuASM);
 	}
 }

@@ -156,3 +156,4 @@ namespace NewGameHud {
 #include "ingame_resetfade.h"
 #include "ingame_minimap.h"
 #include "ingame_pausemenu.h"
+#include "ingame_startmenu.h"

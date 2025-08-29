@@ -5,7 +5,15 @@ public:
 		PreloadTexture("data/global/overlay/pausemenubg.png");
 	}
 
+	static inline tDrawPositions1080p gMenuTitle = {662,436,0.031};
+	static inline tDrawPositions1080p gMenuOptions = {690,520,0.035,0,58};
+	constexpr static inline int nSliderLeft = 675;
+	constexpr static inline int nSliderRight = 1024;
+	constexpr static inline int nSliderTop = 24;
+	constexpr static inline int nSliderBottom = 58;
+
 	static inline bool bMenuUp = false;
+	static inline int nMenuReturnValue = -1;
 
 	enum eSubMenu {
 		SUBMENU_MAIN,
@@ -15,56 +23,121 @@ public:
 	};
 	static inline eSubMenu nSubMenu;
 	static inline int nSelectedOption = 1;
-	static inline int nMenuReturnValue = -1;
 	static void EnterSubmenu(eSubMenu menu) {
 		nSubMenu = menu;
 		nSelectedOption = 1;
 	}
 
-	struct tOption {
-		const char* name;
-		void(*func)();
-	};
-	static inline tOption aOptionsMain[] = {
-			{"PAUSED", nullptr},
-			{"CONTINUE RACE", [](){ nMenuReturnValue = 0; }},
-			{"RESTART RACE", [](){ EnterSubmenu(SUBMENU_RESTARTPROMPT); }},
-			{"SOUND OPTIONS", [](){ EnterSubmenu(SUBMENU_SOUNDOPTIONS); }},
-			{"EXIT TO MENU", [](){ EnterSubmenu(SUBMENU_QUITPROMPT); }},
-			{nullptr, nullptr},
+	class MenuOption {
+	public:
+		std::string sName;
+
+		MenuOption(const std::string& name) {
+			sName = name;
+		}
+
+		virtual bool IsSlider() { return false; }
+		virtual int GetValue() { return 0; }
+		virtual float GetValuePercent() { return 0; }
+
+		virtual void OnSelected() {}
+		virtual void OnLeft() {}
+		virtual void OnRight() {}
 	};
 
-	static inline tOption aOptionsSound[] = {
-			{"SOUND OPTIONS", nullptr},
-			{"MUSIC VOLUME", nullptr},
-			{"SFX VOLUME", nullptr},
-			{nullptr, nullptr},
+	class MenuOptionSelectable : public MenuOption {
+	protected:
+		void(*pFunction)();
+
+	public:
+		MenuOptionSelectable(const std::string& name, void(*func)()) : MenuOption(name) {
+			pFunction = func;
+		}
+		virtual void OnSelected() {
+			pFunction();
+		}
 	};
 
-	static inline tOption aOptionsRestart[] = {
-			{"RESTART RACE", nullptr},
-			{"NO", [](){ EnterSubmenu(SUBMENU_MAIN); }},
-			{"YES", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_RESTARTRACE; }},
-			{"", nullptr},
-			{"YOU WILL LOSE YOUR CURRENT RACE", nullptr},
-			{"PROGRESS!", nullptr},
-			{nullptr, nullptr},
+	class MenuOptionSlider : public MenuOption {
+	protected:
+		int* nValue;
+		int nIncrementValue;
+		int nMinValue;
+		int nMaxValue;
+
+	public:
+		MenuOptionSlider(const std::string& name, int* value, int increment, int min, int max) : MenuOption(name) {
+			nValue = value;
+			nIncrementValue = increment;
+			nMinValue = min;
+			nMaxValue = max;
+		}
+
+		virtual bool IsSlider() { return true; };
+		virtual int GetValue() { return *nValue; }
+		virtual float GetValuePercent() { return ((*nValue) - nMinValue) / (double)(nMaxValue - nMinValue); }
+
+		virtual void OnLeft() {
+			if (*nValue <= nMinValue) return;
+			*nValue -= nIncrementValue;
+		}
+		virtual void OnRight() {
+			if (*nValue >= nMaxValue) return;
+			*nValue += nIncrementValue;
+		}
 	};
 
-	static inline tOption aOptionsQuit[] = {
-			{"EXIT TO MENU", nullptr},
-			{"NO", [](){ EnterSubmenu(SUBMENU_MAIN); }},
-			{"YES", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_QUITRACE; }},
-			{"", nullptr},
-			{"YOU WILL LOSE YOUR CURRENT RACE", nullptr},
-			{"PROGRESS!", nullptr},
-			{nullptr, nullptr},
+	static inline MenuOption* aOptionsMain[] = {
+		new MenuOption("PAUSED"),
+		new MenuOptionSelectable("CONTINUE RACE", [](){ nMenuReturnValue = 0; }),
+		new MenuOptionSelectable("RESTART RACE", [](){ EnterSubmenu(SUBMENU_RESTARTPROMPT); }),
+		new MenuOptionSelectable("SOUND OPTIONS", [](){ EnterSubmenu(SUBMENU_SOUNDOPTIONS); }),
+		new MenuOptionSelectable("EXIT TO MENU", [](){ EnterSubmenu(SUBMENU_QUITPROMPT); }),
+		nullptr
 	};
 
-	tOption* GetOptions() {
-		switch (nSubMenu) {
-			case SUBMENU_MAIN:
+	static inline MenuOption* aOptionsMainNoRestart[] = {
+		new MenuOption("PAUSED"),
+		new MenuOptionSelectable("CONTINUE RACE", [](){ nMenuReturnValue = 0; }),
+		new MenuOptionSelectable("SOUND OPTIONS", [](){ EnterSubmenu(SUBMENU_SOUNDOPTIONS); }),
+		new MenuOptionSelectable("EXIT TO MENU", [](){ EnterSubmenu(SUBMENU_QUITPROMPT); }),
+		nullptr
+	};
+
+	static inline MenuOption* aOptionsSound[] = {
+			new MenuOption("SOUND OPTIONS"),
+			new MenuOptionSlider("MUSIC VOLUME", &nIngameMusicVolume, 5, 0, 100),
+			new MenuOptionSlider("SFX VOLUME", &nIngameSfxVolume, 5, 0, 100),
+			nullptr
+	};
+
+	static inline MenuOption* aOptionsRestart[] = {
+			new MenuOption("RESTART RACE"),
+			new MenuOptionSelectable("NO", [](){ EnterSubmenu(SUBMENU_MAIN); }),
+			new MenuOptionSelectable("YES", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_RESTARTRACE; }),
+			new MenuOption(""),
+			new MenuOption("YOU WILL LOSE YOUR CURRENT RACE"),
+			new MenuOption("PROGRESS!"),
+			nullptr
+	};
+
+	static inline MenuOption* aOptionsQuit[] = {
+			new MenuOption("EXIT TO MENU"),
+			new MenuOptionSelectable("NO", [](){ EnterSubmenu(SUBMENU_MAIN); }),
+			new MenuOptionSelectable("YES", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_QUITRACE; }),
+			new MenuOption(""),
+			new MenuOption("YOU WILL LOSE YOUR CURRENT RACE"),
+			new MenuOption("PROGRESS!"),
+			nullptr
+	};
+
+	MenuOption** GetOptions(eSubMenu menu = nSubMenu) {
+		switch (menu) {
+			case SUBMENU_MAIN: {
+				// stunts continue to the next round if you restart them
+				if (pGameFlow->nEventType == eEventType::STUNT || bIsInMultiplayer) return aOptionsMainNoRestart;
 				return aOptionsMain;
+			}
 			case SUBMENU_SOUNDOPTIONS:
 				return aOptionsSound;
 			case SUBMENU_RESTARTPROMPT:
@@ -74,20 +147,13 @@ public:
 		}
 	}
 
-	static inline tDrawPositions1080p gMenuTitle = {662,436,0.031};
-	static inline tDrawPositions1080p gMenuOptions = {690,520,0.035,0,58};
-	int nSliderLeft = 675;
-	int nSliderRight = 1024;
-	int nSliderTop = 24;
-	int nSliderBottom = 58;
-
-	void DrawMenuTitle() {
+	static void DrawMenuTitle(const std::string& title) {
 		tNyaStringData data;
 		data.x = gMenuTitle.nPosX;
 		data.y = gMenuTitle.nPosY;
 		data.size = gMenuTitle.fSize;
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
-		Draw1080pString(JUSTIFY_CENTER, data, GetOptions()[0].name, &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, title, &DrawStringFO2_Small);
 	}
 
 	int GetNumOptions() {
@@ -95,24 +161,29 @@ public:
 		int count = 0;
 		while (true) {
 			count++;
-			if (!options[count].name || !options[count].name[0]) return count;
+			if (!options[count] || options[count]->sName.empty()) return count;
 		};
+	}
+
+	static void DrawBackground() {
+		static auto texture = LoadTextureFromBFS("data/global/overlay/pausemenubg.png");
+		Draw1080pSprite(JUSTIFY_CENTER, 0, 1920, 0, 1080, {255,255,255,255}, texture);
 	}
 
 	virtual void Process() {
 		static CNyaTimer gTimer;
 		gTimer.Process();
 
-		if (!IsRaceHUDUp() || !bMenuUp) {
+		if (!bMenuUp) {
 			EnterSubmenu(SUBMENU_MAIN);
 			nMenuReturnValue = -1;
 			return;
 		}
 
-		static auto texture = LoadTextureFromBFS("data/global/overlay/pausemenubg.png");
+		DrawBackground();
+
 		static auto textureBar = LoadTextureFromBFS("data/global/overlay/pausemenu_bar.png");
 		static auto textureBarFill = LoadTextureFromBFS("data/global/overlay/pausemenu_bar_filled.png");
-		Draw1080pSprite(JUSTIFY_CENTER, 0, 1920, 0, 1080, {255,255,255,255}, texture);
 
 		auto selectedAlpha = GetFlashingAlpha(gTimer.fTotalTime) / 255.0;
 		if (selectedAlpha < 0) selectedAlpha = 0;
@@ -125,14 +196,14 @@ public:
 		rgbSelected.b = std::lerp(rgb1.b, rgb2.b, selectedAlpha);
 		rgbSelected.a = 255;
 
-		DrawMenuTitle();
+		DrawMenuTitle(GetOptions()[0]->sName);
 
 		auto options = GetOptions();
 		bool afterEmpty = false;
 		float ySpacing = 0;
-		for (int i = 1; options[i].name; i++) {
+		for (int i = 1; options[i]; i++) {
 			auto& option = options[i];
-			if (!option.name[0]) {
+			if (option->sName.empty()) {
 				afterEmpty = true;
 				ySpacing += 1;
 				continue;
@@ -153,31 +224,17 @@ public:
 			}
 
 			// hack for sliders
-			if (!strcmp(option.name, "SFX VOLUME") || !strcmp(option.name, "MUSIC VOLUME")) {
-				Draw1080pString(JUSTIFY_CENTER, data, option.name, &DrawStringFO2_Ingame12);
+			if (option->IsSlider()) {
+				Draw1080pString(JUSTIFY_CENTER, data, option->sName, &DrawStringFO2_Ingame12);
 
-				int& value = !strcmp(option.name, "SFX VOLUME") ? nIngameSfxVolume : nIngameMusicVolume;
-
-				float delta = value/100.0;
+				float delta = option->GetValuePercent();
 				Draw1080pSprite(JUSTIFY_CENTER, nSliderLeft, std::lerp(nSliderLeft, nSliderRight, delta), data.y + nSliderTop, data.y + nSliderBottom, {255,255,255,255}, textureBarFill, {0,0}, {delta, 1});
 				Draw1080pSprite(JUSTIFY_CENTER, nSliderLeft, nSliderRight, data.y + nSliderTop, data.y + nSliderBottom, {255,255,255,255}, textureBar);
-
-				if (i == nSelectedOption) {
-					if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_LEFT)) {
-						value -= 5;
-						if (value < 0) value = 0;
-					}
-
-					if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_RIGHT)) {
-						value += 5;
-						if (value > 100) value = 100;
-					}
-				}
 
 				ySpacing += 1;
 			}
 			else {
-				Draw1080pString(JUSTIFY_CENTER, data, option.name, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, option->sName, &DrawStringFO2_Ingame12);
 			}
 			ySpacing += 1;
 		}
@@ -191,17 +248,25 @@ public:
 
 		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_DOWN)) {
 			nSelectedOption++;
-			if (!options[nSelectedOption].name || !options[nSelectedOption].name[0]) {
+			if (!options[nSelectedOption] || options[nSelectedOption]->sName.empty()) {
 				nSelectedOption = 1;
 			}
 		}
 
+		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_LEFT)) {
+			options[nSelectedOption]->OnLeft();
+		}
+
+		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_RIGHT)) {
+			options[nSelectedOption]->OnRight();
+		}
+
 		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_A) || pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_START)) {
-			if (options[nSelectedOption].func) options[nSelectedOption].func();
+			options[nSelectedOption]->OnSelected();
 		}
 
 		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_SELECT)) {
-			if (options != aOptionsMain) {
+			if (options != GetOptions(SUBMENU_MAIN)) {
 				EnterSubmenu(SUBMENU_MAIN);
 			}
 			else {

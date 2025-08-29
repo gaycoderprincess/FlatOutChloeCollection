@@ -2,25 +2,6 @@ namespace ArcadeMode {
 	bool bIsArcadeMode = false;
 	bool bAllUnlocked = false;
 
-	int __fastcall DrawPressStartMenu(IngameMenu* menu) {
-		//if (!ArcadeMode::bIsArcadeMode) return menu->DrawPressStart();
-
-		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_A) || pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_START)) {
-			pPlayerHost->StartRace();
-			return IngameMenu::MENU_RACE_COUNTDOWN;
-		}
-		return IngameMenu::MENU_PRESS_START;
-	}
-
-	void __attribute__((naked)) DrawPressStartMenuASM() {
-		__asm__ (
-			"mov ecx, ebx\n\t"
-			"jmp %0\n\t"
-				:
-				:  "i" (DrawPressStartMenu)
-		);
-	}
-
 	void PlayTimeTick() {
 		// load the audio file multiple times so it won't cancel the previous tick to play the next tick
 		static int counter = 0;

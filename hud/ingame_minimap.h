@@ -148,6 +148,7 @@ public:
 	virtual void Process() {
 		if (!nIngameMap) return;
 		if (!bIsInMultiplayer && !CIngameHUDElement::IsRaceHUDUp()) return;
+		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
 		if (pMapTexture) {
 			float left, right, top, bottom;
