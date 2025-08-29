@@ -51,7 +51,7 @@ NyaMat4x4* GetClosestResetpoint(NyaVec3 pos, int split, float maxDist = 99999) {
 	float dist = maxDist;
 	NyaMat4x4* out = nullptr;
 	for (auto& reset : aNewResetPoints) {
-		if (reset.split >= 0 && reset.split != split) continue;
+		if (!bIsSmashyRace && reset.split >= 0 && reset.split != split) continue;
 
 		auto d = (reset.matrix.p - pos).length();
 		if (d < dist) {

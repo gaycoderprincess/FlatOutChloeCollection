@@ -39,7 +39,10 @@ namespace SmashyRace {
 		gTimer.Process();
 
 		if (pLoadingScreen) return;
-		if (!bIsSmashyRace) return;
+		if (!bIsSmashyRace) {
+			nPlayerScore = 0;
+			return;
+		}
 		if (GetGameState() != GAME_STATE_RACE) return;
 
 		ArcadeMode::nCurrentEventScore = nPlayerScore;

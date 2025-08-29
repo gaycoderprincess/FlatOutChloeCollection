@@ -79,6 +79,7 @@ namespace ArcadeMode {
 		int nLevel;
 		int nLaps;
 		int nCar;
+		bool bTrackReversed : 1;
 		bool bIsArcadeRace : 1;
 		bool bIsSmashySmash : 1;
 		int nPointsToUnlock;

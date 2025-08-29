@@ -213,14 +213,21 @@ namespace CarnageRace {
 		gTimer.Process();
 
 		if (pLoadingScreen) return;
-		if (!bIsCarnageRace) return;
+		if (!bIsCarnageRace) {
+			nPlayerScore = 0;
+			return;
+		}
 		if (GetGameState() != GAME_STATE_RACE) return;
 
 		ArcadeMode::nCurrentEventScore = nPlayerScore;
 
-		ProcessSceneryCrashes();
-		ProcessAirtime();
-		ProcessCheckpoints();
+		auto ply = GetPlayerScore<PlayerScoreRace>(1);
+		if (!ply->bHasFinished && !ply->bIsDNF) {
+			ProcessSceneryCrashes();
+			ProcessAirtime();
+			ProcessCheckpoints();
+		}
+
 		if (pPlayerHost->nRaceTime < 0) {
 			fPlayerTimeLeft = fPlayerGivenTime;
 			fScoreTimer = 0;
@@ -240,7 +247,6 @@ namespace CarnageRace {
 
 		ArcadeMode::ProcessTimerTick(fPlayerTimeLeft*1000);
 
-		auto ply = GetPlayerScore<PlayerScoreRace>(1);
 		if (fPlayerTimeLeft <= 0 && !ply->bHasFinished && !ply->bIsDNF) {
 			ply->bHasFinished = true;
 			ply->nFinishTime = pPlayerHost->nRaceTime;

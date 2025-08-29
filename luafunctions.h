@@ -1078,6 +1078,13 @@ int ChloeArcadeDefs_SetEventLevel(void* a1) {
 	return 0;
 }
 
+int ChloeArcadeDefs_SetEventReversed(void* a1) {
+	if (ArcadeMode::luaDefs_currentRace->bTrackReversed = luaL_checknumber(a1, 1)) {
+		ArcadeMode::luaDefs_currentRace->sName = "REVERSED " + ArcadeMode::luaDefs_currentRace->sName;
+	}
+	return 0;
+}
+
 int ChloeArcadeDefs_SetEventCar(void* a1) {
 	ArcadeMode::luaDefs_currentRace->nCar = luaL_checknumber(a1, 1);
 	return 0;
@@ -1375,6 +1382,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_BeginEvent, "ChloeArcadeDefs_BeginEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventName, "ChloeArcadeDefs_SetEventName");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventLevel, "ChloeArcadeDefs_SetEventLevel");
+	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventReversed, "ChloeArcadeDefs_SetEventReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventCar, "ChloeArcadeDefs_SetEventCar");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventRules, "ChloeArcadeDefs_SetEventRules");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventGoalScores, "ChloeArcadeDefs_SetEventGoalScores");
