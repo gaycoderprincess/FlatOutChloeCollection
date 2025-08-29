@@ -1443,7 +1443,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100, "NITRO_100");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100_REGEN, "NITRO_100_REGEN");
 
-	static auto sVersionString = "Chloe Collection v1.09 - Multiplayer Edition";
+	static auto sVersionString = "Chloe Collection v1.11 - Multiplayer Derby Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
 	lua_setglobal(a1, sVersionString);
 	lua_settable(a1, LUA_ENVIRONINDEX);

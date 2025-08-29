@@ -49,7 +49,7 @@ public:
 		data.y = gGamemodeLabel.nPosY;
 		data.size = gGamemodeLabel.fSize;
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
-		Draw1080pString(JUSTIFY_CENTER, data, "RACE RESULTS", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? "DERBY RESULTS" : "RACE RESULTS", &DrawStringFO2_Small);
 
 		data.size = fPlayerSize;
 		data.y = nPlayerYStartLabel;

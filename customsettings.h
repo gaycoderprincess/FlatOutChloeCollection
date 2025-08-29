@@ -80,8 +80,4 @@ void ApplyCustomSettingsPatches() {
 		NyaHookLib::Patch(addr, &aNewGameSettings[0].name);
 	}
 	NyaHookLib::Patch(0x4399ED, &aNewGameSettings[0].maxValue);
-
-	// +5 slider adjustment for in-game music and sfx volume
-	NyaHookLib::Patch<uint8_t>(0x45DD15 + 2, 0x10);
-	NyaHookLib::Patch<uint8_t>(0x45DD43 + 2, 0x11);
 }
