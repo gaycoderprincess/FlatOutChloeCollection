@@ -30,7 +30,10 @@ namespace NewIngameMenu {
 	}
 
 	int DrawPressStartMenu() {
-		if (bIsInMultiplayer) return IngameMenu::MENU_RACE_COUNTDOWN;
+		if (bIsInMultiplayer) {
+			pPlayerHost->StartRace();
+			return IngameMenu::MENU_RACE_COUNTDOWN;
+		}
 
 		HUD_StartMenu.bMenuUp = true;
 		if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_A) || pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_START)) {

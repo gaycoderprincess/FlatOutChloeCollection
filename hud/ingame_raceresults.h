@@ -61,7 +61,7 @@ public:
 		data.x = nNameX;
 		Draw1080pString(JUSTIFY_CENTER, data, "DRIVER", &DrawStringFO2_Ingame12);
 		data.x = nBestLapX;
-		Draw1080pString(JUSTIFY_CENTER, data, "BEST LAP", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? "WRECKS" : "BEST LAP", &DrawStringFO2_Ingame12);
 		data.x = nTotalTimeX;
 		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL TIME", &DrawStringFO2_Ingame12);
 
@@ -82,14 +82,21 @@ public:
 			}
 
 			std::string finish;
-			if (ply->bHasFinished) {
-				finish = FormatGameTime(ply->nFinishTime, true);
-			}
-			else if (ply->bIsDNF) {
-				finish = "DNF";
+			if (pGameFlow->nEventType == eEventType::DERBY) {
+				if (ply->bHasFinished || ply->bIsDNF) {
+					finish = FormatGameTime(ply->nFinishTime, true);
+				} else {
+					finish = "--'--\"--";
+				}
 			}
 			else {
-				finish = "--'--\"--";
+				if (ply->bHasFinished) {
+					finish = FormatGameTime(ply->nFinishTime, true);
+				} else if (ply->bIsDNF) {
+					finish = "DNF";
+				} else {
+					finish = "--'--\"--";
+				}
 			}
 
 			auto player = GetPlayer(ply->nPlayerId);
@@ -98,7 +105,7 @@ public:
 			data.x = nNameX;
 			Draw1080pString(JUSTIFY_CENTER, data, GetStringNarrow(player->sPlayerName.Get()), &DrawStringFO2_Ingame12);
 			data.x = nBestLapX;
-			Draw1080pString(JUSTIFY_CENTER, data, bestLap, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]) : bestLap, &DrawStringFO2_Ingame12);
 			data.x = nTotalTimeX;
 			Draw1080pString(JUSTIFY_CENTER, data, finish, &DrawStringFO2_Ingame12);
 
@@ -116,6 +123,7 @@ public:
 		data.y = nPressStartY;
 		data.size = 0.035;
 		data.XCenterAlign = true;
+		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		Draw1080pString(JUSTIFY_CENTER, data, "Press START button", &DrawStringFO2_Small);
 
 		bMenuUp = false;

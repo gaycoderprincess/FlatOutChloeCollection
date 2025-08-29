@@ -4,8 +4,14 @@ public:
 	virtual void Init() {
 		nHUDLayer = eHUDLayer::OVERLAY;
 		PreloadTexture("data/global/overlay/pausemenubg.png");
+		PreloadTexture("data/global/overlay/pausemenu_bar.png");
+		PreloadTexture("data/global/overlay/pausemenu_bar_filled.png");
 	}
 
+	constexpr static inline bool bCenteredOptions = false;
+
+	constexpr static inline int nBoxCenter = 955;
+	constexpr static inline int nBoxTrueCenter = 969;
 	static inline tDrawPositions1080p gMenuTitle = {662,436,0.031};
 	static inline tDrawPositions1080p gMenuOptions = {690,520,0.035,0,58};
 	constexpr static inline int nSliderLeft = 675;
@@ -153,7 +159,19 @@ public:
 			}
 
 			tNyaStringData data;
-			data.x = gMenuOptions.nPosX;
+			if (bCenteredOptions) {
+				if (option->IsSlider()) {
+					data.x = gMenuOptions.nPosX;
+					data.XCenterAlign = false;
+				}
+				else {
+					data.x = afterEmpty ? nBoxTrueCenter : nBoxCenter;
+					data.XCenterAlign = true;
+				}
+			}
+			else {
+				data.x = gMenuOptions.nPosX;
+			}
 			data.y = gMenuOptions.nPosY + gMenuOptions.nSpacingY * ySpacing;
 			data.size = gMenuOptions.fSize;
 			if (afterEmpty) {
@@ -215,8 +233,14 @@ public:
 			else if (menuType == IngameMenu::MENU_PAUSEMENU) {
 				nMenuReturnValue = IngameMenu::MENU_NONE;
 			}
-			else if (menuType == IngameMenu::MENU_END_OF_RACE && pGameFlow->nIsInReplay) {
-				nMenuReturnValue = IngameMenu::MENU_REPLAY_UI;
+			else if (menuType == IngameMenu::MENU_END_OF_RACE) {
+				if (pGameFlow->nIsInReplay) {
+					nMenuReturnValue = IngameMenu::MENU_REPLAY_UI;
+				}
+				// if not in replay, return to race results (only happens in MP)
+				else if (pGameFlow->nEventType != eEventType::STUNT) {
+					nMenuReturnValue = IngameMenu::MENU_RACE_RESULTS;
+				}
 			}
 		}
 

@@ -4,7 +4,7 @@ public:
 		nHUDLayer = eHUDLayer::OVERLAY;
 	}
 
-	static inline tDrawPositions1080p gMenuText = {955,620,0.04};
+	static inline tDrawPositions1080p gMenuText = {(int)HUD_PauseMenu.nBoxCenter,620,0.04};
 
 	static inline bool bMenuUp = false;
 

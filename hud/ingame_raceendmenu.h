@@ -12,6 +12,12 @@ public:
 		nullptr
 	};
 
+	static inline MenuOption* aOptionsMainNoRestart[] = {
+		new MenuOption("EVENT FINISHED"),
+		new MenuOptionSelectable("EXIT TO MENU", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_QUITRACE; }),
+		nullptr
+	};
+
 	static inline MenuOption* aOptionsRetry[] = {
 		new MenuOption("RETRY EVENT"),
 		new MenuOptionSelectable("NO", [](){ EnterSubmenu(SUBMENU_MAIN); }),
@@ -25,7 +31,10 @@ public:
 		switch (menu) {
 			case SUBMENU_MAIN:
 			default:
+			{
+				if (bIsInMultiplayer) return aOptionsMainNoRestart;
 				return aOptionsMain;
+			}
 			case SUBMENU_RESTARTPROMPT:
 				return aOptionsRetry;
 		}
