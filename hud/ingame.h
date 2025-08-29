@@ -79,24 +79,29 @@ public:
 		data.SetColor(rgb);
 		DrawStringFO2_Ingame24(data, value);
 	}
+
+	virtual bool DrawInReplay() { return false; }
 };
 
 namespace NewGameHud {
 	void OnTick() {
-		if (GetGameState() == GAME_STATE_RACE) return;
+		auto state = GetGameState();
+		if (state == GAME_STATE_RACE) return;
 
 		for (auto& hud : CIngameHUDElement::aGameHUD) {
-			hud->Reset();
+			if ((state == GAME_STATE_REPLAY && !hud->DrawInReplay()) || state == GAME_STATE_MENU) hud->Reset();
 		}
 	}
 
 	void OnHUDTick() {
 		if (pLoadingScreen) return;
-		if (GetGameState() != GAME_STATE_RACE) return;
+		auto state = GetGameState();
+		if (state != GAME_STATE_RACE && state != GAME_STATE_REPLAY) return;
 
 		for (int i = 0; i < (int)eHUDLayer::NUM_LAYERS; i++) {
 			for (auto& hud: CIngameHUDElement::aGameHUD) {
 				if (hud->nHUDLayer != (eHUDLayer)i) continue;
+				if (state == GAME_STATE_REPLAY && !hud->DrawInReplay()) continue;
 				hud->Process();
 			}
 		}
@@ -155,5 +160,10 @@ namespace NewGameHud {
 #include "ingame_laptime.h"
 #include "ingame_resetfade.h"
 #include "ingame_minimap.h"
+#include "ingame_menugeneric.h"
 #include "ingame_pausemenu.h"
+#include "ingame_stuntendmenu.h"
+#include "ingame_raceendmenu.h"
+#include "ingame_stuntresultsmenu.h"
 #include "ingame_startmenu.h"
+#include "ingame_raceresults.h"

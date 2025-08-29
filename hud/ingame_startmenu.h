@@ -12,7 +12,17 @@ public:
 		if (!bMenuUp || ArcadeMode::bIsArcadeMode) return;
 
 		HUD_PauseMenu.DrawBackground();
-		HUD_PauseMenu.DrawMenuTitle("EVENT START");
+		if (pGameFlow->nEventType == eEventType::STUNT) {
+			if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {
+				HUD_PauseMenu.DrawMenuTitle(std::format("PLAYER {} START", GetScoreManager()->nStuntPlayerId+1));
+			}
+			else {
+				HUD_PauseMenu.DrawMenuTitle(std::format("ROUND {} START", GetScoreManager()->nStuntRoundId+1));
+			}
+		}
+		else {
+			HUD_PauseMenu.DrawMenuTitle("EVENT START");
+		}
 
 		tNyaStringData data;
 		data.x = gMenuText.nPosX;

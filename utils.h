@@ -67,3 +67,12 @@ int32_t GetPlayerLapTime(Player* ply, int lapId) {
 	if (lapId > 0) lap -= score->nLapTimes[lapId - 1];
 	return lap;
 }
+
+std::vector<PlayerScoreRace*> GetSortedPlayerScores() {
+	std::vector<PlayerScoreRace*> aScores;
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		aScores.push_back(GetScoreManager()->aScores[i]);
+	}
+	std::sort(aScores.begin(), aScores.end(), [] (PlayerScoreRace* a, PlayerScoreRace* b) { if (a->bIsDNF && !b->bIsDNF) { return false; } if (b->bIsDNF && !a->bIsDNF) { return true; } return a->nPosition < b->nPosition; });
+	return aScores;
+}

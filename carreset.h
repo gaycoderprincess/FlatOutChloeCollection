@@ -45,7 +45,7 @@ void LoadResetPoints() {
 }
 
 NyaMat4x4* pPlayerResetpoint = nullptr;
-NyaMat4x4* GetClosestResetpoint(NyaVec3 pos, int split, float maxDist = 99999) {
+NyaMat4x4* GetClosestResetpoint(Player* player, NyaVec3 pos, int split, float maxDist = 99999) {
 	if (aNewResetPoints.empty()) return nullptr;
 
 	float dist = maxDist;
@@ -55,6 +55,16 @@ NyaMat4x4* GetClosestResetpoint(NyaVec3 pos, int split, float maxDist = 99999) {
 
 		auto d = (reset.matrix.p - pos).length();
 		if (d < dist) {
+			bool anyPlayerNearby = false;
+			for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+				auto ply = GetPlayer(i);
+				if (ply == player) continue;
+
+				auto plyPos = ply->pCar->GetMatrix()->p;
+				if ((plyPos - reset.matrix.p).length() < 4) anyPlayerNearby = true;
+			}
+			if (anyPlayerNearby) continue;
+
 			out = &reset.matrix;
 			dist = d;
 		}
@@ -126,7 +136,7 @@ void ProcessCarReset() {
 		float fResetpointMaxDist = 15;
 
 		auto ply = GetPlayer(0);
-		auto reset = GetClosestResetpoint(ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, fResetpointMaxDist);
+		auto reset = GetClosestResetpoint(ply, ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, fResetpointMaxDist);
 		if (reset) pPlayerResetpoint = reset;
 	}
 	else {

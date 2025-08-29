@@ -181,7 +181,20 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nSliderRight", HUD_PauseMenu.nSliderRight);
 	//QuickValueEditor("nSliderTop", HUD_PauseMenu.nSliderTop);
 	//QuickValueEditor("nSliderBottom", HUD_PauseMenu.nSliderBottom);
-	QuickValueEditor("gMenuText", HUD_StartMenu.gMenuText, false);
+	//QuickValueEditor("gMenuText", HUD_StartMenu.gMenuText, false);
+	//QuickValueEditor("gGamemodeDescription", HUD_ArcadeTutorial.gGamemodeDescription, false);
+	//QuickValueEditor("nPlayerYStartLabel", HUD_RaceResults.nPlayerYStartLabel);
+	//QuickValueEditor("nPlayerYStart", HUD_RaceResults.nPlayerYStart);
+	//QuickValueEditor("nPlayerSpacing", HUD_RaceResults.nPlayerSpacing);
+	//QuickValueEditor("fPlayerSize", HUD_RaceResults.fPlayerSize);
+	//QuickValueEditor("nPositionX", HUD_RaceResults.nPositionX);
+	//QuickValueEditor("nPositionY", HUD_RaceResults.nPositionY);
+	//QuickValueEditor("nNameX", HUD_RaceResults.nNameX);
+	//QuickValueEditor("nBestLapX", HUD_RaceResults.nBestLapX);
+	//QuickValueEditor("nTotalTimeX", HUD_RaceResults.nTotalTimeX);
+	//QuickValueEditor("fBalkOffsetY", HUD_RaceResults.fBalkOffsetY);
+	//QuickValueEditor("fBalkSizeY", HUD_RaceResults.fBalkSizeY);
+	//QuickValueEditor("nPressStartY", HUD_RaceResults.nPressStartY);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

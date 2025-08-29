@@ -2,7 +2,7 @@ class CHUD_ArcadeTutorial : public CIngameHUDElement {
 public:
 
 	tDrawPositions1080p gGamemodeLabel = {50,124,0.035};
-	tDrawPositions1080p gGamemodeDescription = {50,220,0.035};
+	tDrawPositions1080p gGamemodeDescription = {50,220,0.04};
 
 	virtual void Init() {
 		nHUDLayer = eHUDLayer::OVERLAY;
@@ -20,7 +20,7 @@ public:
 		}
 		else if (bIsSmashyRace) {
 			gamemodeName = "DEMOLITION";
-			gamemodeDescription = "Cause extreme amounts of vandalism as quickly as possible!\nEarn points by crashing into as much scenery as you can before the time runs out.\nSome objects give more points than others, search for high-reward objects and larger groups if you can, track limits are a suggestion!";
+			gamemodeDescription = "Cause extreme amounts of vandalism as quickly as possible!\nEarn points by crashing into as much scenery as you can before the time runs out.\nSome objects give more points than others.\nTrack limits are a suggestion, search for high-reward objects and larger groups if you can.";
 		}
 
 		DrawRectangle(0, 1, 0, 1, {0,0,0,200}); // background box
@@ -37,7 +37,7 @@ public:
 		data.y = gGamemodeDescription.nPosY;
 		data.size = gGamemodeDescription.fSize;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_LEFT, data, gamemodeDescription, &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, gamemodeDescription, &DrawStringFO2_Ingame10);
 		data.x = 960;
 		data.y = 960;
 		data.size = 0.035;

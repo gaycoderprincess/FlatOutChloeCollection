@@ -45,10 +45,10 @@ public:
 		data.y = fPosY;
 		if (IsInSplitScreen()) data.y *= 0.5;
 		data.size = fSize;
-		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
-			auto ply = GetScoreManager()->aScores[i];
-			if (!ply) continue;
-			auto string1 = std::format("{}.", ply->nPosition);
+
+		auto aScores = GetSortedPlayerScores();
+		for (auto& ply : aScores) {
+			auto string1 = std::format("{}.", (&ply - &aScores[0]) + 1);
 			auto string2 = std::format("{}", GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get()));
 			if (!IsInSplitScreen() && ply->nPlayerId == 0) {
 				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
