@@ -177,7 +177,7 @@ int ChloeHUD_TrackSelect_SetMapPath(void* a1) {
 
 int ChloeHUD_TrackSelect_IsStartRaceHovered(void* a1) {
 	auto name = Menu_TrackSelect.aOptions[Menu_TrackSelect.nCursorY].name;
-	lua_pushboolean(a1, name == "GO RACE" || name == "APPLY SETTINGS");
+	lua_pushboolean(a1, Menu_TrackSelect.aOptions == Menu_TrackSelect.aOptionsMultiplayer || name == "GO RACE" || name == "APPLY SETTINGS");
 	return 1;
 }
 
@@ -221,7 +221,7 @@ int ChloeHUD_TrackSelect_SetIsMultiplayer(void* a1) {
 	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsMultiplayer;
 	Menu_TrackSelect.bSplitScreen = false;
 	Menu_TrackSelect.bMultiplayerCreateGame = false;
-	if (Menu_TrackSelect.nGameType != 0) {
+	if (Menu_TrackSelect.nGameType == 2) {
 		Menu_TrackSelect.nGameType = 0;
 		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
 	}
@@ -229,6 +229,7 @@ int ChloeHUD_TrackSelect_SetIsMultiplayer(void* a1) {
 }
 
 int ChloeHUD_TrackSelect_SetIsMultiplayerCreate(void* a1) {
+	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsMultiplayerCreate;
 	Menu_TrackSelect.bMultiplayerCreateGame = true;
 	return 0;
 }

@@ -107,7 +107,7 @@ public:
 	};
 
 	static inline tOption aOptionsMultiplayer[] = {
-			//{"GAME TYPE", &nGameType},
+			{"GAME TYPE", &nGameType},
 			{"TRACK TYPE", &nTrackType},
 			{"TRACK", &nTrack},
 			{"LAPS", &nLaps},
@@ -118,6 +118,20 @@ public:
 			{"HANDLING", &nMultiplayerHandling},
 			{"AI CLASS", &nMultiplayerAIClass},
 			{"AI COUNT", &nMultiplayerAICount},
+			{"*END*", nullptr},
+	};
+
+	static inline tOption aOptionsMultiplayerCreate[] = {
+			{"GAME TYPE", &nGameType},
+			{"TRACK TYPE", &nTrackType},
+			{"TRACK", &nTrack},
+			{"LAPS", &nLaps},
+			{"CAR CLASS", &nMultiplayerCarClass},
+			{"DAMAGE", &nDamage},
+			{"NITRO", &nMultiplayerNitro},
+			{"UPGRADES", &nUpgrades},
+			{"HANDLING", &nMultiplayerHandling},
+			{"", nullptr},
 			{"APPLY SETTINGS", nullptr},
 			{"*END*", nullptr},
 	};
@@ -142,6 +156,10 @@ public:
 			{"GO RACE", nullptr},
 			{"*END*", nullptr},
 	};
+
+	bool IsMultiplayerMenu() {
+		return aOptions == aOptionsMultiplayer || aOptions == aOptionsMultiplayerCreate;
+	}
 
 	tOption* aOptions = aOptionsQuickRace;
 	bool bSplitScreen = false;
@@ -183,7 +201,7 @@ public:
 				aTracks.push_back({i, false});
 			}
 		}
-		if (aOptions == aOptionsMultiplayer) {
+		if (IsMultiplayerMenu()) {
 			for (int i = 1; i < GetNumTracks() + 1; i++) {
 				if (!DoesTrackExist(i)) continue;
 				if (!DoesTrackSupportReversing(i)) continue;
@@ -202,10 +220,10 @@ public:
 			return 1;
 		}
 		if (nTrack <= 0 || nTrack >= aTracks.size()) {
-			if (aOptions == aOptionsMultiplayer) nTrackReversed = aTracks[0].reversed;
+			if (IsMultiplayerMenu()) nTrackReversed = aTracks[0].reversed;
 			return aTracks[0].level;
 		}
-		if (aOptions == aOptionsMultiplayer) nTrackReversed = aTracks[nTrack].reversed;
+		if (IsMultiplayerMenu()) nTrackReversed = aTracks[nTrack].reversed;
 		return aTracks[nTrack].level;
 	}
 
@@ -241,7 +259,7 @@ public:
 
 	int nCursorY = 0;
 	void CheckOptionBounds(const int* changedValue) {
-		if (bSplitScreen) {
+		if (bSplitScreen || IsMultiplayerMenu()) {
 			if (nGameType < 0) nGameType = 1;
 			if (nGameType > 1) nGameType = 0;
 		}
@@ -570,7 +588,7 @@ public:
 			}
 			else if (option.value == &nTrack) {
 				valueName = GetTrackValueString(trackId, "Name");
-				if (aOptions == aOptionsMultiplayer && nTrackReversed) valueName = "REV " + valueName;
+				if (IsMultiplayerMenu() && nTrackReversed) valueName = "REV " + valueName;
 			}
 			else if (option.value == &nLaps) {
 				if (GetGameMode() != eEventType::RACE) valueName = "N/A";
