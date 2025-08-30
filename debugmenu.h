@@ -214,10 +214,11 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nArrowSizeX", Menu_ArcadeCareer.nArrowSizeX);
 	//QuickValueEditor("nArrowSizeY", Menu_ArcadeCareer.nArrowSizeY);
 	QuickValueEditor("f3D2DYDivByDistance", f3D2DYDivByDistance);
-	QuickValueEditor("fPlayerIconOffset", FragDerby::HUD_FragDerby.fPlayerIconOffset);
-	QuickValueEditor("fPlayerIconSize", FragDerby::HUD_FragDerby.fPlayerIconSize);
-	QuickValueEditor("fPlayerHealthIconOffset", FragDerby::HUD_FragDerby.fPlayerHealthIconOffset);
-	QuickValueEditor("fPlayerHealthIconSize", FragDerby::HUD_FragDerby.fPlayerHealthIconSize);
+	QuickValueEditor("fPlayerIconOffset", HUD_Derby_Overhead.fPlayerIconOffset);
+	QuickValueEditor("fPlayerIconSize", HUD_Derby_Overhead.fPlayerIconSize);
+	QuickValueEditor("fPlayerHealthIconOffset", HUD_Derby_Overhead.fPlayerHealthIconOffset);
+	QuickValueEditor("fPlayerHealthIconSize", HUD_Derby_Overhead.fPlayerHealthIconSize);
+	QuickValueEditor("fPlayerHealthIconMinSize", HUD_Derby_Overhead.fPlayerHealthIconMinSize);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

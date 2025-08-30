@@ -1,4 +1,5 @@
 enum class eHUDLayer {
+	WORLD, // world UI, e.g. 3d player icons
 	BASE, // normal UI
 	FADE, // car reset fade
 	OVERLAY, // pause menu, tutorial screen, etc.
@@ -167,3 +168,4 @@ namespace NewGameHud {
 #include "ingame_stuntresultsmenu.h"
 #include "ingame_startmenu.h"
 #include "ingame_raceresults.h"
+#include "ingame_derby_overhead.h"
