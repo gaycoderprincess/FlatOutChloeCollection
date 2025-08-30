@@ -26,6 +26,18 @@ enum eSplitScreenController {
 	SPLITSCREEN_PAD4,
 };
 
+enum eCrashBonus {
+	CRASHBONUS_CRASHFLYBY,
+	CRASHBONUS_SUPERFLIP,
+	CRASHBONUS_SLAM,
+	CRASHBONUS_POWERHIT,
+	CRASHBONUS_BLASTOUT,
+	CRASHBONUS_RAGDOLLED,
+	CRASHBONUS_WRECKED,
+	NUM_CRASHBONUS_TYPES
+};
+int aCrashBonusesReceived[nMaxPlayers][NUM_CRASHBONUS_TYPES] = {};
+
 uint32_t nMenuSoundtrack = 0;
 uint32_t nIngameSoundtrack = 0;
 uint32_t nIngameDerbySoundtrack = 0;
@@ -52,6 +64,17 @@ bool bIsInMultiplayer = false;
 bool bIsCareerRace = false;
 bool bIsCarnageRace = false;
 bool bIsSmashyRace = false;
+bool bIsFragDerby = false;
+
+bool bIsWreckingDerby = false;
+void SetIsWreckingDerby(bool apply) {
+	bIsWreckingDerby = apply;
+	NyaHookLib::Patch<uint8_t>(0x44906F + 2, apply ? 3 : 1); // enable nitro in derby
+}
+
+bool IsNitroEnabledInDerby() {
+	return bIsWreckingDerby || bIsFragDerby;
+}
 
 bool bMultiplayerNitroOn = true;
 bool bMultiplayerNitroRegen = false;
@@ -59,6 +82,10 @@ float fMultiplayerUpgradeLevel = 0.0;
 float fMultiplayerDamageLevel = 1.0;
 
 bool bIsTrackReversed = false;
+
+namespace FragDerby {
+	int nPlayerScore[nMaxPlayers] = {};
+}
 
 namespace CareerMode {
 	bool IsCareerTimeTrial();

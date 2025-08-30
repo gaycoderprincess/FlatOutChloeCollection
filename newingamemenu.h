@@ -61,11 +61,16 @@ namespace NewIngameMenu {
 		return IngameMenu::MENU_RACE_RESULTS;
 	}
 
+	void DrawDerbyTutorialMenu() {
+		HUD_Tutorial.bMenuUpInNormalMode = true;
+	}
+
 	void Init() {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459FCF, &DrawPauseMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459F79, &DrawPressStartMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45A00E, &DrawStuntEndOfRoundMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459FD8, &DrawRaceEndMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45A01D, &DrawRaceResultsMenu);
+		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45B092, &DrawDerbyTutorialMenu);
 	}
 }

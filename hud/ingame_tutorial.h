@@ -1,4 +1,4 @@
-class CHUD_ArcadeTutorial : public CIngameHUDElement {
+class CHUD_Tutorial : public CIngameHUDElement {
 public:
 
 	tDrawPositions1080p gGamemodeLabel = {50,124,0.035};
@@ -8,10 +8,12 @@ public:
 		nHUDLayer = eHUDLayer::OVERLAY;
 	}
 
+	bool bMenuUpInNormalMode = false;
+
 	virtual void Process() {
-		if (!IsRaceHUDUp()) return;
-		if (!ArcadeMode::bIsArcadeMode) return;
+		if (!ArcadeMode::bIsArcadeMode && !bMenuUpInNormalMode) return;
 		if (pPlayerHost->nRaceTime != -3000) return;
+		bMenuUpInNormalMode = false;
 
 		std::string gamemodeName, gamemodeDescription;
 		if (bIsCarnageRace) {
@@ -21,6 +23,18 @@ public:
 		else if (bIsSmashyRace) {
 			gamemodeName = "DEMOLITION";
 			gamemodeDescription = "Cause extreme amounts of vandalism as quickly as possible!\nEarn points by crashing into as much scenery as you can before the time runs out.\nSome objects give more points than others.\nTrack limits are a suggestion, search for high-reward objects and larger groups if you can.";
+		}
+		else if (bIsWreckingDerby) {
+			gamemodeName = "WRECKING DERBY";
+			gamemodeDescription = "You must win by causing as much destruction as possible.\nYou get bonus points for surviving in the top 3, so try to stay alive.\nYour nitro meter indicates the damage your car receives, though you can still use nitro if you have any.\nYou lose if the damage reaches the top of the meter.";
+		}
+		else if (bIsFragDerby) {
+			gamemodeName = "FRAG DERBY";
+			gamemodeDescription = "Frag derbies are about going for the kill. Wreck opponents to earn points.\nGet the most frags with the current life to be the Frag Streaker and earn double scores.\nSurvive the longest with the current life to earn extra score as the Survivor.";
+		}
+		else if (pGameFlow->nEventType == eEventType::DERBY) {
+			gamemodeName = "DESTRUCTION DERBY";
+			gamemodeDescription = "You can only win by destroying all the other cars.\nYour nitro meter indicates the damage your car receives.\nYou lose if the damage reaches the top of the meter.";
 		}
 
 		DrawRectangle(0, 1, 0, 1, {0,0,0,200}); // background box
@@ -44,4 +58,4 @@ public:
 		data.XCenterAlign = true;
 		Draw1080pString(JUSTIFY_CENTER, data, "Press START button", &DrawStringFO2_Small);
 	}
-} HUD_ArcadeTutorial;
+} HUD_Tutorial;

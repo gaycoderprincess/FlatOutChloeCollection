@@ -6,6 +6,7 @@ int GetHandlingMode() {
 }
 
 float fCarnageModeMassFudge = 0.75;
+float fFragDerbyMassFudge = 0.6;
 
 toml::table GetCarPerformanceTable(int id) {
 	return ReadTOMLFromBfs(std::format("data/database/cars/car{}.toml", GetDealerCar(id)->performanceId));
@@ -292,6 +293,10 @@ void __fastcall LoadCarBody(Car* car) {
 
 	if (bIsCarnageRace && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
 		body->fMass *= fCarnageModeMassFudge;
+	}
+
+	if (bIsFragDerby && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
+		body->fMass *= fFragDerbyMassFudge;
 	}
 
 	body->fTireTurnAngleIn *= 0.017453292;

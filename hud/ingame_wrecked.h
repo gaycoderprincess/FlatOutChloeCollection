@@ -82,6 +82,8 @@ public:
 } HUD_Wrecked;
 
 void AddWreckedNotif(Player* pPlayer) {
+	if (bIsFragDerby) return;
+
 	if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
 		HUD_Wrecked.AddNotif("YOU ARE WRECKED!");
 	}
@@ -97,4 +99,8 @@ void AddTimeoutNotif(Player* pPlayer) {
 	else {
 		HUD_Wrecked.AddNotif(std::format("{}\nRAN OUT OF TIME", GetStringNarrow(pPlayer->sPlayerName.Get())));
 	}
+}
+
+void AddTopBarNotif(const std::string& str) {
+	HUD_Wrecked.AddNotif(str);
 }

@@ -1,6 +1,7 @@
 class CHUD_PlayerList : public CIngameHUDElement {
 public:
 	static constexpr float fPosX = 0.07;
+	static constexpr float fPosXFragDerby = 0.14;
 	static constexpr float fPosY = 0.3;
 	static constexpr float fSize = 0.038;
 	static constexpr float fSpacing = 0.03;
@@ -41,7 +42,7 @@ public:
 		if (fPlayerListState > 1) fPlayerListState = 1;
 
 		tNyaStringData data;
-		data.x = std::lerp(-0.5, fPosX * fPlayerListState * GetAspectRatioInv(), easeInOutQuart(fPlayerListState));
+		data.x = std::lerp(-0.5, (bIsFragDerby ? fPosXFragDerby : fPosX) * fPlayerListState * GetAspectRatioInv(), easeInOutQuart(fPlayerListState));
 		data.y = fPosY;
 		if (IsInSplitScreen()) data.y *= 0.5;
 		data.size = fSize;
@@ -49,6 +50,7 @@ public:
 		auto aScores = GetSortedPlayerScores();
 		for (auto& ply : aScores) {
 			auto string1 = std::format("{}.", (&ply - &aScores[0]) + 1);
+			if (bIsFragDerby) string1 = std::format("{}  {}", FragDerby::nPlayerScore[ply->nPlayerId], string1);
 			auto string2 = std::format("{}", GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get()));
 			if (!IsInSplitScreen() && ply->nPlayerId == 0) {
 				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));

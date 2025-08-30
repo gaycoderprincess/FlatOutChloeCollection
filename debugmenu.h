@@ -202,6 +202,12 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nIconYOffset", Menu_Multiplayer_Lobby.nIconYOffset);
 	//QuickValueEditor("nIconSize", Menu_Multiplayer_Lobby.nIconSize);
 	//QuickValueEditor("nIcon2X", Menu_Multiplayer_Lobby.nIcon2X);
+	//QuickValueEditor("nWreckingDerbyCrashX", HUD_RaceResults.nWreckingDerbyCrashX);
+	//QuickValueEditor("nWreckingDerbyWreckX", HUD_RaceResults.nWreckingDerbyWreckX);
+	//QuickValueEditor("nWreckingDerbyBonusX", HUD_RaceResults.nWreckingDerbyBonusX);
+	//QuickValueEditor("nWreckingDerbyTotalX", HUD_RaceResults.nWreckingDerbyTotalX);
+	QuickValueEditor("fPopupSize", FragDerby::HUD_FragDerby.fPopupSize);
+	QuickValueEditor("fPopupSpacing", FragDerby::HUD_FragDerby.fPopupSpacing);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

@@ -68,11 +68,64 @@ int32_t GetPlayerLapTime(Player* ply, int lapId) {
 	return lap;
 }
 
+int GetWreckingDerbyCrashScore(int player) {
+	int score = 0;
+	score += aCrashBonusesReceived[player][CRASHBONUS_SLAM] * 1;
+	score += aCrashBonusesReceived[player][CRASHBONUS_POWERHIT] * 2;
+	score += aCrashBonusesReceived[player][CRASHBONUS_BLASTOUT] * 3;
+	return score;
+}
+
+int GetWreckingDerbyWreckScore(int player) {
+	int score = 0;
+	score += aCrashBonusesReceived[player][CRASHBONUS_WRECKED] * 5;
+	return score;
+}
+
+int GetWreckingDerbyBonusScore(int position, bool finished) {
+	if (!finished) {
+		int playersAlive = 0;
+		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+			if (!GetPlayer(i)->nIsRagdolled) playersAlive++;
+		}
+
+		if (playersAlive == 1) { return 15; }
+		if (playersAlive == 2) { return 10; }
+		if (playersAlive == 3) { return 5; }
+		return 0;
+	}
+
+	if (position == 1) { return 15; }
+	if (position == 2) { return 10; }
+	if (position == 3) { return 5; }
+	return 0;
+}
+
+int GetWreckingDerbyTotalScore(int player, int position, bool finished) {
+	return GetWreckingDerbyCrashScore(player) + GetWreckingDerbyWreckScore(player) + GetWreckingDerbyBonusScore(position, finished);
+}
+
 std::vector<PlayerScoreRace*> GetSortedPlayerScores() {
 	std::vector<PlayerScoreRace*> aScores;
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		aScores.push_back(GetScoreManager()->aScores[i]);
 	}
-	std::sort(aScores.begin(), aScores.end(), [] (PlayerScoreRace* a, PlayerScoreRace* b) { if (a->bIsDNF && !b->bIsDNF) { return false; } if (b->bIsDNF && !a->bIsDNF) { return true; } return a->nPosition < b->nPosition; });
+	if (bIsFragDerby) {
+		std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+			return FragDerby::nPlayerScore[a->nPlayerId] > FragDerby::nPlayerScore[b->nPlayerId];
+		});
+	}
+	else if (bIsWreckingDerby) {
+		std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+			return GetWreckingDerbyTotalScore(a->nPlayerId, a->nPosition, a->bHasFinished || a->bIsDNF) > GetWreckingDerbyTotalScore(b->nPlayerId, b->nPosition, b->bHasFinished || b->bIsDNF);
+		});
+	}
+	else {
+		std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+			if (a->bIsDNF && !b->bIsDNF) { return false; }
+			if (b->bIsDNF && !a->bIsDNF) { return true; }
+			return a->nPosition < b->nPosition;
+		});
+	}
 	return aScores;
 }

@@ -14,11 +14,11 @@
 #include "include/chloenet.h"
 
 #include "consts.h"
+#include "config.h"
 #include "utils.h"
 #include "mallochook.h"
 #include "events.h"
 #include "filereader.h"
-#include "config.h"
 #include "customsave.h"
 #include "cardealer.h"
 #include "achievements.h"
@@ -44,6 +44,7 @@
 #include "profiles.h"
 #include "carnagerace.h"
 #include "smashyrace.h"
+#include "fragderby.h"
 #include "luafunctions.h"
 #include "nitrogain.h"
 #include "ultrawide.h"
@@ -193,6 +194,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ArcadeMode::Init();
 			CarnageRace::Init();
 			SmashyRace::Init();
+			FragDerby::Init();
 			Achievements::Init();
 			NewIngameMenu::Init();
 			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);

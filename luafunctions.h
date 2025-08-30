@@ -190,8 +190,8 @@ int ChloeCollection_SetIsQuickRace(void* a1) {
 int ChloeHUD_TrackSelect_SetIsTimeTrial(void* a1) {
 	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsTimeTrial;
 	Menu_TrackSelect.bSplitScreen = false;
-	if (Menu_TrackSelect.nGameType != 0) {
-		Menu_TrackSelect.nGameType = 0;
+	if (Menu_TrackSelect.nGameType != Menu_TrackSelect.GAMETYPE_RACE) {
+		Menu_TrackSelect.nGameType = Menu_TrackSelect.GAMETYPE_RACE;
 		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
 	}
 	return 0;
@@ -200,8 +200,8 @@ int ChloeHUD_TrackSelect_SetIsTimeTrial(void* a1) {
 int ChloeHUD_TrackSelect_SetIsHotSeat(void* a1) {
 	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsHotSeat;
 	Menu_TrackSelect.bSplitScreen = false;
-	if (Menu_TrackSelect.nGameType != 2) {
-		Menu_TrackSelect.nGameType = 2;
+	if (Menu_TrackSelect.nGameType != Menu_TrackSelect.GAMETYPE_STUNT) {
+		Menu_TrackSelect.nGameType = Menu_TrackSelect.GAMETYPE_STUNT;
 		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
 	}
 	return 0;
@@ -210,8 +210,8 @@ int ChloeHUD_TrackSelect_SetIsHotSeat(void* a1) {
 int ChloeHUD_TrackSelect_SetIsSplitScreen(void* a1) {
 	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsQuickRace;
 	Menu_TrackSelect.bSplitScreen = true;
-	if (Menu_TrackSelect.nGameType == 2) {
-		Menu_TrackSelect.nGameType = 0;
+	if (Menu_TrackSelect.nGameType == Menu_TrackSelect.GAMETYPE_STUNT) {
+		Menu_TrackSelect.nGameType = Menu_TrackSelect.GAMETYPE_RACE;
 		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
 	}
 	return 0;
@@ -221,8 +221,8 @@ int ChloeHUD_TrackSelect_SetIsMultiplayer(void* a1) {
 	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsMultiplayer;
 	Menu_TrackSelect.bSplitScreen = false;
 	Menu_TrackSelect.bMultiplayerCreateGame = false;
-	if (Menu_TrackSelect.nGameType == 2) {
-		Menu_TrackSelect.nGameType = 0;
+	if (Menu_TrackSelect.nGameType == Menu_TrackSelect.GAMETYPE_STUNT) {
+		Menu_TrackSelect.nGameType = Menu_TrackSelect.GAMETYPE_RACE;
 		Menu_TrackSelect.CheckOptionBounds(&Menu_TrackSelect.nGameType);
 	}
 	return 0;
@@ -1068,6 +1068,8 @@ int ChloeCollection_OnReturnToMenu(void* a1) {
 	CarnageRace::SetIsCarnageRace(false);
 	SmashyRace::SetIsSmashyRace(false);
 	SetTrackReversed(false);
+	SetIsWreckingDerby(false);
+	FragDerby::SetIsFragDerby(false);
 	return 0;
 }
 
@@ -1219,6 +1221,16 @@ int ChloeCollection_CheckCheatCode(void* a1) {
 		}
 		ArcadeMode::bAllUnlocked = true;
 	}
+	return 0;
+}
+
+int ChloeCollection_SetIsWreckingDerby(void* a1) {
+	SetIsWreckingDerby(luaL_checknumber(a1, 1));
+	return 0;
+}
+
+int ChloeCollection_SetIsFragDerby(void* a1) {
+	FragDerby::SetIsFragDerby(luaL_checknumber(a1, 1));
 	return 0;
 }
 
@@ -1417,6 +1429,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetTrackReversed, "ChloeCollection_SetTrackReversed");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetNumSplitScreenCars, "ChloeCollection_SetNumSplitScreenCars");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_CheckCheatCode, "ChloeCollection_CheckCheatCode");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsWreckingDerby, "ChloeCollection_SetIsWreckingDerby");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsFragDerby, "ChloeCollection_SetIsFragDerby");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");
@@ -1456,6 +1470,11 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_0, "NITRO_0");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100, "NITRO_100");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100_REGEN, "NITRO_100_REGEN");
+
+	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_RACE, "GAMETYPE_RACE");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_LMS, "GAMETYPE_DERBY_LMS");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_WRECKING, "GAMETYPE_DERBY_WRECKING");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_STUNT, "GAMETYPE_STUNT");
 
 	static auto sVersionString = "Chloe Collection v1.11 - Multiplayer Derby Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");

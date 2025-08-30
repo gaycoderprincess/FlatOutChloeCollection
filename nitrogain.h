@@ -6,7 +6,7 @@ float fNitroRegenerationRate = 0.05;
 void ProcessNitroGain() {
 	if (GetGameState() != GAME_STATE_RACE) return;
 	if (pLoadingScreen) return;
-	if (pGameFlow->nEventType != eEventType::RACE) return;
+	if (pGameFlow->nEventType != eEventType::RACE && !IsNitroEnabledInDerby()) return;
 	if (pPlayerHost->nRaceTime <= 0) return;
 
 	bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode") || bIsCarnageRace || bIsSmashyRace || (bIsInMultiplayer && bMultiplayerNitroRegen);

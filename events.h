@@ -121,4 +121,13 @@ namespace ChloeEvents {
 			}
 		}
 	} SaveDeletedEvent;
+
+	class EventPlayerReset : public ChloeEvent<void(*)(Player*)> {
+	public:
+		void OnHit(Player* pPlayer) {
+			for (auto& func : functions) {
+				func(pPlayer);
+			}
+		}
+	} PlayerResetEvent;
 }

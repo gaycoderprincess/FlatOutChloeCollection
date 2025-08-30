@@ -108,6 +108,7 @@ void ProcessCarReset(int player, float delta) {
 				if (pGameFlow->nEventType != eEventType::DERBY) {
 					*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * fCarResetSpeed;
 				}
+				ChloeEvents::PlayerResetEvent.OnHit(ply);
 			}
 			bCarResetRequested[player] = false;
 		}

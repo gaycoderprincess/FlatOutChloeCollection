@@ -17,6 +17,11 @@ public:
 	int nBestLapX = 1270;
 	int nTotalTimeX = 1550;
 
+	int nWreckingDerbyCrashX = 1550 - (140*3);
+	int nWreckingDerbyWreckX = 1550 - (140*2);
+	int nWreckingDerbyBonusX = 1550 - (140*1);
+	int nWreckingDerbyTotalX = 1550;
+
 	float fBalkOffsetY = -0.026;
 	float fBalkSizeY = 0.055;
 
@@ -60,10 +65,22 @@ public:
 		data.XCenterAlign = false;
 		data.x = nNameX;
 		Draw1080pString(JUSTIFY_CENTER, data, "DRIVER", &DrawStringFO2_Ingame12);
-		data.x = nBestLapX;
-		Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? "WRECKS" : "BEST LAP", &DrawStringFO2_Ingame12);
-		data.x = nTotalTimeX;
-		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL TIME", &DrawStringFO2_Ingame12);
+		if (bIsWreckingDerby) {
+			data.x = nWreckingDerbyCrashX;
+			Draw1080pString(JUSTIFY_CENTER, data, "CRASH", &DrawStringFO2_Ingame12);
+			data.x = nWreckingDerbyWreckX;
+			Draw1080pString(JUSTIFY_CENTER, data, "WRECK", &DrawStringFO2_Ingame12);
+			data.x = nWreckingDerbyBonusX;
+			Draw1080pString(JUSTIFY_CENTER, data, "BONUS", &DrawStringFO2_Ingame12);
+			data.x = nWreckingDerbyTotalX;
+			Draw1080pString(JUSTIFY_CENTER, data, "TOTAL", &DrawStringFO2_Ingame12);
+		}
+		else {
+			data.x = nBestLapX;
+			Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? "WRECKS" : "BEST LAP", &DrawStringFO2_Ingame12);
+			data.x = nTotalTimeX;
+			Draw1080pString(JUSTIFY_CENTER, data, "TOTAL TIME", &DrawStringFO2_Ingame12);
+		}
 
 		data.y = nPlayerYStart;
 
@@ -73,41 +90,50 @@ public:
 
 			DrawRectangle(0, 1, (data.y / 1080.0) + fBalkOffsetY, (data.y / 1080.0) + fBalkOffsetY + fBalkSizeY, {255,255,255,255}, 0, texture1);
 
-			std::string bestLap;
-			if (!ply->nCurrentLap) {
-				bestLap = "--'--\"--";
-			}
-			else {
-				bestLap = FormatGameTime(GetBestLap(ply), true);
-			}
-
-			std::string finish;
-			if (pGameFlow->nEventType == eEventType::DERBY) {
-				if (ply->bHasFinished || ply->bIsDNF) {
-					finish = FormatGameTime(ply->nFinishTime, true);
-				} else {
-					finish = "--'--\"--";
-				}
-			}
-			else {
-				if (ply->bHasFinished) {
-					finish = FormatGameTime(ply->nFinishTime, true);
-				} else if (ply->bIsDNF) {
-					finish = "DNF";
-				} else {
-					finish = "--'--\"--";
-				}
-			}
-
 			auto player = GetPlayer(ply->nPlayerId);
-
 			data.SetColor(GetPaletteColor(player->nPlayerType == PLAYERTYPE_LOCAL ? COLOR_MENU_YELLOW : COLOR_MENU_WHITE));
+			if (bIsWreckingDerby) {
+				data.x = nWreckingDerbyCrashX;
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyCrashScore(ply->nPlayerId)), &DrawStringFO2_Ingame12);
+				data.x = nWreckingDerbyWreckX;
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyWreckScore(ply->nPlayerId)), &DrawStringFO2_Ingame12);
+				data.x = nWreckingDerbyBonusX;
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyBonusScore(ply->nPosition, ply->bHasFinished || ply->bIsDNF)), &DrawStringFO2_Ingame12);
+				data.x = nWreckingDerbyTotalX;
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyTotalScore(ply->nPlayerId, ply->nPosition, ply->bHasFinished || ply->bIsDNF)), &DrawStringFO2_Ingame12);
+			}
+			else {
+				std::string bestLap;
+				if (!ply->nCurrentLap) {
+					bestLap = "--'--\"--";
+				} else {
+					bestLap = FormatGameTime(GetBestLap(ply), true);
+				}
+
+				std::string finish;
+				if (pGameFlow->nEventType == eEventType::DERBY) {
+					if (ply->bHasFinished || ply->bIsDNF) {
+						finish = FormatGameTime(ply->nFinishTime, true);
+					} else {
+						finish = "--'--\"--";
+					}
+				} else {
+					if (ply->bHasFinished) {
+						finish = FormatGameTime(ply->nFinishTime, true);
+					} else if (ply->bIsDNF) {
+						finish = "DNF";
+					} else {
+						finish = "--'--\"--";
+					}
+				}
+				data.x = nBestLapX;
+				Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]) : bestLap, &DrawStringFO2_Ingame12);
+				data.x = nTotalTimeX;
+				Draw1080pString(JUSTIFY_CENTER, data, finish, &DrawStringFO2_Ingame12);
+			}
+
 			data.x = nNameX;
 			Draw1080pString(JUSTIFY_CENTER, data, GetStringNarrow(player->sPlayerName.Get()), &DrawStringFO2_Ingame12);
-			data.x = nBestLapX;
-			Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]) : bestLap, &DrawStringFO2_Ingame12);
-			data.x = nTotalTimeX;
-			Draw1080pString(JUSTIFY_CENTER, data, finish, &DrawStringFO2_Ingame12);
 
 			data.x = nPositionX;
 			data.y += nPositionY;

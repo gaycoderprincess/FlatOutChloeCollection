@@ -12,6 +12,7 @@ public:
 		if (!IsRaceHUDUp()) return;
 		if (IsInSplitScreen()) return;
 		if (pGameFlow->nEventType != eEventType::DERBY) return;
+		if (bIsFragDerby) return;
 
 		auto timer = fDerbyMaxContactTimer - fDerbyContactTimer[0];
 		DrawElement(1, "CONTACT TIMER", GetContactTimerString(timer * 1000));

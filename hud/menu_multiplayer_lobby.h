@@ -53,6 +53,7 @@ public:
 	virtual void Init() {
 		PreloadTexture("data/menu/mpmenubg.png");
 		PreloadTexture("data/menu/flags.tga");
+		PreloadTexture("data/menu/multiplayer.tga");
 	}
 
 	void DrawPlayerInfo(int y, const std::string& ready, const std::string& name, const std::string& car, const std::string& ping) {
