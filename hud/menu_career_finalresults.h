@@ -52,6 +52,7 @@ public:
 		for (int i = 0; i < 8; i++) {
 			gCustomSave.CalculateCupPlayersByPosition();
 			int playerId = gCustomSave.aCupPlayersByPosition[i];
+			if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN && i == 7 && playerId == 1) continue;
 			auto player = &gCustomSave.aCareerCupPlayers[playerId];
 			std::string playerName = CMenu_Career::GetPlayerName(playerId);
 			data.XCenterAlign = false;
