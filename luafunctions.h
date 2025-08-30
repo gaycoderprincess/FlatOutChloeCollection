@@ -1017,6 +1017,11 @@ int ChloeArcade_SetIsSmashyRace(void* a1) {
 	return 0;
 }
 
+int ChloeArcade_SetIsFragDerby(void* a1) {
+	FragDerby::SetIsFragDerby(true);
+	return 0;
+}
+
 int ChloeArcade_WasArcadeEvent(void* a1) {
 	lua_pushboolean(a1, ArcadeMode::bIsArcadeMode);
 	return 1;
@@ -1029,16 +1034,6 @@ int ChloeArcade_WasCarnageRace(void* a1) {
 
 int ChloeArcade_ProcessResultsFromLastRace(void* a1) {
 	ArcadeMode::ProcessResultsFromLastRace_Prompted();
-	return 0;
-}
-
-int ChloeArcade_SmashyRace_SetTimeLimit(void* a1) {
-	SmashyRace::fPlayerGivenTime = luaL_checknumber(a1, 1);
-	return 0;
-}
-
-int ChloeArcade_SmashyRace_SetScoreMultiplier(void* a1) {
-	SmashyRace::nScoreMultiplier = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -1059,6 +1054,21 @@ int ChloeArcade_CarnageRace_SetCheckpointTimeDecay(void* a1) {
 
 int ChloeArcade_CarnageRace_SetCheckpointInterval(void* a1) {
 	CarnageRace::nCheckpointInterval = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcade_SmashyRace_SetTimeLimit(void* a1) {
+	SmashyRace::fPlayerGivenTime = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcade_SmashyRace_SetScoreMultiplier(void* a1) {
+	SmashyRace::nScoreMultiplier = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeArcade_FragDerby_SetTimeLimit(void* a1) {
+	FragDerby::fPlayerGivenTime = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -1111,6 +1121,7 @@ int ChloeArcadeDefs_SetEventRules(void* a1) {
 	std::string str = (const char*)lua_tolstring(a1, 1);
 	ArcadeMode::luaDefs_currentRace->bIsArcadeRace = str == "ARCADE_RACE";
 	ArcadeMode::luaDefs_currentRace->bIsSmashySmash = str == "SMASHYSMASH";
+	ArcadeMode::luaDefs_currentRace->bIsFragDerby = str == "FRAG_DERBY";
 	return 0;
 }
 
@@ -1226,11 +1237,6 @@ int ChloeCollection_CheckCheatCode(void* a1) {
 
 int ChloeCollection_SetIsWreckingDerby(void* a1) {
 	SetIsWreckingDerby(luaL_checknumber(a1, 1));
-	return 0;
-}
-
-int ChloeCollection_SetIsFragDerby(void* a1) {
-	FragDerby::SetIsFragDerby(luaL_checknumber(a1, 1));
 	return 0;
 }
 
@@ -1396,6 +1402,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsArcadeCareer, "ChloeArcade_SetIsArcadeCareer");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsCarnageRace, "ChloeArcade_SetIsCarnageRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsSmashyRace, "ChloeArcade_SetIsSmashyRace");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsFragDerby, "ChloeArcade_SetIsFragDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasArcadeEvent, "ChloeArcade_WasArcadeEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasCarnageRace, "ChloeArcade_WasCarnageRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_ProcessResultsFromLastRace, "ChloeArcade_ProcessResultsFromLastRace");
@@ -1405,6 +1412,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_CarnageRace_SetCheckpointInterval, "ChloeArcade_CarnageRace_SetCheckpointInterval");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SmashyRace_SetTimeLimit, "ChloeArcade_SmashyRace_SetTimeLimit");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SmashyRace_SetScoreMultiplier, "ChloeArcade_SmashyRace_SetScoreMultiplier");
+	RegisterLUAFunction(a1, (void*)&ChloeArcade_FragDerby_SetTimeLimit, "ChloeArcade_FragDerby_SetTimeLimit");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_BeginArcadeDefs, "ChloeArcadeDefs_BeginArcadeDefs");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_BeginEvent, "ChloeArcadeDefs_BeginEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeArcadeDefs_SetEventName, "ChloeArcadeDefs_SetEventName");
@@ -1430,7 +1438,6 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetNumSplitScreenCars, "ChloeCollection_SetNumSplitScreenCars");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_CheckCheatCode, "ChloeCollection_CheckCheatCode");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsWreckingDerby, "ChloeCollection_SetIsWreckingDerby");
-	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsFragDerby, "ChloeCollection_SetIsFragDerby");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

@@ -16,6 +16,7 @@
 #include "consts.h"
 #include "config.h"
 #include "utils.h"
+#include "draw3d.h"
 #include "mallochook.h"
 #include "events.h"
 #include "filereader.h"
@@ -190,6 +191,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyUltrawidePatches();
 			ApplyXInputPatches();
 			ApplyAIExtenderPatches();
+			ApplyDraw3DPatches();
 			CareerMode::Init();
 			ArcadeMode::Init();
 			CarnageRace::Init();

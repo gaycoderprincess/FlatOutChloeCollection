@@ -49,22 +49,6 @@ void __attribute__((naked)) UltrawideTextScaleASM() {
 	);
 }
 
-class Camera
-{
-public:
-	uint8_t _0[0xF0];
-	float fLeft; // +F0
-	float fRight; // +F4
-	float fTop; // +F8
-	float fBottom; // +FC
-	uint8_t _100[0xC];
-	float fNearZ; // +10C
-	float fFarZ; // +110
-	float fFOV; // +114
-	float fAspectX; // +118
-	float fAspectY; // +11C
-};
-
 struct CameraExtents {
 	uint8_t _0[0x14]; // +0
 	float fLeft; // +14

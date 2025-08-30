@@ -76,7 +76,7 @@ public:
 		}
 
 		int uiId = 1;
-		if (bIsCarnageRace) uiId = 2;
+		if (bIsCarnageRace || bIsFragDerby) uiId = 2;
 		DrawElement(uiId, scoreTitle, FormatScore(targetScore), rgb);
 
 		static CNyaRaceTimer gTimer;

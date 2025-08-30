@@ -75,8 +75,9 @@ namespace FragDerby {
 
 	void OnCrashBonus(Player* pPlayer, int type) {
 		if (!bIsFragDerby) return;
+		if (fGameTimeLeft <= 0) return;
 		int id = pPlayer->nPlayerId-1;
-		if (type == CRASHBONUS_WRECKED) {
+		if (type == CRASHBONUS_WRECKED && !pPlayer->nIsRagdolled) {
 			if (nStreakerId == id) {
 				if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) AddTopBarNotif(std::format("{}\nscores yet another frag! ({} frags)", GetStringNarrow(GetPlayer(id)->sPlayerName.Get()), nPlayerWrecksThisLife[id]+1));
 			}
@@ -118,6 +119,8 @@ namespace FragDerby {
 	}
 
 	void ProcessPlayer(double delta, int player) {
+		if (fGameTimeLeft <= 0) return;
+
 		if (player == GetSurvivorID()) {
 			fPlayerSurvivorTick[player] += delta;
 			if (fPlayerSurvivorTick[player] >= 1) {
@@ -130,13 +133,16 @@ namespace FragDerby {
 		}
 
 		auto ply = GetPlayer(player);
-		ply->pCar->Performance.Engine.fHealth = ply->pCar->nIsRagdolled ? 0.0 : 1.0; // engine smoke based entirely on wrecked or not
-		if (ply->pCar->nIsRagdolled) {
+		ply->pCar->Performance.Engine.fHealth = ply->nIsRagdolled ? 0.0 : 1.0; // engine smoke based entirely on wrecked or not
+		if (ply->nIsRagdolled) {
 			fPlayerTimeAlive[player] = 0;
 
-			if (nStreakerId == player && ply->nPlayerType != PLAYERTYPE_LOCAL) {
-				AddTopBarNotif(std::format("{}\nfrag streak ended! ({} frags)", GetStringNarrow(GetPlayer(player)->sPlayerName.Get()), nPlayerWrecksThisLife[player]));
+			if (nStreakerId == player) {
 				nStreakerId = -1;
+
+				if (ply->nPlayerType != PLAYERTYPE_LOCAL) {
+					AddTopBarNotif(std::format("{}\nfrag streak ended! ({} frags)", GetStringNarrow(GetPlayer(player)->sPlayerName.Get()), nPlayerWrecksThisLife[player]));
+				}
 			}
 
 			nPlayerWrecksThisLife[player] = 0;
@@ -237,12 +243,77 @@ namespace FragDerby {
 			DrawStringFO2_Ingame10(data, value);
 		}
 
+		static inline float fPlayerHealthIconOffset = 1.3;
+		static inline float fPlayerHealthIconSize = 0.17;
+		static void DrawPlayerHealthIcon(Player* ply) {
+			if (ply->nIsRagdolled) return;
+			if (ply->nPlayerType == PLAYERTYPE_LOCAL) return;
+
+			static auto tex = LoadTextureFromBFS("data/global/overlay/derby_health_indicator.png");
+
+			auto mat = *ply->pCar->GetMatrix();
+			mat.p += mat.y * fPlayerHealthIconOffset;
+			auto drawPos = Get3DTo2D(mat);
+			if (drawPos.z <= 0) return;
+
+			NyaDrawing::CNyaRGBA32 color = {255,255,255,255};
+			auto damage = ply->pCar->GetDerbyDamage();
+			if (damage <= 0.0) damage = 0.0;
+			if (damage >= 1.0) damage = 1.0;
+			if (damage < 0.5) {
+				color.r = std::lerp(64, 255, damage * 2);
+				color.g = std::lerp(255, 200, damage * 2);
+				color.b = std::lerp(64, 60, damage * 2);
+			}
+			else {
+				color.r = std::lerp(255, 255, damage - 0.5);
+				color.g = std::lerp(200, 0, damage - 0.5);
+				color.b = std::lerp(60, 0, damage - 0.5);
+			}
+
+			float fSize = fPlayerHealthIconSize / drawPos.z;
+			DrawRectangle(drawPos.x - fSize * GetAspectRatioInv(), drawPos.x + fSize * GetAspectRatioInv(), drawPos.y - fSize, drawPos.y + fSize, color, 0, tex);
+		}
+
+		static inline float fPlayerIconOffset = 1.7;
+		static inline float fPlayerIconSize = 0.25;
+		static void DrawPlayerIcon(const std::string& icon, Player* ply) {
+			static auto tex = LoadTextureFromBFS("data/global/overlay/frag_derby_symbols.png");
+			static auto texData = LoadHUDData("data/global/overlay/frag_derby_symbols.bed", "frag_derby_symbols");
+
+			auto mat = *ply->pCar->GetMatrix();
+			mat.p += mat.y * fPlayerHealthIconOffset;
+			mat.p.z += fPlayerIconOffset - fPlayerHealthIconOffset;
+			auto drawPos = Get3DTo2D(mat);
+			if (drawPos.z <= 0) return;
+
+			float fSize = fPlayerIconSize / drawPos.z;
+			auto symbol = GetHUDData(texData, icon);
+			DrawRectangle(drawPos.x - fSize * GetAspectRatioInv(), drawPos.x + fSize * GetAspectRatioInv(), drawPos.y - fSize, drawPos.y + fSize, {255,255,255,255}, 0, tex, 0, symbol->min, symbol->max);
+		}
+
 		virtual void Process() {
 			static bool isStreaker = false;
 			static bool isSurvivor = false;
 
 			if (!IsRaceHUDUp()) return;
 			if (!bIsFragDerby) return;
+
+			if (nStreakerId >= 0 && nStreakerId == GetSurvivorID()) {
+				DrawPlayerIcon("frag_derby_symbol_combinated", GetPlayer(nStreakerId));
+			}
+			else {
+				if (nStreakerId >= 0) {
+					DrawPlayerIcon("frag_derby_symbol_fragstreak", GetPlayer(nStreakerId));
+				}
+				if (GetSurvivorID() >= 0) {
+					DrawPlayerIcon("frag_derby_symbol_survivor", GetPlayer(GetSurvivorID()));
+				}
+			}
+
+			for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+				DrawPlayerHealthIcon(GetPlayer(i));
+			}
 
 			int timeLeft = fGameTimeLeft*1000;
 			if (timeLeft < 0) timeLeft = 0;
@@ -285,6 +356,7 @@ namespace FragDerby {
 		virtual void Process() {
 			if (!IsRaceHUDUp()) return;
 			if (!bIsFragDerby) return;
+			if (fGameTimeLeft <= 0) return;
 
 			auto ply = GetPlayer(0);
 			double respawnTime = RespawnTime * 0.001;

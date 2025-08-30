@@ -3,6 +3,7 @@ public:
 	virtual const char* GetName() { return "menu_arcadecareer"; }
 
 	int nCursorPos = 0;
+	int nScrollPos = 0;
 
 	virtual void MoveLeft() {
 		nCursorPos--;
@@ -58,6 +59,14 @@ public:
 		return &ArcadeMode::aArcadeRaces[nCursorPos];
 	}
 
+	int nArrowX = 280;
+	int nArrowY1 = 265;
+	int nArrowY2 = 795;
+	int nArrowSizeX = 16;
+	int nArrowSizeY = 10;
+
+	constexpr static inline int nNumEventsOnScreen = (3*5);
+
 	virtual void Process() {
 		ArcadeMode::pCurrentEvent = GetHighlight();
 		ArcadeMode::nCurrentEventId = nCursorPos;
@@ -86,8 +95,24 @@ public:
 
 		CMenu_TrackSelect::DisplayTrackInfo(GetTrackId());
 
+		static auto arrowLeft = GetHUDData(commonData, "nuoliylos");
+		static auto arrowRight = GetHUDData(commonData, "nuolialas");
+		Draw1080pSprite(JUSTIFY_LEFT, nArrowX - nArrowSizeX, nArrowX + nArrowSizeX, nArrowY1 - nArrowSizeY, nArrowY1 + nArrowSizeY, {255,255,255,255}, textureCommon, arrowLeft->min, arrowLeft->max);
+		Draw1080pSprite(JUSTIFY_LEFT, nArrowX - nArrowSizeX, nArrowX + nArrowSizeX, nArrowY2 - nArrowSizeY, nArrowY2 + nArrowSizeY, {255,255,255,255}, textureCommon, arrowRight->min, arrowRight->max);
+
+		while (nCursorPos < nScrollPos) {
+			nScrollPos -= 3;
+		}
+		while (nCursorPos >= nScrollPos+nNumEventsOnScreen) {
+			nScrollPos += 3;
+		}
+
 		auto totalScore = gCustomSave.GetArcadeCareerScore();
-		for (int i = 0; i < ArcadeMode::aArcadeRaces.size(); i++) {
+		int posX = 0;
+		int posY = 0;
+		for (int i = nScrollPos; i < nScrollPos+nNumEventsOnScreen; i++) {
+			if (i < 0 || i >= ArcadeMode::aArcadeRaces.size()) continue;
+
 			auto event = &ArcadeMode::aArcadeRaces[i];
 			auto score = gCustomSave.aArcadeCareerScores[i];
 			bool unlocked = ArcadeMode::bAllUnlocked || totalScore >= event->nPointsToUnlock;
@@ -99,13 +124,6 @@ public:
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(event->nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", event->nLevel).c_str(), "Fatal error", MB_ICONERROR);
-			}
-
-			int posX = i;
-			int posY = 0;
-			while (posX >= 3) {
-				posX -= 3;
-				posY++;
 			}
 
 			auto data = gEvent;
@@ -123,6 +141,12 @@ public:
 				x2 = x1 + fEventHighlightSize * 1.5;
 				y2 = y1 + fEventHighlightSize;
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
+			}
+
+			posX++;
+			if (posX >= 3) {
+				posX -= 3;
+				posY++;
 			}
 		}
 
@@ -188,7 +212,7 @@ public:
 		data.x = gLevelType.nPosX;
 		data.y = gLevelType.nPosY;
 		data.size = gLevelType.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsFragDerby ? "FRAG DERBY" : (event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION"), &DrawStringFO2_Small);
 		data.x = gTotalScore.nPosX;
 		data.y = gTotalScore.nPosY;
 		data.size = gTotalScore.fSize;

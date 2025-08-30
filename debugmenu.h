@@ -206,8 +206,18 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("nWreckingDerbyWreckX", HUD_RaceResults.nWreckingDerbyWreckX);
 	//QuickValueEditor("nWreckingDerbyBonusX", HUD_RaceResults.nWreckingDerbyBonusX);
 	//QuickValueEditor("nWreckingDerbyTotalX", HUD_RaceResults.nWreckingDerbyTotalX);
-	QuickValueEditor("fPopupSize", FragDerby::HUD_FragDerby.fPopupSize);
-	QuickValueEditor("fPopupSpacing", FragDerby::HUD_FragDerby.fPopupSpacing);
+	//QuickValueEditor("fPopupSize", FragDerby::HUD_FragDerby.fPopupSize);
+	//QuickValueEditor("fPopupSpacing", FragDerby::HUD_FragDerby.fPopupSpacing);
+	//QuickValueEditor("nArrowX", Menu_ArcadeCareer.nArrowX);
+	//QuickValueEditor("nArrowY1", Menu_ArcadeCareer.nArrowY1);
+	//QuickValueEditor("nArrowY2", Menu_ArcadeCareer.nArrowY2);
+	//QuickValueEditor("nArrowSizeX", Menu_ArcadeCareer.nArrowSizeX);
+	//QuickValueEditor("nArrowSizeY", Menu_ArcadeCareer.nArrowSizeY);
+	QuickValueEditor("f3D2DYDivByDistance", f3D2DYDivByDistance);
+	QuickValueEditor("fPlayerIconOffset", FragDerby::HUD_FragDerby.fPlayerIconOffset);
+	QuickValueEditor("fPlayerIconSize", FragDerby::HUD_FragDerby.fPlayerIconSize);
+	QuickValueEditor("fPlayerHealthIconOffset", FragDerby::HUD_FragDerby.fPlayerHealthIconOffset);
+	QuickValueEditor("fPlayerHealthIconSize", FragDerby::HUD_FragDerby.fPlayerHealthIconSize);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();
@@ -382,6 +392,12 @@ void ProcessDebugMenu() {
 		auto plyPos = ply->pCar->GetMatrix()->p;
 		DrawDebugMenuViewerOption(std::format("Player Position - {:.1f} {:.1f} {:.1f}", plyPos.x, plyPos.y, plyPos.z));
 		DrawDebugMenuViewerOption(std::format("Race Time - {}", pPlayerHost->nRaceTime));
+
+		auto drawPos = Get3DTo2D(*ply->pCar->GetMatrix());
+		DrawDebugMenuViewerOption(std::format("Player 2D Position - {:.1f} {:.1f} {:.1f}", drawPos.x, drawPos.y, drawPos.z));
+		auto cam = pCameraManager->pCamera;
+		DrawDebugMenuViewerOption(std::format("Camera Position - {:.1f} {:.1f} {:.1f}", cam->GetMatrix()->p.x, cam->GetMatrix()->p.y, cam->GetMatrix()->p.z));
+
 		if (auto reset = pPlayerResetpoint) {
 			DrawDebugMenuViewerOption(std::format("Closest Resetpoint - {:.1f}m", (reset->p - ply->pCar->GetMatrix()->p).length()));
 		}

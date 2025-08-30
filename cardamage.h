@@ -65,7 +65,7 @@ Player* GetPlayerLastHit(int playerId) {
 		if (i == playerId) continue;
 
 		auto ply = GetPlayer(i);
-		if (IsPlayerWrecked(ply)) continue;
+		if (!bIsFragDerby && IsPlayerWrecked(ply)) continue;
 		if (ply->pCar->aCarCollisions[playerId].lastHitTimestamp > lastHitTimestamp) {
 			lastHitTimestamp = ply->pCar->aCarCollisions[playerId].lastHitTimestamp;
 			lastHitPlayer = ply;

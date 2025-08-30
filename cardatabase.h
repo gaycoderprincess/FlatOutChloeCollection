@@ -6,7 +6,7 @@ int GetHandlingMode() {
 }
 
 float fCarnageModeMassFudge = 0.75;
-float fFragDerbyMassFudge = 0.6;
+float fFragDerbyMassFudge = 0.5;
 
 toml::table GetCarPerformanceTable(int id) {
 	return ReadTOMLFromBfs(std::format("data/database/cars/car{}.toml", GetDealerCar(id)->performanceId));
@@ -127,7 +127,7 @@ tCarTuningData GetPlayerTuningData(int carId) {
 
 	auto data = GetAITuningData(true);
 	data.fDurability = CareerMode::GetPlayerUpgradeLevel();
-	if (bIsCarnageRace) data.fDurability = 1.0;
+	if (bIsCarnageRace || bIsFragDerby) data.fDurability = 1.0;
 	return data;
 }
 

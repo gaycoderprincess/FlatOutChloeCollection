@@ -63,6 +63,7 @@ namespace ArcadeMode {
 		bool bTrackReversed : 1;
 		bool bIsArcadeRace : 1;
 		bool bIsSmashySmash : 1;
+		bool bIsFragDerby : 1;
 		int nPointsToUnlock;
 		float fUpgradeLevel;
 		float fAIUpgradeLevel;
@@ -80,6 +81,7 @@ namespace ArcadeMode {
 
 	void SetIsArcadeMode(bool apply) {
 		bIsArcadeMode = apply;
+		NyaHookLib::Patch<uint8_t>(0x45B0F2, apply ? 0xEB : 0x75); // disable vanilla game tutorials
 	}
 
 	void ProcessResultsFromLastRace() {
@@ -89,11 +91,9 @@ namespace ArcadeMode {
 			return;
 		}
 
-		if (pCurrentEvent->bIsArcadeRace || pCurrentEvent->bIsSmashySmash)  {
-			if (nCurrentEventScore > gCustomSave.aArcadeCareerScores[nCurrentEventId]) {
-				gCustomSave.aArcadeCareerScores[nCurrentEventId] = nCurrentEventScore;
-				gCustomSave.Save();
-			}
+		if (nCurrentEventScore > gCustomSave.aArcadeCareerScores[nCurrentEventId]) {
+			gCustomSave.aArcadeCareerScores[nCurrentEventId] = nCurrentEventScore;
+			gCustomSave.Save();
 		}
 		nCurrentEventScore = 0;
 	}

@@ -101,7 +101,7 @@ public:
 					}
 				}
 			}
-			if (GetPlayerScore<PlayerScoreRace>(i+1)->bIsDNF) continue;
+			if (IsPlayerWrecked(ply)) continue;
 			if (localPlayer->pCar->aCarCollisions[i].lastHitTimestamp > pPlayerHost->nRaceTime - 100) {
 				playerJustHit = true;
 				closestPlayerDist = (ply->pCar->GetMatrix()->p - playerPos).length();

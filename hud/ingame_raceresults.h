@@ -65,7 +65,13 @@ public:
 		data.XCenterAlign = false;
 		data.x = nNameX;
 		Draw1080pString(JUSTIFY_CENTER, data, "DRIVER", &DrawStringFO2_Ingame12);
-		if (bIsWreckingDerby) {
+		if (bIsFragDerby) {
+			data.x = nBestLapX;
+			Draw1080pString(JUSTIFY_CENTER, data, "WRECKS", &DrawStringFO2_Ingame12);
+			data.x = nTotalTimeX;
+			Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Ingame12);
+		}
+		else if (bIsWreckingDerby) {
 			data.x = nWreckingDerbyCrashX;
 			Draw1080pString(JUSTIFY_CENTER, data, "CRASH", &DrawStringFO2_Ingame12);
 			data.x = nWreckingDerbyWreckX;
@@ -92,7 +98,13 @@ public:
 
 			auto player = GetPlayer(ply->nPlayerId);
 			data.SetColor(GetPaletteColor(player->nPlayerType == PLAYERTYPE_LOCAL ? COLOR_MENU_YELLOW : COLOR_MENU_WHITE));
-			if (bIsWreckingDerby) {
+			if (bIsFragDerby) {
+				data.x = nBestLapX;
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]), &DrawStringFO2_Ingame12);
+				data.x = nTotalTimeX;
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(FragDerby::nPlayerScore[ply->nPlayerId]), &DrawStringFO2_Ingame12);
+			}
+			else if (bIsWreckingDerby) {
 				data.x = nWreckingDerbyCrashX;
 				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyCrashScore(ply->nPlayerId)), &DrawStringFO2_Ingame12);
 				data.x = nWreckingDerbyWreckX;
