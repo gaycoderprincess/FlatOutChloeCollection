@@ -7,9 +7,6 @@ namespace FragDerby {
 	const int FragScore_SurvivorBonusPerSecond = 50;
 	float WreckedMass = 100;
 
-	//Get the most frags with the current life to be the Frag Streaker and earn double scores.
-	//Survive the longest with the current life to earn extra score as the Survivor.
-
 	double fPlayerGivenTime;
 
 	int nPlayerWrecksThisLife[nMaxPlayers] = {};

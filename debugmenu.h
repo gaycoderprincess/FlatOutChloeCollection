@@ -393,12 +393,6 @@ void ProcessDebugMenu() {
 		auto plyPos = ply->pCar->GetMatrix()->p;
 		DrawDebugMenuViewerOption(std::format("Player Position - {:.1f} {:.1f} {:.1f}", plyPos.x, plyPos.y, plyPos.z));
 		DrawDebugMenuViewerOption(std::format("Race Time - {}", pPlayerHost->nRaceTime));
-
-		auto drawPos = Get3DTo2D(*ply->pCar->GetMatrix());
-		DrawDebugMenuViewerOption(std::format("Player 2D Position - {:.1f} {:.1f} {:.1f}", drawPos.x, drawPos.y, drawPos.z));
-		auto cam = pCameraManager->pCamera;
-		DrawDebugMenuViewerOption(std::format("Camera Position - {:.1f} {:.1f} {:.1f}", cam->GetMatrix()->p.x, cam->GetMatrix()->p.y, cam->GetMatrix()->p.z));
-
 		if (auto reset = pPlayerResetpoint) {
 			DrawDebugMenuViewerOption(std::format("Closest Resetpoint - {:.1f}m", (reset->p - ply->pCar->GetMatrix()->p).length()));
 		}
