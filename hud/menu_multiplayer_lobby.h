@@ -5,9 +5,11 @@ public:
 	struct tPlayer {
 		std::string name;
 		int car = 1;
-		bool ready = false;
+		std::string iconName;
+		std::string icon2Name;
 		int ping = 0;
 		std::string carTitle;
+		std::string flagName;
 	} aPlayers[8] = {};
 	int nNumPlayersReady = 0;
 	int nNumPlayers = 0;
@@ -38,8 +40,19 @@ public:
 	float fTrackPreviewX = -0.149;
 	int nTrackPreviewX = 160;
 
+	int nFlagX = 215;
+	int nFlagYOffset = 3;
+	int nFlagSize = 16;
+
+	int nIconX = 80;
+	int nIconYOffset = 2;
+	int nIconSize = 16;
+
+	int nIcon2X = 141;
+
 	virtual void Init() {
 		PreloadTexture("data/menu/mpmenubg.png");
+		PreloadTexture("data/menu/flags.tga");
 	}
 
 	void DrawPlayerInfo(int y, const std::string& ready, const std::string& name, const std::string& car, const std::string& ping) {
@@ -58,6 +71,47 @@ public:
 		Draw1080pString(JUSTIFY_LEFT, data, ping, &DrawStringFO2_Ingame12);
 	}
 
+	void DrawPlayerFlag(int y, const std::string& flagName) {
+		static auto textureFlags = LoadTextureFromBFS("data/menu/flags.tga");
+		static auto dataFlags = LoadHUDData("data/menu/flags.bed", "flags");
+
+		auto data = GetHUDData(dataFlags, flagName);
+		if (!data) data = GetHUDData(dataFlags, "playerflag_0");
+		if (!data) return;
+
+		auto posY = nPlayerStartY + y * nPlayerListSpacing;
+		posY += nFlagYOffset;
+		Draw1080pSprite(JUSTIFY_LEFT, nFlagX - nFlagSize * 2, nFlagX + nFlagSize * 2, posY - nFlagSize, posY + nFlagSize, {255,255,255,255}, textureFlags, data->min, data->max);
+	}
+
+	void DrawPlayerIcon(int y, const std::string& iconName) {
+		if (iconName.empty()) return;
+
+		static auto textureFlags = LoadTextureFromBFS("data/menu/multiplayer.tga");
+		static auto dataFlags = LoadHUDData("data/menu/multiplayer.bed", "multiplayer");
+
+		auto data = GetHUDData(dataFlags, iconName);
+		if (!data) return;
+
+		auto posY = nPlayerStartY + y * nPlayerListSpacing;
+		posY += nIconYOffset;
+		Draw1080pSprite(JUSTIFY_LEFT, nIconX - nIconSize, nIconX + nIconSize, posY - nIconSize, posY + nIconSize, {255,255,255,255}, textureFlags, data->min, data->max);
+	}
+
+	void DrawPlayerIcon2(int y, const std::string& iconName) {
+		if (iconName.empty()) return;
+
+		static auto textureFlags = LoadTextureFromBFS("data/menu/multiplayer.tga");
+		static auto dataFlags = LoadHUDData("data/menu/multiplayer.bed", "multiplayer");
+
+		auto data = GetHUDData(dataFlags, iconName);
+		if (!data) return;
+
+		auto posY = nPlayerStartY + y * nPlayerListSpacing;
+		posY += nIconYOffset;
+		Draw1080pSprite(JUSTIFY_LEFT, nIcon2X - nIconSize, nIcon2X + nIconSize, posY - nIconSize, posY + nIconSize, {255,255,255,255}, textureFlags, data->min, data->max);
+	}
+
 	virtual void Process() {
 		if (!bEnabled) return;
 		if (!bIsInMultiplayer) return;
@@ -71,7 +125,10 @@ public:
 		DrawPlayerInfo(y++, std::format("{}/{} READY", nNumPlayersReady, nNumPlayers), "NAME", "CAR", "PING");
 		for (auto& ply : aPlayers) {
 			if (ply.name.empty()) continue;
-			DrawPlayerInfo(y++, &ply == &aPlayers[0] ? "HOST" : (ply.ready ? "X" : ""), ply.name, ply.carTitle.empty() ? GetCarName(ply.car) : ply.carTitle, std::to_string(ply.ping));
+			DrawPlayerFlag(y, ply.flagName);
+			DrawPlayerIcon(y, ply.iconName);
+			DrawPlayerIcon2(y, ply.icon2Name);
+			DrawPlayerInfo(y++, "", ply.name, ply.carTitle.empty() ? GetCarName(ply.car) : ply.carTitle, std::to_string(ply.ping));
 		}
 
 		tNyaStringData data;

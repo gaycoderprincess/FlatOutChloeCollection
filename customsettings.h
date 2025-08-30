@@ -16,6 +16,7 @@ tGameSetting aNewGameSettings[] = {
 		{ "Game", "ShowBonus", &nShowBonus, 1, 0, 0 },
 		{ "Game", "HighCarCam", &nHighCarCam, 0, 0, 1 },
 		{ "Game", "SplitScreenDamageMeter", &nSplitScreenDamageMeter, 1, 0, 0 },
+		{ "Game", "PlayerFlag", &nPlayerFlag, 0, 0, 100 },
 		//{ "Control", "ControllerGuid", (void*)0x6BEDD8, 3, 0, 0 },
 		//{ "Control", "Controller", (void*)0x6BEDFC, 0, 0, 2 },
 		{ "Control", "ControllerSupport", &nControllerSupport, 1, 0, 0 },

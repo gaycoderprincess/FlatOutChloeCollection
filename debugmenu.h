@@ -195,6 +195,13 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fBalkOffsetY", HUD_RaceResults.fBalkOffsetY);
 	//QuickValueEditor("fBalkSizeY", HUD_RaceResults.fBalkSizeY);
 	//QuickValueEditor("nPressStartY", HUD_RaceResults.nPressStartY);
+	//QuickValueEditor("nFlagX", Menu_Multiplayer_Lobby.nFlagX);
+	//QuickValueEditor("nFlagYOffset", Menu_Multiplayer_Lobby.nFlagYOffset);
+	//QuickValueEditor("nFlagSize", Menu_Multiplayer_Lobby.nFlagSize);
+	//QuickValueEditor("nIconX", Menu_Multiplayer_Lobby.nIconX);
+	//QuickValueEditor("nIconYOffset", Menu_Multiplayer_Lobby.nIconYOffset);
+	//QuickValueEditor("nIconSize", Menu_Multiplayer_Lobby.nIconSize);
+	//QuickValueEditor("nIcon2X", Menu_Multiplayer_Lobby.nIcon2X);
 
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();

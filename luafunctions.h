@@ -275,8 +275,10 @@ int ChloeHUD_MultiplayerLobby_ClearPlayerInfo(void* a1) {
 	for (auto& ply : Menu_Multiplayer_Lobby.aPlayers) {
 		ply.name = "";
 		ply.car = 0;
-		ply.ready = false;
+		ply.iconName = "";
+		ply.icon2Name = "";
 		ply.ping = 0;
+		ply.flagName = "";
 	}
 	return 0;
 }
@@ -285,14 +287,26 @@ int ChloeHUD_MultiplayerLobby_SetPlayerInfo(void* a1) {
 	auto ply = &Menu_Multiplayer_Lobby.aPlayers[(int)luaL_checknumber(a1, 1)-1];
 	ply->name = GetStringNarrow(lua_tolstring(a1, 2));
 	ply->car = luaL_checknumber(a1, 3)+1;
-	ply->ready = luaL_checknumber(a1, 4);
-	ply->ping = luaL_checknumber(a1, 5);
-	if (lua_type(a1, 6)) {
-		ply->carTitle = (const char*)lua_tolstring(a1, 6);
+	if (lua_type(a1, 4)) {
+		ply->iconName = (const char*)lua_tolstring(a1, 4);
+	}
+	else {
+		ply->iconName = "";
+	}
+	if (lua_type(a1, 5)) {
+		ply->icon2Name = (const char*)lua_tolstring(a1, 5);
+	}
+	else {
+		ply->icon2Name = "";
+	}
+	ply->ping = luaL_checknumber(a1, 6);
+	if (lua_type(a1, 7)) {
+		ply->carTitle = (const char*)lua_tolstring(a1, 7);
 	}
 	else {
 		ply->carTitle = "";
 	}
+	ply->flagName = (const char*)lua_tolstring(a1, 8);
 	return 0;
 }
 
