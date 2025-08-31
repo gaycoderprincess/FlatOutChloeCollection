@@ -355,7 +355,7 @@ namespace CareerMode {
 	}
 
 	int __stdcall GetAIHandicapLevelNew(GameFlow* gameFlow) {
-		if (ArcadeMode::bIsArcadeMode) {
+		if (bIsArcadeMode) {
 			int handicap = ArcadeMode::pCurrentEvent->nAIHandicapLevel;
 			if (handicap >= 1) return handicap;
 		}
@@ -390,10 +390,10 @@ namespace CareerMode {
 		if (bIsInMultiplayer) {
 			return fMultiplayerUpgradeLevel;
 		}
-		if (ArcadeMode::bIsArcadeMode) {
+		if (bIsArcadeMode) {
 			return ArcadeMode::pCurrentEvent->fAIUpgradeLevel;
 		}
-		if (QuickRace::bIsQuickRace) {
+		if (bIsQuickRace) {
 			return QuickRace::fUpgradeLevel;
 		}
 		if (bIsCareerRace) {
@@ -416,7 +416,7 @@ namespace CareerMode {
 		if (bIsInMultiplayer) {
 			return fMultiplayerUpgradeLevel;
 		}
-		if (ArcadeMode::bIsArcadeMode) {
+		if (bIsArcadeMode) {
 			return ArcadeMode::pCurrentEvent->fUpgradeLevel;
 		}
 		return GetAIUpgradeLevel();
@@ -425,10 +425,10 @@ namespace CareerMode {
 	int nForceNumLaps = -1;
 
 	int __stdcall GetNumLapsNew(GameFlow* gameFlow) {
-		if (ArcadeMode::bIsArcadeMode) {
+		if (bIsArcadeMode) {
 			return ArcadeMode::pCurrentEvent->nLaps;
 		}
-		if (QuickRace::bIsQuickRace) {
+		if (bIsQuickRace) {
 			return QuickRace::nNumLaps;
 		}
 		if (bIsCareerRace) {

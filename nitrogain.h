@@ -26,7 +26,7 @@ void ProcessNitroGain() {
 			}
 		}
 
-		if (QuickRace::bIsQuickRace) {
+		if (bIsQuickRace) {
 			if (QuickRace::nNitroLevel == QuickRace::NITRO_0) {
 				ply->pCar->GetNitro() = 0.0;
 				return;

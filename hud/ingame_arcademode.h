@@ -34,7 +34,7 @@ public:
 
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
-		if (!ArcadeMode::bIsArcadeMode) return;
+		if (!bIsArcadeMode) return;
 
 		auto event = ArcadeMode::pCurrentEvent;
 

@@ -587,7 +587,7 @@ public:
 						valueName = "RACE";
 						break;
 					case GAMETYPE_DERBY_LMS:
-						valueName = "DESTRUCTION DERBY";
+						valueName = "SURVIVOR DERBY";
 						break;
 					case GAMETYPE_DERBY_WRECKING:
 						valueName = "WRECKING DERBY";

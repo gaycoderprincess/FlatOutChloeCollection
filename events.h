@@ -68,11 +68,11 @@ namespace ChloeEvents {
 		}
 	} MapLoadedEvent;
 
-	class EventDrawRaceUI : public ChloeEvent<void(*)()> {
+	class EventDrawRaceUI : public ChloeEvent<void(*)(int)> {
 	public:
-		void OnHit() {
+		void OnHit(int layer) {
 			for (auto& func : functions) {
-				func();
+				func(layer);
 			}
 		}
 	} DrawRaceUIEvent; // used for ingame race UI

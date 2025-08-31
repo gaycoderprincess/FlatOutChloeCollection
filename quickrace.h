@@ -1,6 +1,4 @@
 namespace QuickRace {
-	bool bIsQuickRace = false;
-
 	enum eNitroLevel {
 		NITRO_0,
 		NITRO_100,

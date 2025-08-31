@@ -1,3 +1,67 @@
+
+enum ePlaytimeType {
+	PLAYTIME_TOTAL,
+	PLAYTIME_MENU,
+	PLAYTIME_INGAME,
+	PLAYTIME_INGAME_SINGLEPLAYER,
+	PLAYTIME_INGAME_MULTIPLAYER,
+	PLAYTIME_INGAME_SPLITSCREEN,
+	PLAYTIME_INGAME_HOTSEAT,
+	PLAYTIME_INGAME_CAREER,
+	PLAYTIME_INGAME_SPLITSCREEN_CAREER,
+	PLAYTIME_INGAME_CARNAGE,
+	PLAYTIME_INGAME_RALLYMODE,
+	PLAYTIME_INGAME_SINGLE,
+	PLAYTIME_INGAME_ALLRACE,
+	PLAYTIME_INGAME_RACE,
+	PLAYTIME_INGAME_PONGRACE,
+	PLAYTIME_INGAME_ARCADERACE,
+	PLAYTIME_INGAME_BEATTHEBOMB,
+	PLAYTIME_INGAME_LAPKNOCKOUT,
+	PLAYTIME_INGAME_SPEEDTRAP,
+	PLAYTIME_INGAME_TIMETRIAL,
+	PLAYTIME_INGAME_ALLDERBY,
+	PLAYTIME_INGAME_WRECKINGDERBY,
+	PLAYTIME_INGAME_LMSDERBY,
+	PLAYTIME_INGAME_FRAGDERBY,
+	PLAYTIME_INGAME_STUNT,
+	PLAYTIME_INGAME_STUNTSHOW,
+	PLAYTIME_INGAME_SMASHYRACE,
+	PLAYTIME_INGAME_DRIFT,
+	NUM_PLAYTIME_TYPES,
+};
+
+const char* aPlaytimeTypeNames[] = {
+	"Total",
+	"Menus",
+	"In-game",
+	"Singleplayer",
+	"Multiplayer",
+	"Split Screen",
+	"Hot Seat",
+	"Career",
+	"Split Screen Career",
+	"Arcade Mode",
+	"Rally Mode",
+	"Single Events",
+	"All Races",
+	"Race",
+	"Head-On Race",
+	"Carnage Race",
+	"Beat the Bomb",
+	"Knockout",
+	"Speedtrap",
+	"Time Trial",
+	"All Derbies",
+	"Wrecking Derby",
+	"Survivor Derby",
+	"Frag Derby",
+	"All Stunts",
+	"Stunt Show",
+	"Demolition",
+	"Drift",
+};
+
 struct tCustomSaveStructure {
 	struct {
 		uint32_t bIsLocked : 1;
@@ -59,6 +123,7 @@ struct tCustomSaveStructure {
 	} aArcadeRaceVerify[nNumArcadeRaces];
 	uint32_t bestLapsReversed[256];
 	uint32_t bestLapCarsReversed[256];
+	uint64_t playtimeNew[NUM_PLAYTIME_TYPES];
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -255,6 +320,78 @@ void ProcessPlayStats() {
 		if (changed) {
 			gCustomSave.Save();
 		}
+	}
+
+	if (gTimer.fTotalTime > 1) {
+		if (GetGameState() == GAME_STATE_RACE) {
+			gCustomSave.playtimeNew[PLAYTIME_INGAME]++;
+
+			auto gameMode = pGameFlow->nGameMode;
+			if (bIsInMultiplayer) gameMode = eGameMode::JOIN;
+			switch (gameMode) {
+				case eGameMode::SINGLEPLAYER:
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_SINGLEPLAYER]++;
+					break;
+				case eGameMode::HOST:
+				case eGameMode::JOIN:
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_MULTIPLAYER]++;
+					break;
+				case eGameMode::SPLITSCREEN:
+					gCustomSave.playtimeNew[pGameFlow->nEventType == eEventType::STUNT ? PLAYTIME_INGAME_HOTSEAT : PLAYTIME_INGAME_SPLITSCREEN]++;
+					break;
+				default:
+					break;
+			}
+
+			if (bIsCareerRace) {
+				gCustomSave.playtimeNew[IsInSplitScreen() ? PLAYTIME_INGAME_SPLITSCREEN_CAREER : PLAYTIME_INGAME_CAREER]++;
+			}
+			else if (bIsArcadeMode) {
+				gCustomSave.playtimeNew[PLAYTIME_INGAME_CARNAGE]++;
+			}
+			else if (bIsQuickRace) {
+				gCustomSave.playtimeNew[PLAYTIME_INGAME_SINGLE]++;
+			}
+
+			if (pGameFlow->nEventType == eEventType::DERBY) {
+				if (bIsFragDerby) {
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_FRAGDERBY]++;
+				}
+				else if (bIsWreckingDerby) {
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_WRECKINGDERBY]++;
+				}
+				else {
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_LMSDERBY]++;
+				}
+				gCustomSave.playtimeNew[PLAYTIME_INGAME_ALLDERBY]++;
+			}
+			else {
+				if (pGameFlow->nEventType == eEventType::STUNT) {
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_STUNT]++;
+				}
+				else if (bIsTimeTrial) {
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_TIMETRIAL]++;
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_ALLRACE]++;
+				}
+				else if (bIsSmashyRace) {
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_SMASHYRACE]++;
+				}
+				else if (bIsCarnageRace) {
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_ARCADERACE]++;
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_ALLRACE]++;
+				}
+				else {
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_RACE]++;
+					gCustomSave.playtimeNew[PLAYTIME_INGAME_ALLRACE]++;
+				}
+			}
+		}
+		else if (GetGameState() == GAME_STATE_MENU) {
+			gCustomSave.playtimeNew[PLAYTIME_MENU]++;
+		}
+		gCustomSave.playtimeNew[PLAYTIME_TOTAL] = gCustomSave.playtimeNew[PLAYTIME_MENU] + gCustomSave.playtimeNew[PLAYTIME_INGAME];
+
+		gTimer.fTotalTime -= 1;
 	}
 
 	static auto lastGameState = GetGameState();

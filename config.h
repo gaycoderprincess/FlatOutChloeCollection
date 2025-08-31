@@ -61,10 +61,13 @@ bool bNoPreload = false;
 bool bAsyncPreload = false;
 
 bool bIsInMultiplayer = false;
+bool bIsArcadeMode = false;
+bool bIsQuickRace = false;
 bool bIsCareerRace = false;
 bool bIsCarnageRace = false;
 bool bIsSmashyRace = false;
 bool bIsFragDerby = false;
+bool bIsTimeTrial = false;
 
 bool bIsWreckingDerby = false;
 void SetIsWreckingDerby(bool apply) {

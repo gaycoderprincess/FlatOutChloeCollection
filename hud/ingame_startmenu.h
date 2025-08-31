@@ -9,7 +9,7 @@ public:
 	static inline bool bMenuUp = false;
 
 	virtual void Process() {
-		if (!bMenuUp || ArcadeMode::bIsArcadeMode) return;
+		if (!bMenuUp || bIsArcadeMode) return;
 
 		HUD_PauseMenu.DrawBackground();
 		if (pGameFlow->nEventType == eEventType::STUNT) {

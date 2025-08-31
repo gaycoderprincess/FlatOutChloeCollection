@@ -68,6 +68,7 @@ public:
 		if (!IsRaceHUDUp() || pGameFlow->nEventType != eEventType::DERBY) {
 			nStreakerId = -1;
 			nSurvivorId = -1;
+			return;
 		}
 
 		if (bIsFragDerby) {

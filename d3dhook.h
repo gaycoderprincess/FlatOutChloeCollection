@@ -1,10 +1,10 @@
-bool bIsDrawingGameUI = false;
+int nDrawingGameUILayer = -1;
 void HookLoop() {
-	if (bIsDrawingGameUI) {
-		ChloeEvents::DrawRaceUIEvent.OnHit();
+	if (nDrawingGameUILayer >= 0) {
+		ChloeEvents::DrawRaceUIEvent.OnHit(nDrawingGameUILayer);
 		bDontRefreshInputsThisLoop = true;
 		CommonMain();
-		bIsDrawingGameUI = false;
+		nDrawingGameUILayer = -1;
 		return;
 	}
 

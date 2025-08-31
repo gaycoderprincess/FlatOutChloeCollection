@@ -183,7 +183,7 @@ int ChloeHUD_TrackSelect_IsStartRaceHovered(void* a1) {
 
 int ChloeCollection_SetIsQuickRace(void* a1) {
 	Menu_TrackSelect.ApplyOptions();
-	QuickRace::bIsQuickRace = true;
+	bIsQuickRace = true;
 	return 0;
 }
 
@@ -1023,7 +1023,7 @@ int ChloeArcade_SetIsFragDerby(void* a1) {
 }
 
 int ChloeArcade_WasArcadeEvent(void* a1) {
-	lua_pushboolean(a1, ArcadeMode::bIsArcadeMode);
+	lua_pushboolean(a1, bIsArcadeMode);
 	return 1;
 }
 
@@ -1073,13 +1073,14 @@ int ChloeArcade_FragDerby_SetTimeLimit(void* a1) {
 }
 
 int ChloeCollection_OnReturnToMenu(void* a1) {
-	QuickRace::bIsQuickRace = false;
+	bIsQuickRace = false;
 	ArcadeMode::SetIsArcadeMode(false);
 	CarnageRace::SetIsCarnageRace(false);
 	SmashyRace::SetIsSmashyRace(false);
 	SetTrackReversed(false);
 	SetIsWreckingDerby(false);
 	FragDerby::SetIsFragDerby(false);
+	bIsTimeTrial = false;
 	return 0;
 }
 
@@ -1237,6 +1238,11 @@ int ChloeCollection_CheckCheatCode(void* a1) {
 
 int ChloeCollection_SetIsWreckingDerby(void* a1) {
 	SetIsWreckingDerby(luaL_checknumber(a1, 1));
+	return 0;
+}
+
+int ChloeCollection_SetIsTimeTrial(void* a1) {
+	bIsTimeTrial = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -1438,6 +1444,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetNumSplitScreenCars, "ChloeCollection_SetNumSplitScreenCars");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_CheckCheatCode, "ChloeCollection_CheckCheatCode");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsWreckingDerby, "ChloeCollection_SetIsWreckingDerby");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsTimeTrial, "ChloeCollection_SetIsTimeTrial");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

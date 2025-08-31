@@ -78,7 +78,7 @@ namespace FragDerby {
 			if (nStreakerId == id) {
 				if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) AddTopBarNotif(std::format("{}\nscores yet another frag! ({} frags)", GetStringNarrow(GetPlayer(id)->sPlayerName.Get()), nPlayerWrecksThisLife[id]+1));
 			}
-			else if (GetHighestKillstreak() < nPlayerWrecksThisLife[id] + 1) {
+			else if (GetHighestKillstreak() < nPlayerWrecksThisLife[id] + 1 && nPlayerWrecksThisLife[id] >= 1) {
 				nStreakerId = id;
 				if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) AddTopBarNotif(std::format("{}\nis on a frag streak! ({} frags)", GetStringNarrow(GetPlayer(id)->sPlayerName.Get()), nPlayerWrecksThisLife[id]+1));
 			}

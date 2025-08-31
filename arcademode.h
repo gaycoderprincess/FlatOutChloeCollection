@@ -1,5 +1,4 @@
 namespace ArcadeMode {
-	bool bIsArcadeMode = false;
 	bool bAllUnlocked = false;
 
 	void PlayTimeTick() {

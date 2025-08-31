@@ -220,6 +220,16 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fPlayerHealthIconSize", HUD_Derby_Overhead.fPlayerHealthIconSize);
 	//QuickValueEditor("fPlayerHealthIconMinSize", HUD_Derby_Overhead.fPlayerHealthIconMinSize);
 
+	if (DrawMenuOption("Playtime Stats")) {
+		ChloeMenuLib::BeginMenu();
+
+		for (int i = 0; i < NUM_PLAYTIME_TYPES; i++) {
+			DrawDebugMenuViewerOption(std::format("{} - {}", aPlaytimeTypeNames[i], GetTimeString(gCustomSave.playtimeNew[i])));
+		}
+
+		ChloeMenuLib::EndMenu();
+	}
+
 	if (DrawMenuOption("Achievements")) {
 		ChloeMenuLib::BeginMenu();
 

@@ -55,8 +55,8 @@
 void SetHandlingDamage() {
 	int handlingDamage = nHandlingDamage;
 	if (CareerMode::IsCareerTimeTrial()) handlingDamage = HANDLINGDAMAGE_REDUCED;
-	if (QuickRace::bIsQuickRace && QuickRace::fDamageLevel == 0.0) handlingDamage = HANDLINGDAMAGE_OFF;
-	if (ArcadeMode::bIsArcadeMode) handlingDamage = HANDLINGDAMAGE_OFF;
+	if (bIsQuickRace && QuickRace::fDamageLevel == 0.0) handlingDamage = HANDLINGDAMAGE_OFF;
+	if (bIsArcadeMode) handlingDamage = HANDLINGDAMAGE_OFF;
 	if (bIsInMultiplayer) {
 		handlingDamage = HANDLINGDAMAGE_REDUCED;
 		if (fMultiplayerDamageLevel == 0.0) handlingDamage = HANDLINGDAMAGE_OFF;
@@ -91,12 +91,26 @@ void SetHandlingMode() {
 	pGameFlow->Profile.nEasyDifficulty = handlingMode == HANDLING_NORMAL;
 }
 
+// make engine fire always correspond to player health
+void SetEngineDamage() {
+	if (pLoadingScreen) return;
+	if (GetGameState() != GAME_STATE_RACE) return;
+	if (pGameFlow->nEventType != eEventType::RACE) return;
+
+	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+		auto ply = GetPlayer(i);
+		if (!ply) continue;
+		ply->pCar->Performance.Engine.fHealth = 1.0 - ply->pCar->fDamage;
+	}
+}
+
 void CustomSetterThread() {
 	pGameFlow->nAutoTransmission = !nTransmission;
 	nRagdoll = 1;
 
 	SetHandlingDamage();
 	SetHandlingMode();
+	SetEngineDamage();
 	ProcessPlayStats();
 	ChloeEvents::FinishFrameEvent.OnHit();
 
@@ -154,8 +168,10 @@ void __fastcall UpdateCameraHooked(void* a1, void*, float a2) {
 }
 
 void __stdcall D3DGameUI(int) {
-	bIsDrawingGameUI = true;
-	D3DHookMain();
+	for (int i = 0; i < (int)eHUDLayer::NUM_LAYERS; i++) {
+		nDrawingGameUILayer = i;
+		D3DHookMain();
+	}
 }
 
 const char* __cdecl OnMapLoad(void* a1, int a2) {

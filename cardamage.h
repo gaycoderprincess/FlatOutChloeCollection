@@ -242,7 +242,7 @@ void OnCarDamage(Car* pCar) {
 			fDamageMultiplier = 999999.0;
 		}
 	}
-	if (QuickRace::bIsQuickRace) {
+	if (bIsQuickRace) {
 		if (QuickRace::fDamageLevel > 0) {
 			fDamageMultiplier /= QuickRace::fDamageLevel;
 		}

@@ -11,7 +11,7 @@ public:
 	bool bMenuUpInNormalMode = false;
 
 	virtual void Process() {
-		if (!ArcadeMode::bIsArcadeMode && !bMenuUpInNormalMode) return;
+		if (!bIsArcadeMode && !bMenuUpInNormalMode) return;
 		if (pPlayerHost->nRaceTime != -3000) return;
 		bMenuUpInNormalMode = false;
 
@@ -33,7 +33,7 @@ public:
 			gamemodeDescription = "Frag derbies are about going for the kill. Wreck opponents to earn points.\nGet the most frags with the current life to be the Frag Streaker and earn double scores.\nSurvive the longest with the current life to earn extra score as the Survivor.";
 		}
 		else if (pGameFlow->nEventType == eEventType::DERBY) {
-			gamemodeName = "DESTRUCTION DERBY";
+			gamemodeName = "SURVIVOR DERBY";
 			gamemodeDescription = "You can only win by destroying all the other cars.\nYour nitro meter indicates the damage your car receives.\nYou lose if the damage reaches the top of the meter.";
 		}
 

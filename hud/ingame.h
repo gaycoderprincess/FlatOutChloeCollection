@@ -94,17 +94,15 @@ namespace NewGameHud {
 		}
 	}
 
-	void OnHUDTick() {
+	void OnHUDTick(int layer) {
 		if (pLoadingScreen) return;
 		auto state = GetGameState();
 		if (state != GAME_STATE_RACE && state != GAME_STATE_REPLAY) return;
 
-		for (int i = 0; i < (int)eHUDLayer::NUM_LAYERS; i++) {
-			for (auto& hud: CIngameHUDElement::aGameHUD) {
-				if (hud->nHUDLayer != (eHUDLayer)i) continue;
-				if (state == GAME_STATE_REPLAY && !hud->DrawInReplay()) continue;
-				hud->Process();
-			}
+		for (auto& hud: CIngameHUDElement::aGameHUD) {
+			if (hud->nHUDLayer != (eHUDLayer)layer) continue;
+			if (state == GAME_STATE_REPLAY && !hud->DrawInReplay()) continue;
+			hud->Process();
 		}
 	}
 
