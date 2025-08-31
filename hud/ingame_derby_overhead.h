@@ -16,7 +16,7 @@ public:
 
 		auto mat = *ply->pCar->GetMatrix();
 		mat.p += mat.y * fPlayerHealthIconOffset;
-		auto drawPos = Get3DTo2D(mat);
+		auto drawPos = Get3DTo2D(mat.p);
 		if (drawPos.z <= 0) return;
 
 		NyaDrawing::CNyaRGBA32 color = {255,255,255,255};
@@ -48,7 +48,7 @@ public:
 		auto mat = *ply->pCar->GetMatrix();
 		mat.p += mat.y * fPlayerHealthIconOffset;
 		mat.p.y += fPlayerIconOffset - fPlayerHealthIconOffset;
-		auto drawPos = Get3DTo2D(mat);
+		auto drawPos = Get3DTo2D(mat.p);
 		if (drawPos.z <= 0) return;
 
 		float fSize = fPlayerIconSize / drawPos.z;
