@@ -65,7 +65,7 @@ public:
 	}
 
 	virtual void Process() {
-		if (!IsRaceHUDUp() || pGameFlow->nEventType != eEventType::DERBY) {
+		if (!IsRaceHUDUp() || pGameFlow->nEventType != eEventType::DERBY || IsInSplitScreen()) {
 			nStreakerId = -1;
 			nSurvivorId = -1;
 			return;

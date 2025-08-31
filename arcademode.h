@@ -20,6 +20,7 @@ namespace ArcadeMode {
 	}
 	void ProcessTimerTick(int32_t timeLeft) {
 		if (timeLeft < 0) return;
+		if (!bIsFragDerby && IsPlayerWrecked(GetPlayer(0))) return;
 
 		static CNyaTimer gTimer;
 		gTimer.Process();

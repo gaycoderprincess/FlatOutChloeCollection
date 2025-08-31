@@ -84,7 +84,9 @@ namespace FragDerby {
 			}
 			nPlayerWrecksThisLife[id]++;
 		}
-		nPlayerScore[id] += GetCrashBonusPrice(type) * GetPlayerScoreMultiplier(id);
+		if (!bIsInMultiplayer || !ChloeNet::IsReplicatedPlayer(pPlayer)) {
+			nPlayerScore[id] += GetCrashBonusPrice(type) * GetPlayerScoreMultiplier(id);
+		}
 	}
 
 	void SetIsFragDerby(bool apply) {
@@ -118,18 +120,22 @@ namespace FragDerby {
 	void ProcessPlayer(double delta, int player) {
 		if (fGameTimeLeft <= 0) return;
 
-		if (player == GetSurvivorID()) {
-			fPlayerSurvivorTick[player] += delta;
-			if (fPlayerSurvivorTick[player] >= 1) {
-				nPlayerScore[player] += FragScore_SurvivorBonusPerSecond;
-				fPlayerSurvivorTick[player] -= 1;
-			}
+		auto ply = GetPlayer(player);
+		if (bIsInMultiplayer && ChloeNet::IsReplicatedPlayer(ply)) {
+			nPlayerScore[player] = ChloeNet::GetReplicatedPlayerArcadeScore(ply);
 		}
 		else {
-			fPlayerSurvivorTick[player] = 0;
+			if (player == GetSurvivorID()) {
+				fPlayerSurvivorTick[player] += delta;
+				if (fPlayerSurvivorTick[player] >= 1) {
+					nPlayerScore[player] += FragScore_SurvivorBonusPerSecond;
+					fPlayerSurvivorTick[player] -= 1;
+				}
+			} else {
+				fPlayerSurvivorTick[player] = 0;
+			}
 		}
 
-		auto ply = GetPlayer(player);
 		ply->pCar->Performance.Engine.fHealth = ply->nIsRagdolled ? 0.0 : 1.0; // engine smoke based entirely on wrecked or not
 		if (ply->nIsRagdolled) {
 			fPlayerTimeAlive[player] = 0;
@@ -157,8 +163,10 @@ namespace FragDerby {
 				ply->pCar->FixPart(eCarFixPart::WINDOWS);
 				ply->pCar->FixPart(eCarFixPart::LIGHTS);
 
-				auto start = pEnvironment->aStartpoints[ply->nStartPosition-1];
-				Car::Reset(ply->pCar, start.fPosition, start.fMatrix);
+				if (!bIsInMultiplayer || !ChloeNet::IsReplicatedPlayer(ply)) {
+					auto start = pEnvironment->aStartpoints[ply->nStartPosition-1];
+					Car::Reset(ply->pCar, start.fPosition, start.fMatrix);
+				}
 			}
 		}
 		else {
@@ -308,10 +316,12 @@ namespace FragDerby {
 	} HUD_FragDerbyFade;
 
 	void OnPlayerReset(Player* pPlayer) {
+		if (!bIsFragDerby) return;
 		if (pPlayer->nPlayerId == 1) {
 			HUD_FragDerby.TriggerPopup("", "Reset: -1500 points");
 		}
-		nPlayerScore[pPlayer->nPlayerId-1] -= FragScore_ResetCost;
+		if (nPlayerScore[pPlayer->nPlayerId-1] < FragScore_ResetCost) nPlayerScore[pPlayer->nPlayerId-1] = 0;
+		else nPlayerScore[pPlayer->nPlayerId-1] -= FragScore_ResetCost;
 	}
 
 	void Init() {

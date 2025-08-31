@@ -1241,6 +1241,11 @@ int ChloeCollection_SetIsWreckingDerby(void* a1) {
 	return 0;
 }
 
+int ChloeCollection_SetIsFragDerby(void* a1) {
+	FragDerby::SetIsFragDerby(luaL_checknumber(a1, 1));
+	return 0;
+}
+
 int ChloeCollection_SetIsTimeTrial(void* a1) {
 	bIsTimeTrial = luaL_checknumber(a1, 1);
 	return 0;
@@ -1444,6 +1449,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetNumSplitScreenCars, "ChloeCollection_SetNumSplitScreenCars");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_CheckCheatCode, "ChloeCollection_CheckCheatCode");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsWreckingDerby, "ChloeCollection_SetIsWreckingDerby");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsFragDerby, "ChloeCollection_SetIsFragDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsTimeTrial, "ChloeCollection_SetIsTimeTrial");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
@@ -1488,6 +1494,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_RACE, "GAMETYPE_RACE");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_LMS, "GAMETYPE_DERBY_LMS");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_WRECKING, "GAMETYPE_DERBY_WRECKING");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_FRAG, "GAMETYPE_DERBY_FRAG");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_STUNT, "GAMETYPE_STUNT");
 
 	static auto sVersionString = "Chloe Collection v1.12 - Frag Derby Edition";
@@ -1499,4 +1506,15 @@ void CustomLUAFunctions(void* a1) {
 void ApplyLUAPatches() {
 	NyaFO2Hooks::PlaceScriptHook();
 	NyaFO2Hooks::aScriptFuncs.push_back(CustomLUAFunctions);
+}
+
+extern "C" __declspec(dllexport) int __cdecl ChloeCollection_GetLocalPlayerArcadeScore() {
+	return ArcadeMode::nCurrentEventScore;
+}
+
+extern "C" __declspec(dllexport) int __cdecl ChloeCollection_GetPlayerArcadeScore(Player* pPlayer) {
+	if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) return ChloeCollection_GetLocalPlayerArcadeScore();
+
+	if (bIsFragDerby) return FragDerby::nPlayerScore[pPlayer->nPlayerId-1];
+	return 0;
 }

@@ -24,4 +24,10 @@ namespace ChloeNet {
 		if (!funcPtr) return false;
 		return funcPtr(player);
 	}
+
+	int GetReplicatedPlayerArcadeScore(Player* player) {
+		static auto funcPtr = GetFuncPtr<int(__cdecl*)(Player*)>("ChloeNet_GetReplicatedPlayerArcadeScore");
+		if (!funcPtr) return 0;
+		return funcPtr(player);
+	}
 }

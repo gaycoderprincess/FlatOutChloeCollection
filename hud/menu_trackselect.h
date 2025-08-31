@@ -32,6 +32,7 @@ public:
 		GAMETYPE_RACE,
 		GAMETYPE_DERBY_LMS,
 		GAMETYPE_DERBY_WRECKING,
+		GAMETYPE_DERBY_FRAG,
 		GAMETYPE_STUNT,
 	};
 
@@ -179,6 +180,7 @@ public:
 				return eEventType::RACE;
 			case GAMETYPE_DERBY_LMS:
 			case GAMETYPE_DERBY_WRECKING:
+			case GAMETYPE_DERBY_FRAG:
 				return eEventType::DERBY;
 			case GAMETYPE_STUNT:
 				return eEventType::STUNT;
@@ -192,6 +194,7 @@ public:
 				return "RACE";
 			case GAMETYPE_DERBY_LMS:
 			case GAMETYPE_DERBY_WRECKING:
+			case GAMETYPE_DERBY_FRAG:
 				return "DERBY";
 			case GAMETYPE_STUNT:
 				return "STUNT";
@@ -269,8 +272,8 @@ public:
 	int nCursorY = 0;
 	void CheckOptionBounds(const int* changedValue) {
 		if (bSplitScreen || IsMultiplayerMenu()) {
-			if (nGameType < GAMETYPE_RACE) nGameType = GAMETYPE_DERBY_WRECKING;
-			if (nGameType > GAMETYPE_DERBY_WRECKING) nGameType = GAMETYPE_RACE;
+			if (nGameType < GAMETYPE_RACE) nGameType = GAMETYPE_DERBY_FRAG;
+			if (nGameType > GAMETYPE_DERBY_FRAG) nGameType = GAMETYPE_RACE;
 		}
 		else {
 			if (nGameType < GAMETYPE_RACE) nGameType = GAMETYPE_STUNT;
@@ -344,7 +347,7 @@ public:
 	bool IsOptionValid(int option) {
 		if (aOptions[option].name.empty()) return false;
 		if (aOptions != aOptionsTimeTrial && aOptions[option].value == &nTrackReversed && !DoesTrackSupportReversing(GetTrackId())) return false;
-		if (nGameType != GAMETYPE_RACE && nGameType != GAMETYPE_DERBY_WRECKING) {
+		if (nGameType != GAMETYPE_RACE && nGameType != GAMETYPE_DERBY_WRECKING && nGameType != GAMETYPE_DERBY_FRAG) {
 			if (aOptions[option].value == &nNitro) return false;
 			if (aOptions[option].value == &nMultiplayerNitro) return false;
 		}
@@ -592,6 +595,9 @@ public:
 					case GAMETYPE_DERBY_WRECKING:
 						valueName = "WRECKING DERBY";
 						break;
+					case GAMETYPE_DERBY_FRAG:
+						valueName = "FRAG DERBY";
+						break;
 					case GAMETYPE_STUNT:
 						valueName = "STUNT";
 						break;
@@ -632,7 +638,7 @@ public:
 				}
 			}
 			else if (option.value == &nNitro) {
-				if (nGameType != GAMETYPE_RACE && nGameType != GAMETYPE_DERBY_WRECKING) valueName = "N/A";
+				if (nGameType != GAMETYPE_RACE && nGameType != GAMETYPE_DERBY_WRECKING && nGameType != GAMETYPE_DERBY_FRAG) valueName = "N/A";
 				else switch (value) {
 					case QuickRace::NITRO_0:
 					default:
@@ -647,7 +653,7 @@ public:
 				}
 			}
 			else if (option.value == &nMultiplayerNitro) {
-				if (GetGameMode() != eEventType::RACE) valueName = "N/A";
+				if (nGameType != GAMETYPE_RACE && nGameType != GAMETYPE_DERBY_WRECKING && nGameType != GAMETYPE_DERBY_FRAG) valueName = "N/A";
 				else switch (value) {
 					case MULTIPLAYER_NITRO_0:
 					default:
