@@ -86,8 +86,8 @@ struct tCustomSaveStructure {
 		void Clear() {
 			memset(this,0,sizeof(*this));
 		}
-	} aCareerGarage[256];
-	bool tracksWon[256];
+	} aCareerGarage[nMaxCars];
+	bool tracksWon[nMaxTracks];
 	struct tCareerClass {
 		struct tCareerCup {
 			bool bUnlocked : 1;
@@ -114,15 +114,15 @@ struct tCustomSaveStructure {
 	int nCupsPassed;
 	int nCupsMax;
 	int nCarsUnlocked;
-	uint32_t bestLaps[256];
-	uint32_t bestLapCars[256];
+	uint32_t bestLaps[nMaxTracks];
+	uint32_t bestLapCars[nMaxTracks];
 	uint32_t aArcadeCareerScores[nNumArcadeRaces];
 	struct {
 		uint16_t car;
 		uint16_t level;
 	} aArcadeRaceVerify[nNumArcadeRaces];
-	uint32_t bestLapsReversed[256];
-	uint32_t bestLapCarsReversed[256];
+	uint32_t bestLapsReversed[nMaxTracks];
+	uint32_t bestLapCarsReversed[nMaxTracks];
 	uint64_t playtimeNew[NUM_PLAYTIME_TYPES];
 
 	static inline bool bInitialized = false;
