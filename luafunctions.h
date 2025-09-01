@@ -139,6 +139,16 @@ int ChloeHUD_ArcadeCareer_GetHighlight(void* a1) {
 	return 1;
 }
 
+int ChloeHUD_ArcadeCareer_SetSelected(void* a1) {
+	Menu_ArcadeCareer.bSelected = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeHUD_ArcadeCareer_GetSelected(void* a1) {
+	lua_pushboolean(a1, Menu_ArcadeCareer.bSelected);
+	return 1;
+}
+
 int ChloeHUD_TrackSelect_GetTrackId(void* a1) {
 	lua_pushnumber(a1, Menu_TrackSelect.GetTrackId());
 	return 1;
@@ -1293,6 +1303,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetTrackId, "ChloeHUD_ArcadeCareer_GetTrackId");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetCarId, "ChloeHUD_ArcadeCareer_GetCarId");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetHighlight, "ChloeHUD_ArcadeCareer_GetHighlight");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_SetSelected, "ChloeHUD_ArcadeCareer_SetSelected");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetSelected, "ChloeHUD_ArcadeCareer_GetSelected");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetTrackId, "ChloeHUD_TrackSelect_GetTrackId");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetEventType, "ChloeHUD_TrackSelect_GetEventType");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetNitroType, "ChloeHUD_TrackSelect_GetNitroType");

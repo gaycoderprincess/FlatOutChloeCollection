@@ -66,6 +66,7 @@ namespace Achievements {
 		new CAchievement("CASH_DESTRUCTION", "Big Earner", "Earn over $4000 from a single career race", CAT_CAREER),
 		new CAchievement("CARNAGE_FILL_BOARD", "Overkill", "Get 10 separate bonuses in a single combo", CAT_CARNAGE),
 		new CAchievement("CARNAGE_MILLIONAIRE", "Carnage Millionaire", "Earn 1,000,000 points in Arcade Mode", CAT_CARNAGE),
+		new CAchievement("EJECTED_ALL", "Windshield Tester", "Get ejected 25 times", CAT_GENERAL),
 	};
 
 	std::vector<CAchievement*> GetAchievementsInCategory(uint32_t category) {
@@ -431,6 +432,18 @@ namespace Achievements {
 	void OnTick_CarnageMillionaire(CAchievement* pThis, double delta) {
 		pThis->fInternalProgress = gCustomSave.GetArcadeCareerScore();
 	}
+	void OnTick_EjectedAll(CAchievement* pThis, double delta) {
+		static bool bLastEjected = false;
+		if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) return;
+
+		auto bEjected = GetPlayer(0)->pCar->nIsRagdolled;
+		if (pGameFlow->nEventType != eEventType::RACE) return;
+		if (bEjected && !bLastEjected) {
+			pThis->fInternalProgress += 1;
+		}
+
+		bLastEjected = bEjected;
+	}
 	std::string OnTrack_GenericProgress(CAchievement* pThis) {
 		return std::format("Progress: {:.0f}/{}", pThis->fInternalProgress, pThis->fMaxInternalProgress);
 	}
@@ -548,6 +561,7 @@ namespace Achievements {
 		GetAchievement("BUY_CUSTOM_SKIN")->pTickFunction = OnTick_BuyCustomSkin;
 		GetAchievement("ALL_CARS")->pTickFunction = OnTick_AllCars;
 		GetAchievement("CARNAGE_MILLIONAIRE")->pTickFunction = OnTick_CarnageMillionaire;
+		GetAchievement("EJECTED_ALL")->pTickFunction = OnTick_EjectedAll;
 
 		GetAchievement("LOW_HP")->pTrackFunction = OnTrack_LowHP;
 		GetAchievement("BLAST_ALL")->pTrackFunction = OnTrack_GenericProgress;
@@ -555,6 +569,7 @@ namespace Achievements {
 		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
 		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 4000;
 		GetAchievement("CARNAGE_MILLIONAIRE")->fMaxInternalProgress = 1000000;
+		GetAchievement("EJECTED_ALL")->fMaxInternalProgress = 25;
 
 		ChloeEvents::SaveLoadedEvent.AddHandler(Load);
 		ChloeEvents::SaveCreatedEvent.AddHandler(Save);

@@ -4,20 +4,25 @@ public:
 
 	int nCursorPos = 0;
 	int nScrollPos = 0;
+	bool bSelected = false;
 
 	virtual void MoveLeft() {
+		if (bSelected) return;
 		nCursorPos--;
 		if (nCursorPos < 0) nCursorPos = 0;
 	}
 	virtual void MoveRight() {
+		if (bSelected) return;
 		nCursorPos++;
 		if (nCursorPos >= ArcadeMode::aArcadeRaces.size()) nCursorPos = ArcadeMode::aArcadeRaces.size()-1;
 	}
 	virtual void MoveUp() {
+		if (bSelected) return;
 		if (nCursorPos < 3) return;
 		nCursorPos -= 3;
 	}
 	virtual void MoveDown() {
+		if (bSelected) return;
 		int pos = nCursorPos + 3;
 		if (pos >= ArcadeMode::aArcadeRaces.size()) return;
 		nCursorPos = pos;
@@ -30,9 +35,14 @@ public:
 		PreloadTexture("data/menu/carnageoverlay_author.png"),
 		PreloadTexture("data/menu/carnagebg_left.png");
 		PreloadTexture("data/menu/carnagebg_right.png");
+		PreloadTexture("data/menu/carnagebg_selected.png");
 		PreloadTexture("data/menu/track_icons.dds");
 		PreloadTexture("data/menu/track_icons_inactive.dds");
 		PreloadTexture("data/menu/common.dds");
+	}
+
+	virtual void Reset() {
+		bSelected = false;
 	}
 
 	tDrawPositions gEvent = {0.05, 0.26, 0.1, 0.14, 0.09};
@@ -67,6 +77,28 @@ public:
 
 	constexpr static inline int nNumEventsOnScreen = (3*5);
 
+	void DrawEventTitle() {
+		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
+		tNyaStringData data;
+		data.x = gLevelName.nPosX;
+		data.y = gLevelName.nPosY;
+		data.size = gLevelName.fSize;
+		data.XCenterAlign = true;
+		Draw1080pString(JUSTIFY_RIGHT, data, event->sName, &DrawStringFO2_Small);
+		data.x = gLevelType.nPosX;
+		data.y = gLevelType.nPosY;
+		data.size = gLevelType.fSize;
+		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsFragDerby ? "FRAG DERBY" : (event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION"), &DrawStringFO2_Small);
+	}
+
+	void ProcessSelected() {
+		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_selected.png");
+		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
+		DrawEventTitle();
+
+		Menu_CarDealer.ProcessSkinSelector();
+	}
+
 	virtual void Process() {
 		ArcadeMode::pCurrentEvent = GetHighlight();
 		ArcadeMode::nCurrentEventId = nCursorPos;
@@ -75,6 +107,7 @@ public:
 		gTimer.Process();
 
 		if (!bEnabled) return;
+		if (bSelected) return ProcessSelected();
 
 		static IDirect3DTexture9* texturePlacement[] = {
 				LoadTextureFromBFS("data/menu/carnageoverlay_gold.png"),
@@ -203,19 +236,12 @@ public:
 			Draw1080pString(JUSTIFY_LEFT, data, FormatScore(target), &DrawStringFO2_Small);
 		}
 
-		data.x = gLevelName.nPosX;
-		data.y = gLevelName.nPosY;
-		data.size = gLevelName.fSize;
-		data.XRightAlign = false;
-		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_RIGHT, data, event->sName, &DrawStringFO2_Small);
-		data.x = gLevelType.nPosX;
-		data.y = gLevelType.nPosY;
-		data.size = gLevelType.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsFragDerby ? "FRAG DERBY" : (event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION"), &DrawStringFO2_Small);
+		DrawEventTitle();
 		data.x = gTotalScore.nPosX;
 		data.y = gTotalScore.nPosY;
 		data.size = gTotalScore.fSize;
+		data.XRightAlign = false;
+		data.XCenterAlign = true;
 		Draw1080pString(JUSTIFY_RIGHT, data, std::format("TOTAL SCORE: {}", FormatScore(totalScore)), &DrawStringFO2_Small);
 	}
 } Menu_ArcadeCareer;

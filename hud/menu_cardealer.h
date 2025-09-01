@@ -54,10 +54,7 @@ public:
 	//static constexpr tDrawPositions1080p gSkinAuthor = {1588,797,0.02};
 	static constexpr tDrawPositions1080p gSkinAuthor = {1716,801,0.035};
 
-	void ProcessSkinSelector() {
-		if (!bEnabled) return;
-		if (!bSkinSelector) return;
-
+	static void ProcessSkinSelector() {
 		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
 		static auto textureSkinAuthor = LoadTextureFromBFS("data/menu/carselect_skin.png");
 		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
@@ -163,7 +160,7 @@ public:
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
 
 		DrawCarLogo();
-		ProcessSkinSelector();
+		if (bSkinSelector) ProcessSkinSelector();
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 
