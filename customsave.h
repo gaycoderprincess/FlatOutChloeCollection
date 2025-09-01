@@ -64,7 +64,7 @@ const char* aPlaytimeTypeNames[] = {
 
 struct tCustomSaveStructure {
 	struct {
-		uint32_t bIsLocked : 1;
+		uint32_t bIsUnlocked : 1;
 		uint32_t bIsPurchased : 1;
 		uint8_t nSkinId;
 		uint8_t nUpgrades[19];
@@ -197,6 +197,9 @@ struct tCustomSaveStructure {
 		for (auto& data : aCareerClasses) {
 			data.aCups[0].bUnlocked = true;
 		}
+		aCareerGarage[CAR_PEPPER].bIsUnlocked = true;
+		aCareerGarage[CAR_BLOCKER].bIsUnlocked = true;
+		aCareerGarage[CAR_RETROBEETLE].bIsUnlocked = true;
 	}
 	void ApplyPlayerSettings() const {
 
@@ -225,10 +228,7 @@ struct tCustomSaveStructure {
 		file.read((char*)this, sizeof(*this));
 
 		// force unlock first career bits in case of save corruption
-		bCareerClassUnlocked[0] = true;
-		for (auto& data : aCareerClasses) {
-			data.aCups[0].bUnlocked = true;
-		}
+		SetDefaultPlayerSettings();
 		CheckArcadeVerify();
 
 		if (loadAll) {

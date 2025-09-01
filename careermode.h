@@ -21,9 +21,9 @@ namespace CareerMode {
 			float fAIUpgradeLevel;
 			std::vector<tRace> aRaces;
 			int aCupWinnings[3] = {1500,1000,750};
+			std::vector<int> aCarUnlocks;
 		};
 
-		std::vector<int> aCarUnlocks;
 		std::vector<tCup> aCups;
 		std::vector<tCup> aEvents;
 		tCup Finals;
@@ -142,7 +142,7 @@ namespace CareerMode {
 		nLastRaceAwardTotal = 0;
 	}
 
-	int nNewlyUnlockedClass = -1;
+	std::vector<int> aNewlyUnlockedCars;
 
 	void GetStuntTargets(int level, int* out) {
 		switch (level) {
@@ -185,6 +185,13 @@ namespace CareerMode {
 
 			// unlock the next cup if finished 3rd or higher
 			if (cup->nPosition >= 1 && cup->nPosition <= 3) {
+				for (auto& car : GetCurrentCup()->aCarUnlocks) {
+					if (!gCustomSave.aCareerGarage[car].bIsUnlocked) {
+						aNewlyUnlockedCars.push_back(car);
+						gCustomSave.aCareerGarage[car].bIsUnlocked = true;
+					}
+				}
+
 				auto nextCup = cup + 1;
 				nextCup->bUnlocked = true;
 
@@ -195,9 +202,9 @@ namespace CareerMode {
 
 				// unlock next class after finals are done
 				if (gCustomSave.nCareerCup == 64 && gCustomSave.nCareerClass < 4) {
-					if (!gCustomSave.bCareerClassUnlocked[gCustomSave.nCareerClass]) {
-						nNewlyUnlockedClass = gCustomSave.nCareerClass+1;
-					}
+					//if (!gCustomSave.bCareerClassUnlocked[gCustomSave.nCareerClass]) {
+					//	nNewlyUnlockedClass = gCustomSave.nCareerClass+1;
+					//}
 					gCustomSave.bCareerClassUnlocked[gCustomSave.nCareerClass] = true;
 				}
 			}
@@ -504,8 +511,36 @@ namespace CareerMode {
 				gCustomSave.nCarsUnlocked++;
 				continue;
 			}
+			if (car.carId >= 200 && car.carId < 300) {
+				gCustomSave.nCarsUnlocked++;
+				continue;
+			}
 
-			if (gCustomSave.bCareerClassUnlocked[car.classId-1]) gCustomSave.nCarsUnlocked++;
+			if (gCustomSave.aCareerGarage[car.carId].bIsUnlocked) gCustomSave.nCarsUnlocked++;
+		}
+	}
+
+	void OnLoad(int saveSlot) {
+		// retroactively unlock cars based on cups completed
+		for (int classId = 0; classId < 3; classId++) {
+			auto careerClass = &aLUACareerClasses[classId];
+			if (careerClass->aCups.empty()) continue;
+
+			for (int cupId = 0; cupId < careerClass->aCups.size(); cupId++) {
+				auto& cup = gCustomSave.aCareerClasses[classId].aCups[cupId];
+				if (cup.nPosition && cup.nPosition <= 3) {
+					for (auto& car : careerClass->aCups[cupId].aCarUnlocks) {
+						gCustomSave.aCareerGarage[car].bIsUnlocked = true;
+					}
+				}
+			}
+
+			auto& cup = gCustomSave.aCareerClasses[classId].Finals;
+			if (cup.nPosition && cup.nPosition <= 3) {
+				for (auto& car : careerClass->Finals.aCarUnlocks) {
+					gCustomSave.aCareerGarage[car].bIsUnlocked = true;
+				}
+			}
 		}
 	}
 
@@ -532,6 +567,7 @@ namespace CareerMode {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43F0B8, &GetSplitscreenAICountASM);
 
 		ChloeEvents::SaveCreatedEvent.AddHandler(OnSave);
+		ChloeEvents::SaveLoadedEvent.AddHandler(OnLoad);
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 	}
 }

@@ -405,32 +405,24 @@ int ChloeCareer_GetLastRaceCrashTotalMoney(void* a1) {
 	return 1;
 }
 
-int ChloeCareer_GetNewlyUnlockedClass(void* a1) {
-	lua_pushnumber(a1, CareerMode::nNewlyUnlockedClass);
-	return 1;
-}
-
 int ChloeCareer_GetNewlyUnlockedCarCount(void* a1) {
-	int count = 0;
-	for (auto& car : aDealerCars) {
-		if (car.classId == CareerMode::nNewlyUnlockedClass) count++;
-	}
-	lua_pushnumber(a1, count);
+	lua_pushnumber(a1, CareerMode::aNewlyUnlockedCars.size());
 	return 1;
 }
 
 int ChloeCareer_GetNewlyUnlockedCar(void* a1) {
-	std::vector<int> cars;
-	for (auto& car : aDealerCars) {
-		if (car.classId == CareerMode::nNewlyUnlockedClass) cars.push_back(car.carId);
-	}
-	lua_pushnumber(a1, cars[(int)luaL_checknumber(a1, 1)-1]);
+	lua_pushnumber(a1, CareerMode::aNewlyUnlockedCars[(int)luaL_checknumber(a1, 1)-1]);
 	return 1;
 }
 
-int ChloeCareer_ResetNewlyUnlockedClass(void* a1) {
-	CareerMode::nNewlyUnlockedClass = -1;
+int ChloeCareer_ResetNewlyUnlockedCars(void* a1) {
+	CareerMode::aNewlyUnlockedCars.clear();
 	return 0;
+}
+
+int ChloeCareer_IsCarUnlocked(void* a1) {
+	lua_pushboolean(a1, gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)].bIsUnlocked);
+	return 1;
 }
 
 int ChloeHUD_SetCarStats(void* a1) {
@@ -664,10 +656,10 @@ int ChloeCareer_ResignCup(void* a1) {
 
 int ChloeCareerDefs_BeginCareerDefs(void* a1) {
 	for (auto& luaClass : CareerMode::aLUACareerClasses) {
-		luaClass.aCarUnlocks.clear();
 		luaClass.aCups.clear();
 		luaClass.aEvents.clear();
 		luaClass.Finals.aRaces.clear();
+		luaClass.Finals.aCarUnlocks.clear();
 	}
 	return 0;
 }
@@ -697,7 +689,7 @@ int ChloeCareerDefs_BeginEvent(void* a1) {
 }
 
 int ChloeCareerDefs_AddCarUnlock(void* a1) {
-	CareerMode::luaDefs_currentClass->aCarUnlocks.push_back(luaL_checknumber(a1, 1));
+	CareerMode::luaDefs_currentCup->aCarUnlocks.push_back(luaL_checknumber(a1, 1));
 	return 0;
 }
 
@@ -1376,10 +1368,10 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetLastRaceSmashTotalMoney, "ChloeCareer_GetLastRaceSmashTotalMoney");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetLastRaceCrashScore, "ChloeCareer_GetLastRaceCrashScore");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetLastRaceCrashTotalMoney, "ChloeCareer_GetLastRaceCrashTotalMoney");
-	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetNewlyUnlockedClass, "ChloeCareer_GetNewlyUnlockedClass");
-	RegisterLUAFunction(a1, (void*)&ChloeCareer_ResetNewlyUnlockedClass, "ChloeCareer_ResetNewlyUnlockedClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetNewlyUnlockedCarCount, "ChloeCareer_GetNewlyUnlockedCarCount");
 	RegisterLUAFunction(a1, (void*)&ChloeCareer_GetNewlyUnlockedCar, "ChloeCareer_GetNewlyUnlockedCar");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_ResetNewlyUnlockedCars, "ChloeCareer_ResetNewlyUnlockedCars");
+	RegisterLUAFunction(a1, (void*)&ChloeCareer_IsCarUnlocked, "ChloeCareer_IsCarUnlocked");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCareerDefs, "ChloeCareerDefs_BeginCareerDefs");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginClass, "ChloeCareerDefs_BeginClass");
 	RegisterLUAFunction(a1, (void*)&ChloeCareerDefs_BeginCup, "ChloeCareerDefs_BeginCup");
