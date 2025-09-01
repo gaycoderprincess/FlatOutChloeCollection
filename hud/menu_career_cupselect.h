@@ -36,11 +36,13 @@ public:
 	}
 
 	virtual void MoveLeft() {
+		if (nCursorY == 1) return;
 		bCursorJustMoved = true;
 		nCursorX--;
 		if (nCursorX < 0) nCursorX = 0;
 	}
 	virtual void MoveRight() {
+		if (nCursorY == 1) return;
 		bCursorJustMoved = true;
 		nCursorX++;
 		if (nCursorX >= GetCursorLimitX()) nCursorX = GetCursorLimitX()-1;

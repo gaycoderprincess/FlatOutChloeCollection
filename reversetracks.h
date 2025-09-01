@@ -93,9 +93,9 @@ bool DoesTrackSupportReversing(int level) {
 	if (level == TRACK_PIT3A) return true;
 	if (level == TRACK_PIT3B) return true;
 	if (level == TRACK_PIT3C) return true;
-	if (level == TRACK_RACING1A) return true;
+	//if (level == TRACK_RACING1A) return true; // same as 1c
 	if (level == TRACK_RACING1B) return true;
-	if (level == TRACK_RACING1C) return true;
+	//if (level == TRACK_RACING1C) return true; // same as 1a
 	if (level == TRACK_RACING2B) return true;
 	if (level == TRACK_TOWN2A) return true;
 	if (level == TRACK_TOWN2C) return true;

@@ -265,6 +265,10 @@ void AddCrashBonus(Player* pPlayer, int type) {
 	if (GetPlayer(playerId)->nPlayerType == PLAYERTYPE_LOCAL) {
 		if (type != CRASHBONUS_SUPERFLIP && type != CRASHBONUS_WRECKED) {
 			GetAchievement("BLAST_ALL")->fInternalProgress += 1;
+			if (bIsInMultiplayer) GetAchievement("BLAST_MP")->fInternalProgress += 1;
+		}
+		if (type == CRASHBONUS_WRECKED && bIsInMultiplayer) {
+			Achievements::AwardAchievement(GetAchievement("WRECK_MP"));
 		}
 
 		if (bIsInMultiplayer) {

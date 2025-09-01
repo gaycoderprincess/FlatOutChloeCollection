@@ -50,7 +50,10 @@ namespace Achievements {
 	std::vector<CAchievement*> gAchievements = {
 		new CAchievement("WIN_RACE", "Starting Point", "Win a race", CAT_GENERAL),
 		//new CAchievement("WIN_RACE_WRECK", "Eliminator", "Win a race after wrecking everyone", CAT_SINGLEPLAYER),
+		new CAchievement("WIN_MP_RACE", "Friendly Competition", "Win a multiplayer race", CAT_MULTIPLAYER),
 		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GENERAL),
+		new CAchievement("WRECK_MP", "First Blood", "Wreck a car in multiplayer", CAT_MULTIPLAYER),
+		new CAchievement("BLAST_MP", "Unfriendly Competition", "Get 50 crash bonuses in multiplayer", CAT_MULTIPLAYER),
 		new CAchievement("BLAST_ALL", "Blast Master", "Get 500 crash bonuses", CAT_GENERAL),
 		new CAchievement("BUY_CUSTOM_SKIN", "Community-Run", "Purchase a car with a custom livery", CAT_CAREER),
 		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 25% health", CAT_GENERAL),
@@ -416,17 +419,7 @@ namespace Achievements {
 		}
 	}
 	void OnTick_AllCars(CAchievement* pThis, double delta) {
-		int numUnlocked = 0;
-		for (int i = 0; i < aDealerCars.size(); i++) {
-			int classId = aDealerCars[i].classId-1;
-			if (classId < 0 || classId > 2) {
-				numUnlocked++;
-				break;
-			}
-			if (gCustomSave.bCareerClassUnlocked[classId]) numUnlocked++;
-		}
-
-		pThis->fInternalProgress = numUnlocked;
+		pThis->fInternalProgress = gCustomSave.nCarsUnlocked;
 		pThis->fMaxInternalProgress = aDealerCars.size();
 	}
 	void OnTick_CarnageMillionaire(CAchievement* pThis, double delta) {
@@ -533,16 +526,16 @@ namespace Achievements {
 					if (GetPlayer(0)->pCar->fDamage <= 0.0) {
 						AwardAchievement(GetAchievement("WIN_RACE_NODAMAGE"));
 					}
-					//if (bIsInMultiplayer) {
-					//	AwardAchievement(GetAchievement("WIN_MP_RACE"));
-					//}
+					if (bIsInMultiplayer) {
+						AwardAchievement(GetAchievement("WIN_MP_RACE"));
+					}
 					// SP and 8+ players only for the all wreck achievement
-					//if (pPlayerHost->GetNumPlayers() >= 8) {
+					//else if (pPlayerHost->GetNumPlayers() >= 8) {
 					//	bool anyoneAlive = false;
 					//	for (int i = 1; i < pPlayerHost->GetNumPlayers(); i++) {
 					//		auto ply = GetPlayer(i);
 					//		if (!ply) continue;
-					//		if (ply->pCar->fDamage < 1.0) anyoneAlive = true;
+					//		if (!IsPlayerWrecked(ply)) anyoneAlive = true;
 					//	}
 					//	if (!anyoneAlive) AwardAchievement(GetAchievement("WIN_RACE_WRECK"));
 					//}
@@ -564,8 +557,11 @@ namespace Achievements {
 		GetAchievement("EJECTED_ALL")->pTickFunction = OnTick_EjectedAll;
 
 		GetAchievement("LOW_HP")->pTrackFunction = OnTrack_LowHP;
+		GetAchievement("BLAST_MP")->pTrackFunction = OnTrack_GenericProgress;
 		GetAchievement("BLAST_ALL")->pTrackFunction = OnTrack_GenericProgress;
+		GetAchievement("EJECTED_ALL")->pTrackFunction = OnTrack_GenericProgress;
 
+		GetAchievement("BLAST_MP")->fMaxInternalProgress = 50;
 		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
 		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 4000;
 		GetAchievement("CARNAGE_MILLIONAIRE")->fMaxInternalProgress = 1000000;
