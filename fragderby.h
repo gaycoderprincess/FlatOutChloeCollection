@@ -16,6 +16,12 @@ namespace FragDerby {
 	double fGameTimeLeft = 0;
 	int nStreakerId = -1;
 
+	bool IsPlayerScoreLocallyControlled(Player* pPlayer) {
+		if (!bIsInMultiplayer) return true;
+		if (!ChloeNet::IsReplicatedPlayer(pPlayer)) return true;
+		return false;
+	}
+
 	int GetHighestKillstreak() {
 		int wrecks = 0;
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
@@ -84,7 +90,7 @@ namespace FragDerby {
 			}
 			nPlayerWrecksThisLife[id]++;
 		}
-		if (!bIsInMultiplayer || !ChloeNet::IsReplicatedPlayer(pPlayer)) {
+		if (IsPlayerScoreLocallyControlled(pPlayer)) {
 			nPlayerScore[id] += GetCrashBonusPrice(type) * GetPlayerScoreMultiplier(id);
 		}
 	}
@@ -121,10 +127,7 @@ namespace FragDerby {
 		if (fGameTimeLeft <= 0) return;
 
 		auto ply = GetPlayer(player);
-		if (bIsInMultiplayer && ChloeNet::IsReplicatedPlayer(ply)) {
-			nPlayerScore[player] = ChloeNet::GetReplicatedPlayerArcadeScore(ply);
-		}
-		else {
+		if (IsPlayerScoreLocallyControlled(ply)) {
 			if (player == GetSurvivorID()) {
 				fPlayerSurvivorTick[player] += delta;
 				if (fPlayerSurvivorTick[player] >= 1) {
@@ -134,6 +137,9 @@ namespace FragDerby {
 			} else {
 				fPlayerSurvivorTick[player] = 0;
 			}
+		}
+		else {
+			nPlayerScore[player] = ChloeNet::GetReplicatedPlayerArcadeScore(ply);
 		}
 
 		ply->pCar->Performance.Engine.fHealth = ply->nIsRagdolled ? 0.0 : 1.0; // engine smoke based entirely on wrecked or not
@@ -163,7 +169,7 @@ namespace FragDerby {
 				ply->pCar->FixPart(eCarFixPart::WINDOWS);
 				ply->pCar->FixPart(eCarFixPart::LIGHTS);
 
-				if (!bIsInMultiplayer || !ChloeNet::IsReplicatedPlayer(ply)) {
+				if (IsPlayerScoreLocallyControlled(ply)) {
 					auto start = pEnvironment->aStartpoints[ply->nStartPosition-1];
 					Car::Reset(ply->pCar, start.fPosition, start.fMatrix);
 				}
@@ -317,6 +323,7 @@ namespace FragDerby {
 
 	void OnPlayerReset(Player* pPlayer) {
 		if (!bIsFragDerby) return;
+		if (!IsPlayerScoreLocallyControlled(pPlayer)) return;
 		if (pPlayer->nPlayerId == 1) {
 			HUD_FragDerby.TriggerPopup("", "Reset: -1500 points");
 		}

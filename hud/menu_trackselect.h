@@ -341,7 +341,7 @@ public:
 		nTimeTrialProps = nTimeTrialProps == 1 || nTimeTrialProps == -1;
 		nTimeTrial3LapMode = nTimeTrial3LapMode == 1 || nTimeTrial3LapMode == -1;
 
-		if (aOptions != aOptionsTimeTrial && !DoesTrackSupportReversing(GetTrackId())) nTrackReversed = 0;
+		if (aOptions != aOptionsTimeTrial && !bSplitScreen && !DoesTrackSupportReversing(GetTrackId())) nTrackReversed = 0;
 	}
 
 	bool IsOptionValid(int option) {

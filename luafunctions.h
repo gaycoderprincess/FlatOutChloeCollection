@@ -373,6 +373,7 @@ int ChloeCareer_ProcessResultsFromLastRace(void* a1) {
 
 int ChloeCareer_GetLastRaceSmashScore(void* a1) {
 	auto count = CareerMode::aPlayerResults[0].aSceneryBonuses[(int)luaL_checknumber(a1, 1)];
+	if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) count += CareerMode::aPlayerResults[1].aSceneryBonuses[(int)luaL_checknumber(a1, 1)];
 	auto price = fBonusTypePrice[(int)luaL_checknumber(a1, 1)];
 	lua_pushnumber(a1, count);
 	lua_pushnumber(a1, count*price);
@@ -383,6 +384,7 @@ int ChloeCareer_GetLastRaceSmashTotalMoney(void* a1) {
 	int money = 0;
 	for (int i = 0; i < 10; i++) {
 		money += CareerMode::aPlayerResults[0].aSceneryBonuses[i] * fBonusTypePrice[i];
+		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) money += CareerMode::aPlayerResults[1].aSceneryBonuses[i] * fBonusTypePrice[i];
 	}
 	lua_pushnumber(a1, money);
 	return 1;
@@ -390,6 +392,7 @@ int ChloeCareer_GetLastRaceSmashTotalMoney(void* a1) {
 
 int ChloeCareer_GetLastRaceCrashScore(void* a1) {
 	auto count = CareerMode::aPlayerResults[0].aCrashBonuses[(int)luaL_checknumber(a1, 1)-1];
+	if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) count += CareerMode::aPlayerResults[1].aCrashBonuses[(int)luaL_checknumber(a1, 1)-1];
 	auto price = CareerMode::GetCrashBonusPrice(luaL_checknumber(a1, 1)-1);
 	lua_pushnumber(a1, count);
 	lua_pushnumber(a1, count*price);
@@ -400,6 +403,7 @@ int ChloeCareer_GetLastRaceCrashTotalMoney(void* a1) {
 	int money = 0;
 	for (int i = 0; i < NUM_CRASHBONUS_TYPES; i++) {
 		money += CareerMode::aPlayerResults[0].aCrashBonuses[i] * CareerMode::GetCrashBonusPrice(i);
+		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) money += CareerMode::aPlayerResults[1].aCrashBonuses[i] * CareerMode::GetCrashBonusPrice(i);
 	}
 	lua_pushnumber(a1, money);
 	return 1;

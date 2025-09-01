@@ -291,12 +291,14 @@ void __fastcall LoadCarBody(Car* car) {
 	CAR_PERFORMANCE(body->nRearTraction, "Body", "RearTraction");
 	CAR_PERFORMANCE_TUNE(fCarDurability[car->pPlayer->nPlayerId-1], "Body", "Body_Max", "Durability", tuning.fDurability);
 
-	if (bIsCarnageRace && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
-		body->fMass *= fCarnageModeMassFudge;
-	}
+	if (!bIsInMultiplayer) {
+		if (bIsCarnageRace && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
+			body->fMass *= fCarnageModeMassFudge;
+		}
 
-	if (bIsFragDerby && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
-		body->fMass *= fFragDerbyMassFudge;
+		if (bIsFragDerby && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
+			body->fMass *= fFragDerbyMassFudge;
+		}
 	}
 
 	body->fTireTurnAngleIn *= 0.017453292;

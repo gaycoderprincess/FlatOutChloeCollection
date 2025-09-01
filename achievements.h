@@ -53,7 +53,7 @@ namespace Achievements {
 		new CAchievement("WIN_MP_RACE", "Friendly Competition", "Win a multiplayer race", CAT_MULTIPLAYER),
 		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GENERAL),
 		new CAchievement("WRECK_MP", "First Blood", "Wreck a car in multiplayer", CAT_MULTIPLAYER),
-		new CAchievement("BLAST_MP", "Unfriendly Competition", "Get 50 crash bonuses in multiplayer", CAT_MULTIPLAYER),
+		new CAchievement("BLAST_MP", "Unfriendly Competition", "Get 200 crash bonuses in multiplayer", CAT_MULTIPLAYER),
 		new CAchievement("BLAST_ALL", "Blast Master", "Get 500 crash bonuses", CAT_GENERAL),
 		new CAchievement("BUY_CUSTOM_SKIN", "Community-Run", "Purchase a car with a custom livery", CAT_CAREER),
 		new CAchievement("LOW_HP", "Dead Man Walking", "Win a race on less than 25% health", CAT_GENERAL),
@@ -561,7 +561,7 @@ namespace Achievements {
 		GetAchievement("BLAST_ALL")->pTrackFunction = OnTrack_GenericProgress;
 		GetAchievement("EJECTED_ALL")->pTrackFunction = OnTrack_GenericProgress;
 
-		GetAchievement("BLAST_MP")->fMaxInternalProgress = 50;
+		GetAchievement("BLAST_MP")->fMaxInternalProgress = 200;
 		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
 		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 4000;
 		GetAchievement("CARNAGE_MILLIONAIRE")->fMaxInternalProgress = 1000000;

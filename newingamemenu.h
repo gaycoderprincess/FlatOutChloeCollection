@@ -29,6 +29,16 @@ namespace NewIngameMenu {
 		return IngameMenu::MENU_END_OF_RACE;
 	}
 
+	int DrawSplitScreenRaceEndMenu() {
+		HUD_RaceEndMenu.bMenuUp = true;
+		if (HUD_RaceEndMenu.nMenuReturnValue >= 0) {
+			auto value = HUD_RaceEndMenu.nMenuReturnValue;
+			HUD_RaceEndMenu.nMenuReturnValue = -1;
+			return value;
+		}
+		return IngameMenu::MENU_END_OF_RACE_SPLITSCREEN;
+	}
+
 	int DrawPressStartMenu() {
 		if (bIsInMultiplayer) {
 			pPlayerHost->StartRace();
@@ -70,6 +80,7 @@ namespace NewIngameMenu {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459F79, &DrawPressStartMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45A00E, &DrawStuntEndOfRoundMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459FD8, &DrawRaceEndMenu);
+		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459FE1, &DrawSplitScreenRaceEndMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45A01D, &DrawRaceResultsMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45B092, &DrawDerbyTutorialMenu);
 	}
