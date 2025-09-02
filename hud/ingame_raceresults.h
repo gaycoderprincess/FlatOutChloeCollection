@@ -42,17 +42,19 @@ public:
 	}
 
 	tDrawPositions1080p gTotalEventScore = {960,217,0.025};
-	tDrawPositions1080p gEventScore = {960,320,0.055};
+	tDrawPositions1080p gEventScore = {955,320,0.055};
 	tDrawPositions1080p gHighScore = {952,400,0.03, 16};
 	tDrawPositions1080p gScoreBreakdown = {960,480,0.025, 16};
 	tDrawPositions1080p gScoreTypes = {952,532,0.03,16, (int)(0.042*1080)};
 	void DrawArcadeResults() {
 		static auto texture1 = LoadTextureFromBFS("data/global/overlay/raceresult_balk1.png");
 		static auto texture2 = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.png");
-		static auto textureBg = LoadTextureFromBFS("data/global/overlay/arcadefinishbg.png"); // todo remove
-		DrawRectangle(0, 1, 0, 1, {255,255,255,255}, 0, textureBg);
+		//static auto textureBg = LoadTextureFromBFS("data/global/overlay/arcadefinishbg.png"); // todo remove
+		//DrawRectangle(0, 1, 0, 1, {255,255,255,255}, 0, textureBg);
 
-		for (int i = 0; i < 4; i++) {
+		int numScoreTypes = bIsFragDerby ? 3 : 4;
+
+		for (int i = 0; i < numScoreTypes; i++) {
 			DrawRectangle(0, 1, 0.475 + 0.042 * i, (0.475 + 0.042 * i) + 0.039, {255, 255, 255, 255}, 0, texture1); // car crashes
 		}
 		DrawRectangle(0, 1, 0.235, 0.235 + 0.18, {255, 255, 255, 255}, 0, texture1); // event score balk
@@ -67,7 +69,8 @@ public:
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
 		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL EVENT SCORE", &DrawStringFO2_Small);
 		data.y = gScoreBreakdown.nPosY;
-		Draw1080pString(JUSTIFY_CENTER, data, "SCORE BREAKDOWN", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, bIsFragDerby ? "TOP DRIVERS" : "SCORE BREAKDOWN", &DrawStringFO2_Small);
+		data.x = gEventScore.nPosX;
 		data.y = gEventScore.nPosY;
 		data.size = gEventScore.fSize;
 		auto event = ArcadeMode::pCurrentEvent;
@@ -97,24 +100,49 @@ public:
 		data.XRightAlign = false;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId]), &DrawStringFO2_Ingame12);
-		for (int i = 0; i < 4; i++) {
-			const char* types[] = {
-				"CAR CRASHES",
-				"SCENERY CRASHES",
-				"CHECKPOINT BONUS",
-				"AIRTIME",
-			};
+		if (bIsFragDerby) {
+			for (int i = 0; i < 3; i++) {
+				const char* types[] = {
+						"STREAKER",
+						"VICTIM",
+						"SURVIVOR",
+				};
 
-			data.x = gScoreTypes.nPosX;
-			data.y = gScoreTypes.nPosY + (gScoreTypes.nSpacingY * i);
-			data.size = gScoreTypes.fSize;
-			data.XRightAlign = true;
-			data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-			Draw1080pString(JUSTIFY_CENTER, data, types[i], &DrawStringFO2_Ingame12);
-			data.x += gScoreTypes.nSpacingX;
-			data.XRightAlign = false;
-			data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-			Draw1080pString(JUSTIFY_CENTER, data, FormatScore(CarnageRace::nPlayerScoresByType[i]), &DrawStringFO2_Ingame12);
+				int topDriverId = FragDerby::GetTopDriverOfType(i);
+				auto topDriverName = GetStringNarrow(GetPlayer(topDriverId)->sPlayerName.Get());
+
+				data.x = gScoreTypes.nPosX;
+				data.y = gScoreTypes.nPosY + (gScoreTypes.nSpacingY * i);
+				data.size = gScoreTypes.fSize;
+				data.XRightAlign = true;
+				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
+				Draw1080pString(JUSTIFY_CENTER, data, types[i], &DrawStringFO2_Ingame12);
+				data.x += gScoreTypes.nSpacingX;
+				data.XRightAlign = false;
+				data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
+				Draw1080pString(JUSTIFY_CENTER, data, topDriverName, &DrawStringFO2_Ingame12);
+			}
+		}
+		else if (bIsCarnageRace) {
+			for (int i = 0; i < 4; i++) {
+				const char* types[] = {
+					"CAR CRASHES",
+					"SCENERY CRASHES",
+					"CHECKPOINT BONUS",
+					"AIRTIME",
+				};
+
+				data.x = gScoreTypes.nPosX;
+				data.y = gScoreTypes.nPosY + (gScoreTypes.nSpacingY * i);
+				data.size = gScoreTypes.fSize;
+				data.XRightAlign = true;
+				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
+				Draw1080pString(JUSTIFY_CENTER, data, types[i], &DrawStringFO2_Ingame12);
+				data.x += gScoreTypes.nSpacingX;
+				data.XRightAlign = false;
+				data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
+				Draw1080pString(JUSTIFY_CENTER, data, FormatScore(CarnageRace::nPlayerScoresByType[i]), &DrawStringFO2_Ingame12);
+			}
 		}
 	}
 
@@ -256,7 +284,7 @@ public:
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
 		Draw1080pString(JUSTIFY_CENTER, data, GetResultsTitle(), &DrawStringFO2_Small);
 
-		if (bIsCarnageRace) {
+		if (bIsCarnageRace || bIsFragDerby) {
 			DrawArcadeResults();
 		}
 		else {

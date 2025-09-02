@@ -103,8 +103,8 @@ namespace SplitscreenController {
 	void __thiscall dummy_nullsub(Controller* pThis) {}
 	int __thiscall dummy_sub_4FB4A0(Controller* pThis, int a2, int a3) { return 0; }
 	int __thiscall dummy_sub_484CB0(Controller* pThis) { return 1; }
-	int __thiscall dummy_sub_4FB490(Controller* pThis) { MessageBoxA(0, "dummy_sub_4FB490", "", MB_ICONERROR); __debugbreak(); } // returns controller+0x130
-	int __thiscall dummy_sub_4FB480(Controller* pThis) { MessageBoxA(0, "dummy_sub_4FB480", "", MB_ICONERROR); __debugbreak(); } // returns controller+0x798
+	int __thiscall dummy_sub_4FB490(Controller* pThis) { MessageBoxA(0, "dummy_sub_4FB490", "", MB_ICONERROR); __debugbreak(); return 0; } // returns controller+0x130
+	int __thiscall dummy_sub_4FB480(Controller* pThis) { MessageBoxA(0, "dummy_sub_4FB480", "", MB_ICONERROR); __debugbreak(); return 0; } // returns controller+0x798
 	void __thiscall dummy_sub_4F2EB0(Controller* pThis, int a2) {} // does something with the vtable?? idk
 	float __thiscall dummy_sub_4FB5C0(Controller* pThis) { return 0.0; }
 

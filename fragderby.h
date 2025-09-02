@@ -15,6 +15,64 @@ namespace FragDerby {
 	double fPlayerSurvivorTick[nMaxPlayers] = {};
 	double fGameTimeLeft = 0;
 	int nStreakerId = -1;
+	
+	int nPlayerHighestKillstreak[nMaxPlayers] = {};
+	double fPlayerHighestTimeAlive[nMaxPlayers] = {};
+	int nPlayerNumDeaths[nMaxPlayers] = {};
+
+	int GetTopDriverStreaker() {
+		int player = 0;
+		int count = 0;
+		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+			if (nPlayerHighestKillstreak[i] > count) {
+				player = i;
+				count = nPlayerHighestKillstreak[i];
+			}
+		}
+		return player;
+	}
+
+	int GetTopDriverVictim() {
+		int player = 0;
+		int count = 0;
+		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+			if (nPlayerNumDeaths[i] > count) {
+				player = i;
+				count = nPlayerNumDeaths[i];
+			}
+		}
+		return player;
+	}
+
+	int GetTopDriverSurvivor() {
+		int player = 0;
+		float count = 0;
+		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+			if (fPlayerHighestTimeAlive[i] > count) {
+				player = i;
+				count = fPlayerHighestTimeAlive[i];
+			}
+		}
+		return player;
+	}
+
+	enum eTopDriver {
+		TOPDRIVER_STREAKER,
+		TOPDRIVER_VICTIM,
+		TOPDRIVER_SURVIVOR
+	};
+	int GetTopDriverOfType(int type) {
+		switch (type) {
+			case TOPDRIVER_STREAKER:
+				return GetTopDriverStreaker();
+			case TOPDRIVER_VICTIM:
+				return GetTopDriverVictim();
+			case TOPDRIVER_SURVIVOR:
+				return GetTopDriverSurvivor();
+			default:
+				return 0;
+		}
+	}
 
 	bool IsPlayerScoreLocallyControlled(Player* pPlayer) {
 		if (!bIsInMultiplayer) return true;
@@ -120,11 +178,17 @@ namespace FragDerby {
 		memset(fPlayerTimeAlive,0,sizeof(fPlayerTimeAlive));
 		memset(fPlayerTimeDead,0,sizeof(fPlayerTimeDead));
 		memset(fPlayerSurvivorTick,0,sizeof(fPlayerSurvivorTick));
+		memset(nPlayerHighestKillstreak,0,sizeof(nPlayerHighestKillstreak));
+		memset(fPlayerHighestTimeAlive,0,sizeof(fPlayerHighestTimeAlive));
+		memset(nPlayerNumDeaths,0,sizeof(nPlayerNumDeaths));
 		nStreakerId = -1;
 	}
 
 	void ProcessPlayer(double delta, int player) {
 		if (fGameTimeLeft <= 0) return;
+
+		if (nPlayerWrecksThisLife[player] > nPlayerHighestKillstreak[player]) nPlayerHighestKillstreak[player] = nPlayerWrecksThisLife[player];
+		if (fPlayerTimeAlive[player] > fPlayerHighestTimeAlive[player]) fPlayerHighestTimeAlive[player] = fPlayerTimeAlive[player];
 
 		auto ply = GetPlayer(player);
 		if (IsPlayerScoreLocallyControlled(ply)) {
@@ -144,6 +208,9 @@ namespace FragDerby {
 
 		ply->pCar->Performance.Engine.fHealth = ply->nIsRagdolled ? 0.0 : 1.0; // engine smoke based entirely on wrecked or not
 		if (ply->nIsRagdolled) {
+			if (fPlayerTimeAlive[player] > 0) {
+				nPlayerNumDeaths[player]++;
+			}
 			fPlayerTimeAlive[player] = 0;
 
 			if (nStreakerId == player) {

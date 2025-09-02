@@ -99,6 +99,8 @@ bool bIsTrackReversed = false;
 
 namespace FragDerby {
 	int nPlayerScore[nMaxPlayers] = {};
+
+	int GetTopDriverOfType(int type);
 }
 
 namespace CareerMode {

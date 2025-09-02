@@ -54,34 +54,25 @@ public:
 		auto sizeX = pEnvironment->pMinimap->fScreenSize[0];
 		auto sizeY = pEnvironment->pMinimap->fScreenSize[1];
 
+		posX /= 640.0;
+		posY /= 480.0;
+		sizeX /= 640.0;
+		sizeY /= 480.0;
+		posX *= 1440.0;
+		posY *= 1080.0;
+		sizeX *= 1440.0;
+		sizeY *= 1080.0;
+
 		auto justify = CHUDElement::JUSTIFY_LEFT;
 		if (IsInSplitScreen()) {
 			if (IsInQuarteredSplitScreen()) {
-				posX = 320.0 - pEnvironment->pMinimap->fScreenSize[0] * 0.5;
+				posX = 960.0 - sizeX * 0.5;
 				justify = CHUDElement::JUSTIFY_CENTER;
 			}
 			else {
 				posX = 0.0;
 			}
-			posY = 240.0 - pEnvironment->pMinimap->fScreenSize[1] * 0.5;
-		}
-
-		posX /= 640.0;
-		posY /= 480.0;
-		sizeX /= 640.0;
-		sizeY /= 480.0;
-		// todo quartered splitscreen is squished but not having this branch uncenters it
-		if (IsInQuarteredSplitScreen()) {
-			posX *= 1920.0;
-			posY *= 1080.0;
-			sizeX *= 1920.0;
-			sizeY *= 1080.0;
-		}
-		else {
-			posX *= 1440.0;
-			posY *= 1080.0;
-			sizeX *= 1440.0;
-			sizeY *= 1080.0;
+			posY = 540.0 - sizeY * 0.5;
 		}
 
 		CHUDElement::DoJustify(justify, posX, posY);
