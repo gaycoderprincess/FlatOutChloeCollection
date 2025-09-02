@@ -272,8 +272,9 @@ public:
 	int nCursorY = 0;
 	void CheckOptionBounds(const int* changedValue) {
 		if (bSplitScreen || IsMultiplayerMenu()) {
-			if (nGameType < GAMETYPE_RACE) nGameType = GAMETYPE_DERBY_FRAG;
-			if (nGameType > GAMETYPE_DERBY_FRAG) nGameType = GAMETYPE_RACE;
+			int max = bSplitScreen ? GAMETYPE_DERBY_WRECKING : GAMETYPE_DERBY_FRAG;
+			if (nGameType < GAMETYPE_RACE) nGameType = max;
+			if (nGameType > max) nGameType = GAMETYPE_RACE;
 		}
 		else {
 			if (nGameType < GAMETYPE_RACE) nGameType = GAMETYPE_STUNT;

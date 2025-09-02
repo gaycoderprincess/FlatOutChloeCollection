@@ -70,7 +70,8 @@ public:
 		posY /= 480.0;
 		sizeX /= 640.0;
 		sizeY /= 480.0;
-		if (IsInSplitScreen() && pPlayerHost->GetNumPlayers() > 2) {
+		// todo quartered splitscreen is squished but not having this branch uncenters it
+		if (IsInQuarteredSplitScreen()) {
 			posX *= 1920.0;
 			posY *= 1080.0;
 			sizeX *= 1920.0;

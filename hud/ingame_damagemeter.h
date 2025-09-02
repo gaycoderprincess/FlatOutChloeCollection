@@ -240,6 +240,8 @@ public:
 
 const char* GetCrashBonusName(int type) {
 	switch (type) {
+	case CRASHBONUS_CRASHFLYBY:
+		return "CRASH FLY-BY";
 	case CRASHBONUS_SUPERFLIP:
 		return "SUPER FLIP";
 	case CRASHBONUS_SLAM:

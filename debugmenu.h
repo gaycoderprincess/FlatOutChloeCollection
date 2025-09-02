@@ -219,6 +219,13 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fPlayerHealthIconOffset", HUD_Derby_Overhead.fPlayerHealthIconOffset);
 	//QuickValueEditor("fPlayerHealthIconSize", HUD_Derby_Overhead.fPlayerHealthIconSize);
 	//QuickValueEditor("fPlayerHealthIconMinSize", HUD_Derby_Overhead.fPlayerHealthIconMinSize);
+	QuickValueEditor("gLoadingTipTitle", Menu_LoadingScreen.gLoadingTipTitle, false);
+	QuickValueEditor("gLoadingTipText", Menu_LoadingScreen.gLoadingTipText, false);
+	if (DrawMenuOption("Generate New Tip")) {
+		Menu_LoadingScreen.gLoadingScreenTip = Menu_LoadingScreen.GetRandomLoadingScreenTip();
+		auto loading = Menu_LoadingScreen.GetLoadingScreenForTrack(1);
+		if (loading) Menu_LoadingScreen.sTextureName = std::format("data/menu/bg/{}.tga", loading);
+	}
 
 	if (DrawMenuOption("Playtime Stats")) {
 		ChloeMenuLib::BeginMenu();
