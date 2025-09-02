@@ -32,6 +32,10 @@ public:
 		}
 	}
 
+	virtual void Reset() {
+		fEarnPopupTime = 0;
+	}
+
 	virtual void Process() {
 		if (!IsRaceHUDUp()) return;
 		if (!bIsArcadeMode) return;
@@ -40,17 +44,30 @@ public:
 
 		static int lastScore = 0;
 		auto score = ArcadeMode::nCurrentEventScore;
-		if (lastScore < event->aGoalScores[2] && score >= event->aGoalScores[2]) {
-			TriggerEarnPopup("BRONZE EARNED", 3);
+		if (pPlayerHost->nRaceTime >= 0) {
+			if (lastScore < event->aGoalScores[2] && score >= event->aGoalScores[2]) {
+				TriggerEarnPopup("BRONZE EARNED", 3);
+			}
+			if (lastScore < event->aGoalScores[1] && score >= event->aGoalScores[1]) {
+				TriggerEarnPopup("SILVER EARNED", 2);
+			}
+			if (lastScore < event->aGoalScores[0] && score >= event->aGoalScores[0]) {
+				TriggerEarnPopup("GOLD EARNED", 1);
+				if (pPlayerHost->nRaceTime <= 90000) {
+					Achievements::AwardAchievement(GetAchievement("SPEEDRUN_CARNAGE"));
+				}
+				if (!gCustomSave.tracksWon[pGameFlow->nLevel]) {
+					gCustomSave.tracksWon[pGameFlow->nLevel] = true;
+					gCustomSave.Save();
+				}
+			}
+			if (lastScore < event->nPlatinumScore && score >= event->nPlatinumScore) {
+				TriggerEarnPopup("AUTHOR SCORE BEATEN", 4);
+				Achievements::AwardAchievement(GetAchievement("AUTHOR_MEDAL"));
+			}
 		}
-		if (lastScore < event->aGoalScores[1] && score >= event->aGoalScores[1]) {
-			TriggerEarnPopup("SILVER EARNED", 2);
-		}
-		if (lastScore < event->aGoalScores[0] && score >= event->aGoalScores[0]) {
-			TriggerEarnPopup("GOLD EARNED", 1);
-		}
-		if (lastScore < event->nPlatinumScore && score >= event->nPlatinumScore) {
-			TriggerEarnPopup("AUTHOR SCORE BEATEN", 4);
+		else {
+			fEarnPopupTime = 0;
 		}
 		lastScore = score;
 

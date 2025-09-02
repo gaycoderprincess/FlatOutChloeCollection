@@ -3,6 +3,9 @@ namespace Achievements {
 		if (pGameFlow->nEventType != eEventType::RACE) return false;
 		if (pGameFlow->nSubEventType != eSubEventType::RACE_NORMAL) return false;
 		if (CareerMode::IsCareerTimeTrial()) return false;
+		if (bIsTimeTrial) return false;
+		if (bIsCarnageRace) return false;
+		if (bIsSmashyRace) return false;
 		return true;
 	}
 
@@ -48,10 +51,10 @@ namespace Achievements {
 	};
 
 	std::vector<CAchievement*> gAchievements = {
-		new CAchievement("WIN_RACE", "Starting Point", "Win a race", CAT_GENERAL),
+		new CAchievement("WIN_RACE", "Starting Point", "Win a race", CAT_GAMEMODES),
 		//new CAchievement("WIN_RACE_WRECK", "Eliminator", "Win a race after wrecking everyone", CAT_SINGLEPLAYER),
 		new CAchievement("WIN_MP_RACE", "Friendly Competition", "Win a multiplayer race", CAT_MULTIPLAYER),
-		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GENERAL),
+		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GAMEMODES),
 		new CAchievement("WRECK_MP", "First Blood", "Wreck a car in multiplayer", CAT_MULTIPLAYER),
 		new CAchievement("BLAST_MP", "Unfriendly Competition", "Get 200 crash bonuses in multiplayer", CAT_MULTIPLAYER),
 		new CAchievement("BLAST_ALL", "Blast Master", "Get 500 crash bonuses", CAT_GENERAL),
@@ -70,6 +73,13 @@ namespace Achievements {
 		new CAchievement("CARNAGE_FILL_BOARD", "Overkill", "Get 10 separate bonuses in a single combo", CAT_CARNAGE),
 		new CAchievement("CARNAGE_MILLIONAIRE", "Carnage Millionaire", "Earn 1,000,000 points in Arcade Mode", CAT_CARNAGE),
 		new CAchievement("EJECTED_ALL", "Windshield Tester", "Get ejected 25 times", CAT_GENERAL),
+		new CAchievement("SPEEDRUN_CARNAGE", "Speedrunner", "Gold an Arcade Mode event in less than 1:30", CAT_CARNAGE),
+		new CAchievement("AUTHOR_MEDAL", "Trackmaster", "Achieve an author score", CAT_CAREER | CAT_CARNAGE),
+		new CAchievement("CHANGE_MUSIC", "Your Own Jukebox", "Change a music playlist", CAT_GENERAL),
+		//new CAchievement("FRAGDERBY_NO_WRECKS", "Rasputin", "Win a Deathmatch Derby without dying", CAT_GAMEMODES),
+		new CAchievement("BOWLING_STRIKE", "Like an Angel", "Get a strike in Bowling", CAT_GAMEMODES),
+		new CAchievement("FRAG_STREAK", "Killing Spree", "Get a 5 frag streak in Frag Derby", CAT_GAMEMODES),
+		new CAchievement("SMASHY", "Smashy Smash", "Destroy 1,000 roadside objects", CAT_GENERAL),
 	};
 
 	std::vector<CAchievement*> GetAchievementsInCategory(uint32_t category) {
@@ -437,6 +447,29 @@ namespace Achievements {
 
 		bLastEjected = bEjected;
 	}
+	void OnTick_BowlingStrike(CAchievement* pThis, double delta) {
+		if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) return;
+		if (pGameFlow->nSubEventType != eSubEventType::STUNT_BOWLING) return;
+
+		auto score = GetPlayerScore<PlayerScoreRace>(1);
+		if (score->nStuntPointsScore[0] >= 10 || score->nStuntPointsScore[1] >= 10 || score->nStuntPointsScore[2] >= 10) {
+			AwardAchievement(pThis);
+		}
+	}
+	void OnTick_Smashy(CAchievement* pThis, double delta) {
+		static int lastObjects = 0;
+		if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) return;
+
+		int objects = 0;
+		auto ply = GetPlayer(0)->pCar;
+		for (int i = 0; i < 10; i++) {
+			objects += ply->aObjectsSmashed[i];
+		}
+		if (objects > lastObjects) {
+			pThis->fInternalProgress += objects - lastObjects;
+		}
+		lastObjects = objects;
+	}
 	std::string OnTrack_GenericProgress(CAchievement* pThis) {
 		return std::format("Progress: {:.0f}/{}", pThis->fInternalProgress, pThis->fMaxInternalProgress);
 	}
@@ -448,6 +481,14 @@ namespace Achievements {
 			return std::format("Health: {:.0f}%", (1.0 - GetPlayer(0)->pCar->fDamage) * 100);
 		}
 		return "Health: N/A";
+	}
+	std::string OnTrack_SpeedrunCarnage(CAchievement* pThis) {
+		if (GetGameState() == GAME_STATE_RACE && bIsArcadeMode) {
+			std::string timestr = GetTimeFromMilliseconds(90000 - pPlayerHost->nRaceTime, true);
+			timestr.pop_back(); // remove trailing 0, the game has a tickrate of 100fps
+			return std::format("Time Left: {}", timestr);
+		}
+		return "Time Left: N/A";
 	}
 
 	const float fTrackPosX = 0.04;
@@ -555,17 +596,22 @@ namespace Achievements {
 		GetAchievement("ALL_CARS")->pTickFunction = OnTick_AllCars;
 		GetAchievement("CARNAGE_MILLIONAIRE")->pTickFunction = OnTick_CarnageMillionaire;
 		GetAchievement("EJECTED_ALL")->pTickFunction = OnTick_EjectedAll;
+		GetAchievement("BOWLING_STRIKE")->pTickFunction = OnTick_BowlingStrike;
+		GetAchievement("SMASHY")->pTickFunction = OnTick_Smashy;
 
 		GetAchievement("LOW_HP")->pTrackFunction = OnTrack_LowHP;
 		GetAchievement("BLAST_MP")->pTrackFunction = OnTrack_GenericProgress;
 		GetAchievement("BLAST_ALL")->pTrackFunction = OnTrack_GenericProgress;
 		GetAchievement("EJECTED_ALL")->pTrackFunction = OnTrack_GenericProgress;
+		GetAchievement("SPEEDRUN_CARNAGE")->pTrackFunction = OnTrack_SpeedrunCarnage;
+		GetAchievement("SMASHY")->pTrackFunction = OnTrack_GenericProgress;
 
 		GetAchievement("BLAST_MP")->fMaxInternalProgress = 200;
 		GetAchievement("BLAST_ALL")->fMaxInternalProgress = 500;
 		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 4000;
 		GetAchievement("CARNAGE_MILLIONAIRE")->fMaxInternalProgress = 1000000;
 		GetAchievement("EJECTED_ALL")->fMaxInternalProgress = 25;
+		GetAchievement("SMASHY")->fMaxInternalProgress = 1000;
 
 		ChloeEvents::SaveLoadedEvent.AddHandler(Load);
 		ChloeEvents::SaveCreatedEvent.AddHandler(Save);

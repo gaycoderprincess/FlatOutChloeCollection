@@ -118,7 +118,7 @@ public:
 		for (auto& tip : aTips) {
 			tips.push_back(tip);
 		}
-		if (!bIsTimeTrial && !bIsSmashyRace) {
+		if (!bIsTimeTrial && !bIsSmashyRace && pGameFlow->nEventType != eEventType::STUNT) {
 			for (auto& tip : aCrashBonusTips) {
 				tips.push_back(tip);
 			}

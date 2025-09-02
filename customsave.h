@@ -276,7 +276,7 @@ void ProcessPlayStats() {
 		bool changed = false;
 		int track = pGameFlow->nLevel;
 
-		if (!IsInSplitScreen() && pGameFlow->nSubEventType != eSubEventType::RACE_TIMETRIAL) {
+		if (!IsInSplitScreen() && pGameFlow->nSubEventType != eSubEventType::RACE_TIMETRIAL && !bIsArcadeMode) {
 			auto ply = GetPlayerScore<PlayerScoreRace>(1);
 			if (ply->bHasFinished) {
 				if (ply->nPosition == 1 && !gCustomSave.tracksWon[track]) {

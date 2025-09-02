@@ -111,7 +111,7 @@ namespace FragDerby {
 	}
 
 	float GetPlayerScoreMultiplier(int player) {
-		if (player == nStreakerId) return 2;
+		if (player == nStreakerId) return FragScore_StreakMultiplier;
 		return 1;
 	}
 
@@ -128,7 +128,7 @@ namespace FragDerby {
 			case CRASHBONUS_RAGDOLLED:
 				return 0;
 			case CRASHBONUS_WRECKED:
-				return 1500;
+				return FragScore_Base;
 			default:
 				return 0;
 		}
@@ -147,6 +147,9 @@ namespace FragDerby {
 				if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) AddTopBarNotif(std::format("{}\nis on a frag streak! ({} frags)", GetStringNarrow(GetPlayer(id)->sPlayerName.Get()), nPlayerWrecksThisLife[id]+1));
 			}
 			nPlayerWrecksThisLife[id]++;
+			if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL && nPlayerWrecksThisLife[id] >= 5) {
+				Achievements::AwardAchievement(GetAchievement("FRAG_STREAK"));
+			}
 		}
 		if (IsPlayerScoreLocallyControlled(pPlayer)) {
 			nPlayerScore[id] += GetCrashBonusPrice(type) * GetPlayerScoreMultiplier(id);

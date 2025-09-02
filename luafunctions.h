@@ -866,6 +866,11 @@ int ChloeOST_GetNumStuntSoundtracks(void* a1) {
 	return 1;
 }
 
+int ChloeCollection_AwardAchievement(void* a1) {
+	AwardAchievement(GetAchievement((const char*)lua_tolstring(a1, 1)));
+	return 0;
+}
+
 int ChloeCollection_GetAchievementName(void* a1) {
 	auto achievement = GetAchievement((const char*)lua_tolstring(a1, 1));
 	if (!achievement) return 0;
@@ -1402,6 +1407,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumSoundtracks, "ChloeOST_GetNumSoundtracks");
 	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumMenuSoundtracks, "ChloeOST_GetNumMenuSoundtracks");
 	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumStuntSoundtracks, "ChloeOST_GetNumStuntSoundtracks");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_AwardAchievement, "ChloeCollection_AwardAchievement");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementName, "ChloeCollection_GetAchievementName");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementDescription, "ChloeCollection_GetAchievementDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementProgression, "ChloeCollection_GetAchievementProgression");
