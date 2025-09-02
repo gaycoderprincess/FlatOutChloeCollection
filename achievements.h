@@ -91,7 +91,8 @@ namespace Achievements {
 		new CAchievement("BOWLING_STRIKE", "Like an Angel", "Get a strike in Bowling", CAT_GAMEMODES),
 		new CAchievement("BOWLING_PERFECT", "Master Bowler", "Get a perfect score in Bowling", CAT_GAMEMODES, true),
 		new CAchievement("FRAG_STREAK", "Killing Spree", "Get a 5 frag streak in Frag Derby", CAT_GAMEMODES),
-		new CAchievement("SMASHY", "Smashy Smash", "Destroy 1,000 roadside objects", CAT_GENERAL),
+		new CAchievement("SMASHY", "Smashy Smash", "Destroy 5,000 roadside objects", CAT_GENERAL),
+		new CAchievement("FULL_UPGRADE", "Junkman", "Fully upgrade a car", CAT_CAREER),
 	};
 
 	std::vector<CAchievement*> GetAchievementsInCategory(uint32_t category) {
@@ -182,6 +183,19 @@ namespace Achievements {
 	void Delete(int saveSlot) {
 		if (!std::filesystem::exists(GetAchievementSavePath(saveSlot))) return;
 		std::filesystem::remove(GetAchievementSavePath(saveSlot));
+	}
+
+	void Clear() {
+		for (auto& achievement : gAchievements) {
+			achievement->nProgress = 0;
+			achievement->fInternalProgress = 0;
+			achievement->bUnlocked = false;
+		}
+
+		nCurrentSaveSlot = pGameFlow->nSaveSlot;
+		if (nCurrentSaveSlot < 0) {
+			nCurrentSaveSlot = pGameFlow->Profile.nAutosaveSlot;
+		}
 	}
 
 	std::vector<CAchievement*> aUnlockBuffer;
@@ -486,6 +500,8 @@ namespace Achievements {
 		}
 	}
 	void OnTick_Smashy(CAchievement* pThis, double delta) {
+		if (pThis->fInternalProgress < pThis->fMaxInternalProgress) pThis->bUnlocked = false;
+
 		static int lastObjects = 0;
 		if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) return;
 
@@ -498,6 +514,17 @@ namespace Achievements {
 			pThis->fInternalProgress += objects - lastObjects;
 		}
 		lastObjects = objects;
+	}
+	void OnTick_FullUpgrade(CAchievement* pThis, double delta) {
+		for (auto& car : gCustomSave.aCareerGarage) {
+			if (!car.bIsPurchased) continue;
+			bool fullyUpgraded = true;
+			for (int i = 1; i < PlayerProfile::NUM_UPGRADES; i++) {
+				if (!car.IsUpgradePurchased(i)) fullyUpgraded = false;
+			}
+			if (!fullyUpgraded) continue;
+			AwardAchievement(pThis);
+		}
 	}
 	std::string OnTrack_GenericProgress(CAchievement* pThis) {
 		return std::format("Progress: {:.0f}/{}", pThis->fInternalProgress, pThis->fMaxInternalProgress);
@@ -635,6 +662,7 @@ namespace Achievements {
 		GetAchievement("BOWLING_STRIKE")->pTickFunction = OnTick_BowlingStrike;
 		GetAchievement("BOWLING_PERFECT")->pTickFunction = OnTick_BowlingPerfect;
 		GetAchievement("SMASHY")->pTickFunction = OnTick_Smashy;
+		GetAchievement("FULL_UPGRADE")->pTickFunction = OnTick_FullUpgrade;
 
 		GetAchievement("LOW_HP")->pTrackFunction = OnTrack_LowHP;
 		GetAchievement("BLAST_MP")->pTrackFunction = OnTrack_GenericProgress;
@@ -648,11 +676,12 @@ namespace Achievements {
 		GetAchievement("CASH_DESTRUCTION")->fMaxInternalProgress = 4000;
 		GetAchievement("CARNAGE_MILLIONAIRE")->fMaxInternalProgress = 1000000;
 		GetAchievement("EJECTED_ALL")->fMaxInternalProgress = 25;
-		GetAchievement("SMASHY")->fMaxInternalProgress = 1000;
+		GetAchievement("SMASHY")->fMaxInternalProgress = 5000;
 
 		ChloeEvents::SaveLoadedEvent.AddHandler(Load);
 		ChloeEvents::SaveCreatedEvent.AddHandler(Save);
 		ChloeEvents::SaveDeletedEvent.AddHandler(Delete);
+		ChloeEvents::SaveClearedEvent.AddHandler(Clear);
 		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
 	}
 }

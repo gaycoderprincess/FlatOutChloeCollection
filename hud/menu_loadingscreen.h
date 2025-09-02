@@ -69,13 +69,14 @@ public:
 	static inline tLoadingScreenTip aBeatTheBombTips[] = {
 			{"EVERY SECOND COUNTS", "Checkpoint times are added to the time you have left. Thus every second counts.\nCutting a second or two in the beginning of the run will give you those few seconds more in the end of the run."},
 			{"COLLECT NITRO", "Maximize nitro gain during the run. Crash into scenery and find the big jumps.\nUse nitro to jump further and gain more nitro. Don’t overcollect! If your tank is full, save some nitro gathering places for the second lap."},
-			{"TACTICAL NITRO USAGE", "Burn nitro before long straights to get the maximum benefits.\nMake sure tires touch the ground when you use nitro. Watch out for overburn. If your speed is already maxed, there’s no point in wasting more nitro."},
+			{"TACTICAL NITRO USAGE", "Burn nitro before long straights to get the maximum benefits.\nMake sure tires touch the ground when you use nitro."},
 	};
 
 	static inline tLoadingScreenTip aTimeTrialTips[] = {
 			{"OPTIMAL RACELINES", "Stay on the optimal racelines to improve your time.\nPlan ahead your route, cut corners and choose lines that help you retain your speed."},
-			//{"OPTIMAL SPEED", "Retain the optimal speed.\nRemember that there’s no nitro to help you, so retaining the speed all the time is crucial."},
 			{"FIND SHORTCUTS", "The road isn’t always the fastest route.\nFind shortcuts and use them, but make sure that they don’t slow you down too much."},
+			{"COLLECT NITRO", "Maximize nitro gain during the run. Crash into scenery and find the big jumps.\nUse nitro to jump further and gain more nitro. Don’t overcollect! If your tank is full, save some nitro gathering places for the second lap."},
+			{"TACTICAL NITRO USAGE", "Burn nitro before long straights to get the maximum benefits.\nMake sure tires touch the ground when you use nitro."},
 	};
 
 	static inline tLoadingScreenTip aArcadeRaceTips[] = {

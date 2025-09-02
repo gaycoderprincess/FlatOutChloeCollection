@@ -106,7 +106,7 @@ struct tCarTuningData {
 tCarTuningData GetPlayerCareerTuningData(int carId) {
 	tCarTuningData data;
 	auto& tuning = gCustomSave.aCareerGarage[carId];
-	for (int i = 0; i < PlayerProfile::NUM_UPGRADES; i++) {
+	for (int i = 1; i < PlayerProfile::NUM_UPGRADES; i++) {
 		if (!tuning.IsUpgradePurchased(i)) continue;
 		data.ApplyUpgrade(i);
 	}

@@ -217,6 +217,7 @@ struct tCustomSaveStructure {
 	void Clear() {
 		memset(this,0,sizeof(*this));
 		SetDefaultPlayerSettings();
+		ChloeEvents::SaveClearedEvent.OnHit();
 	}
 	void Load(int saveSlot = -1, bool loadAll = true) {
 		if (saveSlot < 0) {
