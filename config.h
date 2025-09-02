@@ -69,6 +69,17 @@ bool bIsSmashyRace = false;
 bool bIsFragDerby = false;
 bool bIsTimeTrial = false;
 
+namespace CarnageRace {
+	enum eScoreType {
+		SCORE_CRASH,
+		SCORE_SCENERY,
+		SCORE_CHECKPOINT,
+		SCORE_AIRTIME,
+		NUM_SCORE_TYPES
+	};
+	int nPlayerScoresByType[NUM_SCORE_TYPES] = {};
+}
+
 bool bIsWreckingDerby = false;
 void SetIsWreckingDerby(bool apply) {
 	bIsWreckingDerby = apply;

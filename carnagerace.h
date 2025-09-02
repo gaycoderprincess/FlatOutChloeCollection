@@ -22,6 +22,7 @@ namespace CarnageRace {
 	struct tScoreEntry {
 		std::string name;
 		double points;
+		int type;
 	};
 	std::vector<tScoreEntry> aScoreHUD;
 
@@ -55,7 +56,7 @@ namespace CarnageRace {
 		}
 	}
 
-	void AddScore(std::string name, double points) {
+	void AddScore(int type, std::string name, double points) {
 		if (IsPlayerWrecked(GetPlayer(0))) return;
 
 		auto ply = GetPlayerScore<PlayerScoreRace>(1);
@@ -64,9 +65,9 @@ namespace CarnageRace {
 		}
 		fScoreTimer = fScoreMaxTime;
 
-		if (name == "SCENERY CRASHES" || name == "AIRTIME") {
+		if (type == SCORE_SCENERY || type == SCORE_AIRTIME) {
 			for (auto& score : aScoreHUD) {
-				if (score.name == name) {
+				if (score.type == type) {
 					score.points += points;
 					return;
 				}
@@ -76,6 +77,7 @@ namespace CarnageRace {
 		tScoreEntry entry;
 		entry.name = name;
 		entry.points = points;
+		entry.type = type;
 		aScoreHUD.push_back(entry);
 
 		if (aScoreHUD.size() >= 10) {
@@ -109,7 +111,7 @@ namespace CarnageRace {
 	void OnCrashBonus(Player* pPlayer, int type) {
 		if (!bIsCarnageRace) return;
 		if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) return;
-		AddScore(GetCrashBonusName(type), GetCrashBonusPrice(type));
+		AddScore(SCORE_CRASH, GetCrashBonusName(type), GetCrashBonusPrice(type));
 	}
 
 	void SetIsCarnageRace(bool apply) {
@@ -134,6 +136,7 @@ namespace CarnageRace {
 		double pointsAwarded = 0;
 		for (auto& score : aScoreHUD) {
 			pointsAwarded += score.points * aRacePositionMultiplier[nPlayerPosition-1];
+			nPlayerScoresByType[score.type] += score.points * aRacePositionMultiplier[nPlayerPosition-1];
 		}
 		nPlayerScore += pointsAwarded;
 		fCashoutNotifTimer = fScoreMaxTime;
@@ -154,7 +157,7 @@ namespace CarnageRace {
 			current += ply->pCar->aObjectsSmashed[i] * nSceneryCrashScore;
 		}
 		if (current > last) {
-			AddScore("SCENERY CRASHES", current - last);
+			AddScore(SCORE_SCENERY, "SCENERY CRASHES", current - last);
 		}
 
 		last = current;
@@ -176,7 +179,7 @@ namespace CarnageRace {
 			current = 0;
 		}
 		if (current > last) {
-			AddScore("AIRTIME", (current - last) * 10);
+			AddScore(SCORE_AIRTIME, "AIRTIME", (current - last) * 10);
 		}
 
 		last = current;
@@ -201,7 +204,7 @@ namespace CarnageRace {
 
 		auto current = GetPlayer(0)->nCurrentSplit / nCheckpointInterval;
 		if (current > last) {
-			AddScore("CHECKPOINT!", nCheckpointScore);
+			AddScore(SCORE_CHECKPOINT, "CHECKPOINT!", nCheckpointScore);
 			OnCheckpointPassed();
 		}
 		last = current;
@@ -214,6 +217,7 @@ namespace CarnageRace {
 		if (pLoadingScreen) return;
 		if (!bIsCarnageRace) {
 			nPlayerScore = 0;
+			memset(nPlayerScoresByType, 0, sizeof(nPlayerScoresByType));
 			return;
 		}
 		if (GetGameState() != GAME_STATE_RACE) return;
@@ -234,6 +238,7 @@ namespace CarnageRace {
 			fCheckpointNotifTimer = 0;
 			aScoreHUD.clear();
 			nPlayerScore = 0;
+			memset(nPlayerScoresByType, 0, sizeof(nPlayerScoresByType));
 			return;
 		}
 

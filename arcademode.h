@@ -76,6 +76,7 @@ namespace ArcadeMode {
 	tLUARace* pCurrentEvent = nullptr;
 	int nCurrentEventId = 0;
 	uint32_t nCurrentEventScore = 0;
+	uint32_t nCurrentEventHighScore = 0;
 
 	tLUARace* luaDefs_currentRace = nullptr;
 
