@@ -167,7 +167,13 @@ namespace Achievements {
 		return DrawString(data, text, &DrawStringFO2_Ingame12);
 	}
 
+	bool findValidSaveSlot = false;
 	void Save(int saveSlot) {
+		if (findValidSaveSlot) {
+			nCurrentSaveSlot = saveSlot;
+			findValidSaveSlot = false;
+		}
+
 		auto file = std::ofstream(GetAchievementSavePath(saveSlot), std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
 
@@ -191,11 +197,7 @@ namespace Achievements {
 			achievement->fInternalProgress = 0;
 			achievement->bUnlocked = false;
 		}
-
-		nCurrentSaveSlot = pGameFlow->nSaveSlot;
-		if (nCurrentSaveSlot < 0) {
-			nCurrentSaveSlot = pGameFlow->Profile.nAutosaveSlot;
-		}
+		findValidSaveSlot = true;
 	}
 
 	std::vector<CAchievement*> aUnlockBuffer;
@@ -219,7 +221,10 @@ namespace Achievements {
 
 		if (achievement->bUnlocked) return;
 		achievement->bUnlocked = true;
-		Save(nCurrentSaveSlot);
+
+		if (!findValidSaveSlot) {
+			Save(nCurrentSaveSlot);
+		}
 
 		aUnlockBuffer.push_back(achievement);
 	}
@@ -520,6 +525,10 @@ namespace Achievements {
 			if (!car.bIsPurchased) continue;
 			bool fullyUpgraded = true;
 			for (int i = 1; i < PlayerProfile::NUM_UPGRADES; i++) {
+				// weird edge case here
+				if (i == PlayerProfile::TURBO && car.IsUpgradePurchased(PlayerProfile::SUPERCHARGER)) continue;
+				if (i == PlayerProfile::SUPERCHARGER && car.IsUpgradePurchased(PlayerProfile::TURBO)) continue;
+				
 				if (!car.IsUpgradePurchased(i)) fullyUpgraded = false;
 			}
 			if (!fullyUpgraded) continue;
