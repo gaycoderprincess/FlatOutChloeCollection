@@ -9,6 +9,14 @@ namespace Achievements {
 		return true;
 	}
 
+	bool IsSurvivalDerby() {
+		if (pGameFlow->nEventType != eEventType::DERBY) return false;
+		if (pGameFlow->nSubEventType != eSubEventType::DERBY_LASTMANSTANDING) return false;
+		if (bIsWreckingDerby) return false;
+		if (bIsFragDerby) return false;
+		return true;
+	}
+
 	int nTotalProgression = 0;
 	int nCurrentSaveSlot = 0;
 
@@ -54,7 +62,9 @@ namespace Achievements {
 		new CAchievement("WIN_RACE", "Starting Point", "Win a race", CAT_GAMEMODES),
 		//new CAchievement("WIN_RACE_WRECK", "Eliminator", "Win a race after wrecking everyone", CAT_SINGLEPLAYER),
 		new CAchievement("WIN_MP_RACE", "Friendly Competition", "Win a multiplayer race", CAT_MULTIPLAYER),
+		new CAchievement("WIN_DERBY_PEP", "Glass Cannon", "Win a Survival Derby with the Pepper", CAT_GAMEMODES),
 		new CAchievement("WIN_RACE_NODAMAGE", "Not a Scratch", "Win a race without taking any damage", CAT_GAMEMODES),
+		new CAchievement("WIN_CUP_PEPPER", "Real Habanero", "Win the Bronze Finals with a stock Pepper", CAT_CAREER),
 		new CAchievement("WRECK_MP", "First Blood", "Wreck a car in multiplayer", CAT_MULTIPLAYER),
 		new CAchievement("BLAST_MP", "Unfriendly Competition", "Get 200 crash bonuses in multiplayer", CAT_MULTIPLAYER),
 		new CAchievement("BLAST_ALL", "Blast Master", "Get 500 crash bonuses", CAT_GENERAL),
@@ -64,6 +74,7 @@ namespace Achievements {
 		new CAchievement("ALL_CARS", "Car Collector", "Unlock all cars in the game", CAT_GENERAL),
 		new CAchievement("COMPLETE_CAREER", "Race Master", "Complete career mode", CAT_CAREER),
 		new CAchievement("COMPLETE_CAREER_GOLD", "Race Wizard", "Complete career mode with all gold", CAT_CAREER),
+		new CAchievement("COMPLETE_CAREER_GOLD_WIN", "Race Legend", "Complete all career cups with all races won", CAT_CAREER, true),
 		new CAchievement("COMPLETE_CARNAGE", "Carnage Master", "Complete Arcade Mode", CAT_CARNAGE),
 		new CAchievement("COMPLETE_CARNAGE_GOLD", "Carnage Wizard", "Complete Arcade Mode with all gold", CAT_CARNAGE),
 		new CAchievement("COMPLETE_CARNAGE_AUTHOR", "Carnage Legend", "Complete Arcade Mode with all author", CAT_CARNAGE, true),
@@ -580,6 +591,13 @@ namespace Achievements {
 					//	}
 					//	if (!anyoneAlive) AwardAchievement(GetAchievement("WIN_RACE_WRECK"));
 					//}
+				}
+			}
+			if (IsSurvivalDerby() && ply->bHasFinished && pPlayerHost->GetNumPlayers() > 1) {
+				if (ply->nPosition == 1) {
+					if (GetPlayer(0)->nCarId + 1 == CAR_PEPPER) {
+						AwardAchievement(GetAchievement("WIN_DERBY_PEP"));
+					}
 				}
 			}
 		}

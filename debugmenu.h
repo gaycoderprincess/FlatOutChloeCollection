@@ -271,6 +271,22 @@ void ProcessDebugMenu() {
 			}
 		}
 
+		if (DrawMenuOption("Dump to File")) {
+			std::ofstream fout("achievements.txt", std::ios::out);
+			if (fout.is_open()) {
+				auto achievements = Achievements::gAchievements;
+				std::sort(achievements.begin(), achievements.end(), [] (Achievements::CAchievement* a, Achievements::CAchievement* b) { return (std::string)a->sName < (std::string)b->sName; });
+				for (auto& achievement : achievements) {
+					if (achievement->bHidden) continue;
+
+					fout << achievement->sName;
+					fout << " - ";
+					fout << achievement->sDescription;
+					fout << "\n";
+				}
+			}
+		}
+
 		ChloeMenuLib::EndMenu();
 	}
 
@@ -327,6 +343,10 @@ void ProcessDebugMenu() {
 
 			ChloeMenuLib::EndMenu();
 		}
+
+		DrawDebugMenuViewerOption(std::format("Career Car - {} ({})", pGameFlow->Profile.nCarType, GetCarName(pGameFlow->Profile.nCarType+1)));
+		DrawDebugMenuViewerOption(std::format("Career Car Upgraded - {}", gCustomSave.aCareerGarage[pGameFlow->Profile.nCarType+1].IsAnyUpgradePurchased()));
+
 		ChloeMenuLib::EndMenu();
 	}
 

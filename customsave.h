@@ -83,6 +83,12 @@ struct tCustomSaveStructure {
 				nUpgrades[upgrade / 8] &= ~bit;
 			}
 		}
+		bool IsAnyUpgradePurchased() {
+			for (int i = 0; i < 19; i++) {
+				if (nUpgrades[i]) return true;
+			}
+			return false;
+		}
 		void Clear() {
 			memset(this,0,sizeof(*this));
 		}
@@ -92,6 +98,7 @@ struct tCustomSaveStructure {
 		struct tCareerCup {
 			bool bUnlocked : 1;
 			uint8_t nPosition : 4;
+			bool bWonAll : 1;
 		} aCups[nNumCareerEvents];
 		struct tCareerEvent {
 			bool bUnlocked : 1;

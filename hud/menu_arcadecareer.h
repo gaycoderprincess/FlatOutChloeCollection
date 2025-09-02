@@ -166,6 +166,9 @@ public:
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, unlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
 			if (position >= 1 && position <= 4) {
+				if (position == 4) {
+					Achievements::AwardAchievement(GetAchievement("AUTHOR_MEDAL"));
+				}
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, texturePlacement[position-1]);
 			}
 			if (i == nCursorPos) {

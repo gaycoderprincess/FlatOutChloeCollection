@@ -183,6 +183,8 @@ namespace CareerMode {
 				cup->nPosition = playerPosition;
 			}
 
+			if (gCustomSave.aCareerCupPlayers[0].points == GetCurrentCup()->aRaces.size() * 10) cup->bWonAll = true;
+
 			// unlock the next cup if finished 3rd or higher
 			if (cup->nPosition >= 1 && cup->nPosition <= 3) {
 				for (auto& car : GetCurrentCup()->aCarUnlocks) {
@@ -202,6 +204,9 @@ namespace CareerMode {
 
 				// unlock next class after finals are done
 				if (gCustomSave.nCareerCup == 64 && gCustomSave.nCareerClass < 4) {
+					if (cup->nPosition == 1 && pGameFlow->Profile.nCarType + 1 == CAR_PEPPER && !gCustomSave.aCareerGarage[CAR_PEPPER].IsAnyUpgradePurchased()) {
+						Achievements::AwardAchievement(GetAchievement("WIN_CUP_PEPPER"));
+					}
 					//if (!gCustomSave.bCareerClassUnlocked[gCustomSave.nCareerClass]) {
 					//	nNewlyUnlockedClass = gCustomSave.nCareerClass+1;
 					//}
@@ -457,6 +462,7 @@ namespace CareerMode {
 	void OnSave(int saveSlot) {
 		float cupsCompleted = 0;
 		int cupsCompletedCount = 0;
+		int cupsCompletedAllWon = 0;
 		int cupsTotal = 0;
 		float eventsCompleted = 0;
 		int eventsCompletedCount = 0;
@@ -471,6 +477,7 @@ namespace CareerMode {
 			for (int i = 0; i < careerClass->aCups.size(); i++) {
 				auto cup = &gCustomSave.aCareerClasses[classId].aCups[i];
 				if (cup->nPosition >= 1 && cup->nPosition <= 3) cupsCompletedCount++;
+				if (cup->bWonAll) cupsCompletedAllWon++;
 
 				if (cup->nPosition == 1) cupsCompleted += 1;
 				else if (cup->nPosition == 2) cupsCompleted += 0.5;
@@ -499,6 +506,10 @@ namespace CareerMode {
 		if (auto achievement = GetAchievement("COMPLETE_CAREER_GOLD")) {
 			achievement->fInternalProgress = cupsCompleted + eventsCompleted;
 			achievement->fMaxInternalProgress = cupsTotal + eventsTotal;
+		}
+		if (auto achievement = GetAchievement("COMPLETE_CAREER_GOLD_WIN")) {
+			achievement->fInternalProgress = cupsCompletedAllWon;
+			achievement->fMaxInternalProgress = cupsTotal;
 		}
 
 		gCustomSave.nGameCompletion = ((double)(cupsCompleted + eventsCompleted) / (double)(cupsTotal + eventsTotal)) * 100;
@@ -559,6 +570,23 @@ namespace CareerMode {
 		);
 	}
 
+	std::string OnTrack_CompleteCareerGoldWin(Achievements::CAchievement* pThis) {
+		std::string str;
+		for (int classId = 0; classId < 3; classId++) {
+			auto careerClass = &CareerMode::aLUACareerClasses[classId];
+			if (careerClass->aCups.empty()) continue;
+
+			for (int i = 0; i < careerClass->aCups.size(); i++) {
+				auto cup = &gCustomSave.aCareerClasses[classId].aCups[i];
+				if (!cup->bWonAll) {
+					if (!str.empty()) str += ", ";
+					str += careerClass->aCups[i].sName;
+				}
+			}
+		}
+		return "Remaining: " + str;
+	}
+
 	void Init() {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x440560, &GetAIHandicapLevelNew);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4404A0, &GetNumLapsNew);
@@ -569,5 +597,7 @@ namespace CareerMode {
 		ChloeEvents::SaveCreatedEvent.AddHandler(OnSave);
 		ChloeEvents::SaveLoadedEvent.AddHandler(OnLoad);
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
+
+		Achievements::GetAchievement("COMPLETE_CAREER_GOLD_WIN")->pTrackFunction = OnTrack_CompleteCareerGoldWin;
 	}
 }
