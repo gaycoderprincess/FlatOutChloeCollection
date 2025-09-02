@@ -82,10 +82,16 @@ public:
 			Draw1080pString(JUSTIFY_CENTER, data, "TOTAL", &DrawStringFO2_Ingame12);
 		}
 		else {
-			data.x = nBestLapX;
-			Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? "WRECKS" : "BEST LAP", &DrawStringFO2_Ingame12);
-			data.x = nTotalTimeX;
-			Draw1080pString(JUSTIFY_CENTER, data, "TOTAL TIME", &DrawStringFO2_Ingame12);
+			if (bIsSmashyRace) {
+				data.x = nTotalTimeX;
+				Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Ingame12);
+			}
+			else {
+				data.x = nBestLapX;
+				Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? "WRECKS" : "BEST LAP", &DrawStringFO2_Ingame12);
+				data.x = nTotalTimeX;
+				Draw1080pString(JUSTIFY_CENTER, data, "TOTAL TIME", &DrawStringFO2_Ingame12);
+			}
 		}
 
 		data.y = nPlayerYStart;
@@ -113,6 +119,10 @@ public:
 				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyBonusScore(ply->nPosition, ply->bHasFinished || ply->bIsDNF)), &DrawStringFO2_Ingame12);
 				data.x = nWreckingDerbyTotalX;
 				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyTotalScore(ply->nPlayerId, ply->nPosition, ply->bHasFinished || ply->bIsDNF)), &DrawStringFO2_Ingame12);
+			}
+			else if (bIsSmashyRace) {
+				data.x = nTotalTimeX;
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(ArcadeMode::nCurrentEventScore), &DrawStringFO2_Ingame12);
 			}
 			else {
 				std::string bestLap;
