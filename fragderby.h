@@ -15,7 +15,7 @@ namespace FragDerby {
 	double fPlayerSurvivorTick[nMaxPlayers] = {};
 	double fGameTimeLeft = 0;
 	int nStreakerId = -1;
-	
+
 	int nPlayerHighestKillstreak[nMaxPlayers] = {};
 	double fPlayerHighestTimeAlive[nMaxPlayers] = {};
 	int nPlayerNumDeaths[nMaxPlayers] = {};

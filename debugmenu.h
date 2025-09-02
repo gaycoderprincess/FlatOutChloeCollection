@@ -230,11 +230,11 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("fBalk1Pos", HUD_RaceResults.fBalk1Pos);
 	//QuickValueEditor("fBalk2Size", HUD_RaceResults.fBalk2Size);
 	//QuickValueEditor("fBalk2Pos", HUD_RaceResults.fBalk2Pos);
-	QuickValueEditor("gTotalEventScore", HUD_RaceResults.gTotalEventScore, false);
-	QuickValueEditor("gEventScore", HUD_RaceResults.gEventScore, false);
-	QuickValueEditor("gHighScore", HUD_RaceResults.gHighScore, true);
-	QuickValueEditor("gScoreBreakdown", HUD_RaceResults.gScoreBreakdown, false);
-	QuickValueEditor("gScoreTypes", HUD_RaceResults.gScoreTypes, true);
+	//QuickValueEditor("gTotalEventScore", HUD_RaceResults.gTotalEventScore, false);
+	//QuickValueEditor("gEventScore", HUD_RaceResults.gEventScore, false);
+	//QuickValueEditor("gHighScore", HUD_RaceResults.gHighScore, true);
+	//QuickValueEditor("gScoreBreakdown", HUD_RaceResults.gScoreBreakdown, false);
+	//QuickValueEditor("gScoreTypes", HUD_RaceResults.gScoreTypes, true);
 
 	if (DrawMenuOption("Playtime Stats")) {
 		ChloeMenuLib::BeginMenu();
