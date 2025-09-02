@@ -89,6 +89,7 @@ namespace Achievements {
 		new CAchievement("CHANGE_MUSIC", "Your Own Jukebox", "Change a music playlist", CAT_GENERAL),
 		//new CAchievement("FRAGDERBY_NO_WRECKS", "Rasputin", "Win a Deathmatch Derby without dying", CAT_GAMEMODES),
 		new CAchievement("BOWLING_STRIKE", "Like an Angel", "Get a strike in Bowling", CAT_GAMEMODES),
+		new CAchievement("BOWLING_PERFECT", "Master Bowler", "Get a perfect score in Bowling", CAT_GAMEMODES, true),
 		new CAchievement("FRAG_STREAK", "Killing Spree", "Get a 5 frag streak in Frag Derby", CAT_GAMEMODES),
 		new CAchievement("SMASHY", "Smashy Smash", "Destroy 1,000 roadside objects", CAT_GENERAL),
 	};
@@ -462,9 +463,26 @@ namespace Achievements {
 		if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) return;
 		if (pGameFlow->nSubEventType != eSubEventType::STUNT_BOWLING) return;
 
-		auto score = GetPlayerScore<PlayerScoreRace>(1);
-		if (score->nStuntPointsScore[0] >= 10 || score->nStuntPointsScore[1] >= 10 || score->nStuntPointsScore[2] >= 10) {
-			AwardAchievement(pThis);
+		int numPlayers = 1;
+		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) numPlayers = pGameFlow->nNumSplitScreenPlayers;
+		for (int i = 0; i < numPlayers; i++) {
+			auto score = GetPlayerScore<PlayerScoreRace>(i+1);
+			if (score->nStuntPointsScore[0] >= 10 || score->nStuntPointsScore[1] >= 10 || score->nStuntPointsScore[2] >= 10) {
+				AwardAchievement(pThis);
+			}
+		}
+	}
+	void OnTick_BowlingPerfect(CAchievement* pThis, double delta) {
+		if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) return;
+		if (pGameFlow->nSubEventType != eSubEventType::STUNT_BOWLING) return;
+
+		int numPlayers = 1;
+		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) numPlayers = pGameFlow->nNumSplitScreenPlayers;
+		for (int i = 0; i < numPlayers; i++) {
+			auto score = GetPlayerScore<PlayerScoreRace>(i+1);
+			if (score->nStuntPointsScore[0] >= 10 && score->nStuntPointsScore[1] >= 10 && score->nStuntPointsScore[2] >= 10) {
+				AwardAchievement(pThis);
+			}
 		}
 	}
 	void OnTick_Smashy(CAchievement* pThis, double delta) {
@@ -557,9 +575,9 @@ namespace Achievements {
 			achievement->sTrackString = "";
 			if (!achievement->bUnlocked) {
 				for (int i = 1; i < GetNumTracks() + 1; i++) {
+					if (gCustomSave.tracksWon[i]) continue;
 					if (!DoesTrackExist(i)) continue;
 					if (DoesTrackValueExist(i, "StuntMode")) continue;
-					if (gCustomSave.tracksWon[i]) continue;
 
 					if (!achievement->sTrackString.empty()) achievement->sTrackString += ", ";
 					achievement->sTrackString += GetTrackName(i);
@@ -615,6 +633,7 @@ namespace Achievements {
 		GetAchievement("CARNAGE_MILLIONAIRE")->pTickFunction = OnTick_CarnageMillionaire;
 		GetAchievement("EJECTED_ALL")->pTickFunction = OnTick_EjectedAll;
 		GetAchievement("BOWLING_STRIKE")->pTickFunction = OnTick_BowlingStrike;
+		GetAchievement("BOWLING_PERFECT")->pTickFunction = OnTick_BowlingPerfect;
 		GetAchievement("SMASHY")->pTickFunction = OnTick_Smashy;
 
 		GetAchievement("LOW_HP")->pTrackFunction = OnTrack_LowHP;

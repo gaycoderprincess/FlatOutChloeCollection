@@ -58,7 +58,7 @@ public:
 			else {
 				data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 			}
-			if (ply->bIsDNF) {
+			if (ply->bIsDNF || (bIsFragDerby && GetPlayer(ply->nPlayerId)->pCar->nIsRagdolled)) {
 				data.SetColor(64,64,64,255);
 			}
 			data.XRightAlign = true;

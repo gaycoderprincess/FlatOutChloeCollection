@@ -892,7 +892,12 @@ int ChloeCollection_GetAchievementDescription(void* a1) {
 }
 
 int ChloeCollection_GetAchievementProgression(void* a1) {
-	auto achievement = GetAchievement((const char*)lua_tolstring(a1, 1));
+	std::string str = (const char*)lua_tolstring(a1, 1);
+	if (str == "TOTAL_PROGRESS") {
+		lua_pushnumber(a1, Achievements::nTotalProgression);
+		return 1;
+	}
+	auto achievement = GetAchievement(str.c_str());
 	if (!achievement) return 0;
 
 	int progress = achievement->nProgress;
@@ -945,7 +950,10 @@ int ChloeCollection_GetAchievementTrackable(void* a1) {
 }
 
 int ChloeHUD_SelectAchievement(void* a1) {
-	if (auto achievement = GetAchievement((const char*)lua_tolstring(a1, 1))) {
+	if (!lua_type(a1, 1)) {
+		Menu_Achievement_Description.SetAchievement(nullptr);
+	}
+	else if (auto achievement = GetAchievement((const char*)lua_tolstring(a1, 1))) {
 		Menu_Achievement_Description.SetAchievement(achievement);
 	}
 	return 0;

@@ -15,7 +15,9 @@ public:
 		static auto tex = LoadTextureFromBFS("data/global/overlay/derby_health_indicator.png");
 
 		auto mat = *ply->pCar->GetMatrix();
-		mat.p += mat.y * fPlayerHealthIconOffset;
+		auto yUp = mat.y;
+		if (yUp.y < 0) yUp *= -1;
+		mat.p += yUp * fPlayerHealthIconOffset;
 		auto drawPos = Get3DTo2D(mat.p);
 		if (drawPos.z <= 0) return;
 
@@ -46,7 +48,9 @@ public:
 		static auto texData = LoadHUDData("data/global/overlay/frag_derby_symbols.bed", "frag_derby_symbols");
 
 		auto mat = *ply->pCar->GetMatrix();
-		mat.p += mat.y * fPlayerHealthIconOffset;
+		auto yUp = mat.y;
+		if (yUp.y < 0) yUp *= -1;
+		mat.p += yUp * fPlayerHealthIconOffset;
 		mat.p.y += fPlayerIconOffset - fPlayerHealthIconOffset;
 		auto drawPos = Get3DTo2D(mat.p);
 		if (drawPos.z <= 0) return;

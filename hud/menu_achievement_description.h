@@ -6,6 +6,10 @@ public:
 	std::string sDescription;
 
 	void SetAchievement(Achievements::CAchievement* achievement) {
+		if (!achievement) {
+			sDescription = "";
+			return;
+		}
 		sDescription = achievement->sDescription;
 	}
 
