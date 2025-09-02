@@ -121,11 +121,25 @@ std::vector<PlayerScoreRace*> GetSortedPlayerScores() {
 		});
 	}
 	else {
-		std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
-			if (a->bIsDNF && !b->bIsDNF) { return false; }
-			if (b->bIsDNF && !a->bIsDNF) { return true; }
-			return a->nPosition < b->nPosition;
-		});
+		if (pGameFlow->nEventType == eEventType::RACE) {
+			std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+				if (a->bIsDNF && !b->bIsDNF) { return false; }
+				if (b->bIsDNF && !a->bIsDNF) { return true; }
+				if (a->bHasFinished && !b->bHasFinished) { return true; }
+				if (b->bHasFinished && !a->bHasFinished) { return false; }
+				if (a->bHasFinished && b->bHasFinished) {
+					return a->nFinishTime < b->nFinishTime;
+				}
+				return a->nPosition < b->nPosition;
+			});
+		}
+		else {
+			std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+				if (a->bIsDNF && !b->bIsDNF) { return false; }
+				if (b->bIsDNF && !a->bIsDNF) { return true; }
+				return a->nPosition < b->nPosition;
+			});
+		}
 	}
 	return aScores;
 }

@@ -284,7 +284,7 @@ public:
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
 		Draw1080pString(JUSTIFY_CENTER, data, GetResultsTitle(), &DrawStringFO2_Small);
 
-		if (bIsCarnageRace || bIsFragDerby) {
+		if (bIsArcadeMode && (bIsCarnageRace || bIsFragDerby)) {
 			DrawArcadeResults();
 		}
 		else {

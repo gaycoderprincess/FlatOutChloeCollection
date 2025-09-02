@@ -7,7 +7,7 @@ public:
 
 	void SetAchievement(Achievements::CAchievement* achievement) {
 		if (!achievement) {
-			sDescription = "";
+			sDescription = std::format("{} out of {} completed", Achievements::GetNumUnlockedAchievements(), Achievements::GetNumVisibleAchievements());
 			return;
 		}
 		sDescription = achievement->sDescription;

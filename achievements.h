@@ -528,7 +528,7 @@ namespace Achievements {
 				// weird edge case here
 				if (i == PlayerProfile::TURBO && car.IsUpgradePurchased(PlayerProfile::SUPERCHARGER)) continue;
 				if (i == PlayerProfile::SUPERCHARGER && car.IsUpgradePurchased(PlayerProfile::TURBO)) continue;
-				
+
 				if (!car.IsUpgradePurchased(i)) fullyUpgraded = false;
 			}
 			if (!fullyUpgraded) continue;
