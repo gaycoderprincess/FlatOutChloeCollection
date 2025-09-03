@@ -53,7 +53,7 @@ public:
 			}
 			if (lastScore < event->aGoalScores[0] && score >= event->aGoalScores[0]) {
 				TriggerEarnPopup("GOLD EARNED", 1);
-				if (pPlayerHost->nRaceTime <= 90000) {
+				if (pPlayerHost->nRaceTime <= 90000 && !bIsSmashyRace) {
 					Achievements::AwardAchievement(GetAchievement("SPEEDRUN_CARNAGE"));
 				}
 				if (!gCustomSave.tracksWon[pGameFlow->nLevel]) {

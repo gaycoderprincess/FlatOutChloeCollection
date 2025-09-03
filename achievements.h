@@ -11,7 +11,6 @@ namespace Achievements {
 
 	bool IsSurvivalDerby() {
 		if (pGameFlow->nEventType != eEventType::DERBY) return false;
-		if (pGameFlow->nSubEventType != eSubEventType::DERBY_LASTMANSTANDING) return false;
 		if (bIsWreckingDerby) return false;
 		if (bIsFragDerby) return false;
 		return true;
