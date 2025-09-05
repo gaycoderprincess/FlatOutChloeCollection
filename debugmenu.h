@@ -90,6 +90,7 @@ void QuickValueEditor(const char* name, CHUDElement::tDrawPositions1080p& value,
 
 std::vector<NyaVec3> aCustomSplinesL;
 std::vector<NyaVec3> aCustomSplinesR;
+std::vector<NyaVec3> aCustomSplinesRaceLine;
 std::vector<NyaMat4x4> aCustomStartpoints;
 
 struct tSplitpoint {
@@ -233,6 +234,7 @@ void WriteSplines() {
 
 	WriteSpline(fout, aCustomSplinesL, "AIBorderLineLeft");
 	WriteSpline(fout, aCustomSplinesR, "AIBorderLineRight");
+	WriteSpline(fout, aCustomSplinesRaceLine, "AIRaceLine");
 
 	fout << "\n}";
 }
@@ -536,15 +538,21 @@ void ProcessDebugMenu() {
 					auto ply = GetPlayer(0);
 					aCustomSplinesR.push_back(ply->pCar->GetMatrix()->p);
 				}
+				if (DrawMenuOption("Add Raceline Node")) {
+					auto ply = GetPlayer(0);
+					aCustomSplinesRaceLine.push_back(ply->pCar->GetMatrix()->p);
+				}
 				SplineViewerMenu(aCustomSplinesL, "Left");
 				SplineViewerMenu(aCustomSplinesR, "Right");
-				if (!aCustomSplinesL.empty() && !aCustomSplinesR.empty()) {
+				SplineViewerMenu(aCustomSplinesRaceLine, "Raceline");
+				if (!aCustomSplinesL.empty() && !aCustomSplinesR.empty() && !aCustomSplinesRaceLine.empty()) {
 					if (DrawMenuOption("Save Splines", "", false, false)) {
 						WriteSplines();
 					}
 					if (DrawMenuOption("Delete All Splines", "", false, false)) {
 						aCustomSplinesL.clear();
 						aCustomSplinesR.clear();
+						aCustomSplinesRaceLine.clear();
 					}
 				}
 			}
