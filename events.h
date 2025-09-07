@@ -59,14 +59,23 @@ namespace ChloeEvents {
 		}
 	} FilesystemInitEvent;
 
-	class EventMapLoaded : public ChloeEvent<void(*)()> {
+	class EventMapLoad : public ChloeEvent<void(*)()> {
 	public:
 		void OnHit() {
 			for (auto& func : functions) {
 				func();
 			}
 		}
-	} MapLoadedEvent;
+	} MapLoadEvent;
+
+	class EventMapPreLoad : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} MapPreLoadEvent;
 
 	class EventDrawRaceUI : public ChloeEvent<void(*)(int)> {
 	public:

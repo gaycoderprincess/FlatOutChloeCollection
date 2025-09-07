@@ -80,7 +80,7 @@ void SetTrackReversed(bool apply) {
 	NyaHookLib::Patch(0x402595 + 1, apply ? "AIBorderLineLeft" : "AIBorderLineRight");
 	NyaHookLib::Patch(0x469857 + 1, apply ? "Right" : "Left");
 	NyaHookLib::Patch(0x4698A5 + 1, apply ? "Left" : "Right");
-	ChloeEvents::MapLoadedEvent.AddHandler(ReverseTrackStartpoints);
+	ChloeEvents::MapLoadEvent.AddHandler(ReverseTrackStartpoints);
 }
 
 bool DoesTrackSupportReversing(int level) {
@@ -150,4 +150,30 @@ bool DoesTrackSupportReversing(int level) {
 	fairgrass challenge
 	whattahoo rush hour
 	*/
+}
+
+void SetExclusiveGeometryFolder(bool apply) {
+	NyaHookLib::Patch(0x4BC963 + 2, apply ? 0x1138 : 0x111C);
+	NyaHookLib::Patch(0x4BC4F8 + 2, apply ? 0x1150 : 0x1134);
+	NyaHookLib::Patch(0x4BC505 + 2, apply ? 0x113C : 0x1120);
+	NyaHookLib::Patch(0x4BC50D + 2, apply ? 0x113C : 0x1120);
+	NyaHookLib::Patch(0x4BC526 + 2, apply ? 0x1150 : 0x1134);
+	NyaHookLib::Patch(0x4BC533 + 2, apply ? 0x113C : 0x1120);
+	NyaHookLib::Patch(0x4BC53B + 2, apply ? 0x113C : 0x1120);
+	NyaHookLib::Patch<uint8_t>(0x4CA19F + 2, apply ? 0x1C*2 : 0x1C);
+}
+
+void SetTrackCustomProperties() {
+	SetExclusiveGeometryFolder(DoesFileExist(std::format("{}geometry/track_geom.w32", pEnvironment->sStagePath.Get()).c_str()));
+}
+
+auto NoFO2WindowProps_call = (void(__stdcall*)(void*, const char*, void*, void*, void*, void*, void*, void*, void*))0x4C95E0;
+void __stdcall NoFO2WindowProps(void* a1, const char* a2, void* a3, void* a4, void* a5, void* a6, void* a7, void* a8, void* a9) {
+	if (!strcmp(a2, "window")) return;
+	return NoFO2WindowProps_call(a1, a2, a3, a4, a5, a6, a7, a8, a9);
+}
+
+void ApplyTrackExtenderPatches() {
+	ChloeEvents::MapPreLoadEvent.AddHandler(SetTrackCustomProperties);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4CD314, &NoFO2WindowProps);
 }

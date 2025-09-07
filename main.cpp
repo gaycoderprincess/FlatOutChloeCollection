@@ -27,7 +27,7 @@
 #include "quickrace.h"
 #include "cardamage.h"
 #include "carlimitadjuster.h"
-#include "reversetracks.h"
+#include "trackextender.h"
 #include "carreset.h"
 #include "arcademode.h"
 #include "careermode.h"
@@ -176,18 +176,17 @@ void __stdcall D3DGameUI(int) {
 }
 
 const char* __cdecl OnMapLoad(void* a1, int a2) {
-	ChloeEvents::MapLoadedEvent.OnHit();
+	ChloeEvents::MapLoadEvent.OnHit();
 
 	auto path = (const char*)lua_tolstring(a1, a2);
 	HUD_Minimap.pMapTexture = CHUDElement::LoadTextureFromBFS(path);
 	return path;
 }
 
-auto NoFO2WindowProps_call = (void(__stdcall*)(void*, const char*, void*, void*, void*, void*, void*, void*, void*))0x4C95E0;
-void __stdcall NoFO2WindowProps(void* a1, const char* a2, void* a3, void* a4, void* a5, void* a6, void* a7, void* a8, void* a9) {
-	if (!strcmp(a2, "window")) return;
-	WriteLog(a2);
-	return NoFO2WindowProps_call(a1, a2, a3, a4, a5, a6, a7, a8, a9);
+auto OnMapPreLoad_call = (void(__stdcall*)(int, int, int, int, int, int, int, float, char))0x4B9250;
+void __stdcall OnMapPreLoad(int a1, int a2, int a3, int a4, int a5, int a6, int a7, float a8, char a9) {
+	ChloeEvents::MapPreLoadEvent.OnHit();
+	return OnMapPreLoad_call(a1, a2, a3, a4, a5, a6, a7, a8, a9);
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
@@ -216,6 +215,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyXInputPatches();
 			ApplyAIExtenderPatches();
 			ApplyDraw3DPatches();
+			ApplyTrackExtenderPatches();
 			CareerMode::Init();
 			ArcadeMode::Init();
 			CarnageRace::Init();
@@ -258,7 +258,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			UpdateCameraHooked_call = (void(__thiscall*)(void*, float))(*(uintptr_t*)0x662978);
 			NyaHookLib::Patch(0x662978, &UpdateCameraHooked);
 
-			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4CD314, &NoFO2WindowProps);
+			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x468DA9, &OnMapPreLoad);
 
 			for (int i = 0; i < nMaxSplitscreenPlayers; i++) {
 				HUD_DamageMeter[i].nPlayerId = i;

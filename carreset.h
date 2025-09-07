@@ -213,7 +213,7 @@ void ApplyCarResetPatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x448731, &ResetSpeedCheckASM);
 	NyaHookLib::Patch<uint8_t>(0x448764, 0x74);
 
-	ChloeEvents::MapLoadedEvent.AddHandler(LoadResetPoints);
+	ChloeEvents::MapLoadEvent.AddHandler(LoadResetPoints);
 	ChloeEvents::FinishFrameEvent.AddHandler(ProcessCarReset);
 	ChloeEvents::FinishFrameEvent.AddHandler(OutOfTrackChecker);
 }
