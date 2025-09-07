@@ -228,7 +228,7 @@ namespace NewMusicPlayer {
 				nMusicPopupTimeOffset = -15000;
 			}
 
-			if (GetGameState() != GAME_STATE_MENU && pGameFlow->nIsPaused) {
+			if (GetGameState() != GAME_STATE_MENU && (pGameFlow->nIsPaused || pPlayerHost->nRaceTime == -3000)) {
 				nMusicPopupTimeOffset -= gTimer.fDeltaTime * 1000;
 			}
 
