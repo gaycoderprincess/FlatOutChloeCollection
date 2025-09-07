@@ -258,7 +258,8 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			UpdateCameraHooked_call = (void(__thiscall*)(void*, float))(*(uintptr_t*)0x662978);
 			NyaHookLib::Patch(0x662978, &UpdateCameraHooked);
 
-			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x468DA9, &OnMapPreLoad);
+			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x468DA9, &OnMapPreLoad); // ingame
+			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4655EF, &OnMapPreLoad); // menu
 
 			for (int i = 0; i < nMaxSplitscreenPlayers; i++) {
 				HUD_DamageMeter[i].nPlayerId = i;

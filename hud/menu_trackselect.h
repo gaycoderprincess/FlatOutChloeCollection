@@ -9,10 +9,11 @@ public:
 		TRACKTYPE_RACING = 4,
 		TRACKTYPE_TOWN = 5,
 		TRACKTYPE_WINTER = 6,
-		TRACKTYPE_ARENA = 7,
+		TRACKTYPE_DESERT = 7,
+		TRACKTYPE_ARENA = 8,
 		NUM_RACE_TRACKTYPES,
 		TRACKTYPE_DERBY = NUM_RACE_TRACKTYPES,
-		TRACKTYPE_STUNT = 9,
+		TRACKTYPE_STUNT,
 		NUM_TRACKTYPES
 	};
 
@@ -23,6 +24,7 @@ public:
 		"RACE",
 		"TOWN",
 		"WINTER",
+		"DESERT",
 		"BONUS",
 		"DERBY",
 		"STUNT",
@@ -201,6 +203,10 @@ public:
 		}
 	}
 
+	bool DoesTrackSupportAI(int level) {
+		return !DoesTrackValueExist(level, "NoAI");
+	}
+
 	struct tTrackEntry {
 		int level;
 		bool reversed;
@@ -209,6 +215,7 @@ public:
 		std::vector<tTrackEntry> aTracks;
 		for (int i = 1; i < GetNumTracks()+1; i++) {
 			if (!DoesTrackExist(i)) continue;
+			if (aOptions != aOptionsTimeTrial && !bSplitScreen && !IsMultiplayerMenu() && !DoesTrackSupportAI(i)) continue;
 			if (GetTrackValueNumber(i, "TrackType") == nTrackType) {
 				aTracks.push_back({i, false});
 			}
