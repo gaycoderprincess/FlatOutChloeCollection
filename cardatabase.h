@@ -257,8 +257,8 @@ void __fastcall LoadCarBody(Car* car) {
 
 	auto body = &car->Body;
 
-	const char* steerBalanceFactor = nHandlingMode == HANDLING_PROFESSIONAL ? "ProSteerBalanceFactor" : "SteerBalanceFactor";
-	const char* steerBalanceRate = nHandlingMode == HANDLING_PROFESSIONAL ? "ProSteerBalanceRate" : "SteerBalanceRate";
+	const char* steerBalanceFactor = nHandlingMode == HANDLING_PROFESSIONAL && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL ? "ProSteerBalanceFactor" : "SteerBalanceFactor";
+	const char* steerBalanceRate = nHandlingMode == HANDLING_PROFESSIONAL && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL ? "ProSteerBalanceRate" : "SteerBalanceRate";
 	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceFactor, "Body", steerBalanceFactor, 3);
 	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceRate, "Body", steerBalanceRate, 3);
 	CAR_PERFORMANCE_TUNE(body->fArcadeBrakePower, "Body", "Body_Max", "BrakePower", tuning.fBrakePower);
