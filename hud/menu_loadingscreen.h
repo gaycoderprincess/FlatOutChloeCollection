@@ -213,6 +213,21 @@ public:
 			case TRACK_BOWLING: return "bowling";
 			case TRACK_DARTS: return "darts";
 			case TRACK_CLOWN: return "clown";
+			case TRACK_DESERT1A: return "bg_desert";
+			case TRACK_DESERT1B: return "bg_desert";
+			case TRACK_DESERT1C: return "bg_desert";
+			case TRACK_FIELDS1A: return "bg_field";
+			case TRACK_FIELDS1B: return "bg_field";
+			case TRACK_FIELDS1C: return "bg_field";
+			case TRACK_FIELDS2A: return "bg_field";
+			case TRACK_FIELDS2B: return "bg_field";
+			case TRACK_FIELDS2C: return "bg_field";
+			case TRACK_FO2FOREST1A: return "bg_forest";
+			case TRACK_FO2FOREST1B: return "bg_forest";
+			case TRACK_FO2FOREST1C: return "bg_forest";
+			case TRACK_FO2FOREST2A: return "bg_forest";
+			case TRACK_FO2FOREST2B: return "bg_forest";
+			case TRACK_FO2FOREST2C: return "bg_forest";
 			default:
 				return nullptr;
 		}

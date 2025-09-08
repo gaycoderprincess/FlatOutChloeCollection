@@ -106,8 +106,8 @@ bool DoesTrackSupportReversing(int level) {
 	if (level == TRACK_WINTER2B) return true;
 	if (level == TRACK_WINTER2C) return true;
 	// chloe collection tracks
-	if (level == TRACK_DESERT1B) return true;
-	if (level == TRACK_DESERT1C) return true;
+	//if (level == TRACK_DESERT1B) return true; // half broken?
+	//if (level == TRACK_DESERT1C) return true; // random game crash on t2
 	if (level == TRACK_FIELDS1B) return true;
 	if (level == TRACK_FIELDS1C) return true;
 	if (level == TRACK_FIELDS2A) return true; // no ai on these

@@ -223,7 +223,7 @@ public:
 		if (IsMultiplayerMenu()) {
 			for (int i = 1; i < GetNumTracks() + 1; i++) {
 				if (!DoesTrackExist(i)) continue;
-				if (!DoesTrackSupportReversing(i)) continue;
+				if (nMultiplayerAICount > 0 && !DoesTrackSupportReversing(i)) continue;
 				if (GetTrackValueNumber(i, "TrackType") == nTrackType) {
 					aTracks.push_back({i, true});
 				}
