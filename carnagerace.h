@@ -60,7 +60,7 @@ namespace CarnageRace {
 		if (IsPlayerWrecked(GetPlayer(0))) return;
 
 		auto ply = GetPlayerScore<PlayerScoreRace>(1);
-		if (!ply->bHasFinished && !ply->bIsDNF) return;
+		if (ply->bHasFinished || ply->bIsDNF) return;
 		if (ply->nPosition < nPlayerPosition || aScoreHUD.empty()) {
 			nPlayerPosition = ply->nPosition;
 		}
