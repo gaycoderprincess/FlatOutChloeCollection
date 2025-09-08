@@ -148,4 +148,13 @@ namespace ChloeEvents {
 			}
 		}
 	} PlayerResetEvent;
+
+	class EventRaceRestart : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} RaceRestartEvent;
 }

@@ -213,16 +213,6 @@ namespace NewMusicPlayer {
 				nMusicPopupTimeOffset = -15000;
 			}
 
-			// remove duplicate music popup after a race restart
-			if (nMusicPopupTimeOffset > pPlayerHost->nRaceTime) {
-				nMusicPopupTimeOffset = -15000;
-			}
-
-			// remove music popup from start of race after 5 seconds pass
-			if (nMusicPopupTimeOffset <= -3000 && nMusicPopupTimeOffset > -15000 && pPlayerHost->nRaceTime >= 5000) {
-				nMusicPopupTimeOffset = -1000;
-			}
-
 			// remove duplicate music popup during replays
 			if ((GetGameState() == GAME_STATE_REPLAY) != bLastSongPlayedInReplay) {
 				nMusicPopupTimeOffset = -15000;
@@ -330,6 +320,11 @@ namespace NewMusicPlayer {
 		}
 	}
 
+	void OnRaceRestart() {
+		nMusicPopupTimeOffset -= pPlayerHost->nRaceTime;
+		nMusicPopupTimeOffset -= 3000;
+	}
+
 	void Init() {
 		static bool bInited = false;
 		if (bInited) {
@@ -339,6 +334,7 @@ namespace NewMusicPlayer {
 
 		NyaAudio::Init(ghWnd);
 		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
+		ChloeEvents::RaceRestartEvent.AddHandler(OnRaceRestart);
 
 		NyaHookLib::Patch<uint8_t>(0x410CB0, 0xC3);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);

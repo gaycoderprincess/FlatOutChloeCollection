@@ -458,6 +458,7 @@ public:
 	static std::string GetTrackLogoPath(int track) {
 		auto str = GetTrackValueString(track, "TrackPath"); // data/Tracks/Forest/Forest1/
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::tolower(c); });
+		bool bIsFO2 = str.find("fo2") != std::string::npos;
 		str.pop_back(); // remove trailing /
 		// only leave the folder name
 		while (str.find('/') != std::string::npos) {
@@ -466,6 +467,7 @@ public:
 		if (str.starts_with("arena")) return "arena";
 		if (str.starts_with("derby")) return "derby";
 		if (str.starts_with("stunt")) return "stunt";
+		if (bIsFO2) return "fo2" + str;
 		return str;
 	}
 

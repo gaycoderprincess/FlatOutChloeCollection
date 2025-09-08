@@ -244,6 +244,10 @@ public:
 			}
 		}
 
+		if (nMenuReturnValue == IngameMenu::MENU_ACTION_RESTARTRACE) {
+			ChloeEvents::RaceRestartEvent.OnHit();
+		}
+
 		bMenuUp = false;
 	}
 };
