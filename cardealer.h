@@ -59,18 +59,20 @@ std::string GetSkinAuthor(int carId, int skinId, bool wrapAround) {
 
 void ApplyCarDealerPatches() {
 	WriteLogDebug("CARDEALER", "--- Loading car data ---");
-	auto config = ReadTOMLFromBfs("data/database/cardealer.toml");
-	int count = config["CarDealer"]["NumCars"].value_or(0);
-	aDealerCars.reserve(count);
-	for (int i = 0; i < count; i++) {
-		auto category = std::format("Car{}", i+1);
+
+	for (int i = 0; i < 1024; i++) {
+		auto path = std::format("data/database/cars/car{}.toml", i+1);
+		if (!DoesFileExist(path.c_str())) continue;
+
+		auto config = ReadTOMLFromBfs(path);
+		if (!DoesFileExist(std::format("{}body.bgm", config["Data"]["DataPath"].value_or("")).c_str())) continue;
+
 		tDealerCar car;
-		car.carId = config["CarDealer"][category]["CarId"].value_or(0);
-		car.name = config["CarDealer"][category]["Name"].value_or("");
-		car.classId = config["CarDealer"][category]["Class"].value_or(0);
-		car.cameraId = config["CarDealer"][category]["Camera"].value_or(0);
-		car.performanceId = config["CarDealer"][category]["PerformanceOverride"].value_or(car.carId);
-		if (car.carId <= 0) continue;
+		car.carId = i+1;
+		car.name = config["Data"]["Name"].value_or("");
+		car.classId = config["Data"]["Class"].value_or(0);
+		car.cameraId = config["Data"]["Camera"].value_or(0);
+		car.performanceId = config["Data"]["PerformanceOverride"].value_or(car.carId);
 		if (!nFO2CarsEnabled && car.carId >= 200 && car.carId <= 250) continue;
 		if (car.classId <= 0) continue;
 		if (car.cameraId <= 0) {
@@ -80,5 +82,14 @@ void ApplyCarDealerPatches() {
 		WriteLogDebug("CARDEALER", std::format("Registered dealer car {} ({}) to data ID {} with performance from car{}", i+1, car.name, car.carId, car.performanceId));
 		aDealerCars.push_back(car);
 	}
+	std::sort(aDealerCars.begin(), aDealerCars.end(), [](const tDealerCar& a, const tDealerCar& b) {
+		if (a.classId != b.classId) {
+			return a.classId < b.classId;
+		}
+		if (a.cameraId != b.cameraId) {
+			return a.cameraId < b.cameraId;
+		}
+		return a.carId < b.carId;
+	});
 	WriteLogDebug("CARDEALER", "--- Finished loading car data ---");
 }
