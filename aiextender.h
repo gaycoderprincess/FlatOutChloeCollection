@@ -6,18 +6,10 @@ int __cdecl GetCarCount(int, int) {
 	return nOpponentCount + 1;
 }
 
-const wchar_t* aCustomPlayerNames[nMaxPlayers] = {
-		L"FRANK BENTON",
-		L"SUE O'NEILL",
-		L"TANIA GRAHAM",
-		L"KATIE DAGGERT",
-		L"RAY SMITH",
-		L"PAUL MCGUIRE",
-		L"SETH BELLINGER",
-};
+const wchar_t* aCustomPlayerNames[nMaxPlayers] = {};
 
 void GetAINames() {
-	auto config = toml::parse_file("Config/AIConfig.toml");
+	auto config = ReadTOMLFromBfs("data/database/aiconfig.toml");
 	nNumAIProfiles = config["main"]["NumAIProfiles"].value_or(7);
 	for (int i = 0; i < nMaxPlayers; i++) {
 		auto str = (std::string) config["main"]["AI" + std::to_string(i + 1)].value_or("NULL");
@@ -116,7 +108,7 @@ void ApplyAIExtenderPatches() {
 
 	NyaHookLib::Patch(0x43F74E, &aCustomPlayerNames[-1]);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x43F05C, &GetCarCount);
-	GetAINames();
+	ChloeEvents::FilesystemInitEvent.AddHandler(GetAINames);
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43F403, 0x43F487); // don't init start positions
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x43F58E, &PlayerStartPositionASM);

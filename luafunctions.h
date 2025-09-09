@@ -466,7 +466,9 @@ int ChloeGarage_PurchaseCar(void* a1) {
 
 int ChloeGarage_SellCar(void* a1) {
 	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
+	auto unlocked = car->bIsUnlocked;
 	car->Clear();
+	car->bIsUnlocked = unlocked;
 	return 0;
 }
 
