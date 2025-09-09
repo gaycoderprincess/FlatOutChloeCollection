@@ -3,21 +3,13 @@ float GetCarDamage(Car* pCar) {
 	return pCar->fDamage;
 }
 
-// vanilla game uses 50.0, higher is less damage
-float fDamageMultiplier = 50.0;
 float fDerbyContactTimer[32];
-float fDerbyMaxContactTimer = 40;
+GameRules::KeyValue DerbyMaxContactTimer("ContactTimer");
 
-float fWhammoCrashVelocity1 = 10.0;
-float fPowerHitCrashVelocity1 = 20.0;
-float fBlastOutCrashVelocity1 = 35.0;
-int nRagdollPiggybagThreshold = 3000;
-int nWreckPiggybagThreshold = 5000;
-int nFlipPiggybagThreshold = 3000;
-float fCrashVelocityMultiplier = 150;
-
-float fCarDamageMultiplier = 2.0;
-float fWorldDamageMultiplier = 1.0 / 3.0;
+GameRules::KeyValue GlobalDamageScale("GlobalDamageScale");
+GameRules::KeyValue CarDamageMultiplier("CarDamageMultiplier");
+GameRules::KeyValue ObjectDamageMultiplier("ObjectDamageMultiplier");
+GameRules::KeyValue WorldDamageMultiplier("WorldDamageMultiplier");
 
 bool IsPlayerWrecked(Player* ply) {
 	if (pGameFlow->nEventType == eEventType::DERBY) return ply->pCar->nIsRagdolled;
@@ -44,7 +36,7 @@ void ProcessDerbyContactTimer() {
 		}
 
 		fDerbyContactTimer[i] += gTimer.fDeltaTime;
-		if (fDerbyContactTimer[i] >= fDerbyMaxContactTimer) {
+		if (fDerbyContactTimer[i] >= DerbyMaxContactTimer) {
 			auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
 			score->nFinishTime = pPlayerHost->nRaceTime;
 			// ragdoll ai players out if they run out of time
@@ -98,17 +90,16 @@ void ProcessCrashBonuses() {
 
 		auto& data = ply->pCar->aCarCollisions[i];
 		if (data.lastHitTimestamp > lastHitTimestamps[i]) {
-			//auto diff = opponent->pCar->GetVelocity()->Dot(*ply->pCar->GetVelocity());
-			//auto diff = ply->pCar->GetVelocity()->length() - opponent->pCar->GetVelocity()->length();
 			auto diff = data.damage;
-			diff *= fCrashVelocityMultiplier;
-			if (diff > fBlastOutCrashVelocity1) {
+			//diff /= CarDamageMultiplier;
+			diff *= CrashVelocityMultiplier;
+			if (diff > BlastOutCrashVelocity1) {
 				ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_BLASTOUT);
 			}
-			else if (diff > fPowerHitCrashVelocity1) {
+			else if (diff > PowerHitCrashVelocity1) {
 				ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_POWERHIT);
 			}
-			else if (diff > fWhammoCrashVelocity1) {
+			else if (diff > WhammoCrashVelocity1) {
 				ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_SLAM);
 			}
 			if (pGameFlow->nEventType != eEventType::RACE && !IsNitroEnabledInDerby()) {
@@ -116,12 +107,12 @@ void ProcessCrashBonuses() {
 			}
 		}
 		if (opponent->pCar->nIsRagdolled && !isRagdolled[i] && pGameFlow->nEventType != eEventType::DERBY) {
-			if (GetPlayerLastHit(i) == ply && data.lastHitTimestamp > pPlayerHost->nRaceTime - nRagdollPiggybagThreshold) {
+			if (GetPlayerLastHit(i) == ply && data.lastHitTimestamp > pPlayerHost->nRaceTime - RagdollPiggybagThreshold) {
 				ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_RAGDOLLED);
 			}
 		}
 
-		if (data.lastHitTimestamp < 0 || data.lastHitTimestamp < pPlayerHost->nRaceTime - nFlipPiggybagThreshold) {
+		if (data.lastHitTimestamp < 0 || data.lastHitTimestamp < pPlayerHost->nRaceTime - FlipPiggybagThreshold) {
 			rotateAmount[i] = 0;
 		}
 		else {
@@ -163,7 +154,7 @@ void AwardWreck(int playerId) {
 	if (!lastHitPlayer) return;
 
 	auto lastHitTimestamp = lastHitPlayer->pCar->aCarCollisions[playerId].lastHitTimestamp;
-	if (lastHitTimestamp > pPlayerHost->nRaceTime - nWreckPiggybagThreshold) {
+	if (lastHitTimestamp > pPlayerHost->nRaceTime - WreckPiggybagThreshold) {
 		ChloeEvents::CrashBonusEvent.OnHit(lastHitPlayer, CRASHBONUS_WRECKED);
 		if (lastHitPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
 			if (pGameFlow->nEventType == eEventType::RACE) Achievements::AwardAchievement(GetAchievement("WRECK_CAR_RACE"));
@@ -233,8 +224,10 @@ float GetCarDamageNew() {
 }
 
 float fCarDurability[32] = {};
+float fDamageMultiplier = 50.0;
+
 void OnCarDamage(Car* pCar) {
-	fDamageMultiplier = pGameFlow->nEventType == eEventType::DERBY ? 40.0 : 90.0;
+	fDamageMultiplier = GlobalDamageScale;
 	if (bIsFragDerby) fDamageMultiplier /= 4;
 	fDamageMultiplier *= 1 + fCarDurability[pCar->pPlayer->nPlayerId-1];
 	if (bIsInMultiplayer) {
@@ -315,7 +308,7 @@ void __attribute__((naked)) IsPlayerWreckedASM() {
 }
 
 void __fastcall WorldDamageMult(float* a1) {
-	a1[9] *= fWorldDamageMultiplier;
+	a1[9] *= WorldDamageMultiplier;
 }
 
 uintptr_t WorldDamageMultASM_jmp = 0x4B2100;
@@ -333,8 +326,19 @@ void __attribute__((naked)) WorldDamageMultASM() {
 	);
 }
 
-void __fastcall CarDamageMult(float* a1) {
-	a1[9] *= fCarDamageMultiplier;
+void __fastcall CarDamageMult(DamageData* a1) {
+	if (a1->pEntity) {
+		if (a1->pEntity->nEntityType == 4) {
+			a1->fImpactForceTaken *= CarDamageMultiplier;
+			a1->fImpactForceGiven /= CarDamageMultiplier; // fix ejection threshold
+		}
+		else {
+			a1->fImpactForceTaken *= ObjectDamageMultiplier;
+		}
+	}
+	else {
+		a1->fImpactForceTaken *= WorldDamageMultiplier;
+	}
 }
 
 void __attribute__((naked)) CarDamageMultASM() {

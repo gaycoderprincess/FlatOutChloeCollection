@@ -1,18 +1,13 @@
 namespace CarnageRace {
-	int aRacePositionMultiplier[] = {
-			5,
-			4,
-			3,
-			3,
-			2,
-			2,
-			1,
-			1,
-	};
+	GameRules::KeyValueArray RacePositionMultiplier("RacePositionMultiplier", 8);
 
-	int nSceneryCrashScore = 15;
-	int nAirtimeScore = 10;
-	int nCheckpointScore = 200;
+	GameRules::KeyValue SceneryCrashScore("SceneryCrashScore");
+	GameRules::KeyValue AirtimeScore("AirtimeScore");
+	GameRules::KeyValue CheckpointScore("CheckpointScore");
+	GameRules::KeyValue ComboMaxTime("ComboMaxTime");
+	GameRules::KeyValue ComboMaxTimeFull("ComboMaxTimeFull");
+	GameRules::KeyValue ComboMaxCount("ComboMaxCount");
+	GameRules::KeyValue CashoutNotifMaxTime("CashoutNotifMaxTime");
 
 	double fPlayerGivenTime;
 	double fCheckpointTimeBonus;
@@ -30,8 +25,6 @@ namespace CarnageRace {
 	int nPlayerScore = 0;
 	int nPlayerPosition = 0;
 
-	const double fScoreMaxTime = 4;
-	const double fScoreMaxTimeFull = 2;
 	double fScoreTimer = 0;
 
 	double fCashoutNotifTimer = 0;
@@ -64,7 +57,7 @@ namespace CarnageRace {
 		if (ply->nPosition < nPlayerPosition || aScoreHUD.empty()) {
 			nPlayerPosition = ply->nPosition;
 		}
-		fScoreTimer = fScoreMaxTime;
+		fScoreTimer = ComboMaxTime;
 
 		if (type == SCORE_SCENERY || type == SCORE_AIRTIME) {
 			for (auto& score : aScoreHUD) {
@@ -82,10 +75,10 @@ namespace CarnageRace {
 		aScoreHUD.push_back(entry);
 
 		if (aScoreHUD.size() >= 10) {
-			fScoreTimer = fScoreMaxTimeFull;
+			fScoreTimer = ComboMaxTimeFull;
 			Achievements::AwardAchievement(GetAchievement("CARNAGE_FILL_BOARD"));
 		}
-		if (aScoreHUD.size() >= 15) {
+		if (aScoreHUD.size() >= (int)ComboMaxCount) {
 			fScoreTimer = 0.5;
 		}
 	}
@@ -136,11 +129,11 @@ namespace CarnageRace {
 	void CashOutCombo() {
 		double pointsAwarded = 0;
 		for (auto& score : aScoreHUD) {
-			pointsAwarded += score.points * aRacePositionMultiplier[nPlayerPosition-1];
-			nPlayerScoresByType[score.type] += score.points * aRacePositionMultiplier[nPlayerPosition-1];
+			pointsAwarded += score.points * RacePositionMultiplier[nPlayerPosition-1];
+			nPlayerScoresByType[score.type] += score.points * RacePositionMultiplier[nPlayerPosition-1];
 		}
 		nPlayerScore += pointsAwarded;
-		fCashoutNotifTimer = fScoreMaxTime;
+		fCashoutNotifTimer = CashoutNotifMaxTime;
 		nCashoutNotifAmount = pointsAwarded;
 		aScoreHUD.clear();
 	}
@@ -155,7 +148,7 @@ namespace CarnageRace {
 		int current = 0;
 		auto ply = GetPlayer(0);
 		for (int i = 0; i < 10; i++) {
-			current += ply->pCar->aObjectsSmashed[i] * nSceneryCrashScore;
+			current += ply->pCar->aObjectsSmashed[i] * SceneryCrashScore;
 		}
 		if (current > last) {
 			AddScore(SCORE_SCENERY, "SCENERY CRASHES", current - last);
@@ -174,7 +167,7 @@ namespace CarnageRace {
 		int current = 0;
 		auto ply = GetPlayer(0);
 		if (ply->pCar->fTimeInAir >= 0.5) {
-			current = ((ply->pCar->fTimeInAir - 0.5) * 10) * nAirtimeScore;
+			current = ((ply->pCar->fTimeInAir - 0.5) * 10) * AirtimeScore;
 		}
 		else {
 			current = 0;
@@ -205,7 +198,7 @@ namespace CarnageRace {
 
 		auto current = GetPlayer(0)->nCurrentSplit / nCheckpointInterval;
 		if (current > last) {
-			AddScore(SCORE_CHECKPOINT, "CHECKPOINT!", nCheckpointScore);
+			AddScore(SCORE_CHECKPOINT, "CHECKPOINT!", CheckpointScore);
 			OnCheckpointPassed();
 		}
 		last = current;
@@ -333,7 +326,7 @@ namespace CarnageRace {
 
 			int id = 0;
 			if (!aScoreHUD.empty()) {
-				DrawScoreHUDEntry(id++, std::format("POSITION ({})", GetNthString(nPlayerPosition)), std::format("{}X", aRacePositionMultiplier[nPlayerPosition-1]));
+				DrawScoreHUDEntry(id++, std::format("POSITION ({})", GetNthString(nPlayerPosition)), std::format("{}X", (int)RacePositionMultiplier[nPlayerPosition-1]));
 			}
 			else if (fCashoutNotifTimer > 0) {
 				DrawScoreHUDEntry(id++, "TOTAL", std::format("+{}", nCashoutNotifAmount));

@@ -14,7 +14,7 @@ public:
 		if (pGameFlow->nEventType != eEventType::DERBY) return;
 		if (bIsFragDerby) return;
 
-		auto timer = fDerbyMaxContactTimer - fDerbyContactTimer[0];
+		auto timer = DerbyMaxContactTimer - fDerbyContactTimer[0];
 		DrawElement(1, "CONTACT TIMER", GetContactTimerString(timer * 1000));
 	}
 } HUD_ContactTimer;

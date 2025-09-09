@@ -410,8 +410,23 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gHighScore", HUD_RaceResults.gHighScore, true);
 	//QuickValueEditor("gScoreBreakdown", HUD_RaceResults.gScoreBreakdown, false);
 	//QuickValueEditor("gScoreTypes", HUD_RaceResults.gScoreTypes, true);
-	QuickValueEditor("fCarDamageMultiplier", fCarDamageMultiplier);
-	QuickValueEditor("fWorldDamageMultiplier", fWorldDamageMultiplier);
+	QuickValueEditor("fCarDamageMultiplier", CarDamageMultiplier.value);
+	QuickValueEditor("fWorldDamageMultiplier", WorldDamageMultiplier.value);
+
+	if (DrawMenuOption("Game Rules")) {
+		ChloeMenuLib::BeginMenu();
+
+		for (auto& rule : GameRules::KeyValue::aKeyValues) {
+			DrawDebugMenuViewerOption(std::format("{} - {}", rule->key, rule->value));
+		}
+		for (auto& rule : GameRules::KeyValueArray::aKeyValues) {
+			for (int i = 0; i < rule->count; i++) {
+				DrawDebugMenuViewerOption(std::format("{}[{}] - {}", rule->key, i+1, rule->values[i]));
+			}
+		}
+
+		ChloeMenuLib::EndMenu();
+	}
 
 	if (DrawMenuOption("Playtime Stats")) {
 		ChloeMenuLib::BeginMenu();

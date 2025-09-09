@@ -75,7 +75,7 @@ NyaMat4x4* GetClosestResetpoint(Player* player, NyaVec3 pos, int split, float ma
 double fCarResetFadeTimer[nMaxSplitscreenPlayers] = {};
 bool bCarResetRequested[nMaxSplitscreenPlayers] = {};
 
-float fCarResetSpeed = 15;
+GameRules::KeyValue CarResetSpeed("CarResetSpeed");
 
 void ProcessCarReset(int player, float delta) {
 	if (player > 0 && !IsInSplitScreen()) return;
@@ -105,9 +105,7 @@ void ProcessCarReset(int player, float delta) {
 				if (player == 0 && pPlayerResetpoint) {
 					Car::Reset(ply->pCar, &pPlayerResetpoint->p.x, &pPlayerResetpoint->x.x);
 				}
-				if (pGameFlow->nEventType != eEventType::DERBY) {
-					*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * fCarResetSpeed;
-				}
+				*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * CarResetSpeed;
 				ChloeEvents::PlayerResetEvent.OnHit(ply);
 			}
 			bCarResetRequested[player] = false;

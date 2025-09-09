@@ -20,6 +20,7 @@
 #include "mallochook.h"
 #include "events.h"
 #include "filereader.h"
+#include "gamerules.h"
 #include "customsave.h"
 #include "cardealer.h"
 #include "achievements.h"
@@ -211,6 +212,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			FragDerby::Init();
 			Achievements::Init();
 			NewIngameMenu::Init();
+			GameRules::Init();
 			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
 			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
 			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
