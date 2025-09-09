@@ -177,6 +177,10 @@ void __stdcall OnMapPreLoad(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	return OnMapPreLoad_call(a1, a2, a3, a4, a5, a6, a7, a8, a9);
 }
 
+void ClearD3D() {
+	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);
+}
+
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
@@ -186,6 +190,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 			NyaFO2Hooks::PlaceWndProcHook();
 			NyaFO2Hooks::aWndProcFuncs.push_back(WndProcHook);
+			NyaFO2Hooks::aPostPresentFuncs.push_back(ClearD3D);
 
 			//HookMalloc();
 			ApplyBFSLoadingPatches();

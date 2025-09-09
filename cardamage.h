@@ -228,7 +228,6 @@ float fDamageMultiplier = 50.0;
 
 void OnCarDamage(Car* pCar) {
 	fDamageMultiplier = GlobalDamageScale;
-	if (bIsFragDerby) fDamageMultiplier /= 4;
 	fDamageMultiplier *= 1 + fCarDurability[pCar->pPlayer->nPlayerId-1];
 	if (bIsInMultiplayer) {
 		if (fMultiplayerDamageLevel > 0) {
@@ -329,15 +328,15 @@ void __attribute__((naked)) WorldDamageMultASM() {
 void __fastcall CarDamageMult(DamageData* a1) {
 	if (a1->pEntity) {
 		if (a1->pEntity->nEntityType == 4) {
-			a1->fImpactForceTaken *= CarDamageMultiplier;
-			a1->fImpactForceGiven /= CarDamageMultiplier; // fix ejection threshold
+			a1->fImpactForce *= CarDamageMultiplier;
+			a1->fImpactForce2 /= CarDamageMultiplier; // fix ejection threshold
 		}
 		else {
-			a1->fImpactForceTaken *= ObjectDamageMultiplier;
+			a1->fImpactForce *= ObjectDamageMultiplier;
 		}
 	}
 	else {
-		a1->fImpactForceTaken *= WorldDamageMultiplier;
+		a1->fImpactForce *= WorldDamageMultiplier;
 	}
 }
 

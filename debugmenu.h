@@ -410,8 +410,6 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gHighScore", HUD_RaceResults.gHighScore, true);
 	//QuickValueEditor("gScoreBreakdown", HUD_RaceResults.gScoreBreakdown, false);
 	//QuickValueEditor("gScoreTypes", HUD_RaceResults.gScoreTypes, true);
-	QuickValueEditor("fCarDamageMultiplier", CarDamageMultiplier.value);
-	QuickValueEditor("fWorldDamageMultiplier", WorldDamageMultiplier.value);
 
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();
