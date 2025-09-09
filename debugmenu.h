@@ -410,6 +410,8 @@ void ProcessDebugMenu() {
 	//QuickValueEditor("gHighScore", HUD_RaceResults.gHighScore, true);
 	//QuickValueEditor("gScoreBreakdown", HUD_RaceResults.gScoreBreakdown, false);
 	//QuickValueEditor("gScoreTypes", HUD_RaceResults.gScoreTypes, true);
+	QuickValueEditor("fCarDamageMultiplier", fCarDamageMultiplier);
+	QuickValueEditor("fWorldDamageMultiplier", fWorldDamageMultiplier);
 
 	if (DrawMenuOption("Playtime Stats")) {
 		ChloeMenuLib::BeginMenu();
@@ -674,6 +676,7 @@ void ProcessDebugMenu() {
 		DrawDebugMenuViewerOption(std::format("Player Score Pointer - {:X}", (uintptr_t)GetPlayerScore<PlayerScoreRace>(1)));
 		auto plyPos = ply->pCar->GetMatrix()->p;
 		DrawDebugMenuViewerOption(std::format("Player Position - {:.1f} {:.1f} {:.1f}", plyPos.x, plyPos.y, plyPos.z));
+		DrawDebugMenuViewerOption(std::format("Player Health - {:.1f}", 1.0 - ply->pCar->fDamage));
 		DrawDebugMenuViewerOption(std::format("Race Time - {}", pPlayerHost->nRaceTime));
 		if (auto reset = pPlayerResetpoint) {
 			DrawDebugMenuViewerOption(std::format("Closest Resetpoint - {:.1f}m", (reset->p - ply->pCar->GetMatrix()->p).length()));

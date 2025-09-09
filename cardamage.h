@@ -16,6 +16,9 @@ int nWreckPiggybagThreshold = 5000;
 int nFlipPiggybagThreshold = 3000;
 float fCrashVelocityMultiplier = 150;
 
+float fCarDamageMultiplier = 2.0;
+float fWorldDamageMultiplier = 1.0 / 3.0;
+
 bool IsPlayerWrecked(Player* ply) {
 	if (pGameFlow->nEventType == eEventType::DERBY) return ply->pCar->nIsRagdolled;
 	if (GetCarDamage(ply->pCar) < 1.0) return false;
@@ -311,6 +314,42 @@ void __attribute__((naked)) IsPlayerWreckedASM() {
 	);
 }
 
+void __fastcall WorldDamageMult(float* a1) {
+	a1[9] *= fWorldDamageMultiplier;
+}
+
+uintptr_t WorldDamageMultASM_jmp = 0x4B2100;
+void __attribute__((naked)) WorldDamageMultASM() {
+	__asm__ (
+		"mov edx, [esp+0xC4]\n\t"
+		"mov [eax+0x34], edx\n\t"
+		"pushad\n\t"
+		"mov ecx, eax\n\t"
+		"call %1\n\t"
+		"popad\n\t"
+		"jmp %0\n\t"
+			:
+			:  "m" (WorldDamageMultASM_jmp), "i" (WorldDamageMult)
+	);
+}
+
+void __fastcall CarDamageMult(float* a1) {
+	a1[9] *= fCarDamageMultiplier;
+}
+
+void __attribute__((naked)) CarDamageMultASM() {
+	__asm__ (
+		"mov [eax+0x34], ecx\n\t"
+		"pushad\n\t"
+		"mov ecx, eax\n\t"
+		"call %0\n\t"
+		"popad\n\t"
+		"ret\n\t"
+			:
+			:  "i" (CarDamageMult)
+	);
+}
+
 void ApplyCarDamagePatches() {
 	uintptr_t addresses[] = {
 		0x4078F0,
@@ -334,6 +373,9 @@ void ApplyCarDamagePatches() {
 	NyaHookLib::Patch<uint8_t>(0x452B7F, 0xEB); // remove stupid slowmo feature when ragdolled
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4166AA, &IsPlayerWreckedASM);
+
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4B20F6, &WorldDamageMultASM);
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x428DC9, &CarDamageMultASM);
 
 	NyaHookLib::Patch(0x416748 + 2, -100); // minimum crash bonus interval, default -500
 
