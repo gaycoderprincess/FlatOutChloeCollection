@@ -1,10 +1,3 @@
-int GetHandlingMode() {
-	int handlingMode = nHandlingMode;
-	if (CareerMode::IsCareerTimeTrial()) handlingMode = HANDLING_NORMAL;
-	if (bIsInMultiplayer) handlingMode = nMultiplayerHandlingMode;
-	return handlingMode;
-}
-
 float fCarnageModeMassFudge = 0.75;
 float fFragDerbyMassFudge = 0.5;
 
@@ -257,8 +250,8 @@ void __fastcall LoadCarBody(Car* car) {
 
 	auto body = &car->Body;
 
-	const char* steerBalanceFactor = nHandlingMode == HANDLING_PROFESSIONAL && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL ? "ProSteerBalanceFactor" : "SteerBalanceFactor";
-	const char* steerBalanceRate = nHandlingMode == HANDLING_PROFESSIONAL && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL ? "ProSteerBalanceRate" : "SteerBalanceRate";
+	const char* steerBalanceFactor = GetHandlingMode() == HANDLING_PROFESSIONAL && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL ? "ProSteerBalanceFactor" : "SteerBalanceFactor";
+	const char* steerBalanceRate = GetHandlingMode() == HANDLING_PROFESSIONAL && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL ? "ProSteerBalanceRate" : "SteerBalanceRate";
 	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceFactor, "Body", steerBalanceFactor, 3);
 	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceRate, "Body", steerBalanceRate, 3);
 	CAR_PERFORMANCE_TUNE(body->fArcadeBrakePower, "Body", "Body_Max", "BrakePower", tuning.fBrakePower);

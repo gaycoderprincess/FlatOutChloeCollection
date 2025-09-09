@@ -31,6 +31,7 @@
 #include "carreset.h"
 #include "arcademode.h"
 #include "careermode.h"
+#include "handlingmode.h"
 #include "cardatabase.h"
 #include "aiextender.h"
 #include "ddsparser.h"
@@ -77,21 +78,6 @@ void SetHandlingDamage() {
 	}
 }
 
-void SetHandlingMode() {
-	int handlingMode = nHandlingMode;
-	if (CareerMode::IsCareerTimeTrial()) handlingMode = HANDLING_NORMAL;
-	if (bIsArcadeMode && handlingMode == HANDLING_HARDCORE) handlingMode = HANDLING_NORMAL;
-	if (bIsInMultiplayer) handlingMode = nMultiplayerHandlingMode;
-
-	static int nLast = -1;
-	if (nLast != handlingMode) {
-		NyaHookLib::Patch<uint64_t>(0x418B39, handlingMode == HANDLING_HARDCORE ? 0x86D9900000038DE9 : 0x86D90000038C840F);
-		NyaHookLib::Patch<uint64_t>(0x419211, handlingMode == HANDLING_HARDCORE ? 0x44D990000003D7E9 : 0x44D9000003D6850F);
-		nLast = handlingMode;
-	}
-	pGameFlow->Profile.nEasyDifficulty = handlingMode == HANDLING_NORMAL;
-}
-
 // make engine fire always correspond to player health
 void SetEngineDamage() {
 	if (pLoadingScreen) return;
@@ -107,6 +93,7 @@ void SetEngineDamage() {
 
 void CustomSetterThread() {
 	pGameFlow->nAutoTransmission = !nTransmission;
+	pGameFlow->Profile.nEasyDifficulty = GetHandlingMode() == HANDLING_NORMAL;
 	nRagdoll = 1;
 
 	SetHandlingDamage();
@@ -216,6 +203,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyAIExtenderPatches();
 			ApplyDraw3DPatches();
 			ApplyTrackExtenderPatches();
+			ApplyHandlingModePatches();
 			CareerMode::Init();
 			ArcadeMode::Init();
 			CarnageRace::Init();
