@@ -6,7 +6,7 @@ void __thiscall GetProjectionMatrix(float* pThis, float* a2) {
 
 bool IsBehindCamera(NyaVec3 pos)
 {
-	// Time for my own bit of dumb code -zw
+	// TODO: Find a better way to get the camera direction vector -zw
 	auto camMat = pCameraManager->pCamera->GetMatrix();
 	auto camDir = *camMat * NyaVec4(0, 0, 1, 0);
 
