@@ -270,11 +270,15 @@ void ProcessDebugMenu() {
 		ChloeMenuLib::BeginMenu();
 
 		for (auto& rule : GameRules::KeyValue::aKeyValues) {
-			DrawDebugMenuViewerOption(std::format("{} - {}", rule->key, rule->value));
+			if (DrawMenuOption(std::format("{} - {}", rule->key, rule->value))) {
+				if (!bIsInMultiplayer) ValueEditorMenu(rule->value);
+			}
 		}
 		for (auto& rule : GameRules::KeyValueArray::aKeyValues) {
 			for (int i = 0; i < rule->count; i++) {
-				DrawDebugMenuViewerOption(std::format("{}[{}] - {}", rule->key, i+1, rule->values[i]));
+				if (DrawMenuOption(std::format("{}[{}] - {}", rule->key, i+1, rule->values[i]))) {
+					if (!bIsInMultiplayer) ValueEditorMenu(rule->values[i]);
+				}
 			}
 		}
 

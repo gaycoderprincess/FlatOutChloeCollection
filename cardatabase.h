@@ -1,5 +1,4 @@
-float fCarnageModeMassFudge = 0.75;
-float fFragDerbyMassFudge = 0.5;
+GameRules::KeyValue PlayerVsAIMassFudgeFactor("PlayerVsAIMassFudgeFactor");
 
 toml::table GetCarPerformanceTable(int id) {
 	return ReadTOMLFromBfs(std::format("data/database/cars/car{}.toml", GetDealerCar(id)->performanceId));
@@ -284,14 +283,8 @@ void __fastcall LoadCarBody(Car* car) {
 	CAR_PERFORMANCE(body->nRearTraction, "Body", "RearTraction");
 	CAR_PERFORMANCE_TUNE(fCarDurability[car->pPlayer->nPlayerId-1], "Body", "Body_Max", "Durability", tuning.fDurability);
 
-	if (!bIsInMultiplayer) {
-		if (bIsCarnageRace && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
-			body->fMass *= fCarnageModeMassFudge;
-		}
-
-		if (bIsFragDerby && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
-			body->fMass *= fFragDerbyMassFudge;
-		}
+	if (!bIsInMultiplayer && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
+		body->fMass *= PlayerVsAIMassFudgeFactor;
 	}
 
 	body->fTireTurnAngleIn *= 0.017453292;
