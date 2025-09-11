@@ -6,7 +6,7 @@ public:
 	}
 
 	static inline float fPlayerHealthIconOffset = 1.3;
-	static inline float fPlayerHealthIconSize = 0.17;
+	static inline float fPlayerHealthIconSize = 0.017;
 	static inline float fPlayerHealthIconMinSize = 0.01;
 	static void DrawPlayerHealthIcon(Player* ply) {
 		if (ply->nIsRagdolled) return;
@@ -15,11 +15,14 @@ public:
 		static auto tex = LoadTextureFromBFS("data/global/overlay/derby_health_indicator.png");
 
 		auto mat = *ply->pCar->GetMatrix();
+
 		auto yUp = mat.y;
 		if (yUp.y < 0) yUp *= -1;
 		mat.p += yUp * fPlayerHealthIconOffset;
+
+		if (IsBehindCamera(mat.p)) return;
+
 		auto drawPos = Get3DTo2D(mat.p);
-		if (drawPos.z <= 0) return;
 
 		NyaDrawing::CNyaRGBA32 color = {255,255,255,255};
 		auto damage = ply->pCar->GetDerbyDamage();
@@ -42,7 +45,7 @@ public:
 	}
 
 	static inline float fPlayerIconOffset = 1.7;
-	static inline float fPlayerIconSize = 0.25;
+	static inline float fPlayerIconSize = 0.05;
 	static void DrawPlayerIcon(const std::string& icon, Player* ply) {
 		static auto tex = LoadTextureFromBFS("data/global/overlay/frag_derby_symbols.png");
 		static auto texData = LoadHUDData("data/global/overlay/frag_derby_symbols.bed", "frag_derby_symbols");
@@ -52,8 +55,10 @@ public:
 		if (yUp.y < 0) yUp *= -1;
 		mat.p += yUp * fPlayerHealthIconOffset;
 		mat.p.y += fPlayerIconOffset - fPlayerHealthIconOffset;
+
+		if (IsBehindCamera(mat.p)) return;
+
 		auto drawPos = Get3DTo2D(mat.p);
-		if (drawPos.z <= 0) return;
 
 		float fSize = fPlayerIconSize / drawPos.z;
 		auto symbol = GetHUDData(texData, icon);
