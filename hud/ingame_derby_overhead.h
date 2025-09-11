@@ -45,7 +45,7 @@ public:
 	}
 
 	static inline float fPlayerIconOffset = 1.7;
-	static inline float fPlayerIconSize = 0.05;
+	static inline float fPlayerIconSize = 0.25;
 	static void DrawPlayerIcon(const std::string& icon, Player* ply) {
 		static auto tex = LoadTextureFromBFS("data/global/overlay/frag_derby_symbols.png");
 		static auto texData = LoadHUDData("data/global/overlay/frag_derby_symbols.bed", "frag_derby_symbols");

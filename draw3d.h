@@ -4,7 +4,7 @@ void __thiscall GetProjectionMatrix(float* pThis, float* a2) {
 	FO2MatrixInvert(pThis, a2);
 }
 
-bool IsBehindCamera(NyaVec3 pos)
+bool IsBehindCamera(const NyaVec3& pos)
 {
 	// TODO: Find a better way to get the camera direction vector -zw
 	auto camMat = pCameraManager->pCamera->GetMatrix();
@@ -13,7 +13,7 @@ bool IsBehindCamera(NyaVec3 pos)
 	auto fromCamToPos = pos - camMat->p;
 	fromCamToPos.Normalize();
 
-	return fromCamToPos.Dot(NyaVec3(camDir.x, camDir.y, camDir.z)) < 0.0;
+	return fromCamToPos.Dot(camDir) < 0.05;
 }
 
 
@@ -22,20 +22,19 @@ NyaVec3 Get3DTo2D(NyaVec3 pos) {
 	auto cam = pCameraManager->pCamera;
 	if (!cam) return {0,0,0};
 	auto mat = *cam->GetMatrix();
-	mat = mat.Invert();
+	mat = mat.FastInvert();
 	auto proj = mProjectionMatrix;
 	auto out = (proj * mat * NyaVec4(pos, 1));
 
 	out.x /= out.w;
 	out.y /= out.w;
-	out.z /= out.w;
 
 	out.x *= 0.5;
 	out.y *= -0.5;
 
 	out.x += 0.5;
 	out.y += 0.5;
-	return NyaVec3(out.x, out.y, out.z);
+	return out;
 }
 
 void ApplyDraw3DPatches() {
