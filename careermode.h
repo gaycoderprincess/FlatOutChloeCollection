@@ -204,7 +204,11 @@ namespace CareerMode {
 
 				// unlock next class after finals are done
 				if (gCustomSave.nCareerCup == 64 && gCustomSave.nCareerClass < 4) {
-					if (cup->nPosition == 1 && pGameFlow->Profile.nCarType + 1 == CAR_PEPPER && !gCustomSave.aCareerGarage[CAR_PEPPER].IsAnyUpgradePurchased()) {
+					bool stockPep = true;
+					for (int i = 0; i < GetCurrentCup()->aRaces.size(); i++) {
+						if (!gCustomSave.aCareerCupPlayers[0].IsStockPep(i)) stockPep = false;
+					}
+					if (cup->nPosition == 1 && stockPep) {
 						Achievements::AwardAchievement(GetAchievement("WIN_CUP_PEPPER"));
 					}
 					//if (!gCustomSave.bCareerClassUnlocked[gCustomSave.nCareerClass]) {
@@ -301,6 +305,7 @@ namespace CareerMode {
 			}
 			player->points += player->eventPoints[eventNumber];
 		}
+		gCustomSave.aCareerCupPlayers[0].SetStockPep(eventNumber, pGameFlow->Profile.nCarType + 1 == CAR_PEPPER && !gCustomSave.aCareerGarage[CAR_PEPPER].IsAnyUpgradePurchased());
 		gCustomSave.CalculateCupPlayersByPosition();
 		OnRaceFinished();
 		if (gCustomSave.nCareerCupNextEvent >= GetCurrentCup()->aRaces.size()) {

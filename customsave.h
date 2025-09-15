@@ -113,9 +113,24 @@ struct tCustomSaveStructure {
 	uint8_t nCareerCupNextEvent;
 	int8_t nCareerEvent;
 	struct tCareerCupPlayer {
-		int points;
+		uint16_t points;
+		uint8_t eventStockPep[2];
 		int eventPosition[nNumCareerEventsPerCup];
 		int eventPoints[nNumCareerEventsPerCup];
+
+		bool IsStockPep(int eventId) {
+			uint32_t bit = 1 << (eventId % 8);
+			return (eventStockPep[eventId / 8] & bit) != 0;
+		}
+		void SetStockPep(int eventId, bool set) {
+			uint32_t bit = 1 << (eventId % 8);
+			if (set) {
+				eventStockPep[eventId / 8] |= bit;
+			}
+			else {
+				eventStockPep[eventId / 8] &= ~bit;
+			}
+		}
 	} aCareerCupPlayers[nNumCareerMaxPlayers];
 	int nGameCompletion;
 	int nCupsPassed;
