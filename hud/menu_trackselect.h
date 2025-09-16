@@ -207,6 +207,13 @@ public:
 		return !DoesTrackValueExist(level, "NoAI");
 	}
 
+	bool DoesEventHaveAI() {
+		if (aOptions == aOptionsTimeTrial) return false;
+		if (bSplitScreen) return false;
+		if (IsMultiplayerMenu() && nMultiplayerAICount <= 0) return false;
+		return true;
+	}
+
 	struct tTrackEntry {
 		int level;
 		bool reversed;
@@ -215,7 +222,7 @@ public:
 		std::vector<tTrackEntry> aTracks;
 		for (int i = 1; i < GetNumTracks()+1; i++) {
 			if (!DoesTrackExist(i)) continue;
-			if (aOptions != aOptionsTimeTrial && !bSplitScreen && !IsMultiplayerMenu() && !DoesTrackSupportAI(i)) continue;
+			if (DoesEventHaveAI() && !DoesTrackSupportAI(i)) continue;
 			if (GetTrackValueNumber(i, "TrackType") == nTrackType) {
 				aTracks.push_back({i, false});
 			}
@@ -349,12 +356,12 @@ public:
 		nTimeTrialProps = nTimeTrialProps == 1 || nTimeTrialProps == -1;
 		nTimeTrial3LapMode = nTimeTrial3LapMode == 1 || nTimeTrial3LapMode == -1;
 
-		if (aOptions != aOptionsTimeTrial && !bSplitScreen && !DoesTrackSupportReversing(GetTrackId())) nTrackReversed = 0;
+		if (DoesEventHaveAI() && !DoesTrackSupportReversing(GetTrackId())) nTrackReversed = 0;
 	}
 
 	bool IsOptionValid(int option) {
 		if (aOptions[option].name.empty()) return false;
-		if (aOptions != aOptionsTimeTrial && aOptions[option].value == &nTrackReversed && !DoesTrackSupportReversing(GetTrackId())) return false;
+		if (DoesEventHaveAI() && aOptions[option].value == &nTrackReversed && !DoesTrackSupportReversing(GetTrackId())) return false;
 		if (nGameType != GAMETYPE_RACE && nGameType != GAMETYPE_DERBY_WRECKING && nGameType != GAMETYPE_DERBY_FRAG) {
 			if (aOptions[option].value == &nNitro) return false;
 			if (aOptions[option].value == &nMultiplayerNitro) return false;
