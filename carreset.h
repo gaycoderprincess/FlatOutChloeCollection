@@ -80,6 +80,10 @@ GameRules::KeyValue CarResetSpeed("CarResetSpeed");
 void ProcessCarReset(int player, float delta) {
 	if (player > 0 && !IsInSplitScreen()) return;
 
+	if (NewResetMap::ShouldReset(GetPlayer(player))) {
+		bCarResetRequested[player] = true;
+	}
+
 	if (!bCarResetRequested[player] && fCarResetFadeTimer[player] <= 0) return;
 	if (pLoadingScreen || GetGameState() != GAME_STATE_RACE) {
 		fCarResetFadeTimer[player] = 0;

@@ -47,3 +47,30 @@ toml::table ReadTOMLFromBfs(const std::string& path) {
 	}
 	return {};
 }
+
+// simple hacks for simple lua files to load as toml, e.g. resetmap.bed
+toml::table ReadTOMLFromBfsLUAHack(const std::string& path) {
+	size_t size = 0;
+	auto file = (char*)ReadFileFromBfs(path.c_str(), size);
+	if (!file || !size) return {};
+
+	for (int i = 0; i < size; i++) {
+		if (file[i] == '{') file[i] = '[';
+		if (file[i] == '}') file[i] = ']';
+	}
+
+	if (file[size-2] == '\r') file[size-2]=0;
+	file[size-1]=0;
+
+	std::stringstream ss;
+	ss << file;
+	delete[] file;
+
+	try {
+		return toml::parse(ss);
+	}
+	catch (const toml::parse_error& err) {
+		MessageBoxA(0, std::format("Failed to parse {}: {}", path, err.what()).c_str(), "Fatal error", MB_ICONERROR);
+	}
+	return {};
+}

@@ -1,5 +1,12 @@
 int nDrawingGameUILayer = -1;
 void HookLoop() {
+	DrawCallback([](const ImDrawList* parent_list, const ImDrawCmd* cmd) {
+		//g_pd3dDevice->SetRenderState(D3DRS_WRAP0, 0);
+		g_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+		g_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+		g_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSW, D3DTADDRESS_CLAMP);
+	}, false);
+
 	if (nDrawingGameUILayer >= 0) {
 		ChloeEvents::DrawRaceUIEvent.OnHit(nDrawingGameUILayer);
 		bDontRefreshInputsThisLoop = true;

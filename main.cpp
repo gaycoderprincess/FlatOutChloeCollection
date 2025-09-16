@@ -29,6 +29,7 @@
 #include "cardamage.h"
 #include "carlimitadjuster.h"
 #include "trackextender.h"
+#include "resetmap.h"
 #include "carreset.h"
 #include "arcademode.h"
 #include "careermode.h"
@@ -234,6 +235,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			Achievements::Init();
 			NewIngameMenu::Init();
 			GameRules::Init();
+			NewResetMap::Init();
 			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
 			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
 			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
