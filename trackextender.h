@@ -73,7 +73,7 @@ void SetTrackReversed(bool apply) {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x402669, &GetBorderLineRightIDReversed);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4027FE, &GetBorderLineLeftIDReversed);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x40282A, &GetBorderLineLeftIDReversed);
-	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4011E4, apply ? 0x402BB0 : 0x4028D0); // disable sectors.ai
+	NyaHookLib::Patch(0x402942 + 1, apply ? "data/sectors_reversed.ai" : "data/sectors.ai");
 	NyaHookLib::Patch(0x4026C8 + 1, apply ? "AIBorderLineRight" : "AIBorderLineLeft");
 	NyaHookLib::Patch(0x402762 + 1, apply ? "AIBorderLineRight" : "AIBorderLineLeft");
 	NyaHookLib::Patch(0x40254F + 1, apply ? "AIBorderLineLeft" : "AIBorderLineRight");

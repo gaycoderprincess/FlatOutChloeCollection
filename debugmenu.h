@@ -269,11 +269,11 @@ void WriteSectors() {
 	std::ofstream fout((std::string)GetTrackName(pGameFlow->nLevel) + "_sectors.ai", std::ios::out);
 	if (!fout.is_open()) return;
 
-	fout << "Count = ";
+	fout << "SectorCount = ";
 	fout << pTrackAI->nNumSectors;
 	fout << "\n\nSectors = {";
 	for (int i = 0; i < pTrackAI->nNumSectors; i++) {
-		fout << std::format("\n\t[{}] = {{ SpeedLimit = {} }},", i + 1, pTrackAI->aSectors[i].fSpeedLimit - fSectorLeniency);
+		fout << std::format("\n\t[{}] = {{ SpeedLimit = {:.0f} }},", i + 1, pTrackAI->aSectors[i].fSpeedLimit - fSectorLeniency);
 	}
 	fout << "\n}";
 }
