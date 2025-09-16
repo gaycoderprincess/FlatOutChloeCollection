@@ -54,7 +54,7 @@ namespace NewResetMap {
 		bResetMapValid = true;
 	}
 
-	void OnTick() {
+	void CheckOutOfTrack() {
 		if (!bResetMapValid) return;
 		if (pLoadingScreen) return;
 		if (GetGameState() != GAME_STATE_RACE) return;
@@ -73,6 +73,5 @@ namespace NewResetMap {
 		VirtualProtect(aGetResetmapValue, sizeof(aGetResetmapValue), PAGE_EXECUTE_READWRITE, &oldProt);
 
 		ChloeEvents::MapLoadEvent.AddHandler(OnMapLoad);
-		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 	}
 }

@@ -121,6 +121,8 @@ void ProcessCarReset(int player, float delta) {
 }
 
 void ProcessCarReset() {
+	if (!aNewResetPoints.empty()) NewResetMap::CheckOutOfTrack();
+
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();
 
