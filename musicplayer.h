@@ -26,6 +26,7 @@ namespace NewMusicPlayer {
 		bool bFinished = false;
 		bool bAlreadyPlayed = false;
 		bool bIsFromFile = false;
+		bool bDisabled = false;
 
 		void Load(bool loadStreams) {
 			WriteLogDebug("MUSIC", std::format("Loading song {} - {}", sArtist, sTitle));
@@ -116,12 +117,26 @@ namespace NewMusicPlayer {
 		std::wstring wsName;
 		std::vector<tSong> aSongs;
 
+		int GetNumSongsEnabled() {
+			int count = 0;
+			for (auto& song : aSongs) {
+				if (song.bDisabled) continue;
+				count++;
+			}
+			return count;
+		}
+
+		bool IsEmpty() {
+			return GetNumSongsEnabled() <= 0;
+		}
+
 		tSong* GetNextSong() {
-			if (aSongs.empty()) return nullptr;
+			if (IsEmpty()) return nullptr;
 
 			std::vector<tSong*> songs;
 			for (auto& song : aSongs) {
 				if (song.bAlreadyPlayed) continue;
+				if (song.bDisabled) continue;
 				songs.push_back(&song);
 			}
 
@@ -151,6 +166,9 @@ namespace NewMusicPlayer {
 	tPlaylist* pPlaylistIngame = nullptr;
 	tPlaylist* pPlaylistDerby = nullptr;
 	tPlaylist* pPlaylistStunt = nullptr;
+
+	tPlaylist* pPlaylistCustomTitle = nullptr;
+	tPlaylist* pPlaylistCustomIngame = nullptr;
 
 	tPlaylist* pCurrentPlaylist = nullptr;
 	tSong* pCurrentSong = nullptr;
@@ -200,7 +218,7 @@ namespace NewMusicPlayer {
 			else pCurrentPlaylist = pPlaylistIngame;
 		}
 
-		if (!pCurrentPlaylist || pCurrentPlaylist->aSongs.empty()) return;
+		if (!pCurrentPlaylist || pCurrentPlaylist->IsEmpty()) return;
 
 		if (GetGameState() == GAME_STATE_MENU) {
 			nMusicPopupTimeOffset = 0;
@@ -230,7 +248,7 @@ namespace NewMusicPlayer {
 		}
 		if (!pCurrentSong && GetMusicVolume() > 0) {
 			pCurrentSong = pCurrentPlaylist->GetNextSong();
-			while (pCurrentPlaylist->aSongs.size() > 1 && pCurrentSong == pLastSong) {
+			while (pCurrentPlaylist->GetNumSongsEnabled() > 1 && pCurrentSong == pLastSong) {
 				pCurrentSong = pCurrentPlaylist->GetNextSong();
 			}
 			pCurrentSong->Play();
@@ -263,6 +281,7 @@ namespace NewMusicPlayer {
 			if (song.sPath.empty()) continue;
 			if (song.sArtist.empty()) continue;
 			if (song.sTitle.empty()) continue;
+			std::transform(song.sPath.begin(), song.sPath.end(), song.sPath.begin(), [](wchar_t c){ return std::tolower(c); });
 			out->aSongs.push_back(song);
 		}
 		return !out->aSongs.empty();
@@ -304,6 +323,40 @@ namespace NewMusicPlayer {
 			WriteLogDebug("MUSIC", std::format("Adding stunt playlist {} with {} songs", GetStringNarrow(playlist.wsName.c_str()), playlist.aSongs.size()));
 			aPlaylistsStunt.push_back(playlist);
 		}
+
+		/*tPlaylist custom;
+		custom.wsName = L"CHLOE TRAX";
+		aPlaylistsTitle.push_back(custom);
+		aPlaylistsIngame.push_back(custom);
+
+		pPlaylistCustomTitle = &aPlaylistsTitle[aPlaylistsTitle.size()-1];
+		pPlaylistCustomIngame = &aPlaylistsIngame[aPlaylistsIngame.size()-1];
+
+		for (auto& playlist : aPlaylistsTitle) {
+			if (&playlist == pPlaylistCustomTitle) continue;
+
+			for (auto& song : playlist.aSongs) {
+				bool found = false;
+				for (auto& customSong : pPlaylistCustomTitle->aSongs) {
+					if (customSong.sPath == song.sPath) found = true;
+				}
+				if (found) continue;
+				pPlaylistCustomTitle->aSongs.push_back(song);
+			}
+		}
+		for (auto& playlist : aPlaylistsIngame) {
+			if (&playlist == pPlaylistCustomIngame) continue;
+
+			for (auto& song : playlist.aSongs) {
+				bool found = false;
+				for (auto& customSong : pPlaylistCustomIngame->aSongs) {
+					if (customSong.sPath == song.sPath) found = true;
+				}
+				if (found) continue;
+				pPlaylistCustomIngame->aSongs.push_back(song);
+			}
+		}*/
+
 		if (defaultMenu < 0 || defaultMenu >= aPlaylistsTitle.size()) defaultMenu = 0;
 		if (defaultStunt < 0 || defaultStunt >= aPlaylistsStunt.size()) defaultStunt = 0;
 		if (defaultIngame < 0 || defaultIngame >= aPlaylistsIngame.size()) defaultIngame = 0;

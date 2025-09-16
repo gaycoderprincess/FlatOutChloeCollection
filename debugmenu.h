@@ -263,6 +263,20 @@ void WriteStartpoints() {
 	fout << "\n}";
 }
 
+void PlaylistEditorMenu(const std::string& name, NewMusicPlayer::tPlaylist* playlist) {
+	if (DrawMenuOption(name)) {
+		ChloeMenuLib::BeginMenu();
+
+		for (auto& song : playlist->aSongs) {
+			if (DrawMenuOption(std::format("{} - {} - {}", song.sArtist, song.sTitle, !song.bDisabled))) {
+				song.bDisabled = !song.bDisabled;
+			}
+		}
+
+		ChloeMenuLib::EndMenu();
+	}
+}
+
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
@@ -281,6 +295,15 @@ void ProcessDebugMenu() {
 				}
 			}
 		}
+
+		ChloeMenuLib::EndMenu();
+	}
+
+	if (NewMusicPlayer::pPlaylistCustomIngame && DrawMenuOption("Chloe Trax")) {
+		ChloeMenuLib::BeginMenu();
+
+		PlaylistEditorMenu("Menu", NewMusicPlayer::pPlaylistCustomTitle);
+		PlaylistEditorMenu("Ingame", NewMusicPlayer::pPlaylistCustomIngame);
 
 		ChloeMenuLib::EndMenu();
 	}

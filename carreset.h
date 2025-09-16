@@ -76,6 +76,7 @@ double fCarResetFadeTimer[nMaxSplitscreenPlayers] = {};
 bool bCarResetRequested[nMaxSplitscreenPlayers] = {};
 
 GameRules::KeyValue CarResetSpeed("CarResetSpeed");
+GameRules::KeyValue ResetpointMaxDist("ResetpointMaxDist");
 
 void ProcessCarReset(int player, float delta) {
 	if (player > 0 && !IsInSplitScreen()) return;
@@ -138,11 +139,10 @@ void ProcessCarReset() {
 	}
 
 	if (!pLoadingScreen && GetGameState() == GAME_STATE_RACE) {
-		float fResetpointMaxDist = 15;
-
 		auto ply = GetPlayer(0);
-		auto reset = GetClosestResetpoint(ply, ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, fResetpointMaxDist);
-		if (reset) pPlayerResetpoint = reset;
+		if (auto reset = GetClosestResetpoint(ply, ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, ResetpointMaxDist)) {
+			pPlayerResetpoint = reset;
+		}
 
 		if (NewResetMap::bResetMapValid && pPlayerResetpoint && ply->nIsOutOfTrack) {
 			ply->fLastValidPosition[0] = pPlayerResetpoint->p.x;

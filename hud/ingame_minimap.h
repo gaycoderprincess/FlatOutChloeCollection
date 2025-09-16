@@ -251,9 +251,14 @@ public:
 			auto ply = GetPlayer(i);
 			if (!ply) continue;
 			if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
-			if (ply->nIsOutOfTrack) {
-				DrawPlayerResetOnMap(ply);
-			}
+			if (!ply->nIsOutOfTrack) continue;
+			DrawPlayerResetOnMap(ply);
+		}
+
+		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+			auto ply = GetPlayer(i);
+			if (!ply) continue;
+			if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
 			DrawPlayerOnMap(ply);
 		}
 
