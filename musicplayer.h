@@ -469,6 +469,7 @@ namespace NewMusicPlayer {
 		for (auto& playlist : aPlaylistsTitle) { playlist.Load(); }
 		for (auto& playlist : aPlaylistsIngame) { playlist.Load(); }
 		for (auto& playlist : aPlaylistsStunt) { playlist.Load(); }
+		pPlaylistCustomDerby->Load();
 
 		WriteLogDebug("MUSIC", "--- Finished preloading playlists ---");
 	}
