@@ -1,4 +1,6 @@
 namespace NewResetMap {
+	bool bNoReset = false;
+
 	class ResetMap {
 	public:
 		float fResetMapTopLeft[2]; // +0
@@ -13,6 +15,7 @@ namespace NewResetMap {
 
 	bool ShouldReset(Player* ply) {
 		if (!bResetMapValid) return false;
+		if (bNoReset) return false;
 
 		auto value = GetResetmapValue(&ply->pCar->GetMatrix()->p.x, &gResetMap);
 		return (value & 1) != 0;
@@ -20,6 +23,7 @@ namespace NewResetMap {
 
 	bool ShouldPromptReset(Player* ply) {
 		if (!bResetMapValid) return false;
+		if (bNoReset) return false;
 
 		auto value = GetResetmapValue(&ply->pCar->GetMatrix()->p.x, &gResetMap);
 		return (value & 2) != 0;
@@ -49,7 +53,7 @@ namespace NewResetMap {
 		gResetMap.fResetMapSize[0] = 256.0 / (gResetMap.fResetMapBottomRight[0] - gResetMap.fResetMapTopLeft[0]);
 		gResetMap.fResetMapSize[1] = 256.0 / (gResetMap.fResetMapBottomRight[1] - gResetMap.fResetMapTopLeft[1]);
 
-		NyaHookLib::Patch<uint8_t>(0x450B20, 0xC3); // remove out of map arrow
+		//NyaHookLib::Patch<uint8_t>(0x450B20, 0xC3); // remove out of map arrow
 
 		bResetMapValid = true;
 	}

@@ -76,6 +76,9 @@ void SetHandlingDamage() {
 		ply->pCar->FixPart(eCarFixPart::SUSPENSION);
 		if (handlingDamage == HANDLINGDAMAGE_OFF) {
 			ply->pCar->FixPart(eCarFixPart::WHEELS);
+			auto enginehp = ply->pCar->Performance.Engine.fHealth;
+			ply->pCar->FixPart(eCarFixPart::ENGINE);
+			ply->pCar->Performance.Engine.fHealth = enginehp;
 		}
 	}
 }

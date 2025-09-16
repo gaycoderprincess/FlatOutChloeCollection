@@ -502,6 +502,9 @@ void ProcessDebugMenu() {
 			}
 			ChloeMenuLib::EndMenu();
 		}
+		if (DrawMenuOption(std::format("No Auto-Reset - {}", NewResetMap::bNoReset))) {
+			NewResetMap::bNoReset = !NewResetMap::bNoReset;
+		}
 		ChloeMenuLib::EndMenu();
 	}
 

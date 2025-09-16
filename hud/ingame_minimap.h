@@ -3,6 +3,7 @@ public:
 	IDirect3DTexture9* pMapTexture = nullptr;
 	IDirect3DTexture9* pMapTextureFO2 = nullptr;
 	static constexpr float fArrowSize = 0.011;
+	static constexpr float fResetSize = 0.015;
 
 	static inline bool bFO2Minimap = true;
 	static inline NyaVec3 vLocalPlayerPosition = {0, 0, 0};
@@ -154,12 +155,26 @@ public:
 		DrawRectangle(plyPos.x - (fArrowSize * GetAspectRatioInv()), plyPos.x + (fArrowSize * GetAspectRatioInv()), plyPos.y - fArrowSize, plyPos.y + fArrowSize, GetPlayerColor(ply), 0, ply->nPlayerType == PLAYERTYPE_LOCAL ? arrowPlayer : arrow, plyDir);
 	}
 
+	static void DrawPlayerResetOnMap(Player* ply) {
+		static auto arrow = LoadTextureFromBFS("data/global/overlay/map_resetpoint.png");
+
+		auto plyPos = GetPositionOnMap(NyaVec3(ply->fLastValidPosition[0], ply->fLastValidPosition[1], ply->fLastValidPosition[2]));
+		DrawRectangle(plyPos.x - (fResetSize * GetAspectRatioInv()), plyPos.x + (fResetSize * GetAspectRatioInv()), plyPos.y - fResetSize, plyPos.y + fResetSize, {255,255,255,255}, 0, arrow);
+	}
+
 	NyaVec3 gArcadeCheckpoint;
 	static void DrawCheckpointOnMap(NyaVec3 pos) {
 		static auto texture = LoadTextureFromBFS("data/global/overlay/map_checkpoint.tga");
 
 		auto spritePos = GetPositionOnMap(pos);
 		DrawRectangle(spritePos.x - (fArrowSize * GetAspectRatioInv()), spritePos.x + (fArrowSize * GetAspectRatioInv()), spritePos.y - fArrowSize, spritePos.y + fArrowSize, {8,200,8,255}, 0, texture);
+	}
+
+	virtual void Init() {
+		PreloadTexture("data/global/overlay/map_playerarrow.png");
+		PreloadTexture("data/global/overlay/map_playerarrow_local.png");
+		PreloadTexture("data/global/overlay/map_resetpoint.png");
+		PreloadTexture("data/global/overlay/map_checkpoint.tga");
 	}
 
 	virtual void Process() {
@@ -236,6 +251,9 @@ public:
 			auto ply = GetPlayer(i);
 			if (!ply) continue;
 			if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
+			if (ply->nIsOutOfTrack) {
+				DrawPlayerResetOnMap(ply);
+			}
 			DrawPlayerOnMap(ply);
 		}
 

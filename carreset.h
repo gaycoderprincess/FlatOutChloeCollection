@@ -143,6 +143,12 @@ void ProcessCarReset() {
 		auto ply = GetPlayer(0);
 		auto reset = GetClosestResetpoint(ply, ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, fResetpointMaxDist);
 		if (reset) pPlayerResetpoint = reset;
+
+		if (NewResetMap::bResetMapValid && pPlayerResetpoint && ply->nIsOutOfTrack) {
+			ply->fLastValidPosition[0] = pPlayerResetpoint->p.x;
+			ply->fLastValidPosition[1] = pPlayerResetpoint->p.y;
+			ply->fLastValidPosition[2] = pPlayerResetpoint->p.z;
+		}
 	}
 	else {
 		pPlayerResetpoint = nullptr;
