@@ -33,8 +33,6 @@ namespace NewResetMap {
 		path += "data/resetmap.4b";
 		path2 += "data/resetmap.bed";
 
-		WriteLog(std::format("Searching for {} and {}", path, path2));
-
 		if (!DoesFileExist(path.c_str())) return;
 		if (!DoesFileExist(path2.c_str())) return;
 
@@ -42,8 +40,6 @@ namespace NewResetMap {
 		auto file = ReadFileFromBfs(path.c_str(), size);
 		if (size > 0x8000) size = 0x8000;
 		memcpy(gResetMap.data, file, size);
-
-		WriteLog(std::format("Read resetmap.4b", path, path2));
 
 		auto config = ReadTOMLFromBfsLUAHack(path2.c_str());
 		gResetMap.fResetMapTopLeft[0] = config["ResetMapTopLeft"][0].value_or(0.0f);
@@ -53,11 +49,7 @@ namespace NewResetMap {
 		gResetMap.fResetMapSize[0] = 256.0 / (gResetMap.fResetMapBottomRight[0] - gResetMap.fResetMapTopLeft[0]);
 		gResetMap.fResetMapSize[1] = 256.0 / (gResetMap.fResetMapBottomRight[1] - gResetMap.fResetMapTopLeft[1]);
 
-		WriteLog(std::format("Read resetmap.bed", path, path2));
-
-		WriteLog(std::format("fResetMapTopLeft {} {}", gResetMap.fResetMapTopLeft[0], gResetMap.fResetMapTopLeft[1]));
-		WriteLog(std::format("fResetMapBottomRight {} {}", gResetMap.fResetMapBottomRight[0], gResetMap.fResetMapBottomRight[1]));
-		WriteLog(std::format("fResetMapSize {} {}", gResetMap.fResetMapSize[0], gResetMap.fResetMapSize[1]));
+		NyaHookLib::Patch<uint8_t>(0x450B20, 0xC3); // remove out of map arrow
 
 		bResetMapValid = true;
 	}
