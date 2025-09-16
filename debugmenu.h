@@ -263,6 +263,21 @@ void WriteStartpoints() {
 	fout << "\n}";
 }
 
+bool bSectorCapture = false;
+float fSectorLeniency = 0;
+void WriteSectors() {
+	std::ofstream fout((std::string)GetTrackName(pGameFlow->nLevel) + "_sectors.ai", std::ios::out);
+	if (!fout.is_open()) return;
+
+	fout << "Count = ";
+	fout << pTrackAI->nNumSectors;
+	fout << "\n\nSectors = {";
+	for (int i = 0; i < pTrackAI->nNumSectors; i++) {
+		fout << std::format("\n\t[{}] = {{ SpeedLimit = {} }},", i + 1, pTrackAI->aSectors[i].fSpeedLimit - fSectorLeniency);
+	}
+	fout << "\n}";
+}
+
 void PlaylistEditorMenu(const std::string& name, NewMusicPlayer::tPlaylist* playlist) {
 	if (DrawMenuOption(name)) {
 		ChloeMenuLib::BeginMenu();
@@ -491,6 +506,24 @@ void ProcessDebugMenu() {
 			}
 			ChloeMenuLib::EndMenu();
 		}
+		if (DrawMenuOption("Sectors Creator")) {
+			ChloeMenuLib::BeginMenu();
+			if (GetGameState() == GAME_STATE_RACE) {
+				if (DrawMenuOption(std::format("Capture Mode - {}", bSectorCapture))) {
+					bSectorCapture = !bSectorCapture;
+				}
+				if (DrawMenuOption(std::format("Sector Speed Offset - {}", fSectorLeniency))) {
+					ValueEditorMenu(fSectorLeniency);
+				}
+				if (DrawMenuOption("Save Sectors", "", false, false)) {
+					WriteSectors();
+				}
+			}
+			else {
+				DrawDebugMenuViewerOption("Not in a race");
+			}
+			ChloeMenuLib::EndMenu();
+		}
 		if (DrawMenuOption("Resetpoint Editor")) {
 			ChloeMenuLib::BeginMenu();
 			if (GetGameState() == GAME_STATE_RACE) {
@@ -582,6 +615,13 @@ void ProcessDebugMenu() {
 		auto plyPos = ply->pCar->GetMatrix()->p;
 		DrawDebugMenuViewerOption(std::format("Player Position - {:.1f} {:.1f} {:.1f}", plyPos.x, plyPos.y, plyPos.z));
 		DrawDebugMenuViewerOption(std::format("Player Health - {:.1f}", 1.0 - ply->pCar->fDamage));
+		DrawDebugMenuViewerOption(std::format("Player Sector - {}", (ply->pCurrentSector - pTrackAI->aSectors) + 1));
+		if (ply->pCurrentSector) {
+			if (DrawMenuOption(std::format("Player Sector Speed Limit - {}", ply->pCurrentSector->fSpeedLimit))) {
+				ValueEditorMenu(ply->pCurrentSector->fSpeedLimit);
+			}
+		}
+		DrawDebugMenuViewerOption(std::format("Track Sector Count - {}", pTrackAI->nNumSectors));
 		DrawDebugMenuViewerOption(std::format("Race Time - {}", pPlayerHost->nRaceTime));
 		if (auto reset = pPlayerResetpoint) {
 			DrawDebugMenuViewerOption(std::format("Closest Resetpoint - {:.1f}m", (reset->p - ply->pCar->GetMatrix()->p).length()));
@@ -591,6 +631,19 @@ void ProcessDebugMenu() {
 	ChloeMenuLib::EndMenu();
 }
 
+void DebugLoop() {
+	if (!bSectorCapture) return;
+	if (pLoadingScreen) return;
+	if (GetGameState() != GAME_STATE_RACE) return;
+	auto ply = GetPlayer(0);
+	if (!ply) return;
+	if (!ply->pCurrentSector) return;
+
+	auto speed = ply->pCar->GetVelocity()->length() * 3.6;
+	if (speed > ply->pCurrentSector->fSpeedLimit) ply->pCurrentSector->fSpeedLimit = speed;
+}
+
 void ApplyDebugMenuPatches() {
 	ChloeMenuLib::RegisterMenu("Chloe Collection Debug Menu", &ProcessDebugMenu);
+	ChloeEvents::FinishFrameEvent.AddHandler(DebugLoop);
 }
