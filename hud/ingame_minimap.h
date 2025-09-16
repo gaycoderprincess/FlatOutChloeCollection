@@ -52,9 +52,9 @@ public:
 		return aPlayerColors[0];
 	}
 
-	static inline float fFO2MapPos[2] = {-120, 140};
-	static inline float fFO2MapSize[2] = {400, 400};
-	static inline float fFO2MapClipSize[2] = {128, 128};
+	static inline float fFO2MapPos[2] = {95, 340};
+	static inline float fFO2MapSize = 400;
+	static inline float fFO2MapClipSize = 128;
 	static void GetMapExtents(float* left, float* right, float* top, float* bottom) {
 		auto posX = pEnvironment->pMinimap->fScreenPos[0];
 		auto posY = pEnvironment->pMinimap->fScreenPos[1];
@@ -63,8 +63,10 @@ public:
 		if (bFO2Minimap) {
 			posX = fFO2MapPos[0];
 			posY = fFO2MapPos[1];
-			sizeX = fFO2MapSize[0];
-			sizeY = fFO2MapSize[1];
+			sizeX = fFO2MapSize;
+			sizeY = fFO2MapSize;
+			posX -= sizeX * 0.5;
+			posY -= sizeY * 0.5;
 		}
 
 		posX /= 640.0;
@@ -153,6 +155,8 @@ public:
 		if (!bIsInMultiplayer && !IsRaceHUDUp()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
+		bFO2Minimap = pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen();
+
 		auto plyMatrix = GetPlayer(0)->pCar->GetMatrix();
 		fLocalPlayerHeading = bFO2Minimap ? std::atan2(plyMatrix->z.x, plyMatrix->z.z) : 0;
 		vLocalPlayerPosition = bFO2Minimap ? plyMatrix->p : NyaVec3(0, 0, 0);
@@ -162,9 +166,8 @@ public:
 				auto pos = GetPositionOnMap(vLocalPlayerPosition);
 				pos.x *= nResX;
 				pos.y *= nResY;
-				float sizeX = fFO2MapClipSize[0];
-				float sizeY = fFO2MapClipSize[1];
-				ImGui::GetForegroundDrawList()->PushClipRect(ImVec2(pos.x-sizeX, pos.y-sizeY), ImVec2(pos.x+sizeX, pos.y+sizeY), false);
+				float size = fFO2MapClipSize;
+				ImGui::GetForegroundDrawList()->PushClipRect(ImVec2(pos.x-size, pos.y-size), ImVec2(pos.x+size, pos.y+size), false);
 			}, true);
 		}
 
