@@ -28,6 +28,14 @@ public:
 			new MenuOption("SOUND OPTIONS"),
 			new MenuOptionSlider("MUSIC VOLUME", &nIngameMusicVolume, 5, 0, 100),
 			new MenuOptionSlider("SFX VOLUME", &nIngameSfxVolume, 5, 0, 100),
+			new MenuOptionPlaylist("PLAYLIST"),
+			nullptr
+	};
+
+	static inline MenuOption* aOptionsSoundStunt[] = {
+			new MenuOption("SOUND OPTIONS"),
+			new MenuOptionSlider("MUSIC VOLUME", &nIngameMusicVolume, 5, 0, 100),
+			new MenuOptionSlider("SFX VOLUME", &nIngameSfxVolume, 5, 0, 100),
 			nullptr
 	};
 
@@ -58,8 +66,10 @@ public:
 				if (pGameFlow->nEventType == eEventType::STUNT || bIsInMultiplayer) return aOptionsMainNoRestart;
 				return aOptionsMain;
 			}
-			case SUBMENU_SOUNDOPTIONS:
+			case SUBMENU_SOUNDOPTIONS: {
+				if (pGameFlow->nEventType == eEventType::STUNT) return aOptionsSoundStunt;
 				return aOptionsSound;
+			}
 			case SUBMENU_RESTARTPROMPT:
 				return aOptionsRestart;
 			case SUBMENU_QUITPROMPT:

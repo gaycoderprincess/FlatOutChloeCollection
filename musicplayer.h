@@ -172,6 +172,7 @@ namespace NewMusicPlayer {
 		if (nIngameStuntSoundtrack < 0 || nIngameStuntSoundtrack >= aPlaylistsStunt.size()) nIngameStuntSoundtrack = 0;
 		if (nIngameSoundtrack < 0 || nIngameSoundtrack >= aPlaylistsIngame.size()) nIngameSoundtrack = 0;
 		if (nIngameDerbySoundtrack < 0 || nIngameDerbySoundtrack >= aPlaylistsIngame.size()) nIngameDerbySoundtrack = 0;
+		// on change playlist in menu
 		if (pPlaylistTitle != &aPlaylistsTitle[nMenuSoundtrack]) {
 			StopPlayback();
 			pPlaylistTitle = &aPlaylistsTitle[nMenuSoundtrack];

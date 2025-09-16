@@ -154,6 +154,11 @@ public:
 			if (score >= event->aGoalScores[1]) position = 2;
 			if (score >= event->aGoalScores[0]) position = 1;
 			if (score >= event->nPlatinumScore) position = 4;
+
+			if (position == 1 || position == 4) {
+				gCustomSave.tracksWon[event->nLevel] = true;
+			}
+
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(event->nLevel, "Image"));
 			if (!trackIcon) {
 				MessageBoxA(0, std::format("Failed to find image for track {}", event->nLevel).c_str(), "Fatal error", MB_ICONERROR);

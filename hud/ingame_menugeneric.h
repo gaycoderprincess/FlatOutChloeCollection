@@ -38,6 +38,7 @@ public:
 		}
 
 		virtual bool IsSlider() { return false; }
+		virtual bool IsPlaylist() { return false; }
 		virtual int GetValue() { return 0; }
 		virtual float GetValuePercent() { return 0; }
 
@@ -74,7 +75,7 @@ public:
 			nMaxValue = max;
 		}
 
-		virtual bool IsSlider() { return true; };
+		virtual bool IsSlider() { return true; }
 		virtual int GetValue() { return *nValue; }
 		virtual float GetValuePercent() { return ((*nValue) - nMinValue) / (double)(nMaxValue - nMinValue); }
 
@@ -85,6 +86,26 @@ public:
 		virtual void OnRight() {
 			if (*nValue >= nMaxValue) return;
 			*nValue += nIncrementValue;
+		}
+	};
+
+	class MenuOptionPlaylist : public MenuOption {
+	public:
+		MenuOptionPlaylist(const std::string& name) : MenuOption(name) { }
+
+		virtual bool IsPlaylist() { return true; }
+
+		virtual void OnLeft() {
+			auto& value = pGameFlow->nEventType == eEventType::DERBY ? nIngameDerbySoundtrack : nIngameSoundtrack;
+			value--;
+			if (value < 0) value = NewMusicPlayer::aPlaylistsIngame.size()-1;
+			NewMusicPlayer::StopPlayback();
+		}
+		virtual void OnRight() {
+			auto& value = pGameFlow->nEventType == eEventType::DERBY ? nIngameDerbySoundtrack : nIngameSoundtrack;
+			value++;
+			if (value >= NewMusicPlayer::aPlaylistsIngame.size()) value = 0;
+			NewMusicPlayer::StopPlayback();
 		}
 	};
 
@@ -185,7 +206,10 @@ public:
 			}
 
 			// hack for sliders
-			if (option->IsSlider()) {
+			if (option->IsPlaylist()) {
+				Draw1080pString(JUSTIFY_CENTER, data, std::format("{} < {} >", option->sName, GetStringNarrow(NewMusicPlayer::pCurrentPlaylist->wsName)), &DrawStringFO2_Ingame12);
+			}
+			else if (option->IsSlider()) {
 				Draw1080pString(JUSTIFY_CENTER, data, option->sName, &DrawStringFO2_Ingame12);
 
 				float delta = option->GetValuePercent();

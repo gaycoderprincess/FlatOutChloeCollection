@@ -172,6 +172,10 @@ void tCustomSaveStructure::CreateArcadeVerify() {
 void tCustomSaveStructure::WriteArcadeScore(int car, int level, int score) {
 	if (score <= 0) return;
 
+	// hacks for changed event ids
+	if (car == CAR_FO2SWITCHBLADE && level == TRACK_FO2FOREST2B) level = TRACK_FO2FOREST2C;
+	if (car == CAR_RETROSLIDER && level == TRACK_RETRODEMO1B) level = TRACK_RETRODEMO2A;
+
 	for (int i = 0; i < ArcadeMode::aArcadeRaces.size(); i++) {
 		auto race = &ArcadeMode::aArcadeRaces[i];
 		if (race->nLevel != level) continue;

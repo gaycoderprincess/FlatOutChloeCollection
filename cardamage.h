@@ -80,7 +80,7 @@ void ProcessCrashBonuses() {
 
 	auto ply = GetPlayer(playerId);
 	if (!ply) return;
-	if (IsPlayerWrecked(ply)) return;
+	if (!bIsFragDerby && IsPlayerWrecked(ply)) return;
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		if (i == playerId) continue;
