@@ -3,6 +3,10 @@ public:
 	IDirect3DTexture9* pMapTexture = nullptr;
 	static constexpr float fArrowSize = 0.011;
 
+	static inline bool bFO2Minimap = true;
+	static inline NyaVec3 vLocalPlayerPosition = {0, 0, 0};
+	static inline float fLocalPlayerHeading = 0;
+
 	static NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
 		if (IsPlayerWrecked(ply)) return {0,0,0,127};
 
@@ -48,11 +52,20 @@ public:
 		return aPlayerColors[0];
 	}
 
+	static inline float fFO2MapPos[2] = {-120, 140};
+	static inline float fFO2MapSize[2] = {400, 400};
+	static inline float fFO2MapClipSize[2] = {128, 128};
 	static void GetMapExtents(float* left, float* right, float* top, float* bottom) {
 		auto posX = pEnvironment->pMinimap->fScreenPos[0];
 		auto posY = pEnvironment->pMinimap->fScreenPos[1];
 		auto sizeX = pEnvironment->pMinimap->fScreenSize[0];
 		auto sizeY = pEnvironment->pMinimap->fScreenSize[1];
+		if (bFO2Minimap) {
+			posX = fFO2MapPos[0];
+			posY = fFO2MapPos[1];
+			sizeX = fFO2MapSize[0];
+			sizeY = fFO2MapSize[1];
+		}
 
 		posX /= 640.0;
 		posY /= 480.0;
@@ -63,11 +76,11 @@ public:
 		sizeX *= 1440.0;
 		sizeY *= 1080.0;
 
-		auto justify = CHUDElement::JUSTIFY_LEFT;
+		auto justify = JUSTIFY_LEFT;
 		if (IsInSplitScreen()) {
 			if (IsInQuarteredSplitScreen()) {
 				posX = 960.0 - sizeX * 0.5;
-				justify = CHUDElement::JUSTIFY_CENTER;
+				justify = JUSTIFY_CENTER;
 			}
 			else {
 				posX = 0.0;
@@ -75,8 +88,8 @@ public:
 			posY = 540.0 - sizeY * 0.5;
 		}
 
-		CHUDElement::DoJustify(justify, posX, posY);
-		CHUDElement::DoJustify(justify, sizeX, sizeY);
+		DoJustify(justify, posX, posY);
+		DoJustify(justify, sizeX, sizeY);
 
 		*left = posX;
 		*right = posX + sizeX;
@@ -84,10 +97,7 @@ public:
 		*bottom = posY + sizeY;
 	}
 
-	static void DrawPlayerOnMap(Player* ply) {
-		static auto arrow = CHUDElement::LoadTextureFromBFS("data/global/overlay/map_playerarrow.png");
-		static auto arrowPlayer = CHUDElement::LoadTextureFromBFS("data/global/overlay/map_playerarrow_local.png");
-
+	static NyaVec3 GetPositionOnMap(NyaVec3 pos, bool usePosOffset = true) {
 		auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
 		auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
 		auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
@@ -96,56 +106,87 @@ public:
 		float left, right, top, bottom;
 		GetMapExtents(&left, &right, &top, &bottom);
 
-		auto plyMatrix = ply->pCar->GetMatrix();
-		auto plyPos = plyMatrix->p;
-		auto plyDir = std::atan2(plyMatrix->z.x, plyMatrix->z.z);
-		plyPos.x -= startX;
-		plyPos.x /= startX - endX;
-		plyPos.z -= startY;
-		plyPos.z /= startY - endY;
-		if (-plyPos.x < 0) return;
-		if (-plyPos.z < 0) return;
-		if (-plyPos.x > 1) return;
-		if (-plyPos.z > 1) return;
-		float spritePosX = std::lerp(left, right, -plyPos.x);
-		float spritePosY = std::lerp(bottom, top, -plyPos.z);
-		DrawRectangle(spritePosX - (fArrowSize * GetAspectRatioInv()), spritePosX + (fArrowSize * GetAspectRatioInv()), spritePosY - fArrowSize, spritePosY + fArrowSize, GetPlayerColor(ply), 0, ply->nPlayerType == PLAYERTYPE_LOCAL ? arrowPlayer : arrow, plyDir);
-	}
+		if (bFO2Minimap) {
+			NyaMat4x4 mat;
+			mat.SetIdentity();
+			mat.p = pos;
 
-	NyaVec3 gArcadeCheckpoint;
-	static void DrawCheckpointOnMap(NyaVec3 pos) {
-		static auto texture = CHUDElement::LoadTextureFromBFS("data/global/overlay/map_checkpoint.tga");
+			NyaMat4x4 plyMat;
+			plyMat.SetIdentity();
+			plyMat.Rotate({0, 0, -fLocalPlayerHeading});
+			if (usePosOffset) plyMat.p = vLocalPlayerPosition;
+			plyMat = plyMat.Invert();
+			mat = plyMat * mat;
 
-		auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
-		auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
-		auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
-		auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
-
-		float left, right, top, bottom;
-		GetMapExtents(&left, &right, &top, &bottom);
+			pos = mat.p;
+		}
 
 		pos.x -= startX;
 		pos.x /= startX - endX;
 		pos.z -= startY;
 		pos.z /= startY - endY;
-		if (-pos.x < 0) return;
-		if (-pos.z < 0) return;
-		if (-pos.x > 1) return;
-		if (-pos.z > 1) return;
 		float spritePosX = std::lerp(left, right, -pos.x);
 		float spritePosY = std::lerp(bottom, top, -pos.z);
-		DrawRectangle(spritePosX - (fArrowSize * GetAspectRatioInv()), spritePosX + (fArrowSize * GetAspectRatioInv()), spritePosY - fArrowSize, spritePosY + fArrowSize, {8,200,8,255}, 0, texture);
+		return {spritePosX, spritePosY, 0};
+	}
+
+	static void DrawPlayerOnMap(Player* ply) {
+		static auto arrow = LoadTextureFromBFS("data/global/overlay/map_playerarrow.png");
+		static auto arrowPlayer = LoadTextureFromBFS("data/global/overlay/map_playerarrow_local.png");
+
+		auto plyMatrix = ply->pCar->GetMatrix();
+		auto plyPos = GetPositionOnMap(plyMatrix->p);
+		auto plyDir = std::atan2(plyMatrix->z.x, plyMatrix->z.z) - fLocalPlayerHeading;
+		DrawRectangle(plyPos.x - (fArrowSize * GetAspectRatioInv()), plyPos.x + (fArrowSize * GetAspectRatioInv()), plyPos.y - fArrowSize, plyPos.y + fArrowSize, GetPlayerColor(ply), 0, ply->nPlayerType == PLAYERTYPE_LOCAL ? arrowPlayer : arrow, plyDir);
+	}
+
+	NyaVec3 gArcadeCheckpoint;
+	static void DrawCheckpointOnMap(NyaVec3 pos) {
+		static auto texture = LoadTextureFromBFS("data/global/overlay/map_checkpoint.tga");
+
+		auto spritePos = GetPositionOnMap(pos);
+		DrawRectangle(spritePos.x - (fArrowSize * GetAspectRatioInv()), spritePos.x + (fArrowSize * GetAspectRatioInv()), spritePos.y - fArrowSize, spritePos.y + fArrowSize, {8,200,8,255}, 0, texture);
 	}
 
 	virtual void Process() {
 		if (!nIngameMap) return;
-		if (!bIsInMultiplayer && !CIngameHUDElement::IsRaceHUDUp()) return;
+		if (!bIsInMultiplayer && !IsRaceHUDUp()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
+		auto plyMatrix = GetPlayer(0)->pCar->GetMatrix();
+		fLocalPlayerHeading = bFO2Minimap ? std::atan2(plyMatrix->z.x, plyMatrix->z.z) : 0;
+		vLocalPlayerPosition = bFO2Minimap ? plyMatrix->p : NyaVec3(0, 0, 0);
+
+		if (bFO2Minimap) {
+			DrawCallback([](const ImDrawList* parent_list, const ImDrawCmd* cmd) {
+				auto pos = GetPositionOnMap(vLocalPlayerPosition);
+				pos.x *= nResX;
+				pos.y *= nResY;
+				float sizeX = fFO2MapClipSize[0];
+				float sizeY = fFO2MapClipSize[1];
+				ImGui::GetForegroundDrawList()->PushClipRect(ImVec2(pos.x-sizeX, pos.y-sizeY), ImVec2(pos.x+sizeX, pos.y+sizeY), false);
+			}, true);
+		}
+
 		if (pMapTexture) {
-			float left, right, top, bottom;
-			GetMapExtents(&left, &right, &top, &bottom);
-			DrawRectangle(left, right, top, bottom, {255,255,255,255}, 0, pMapTexture);
+			if (bFO2Minimap) {
+				auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
+				auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
+				auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
+				auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
+				auto midX = std::lerp(startX, endX, 0.5);
+				auto midY = std::lerp(startY, endY, 0.5);
+
+				float left, right, top, bottom;
+				GetMapExtents(&left, &right, &top, &bottom);
+				auto posOffset = GetPositionOnMap(vLocalPlayerPosition) - GetPositionOnMap({midX, 0, midY});
+				DrawRectangle(left-posOffset.x, right-posOffset.x, top-posOffset.y, bottom-posOffset.y, {255,255,255,255}, 0, pMapTexture, -fLocalPlayerHeading);
+			}
+			else {
+				float left, right, top, bottom;
+				GetMapExtents(&left, &right, &top, &bottom);
+				DrawRectangle(left, right, top, bottom, {255,255,255,255}, 0, pMapTexture);
+			}
 		}
 
 		// draw wrecked players first, opponents after, then arcade checkpoint, local player on top
@@ -173,6 +214,10 @@ public:
 			if (!ply) continue;
 			if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
 			DrawPlayerOnMap(ply);
+		}
+
+		if (bFO2Minimap) {
+			DrawCallback([](const ImDrawList* parent_list, const ImDrawCmd* cmd) { ImGui::GetForegroundDrawList()->PopClipRect(); }, true);
 		}
 	}
 } HUD_Minimap;
