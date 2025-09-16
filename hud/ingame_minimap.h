@@ -1,6 +1,7 @@
 class CHUD_Minimap : public CIngameHUDElement {
 public:
 	IDirect3DTexture9* pMapTexture = nullptr;
+	IDirect3DTexture9* pMapTextureFO2 = nullptr;
 	static constexpr float fArrowSize = 0.011;
 
 	static inline bool bFO2Minimap = true;
@@ -53,21 +54,13 @@ public:
 	}
 
 	static inline float fFO2MapPos[2] = {95, 340};
-	static inline float fFO2MapSize = 400;
+	static inline float fFO2MapSize = 0.001;
 	static inline float fFO2MapClipSize = 128;
 	static void GetMapExtents(float* left, float* right, float* top, float* bottom) {
 		auto posX = pEnvironment->pMinimap->fScreenPos[0];
 		auto posY = pEnvironment->pMinimap->fScreenPos[1];
 		auto sizeX = pEnvironment->pMinimap->fScreenSize[0];
 		auto sizeY = pEnvironment->pMinimap->fScreenSize[1];
-		if (bFO2Minimap) {
-			posX = fFO2MapPos[0];
-			posY = fFO2MapPos[1];
-			sizeX = fFO2MapSize;
-			sizeY = fFO2MapSize;
-			posX -= sizeX * 0.5;
-			posY -= sizeY * 0.5;
-		}
 
 		posX /= 640.0;
 		posY /= 480.0;
@@ -99,15 +92,16 @@ public:
 		*bottom = posY + sizeY;
 	}
 
-	static NyaVec3 GetPositionOnMap(NyaVec3 pos, bool usePosOffset = true) {
-		auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
-		auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
-		auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
-		auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
+	static void GetFO2MapPosition(float* x, float* y) {
+		auto posX = fFO2MapPos[0];
+		auto posY = fFO2MapPos[1];
+		DoJustify(JUSTIFY_480P_LEFT, posX, posY);
 
-		float left, right, top, bottom;
-		GetMapExtents(&left, &right, &top, &bottom);
+		*x = posX;
+		*y = posY;
+	}
 
+	static NyaVec3 GetPositionOnMap(NyaVec3 pos, bool useOffset = true) {
 		if (bFO2Minimap) {
 			NyaMat4x4 mat;
 			mat.SetIdentity();
@@ -116,20 +110,38 @@ public:
 			NyaMat4x4 plyMat;
 			plyMat.SetIdentity();
 			plyMat.Rotate({0, 0, -fLocalPlayerHeading});
-			if (usePosOffset) plyMat.p = vLocalPlayerPosition;
+			plyMat.p = vLocalPlayerPosition;
 			plyMat = plyMat.Invert();
 			mat = plyMat * mat;
 
 			pos = mat.p;
-		}
 
-		pos.x -= startX;
-		pos.x /= startX - endX;
-		pos.z -= startY;
-		pos.z /= startY - endY;
-		float spritePosX = std::lerp(left, right, -pos.x);
-		float spritePosY = std::lerp(bottom, top, -pos.z);
-		return {spritePosX, spritePosY, 0};
+			float x, y;
+			GetFO2MapPosition(&x, &y);
+
+			if (!useOffset) {
+				x = 0;
+				y = 0;
+			}
+			return NyaVec3(x+(pos.x*fFO2MapSize*GetAspectRatioInv()), y-pos.z*fFO2MapSize, 0);
+		}
+		else {
+			auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
+			auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
+			auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
+			auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
+
+			float left, right, top, bottom;
+			GetMapExtents(&left, &right, &top, &bottom);
+
+			pos.x -= startX;
+			pos.x /= startX - endX;
+			pos.z -= startY;
+			pos.z /= startY - endY;
+			float spritePosX = std::lerp(left, right, -pos.x);
+			float spritePosY = std::lerp(bottom, top, -pos.z);
+			return {spritePosX, spritePosY, 0};
+		}
 	}
 
 	static void DrawPlayerOnMap(Player* ply) {
@@ -155,7 +167,12 @@ public:
 		if (!bIsInMultiplayer && !IsRaceHUDUp()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
-		bFO2Minimap = pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen();
+		if (nUseFO2Minimap == 2) {
+			bFO2Minimap = pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen();
+		}
+		else {
+			bFO2Minimap = nUseFO2Minimap && pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen() && pMapTextureFO2;
+		}
 
 		auto plyMatrix = GetPlayer(0)->pCar->GetMatrix();
 		fLocalPlayerHeading = bFO2Minimap ? std::atan2(plyMatrix->z.x, plyMatrix->z.z) : 0;
@@ -173,17 +190,20 @@ public:
 
 		if (pMapTexture) {
 			if (bFO2Minimap) {
+				auto texture = pMapTextureFO2;
+				if (!texture) texture = pMapTexture;
+
 				auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
 				auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
 				auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
 				auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
 				auto midX = std::lerp(startX, endX, 0.5);
 				auto midY = std::lerp(startY, endY, 0.5);
+				auto sizeX = (endX - startX) * fFO2MapSize;
+				auto sizeY = (endY - startY) * fFO2MapSize;
 
-				float left, right, top, bottom;
-				GetMapExtents(&left, &right, &top, &bottom);
-				auto posOffset = GetPositionOnMap(vLocalPlayerPosition) - GetPositionOnMap({midX, 0, midY});
-				DrawRectangle(left-posOffset.x, right-posOffset.x, top-posOffset.y, bottom-posOffset.y, {255,255,255,255}, 0, pMapTexture, -fLocalPlayerHeading);
+				auto plyPos = GetPositionOnMap(NyaVec3(midX, 0, midY));
+				DrawRectangle(plyPos.x - (sizeX * 0.5 * GetAspectRatioInv()), plyPos.x + (sizeX * 0.5 * GetAspectRatioInv()), plyPos.y - sizeY * 0.5, plyPos.y + sizeY * 0.5, {255,255,255,255}, 0, texture, -fLocalPlayerHeading);
 			}
 			else {
 				float left, right, top, bottom;

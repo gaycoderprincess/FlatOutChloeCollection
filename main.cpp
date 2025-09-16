@@ -168,6 +168,22 @@ const char* __cdecl OnMapLoad(void* a1, int a2) {
 
 	auto path = (const char*)lua_tolstring(a1, a2);
 	HUD_Minimap.pMapTexture = CHUDElement::LoadTextureFromBFS(path);
+
+	std::string pathFO2 = path;
+	pathFO2.pop_back();
+	pathFO2.pop_back();
+	pathFO2.pop_back();
+	pathFO2.pop_back();
+	auto pathFO2DDS = pathFO2;
+	pathFO2 += "_fo2.tga";
+	pathFO2DDS += "_fo2.dds";
+	HUD_Minimap.pMapTextureFO2 = nullptr;
+	if (DoesFileExist(pathFO2.c_str()) || DoesFileExist(pathFO2DDS.c_str())) {
+		HUD_Minimap.pMapTextureFO2 = CHUDElement::LoadTextureFromBFS(pathFO2.c_str());
+	}
+	else if (DoesTrackValueExist(pGameFlow->nLevel, "UseFO2Minimap")) {
+		HUD_Minimap.pMapTextureFO2 = HUD_Minimap.pMapTexture;
+	}
 	return path;
 }
 

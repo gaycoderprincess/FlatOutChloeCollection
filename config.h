@@ -54,6 +54,7 @@ uint32_t nHighCarCam = 0;
 uint32_t nSplitScreenController[4] = { SPLITSCREEN_P1_KEYBOARD, SPLITSCREEN_PAD1, SPLITSCREEN_PAD2, SPLITSCREEN_PAD3 };
 uint32_t nSplitScreenDamageMeter = 1;
 uint32_t nPlayerFlag = 0;
+uint32_t nUseFO2Minimap = 1;
 
 uint32_t nMultiplayerHandlingMode = HANDLING_NORMAL;
 

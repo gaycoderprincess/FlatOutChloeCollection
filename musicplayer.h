@@ -337,7 +337,14 @@ namespace NewMusicPlayer {
 		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
 		ChloeEvents::RaceRestartEvent.AddHandler(OnRaceRestart);
 
-		NyaHookLib::Patch<uint8_t>(0x410CB0, 0xC3);
+		// todo credits song
+
+		// get rid of all vanilla playlist stuff
+		NyaHookLib::Patch<uint8_t>(0x410CB0, 0xC3); // StartMusic
+		NyaHookLib::Patch<uint8_t>(0x4112B0, 0xC3); // PickGameSongAndStartMenuSong
+		NyaHookLib::Patch<uint8_t>(0x411350, 0xC3); // StartSelectedSongFromMusicPlaylist
+		NyaHookLib::Patch<uint8_t>(0x410ED0, 0xC3); // ReadMusicPlaylist
+
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
 

@@ -266,11 +266,6 @@ void WriteStartpoints() {
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
-	QuickValueEditor("fFO2MapPos.x", CHUD_Minimap::fFO2MapPos[0]);
-	QuickValueEditor("fFO2MapPos.y", CHUD_Minimap::fFO2MapPos[1]);
-	QuickValueEditor("fFO2MapSize", CHUD_Minimap::fFO2MapSize);
-	QuickValueEditor("fFO2MapClipSize", CHUD_Minimap::fFO2MapClipSize);
-
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();
 
