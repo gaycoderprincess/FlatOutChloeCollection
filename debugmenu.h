@@ -303,7 +303,8 @@ void ProcessDebugMenu() {
 		ChloeMenuLib::BeginMenu();
 
 		PlaylistEditorMenu("Menu", NewMusicPlayer::pPlaylistCustomTitle);
-		PlaylistEditorMenu("Ingame", NewMusicPlayer::pPlaylistCustomIngame);
+		PlaylistEditorMenu("Race", NewMusicPlayer::pPlaylistCustomIngame);
+		PlaylistEditorMenu("Derby", NewMusicPlayer::pPlaylistCustomDerby);
 
 		ChloeMenuLib::EndMenu();
 	}

@@ -169,6 +169,7 @@ namespace NewMusicPlayer {
 
 	tPlaylist* pPlaylistCustomTitle = nullptr;
 	tPlaylist* pPlaylistCustomIngame = nullptr;
+	tPlaylist* pPlaylistCustomDerby = nullptr;
 
 	tPlaylist* pCurrentPlaylist = nullptr;
 	tSong* pCurrentSong = nullptr;
@@ -178,6 +179,45 @@ namespace NewMusicPlayer {
 		if (!pCurrentSong) return;
 		pCurrentSong->Stop();
 		pCurrentSong = nullptr;
+	}
+
+	void SavePlaylist(const char* path, tPlaylist* playlist) {
+		auto file = std::ofstream(path, std::ios::out | std::ios::binary);
+		if (!file.is_open()) return;
+
+		for (auto& song : playlist->aSongs) {
+			if (song.bDisabled) continue;
+			WriteStringToFile(file, song.sPath.c_str());
+		}
+	}
+
+	void LoadPlaylist(const char* path, tPlaylist* playlist) {
+		auto file = std::ifstream(path, std::ios::in | std::ios::binary);
+		if (!file.is_open()) return;
+
+		for (auto& song : playlist->aSongs) {
+			song.bDisabled = true;
+		}
+
+		auto songToEnable = ReadStringFromFile(file);
+		while (!songToEnable.empty()) {
+			for (auto& song : playlist->aSongs) {
+				if (song.sPath == songToEnable) song.bDisabled = false;
+			}
+			songToEnable = ReadStringFromFile(file);
+		}
+	}
+
+	void SaveCustomPlaylists(int saveSlot) {
+		SavePlaylist("Savegame/playlist_title.sav", pPlaylistCustomTitle);
+		SavePlaylist("Savegame/playlist_ingame.sav", pPlaylistCustomIngame);
+		SavePlaylist("Savegame/playlist_derby.sav", pPlaylistCustomDerby);
+	}
+
+	void LoadCustomPlaylists() {
+		LoadPlaylist("Savegame/playlist_title.sav", pPlaylistCustomTitle);
+		LoadPlaylist("Savegame/playlist_ingame.sav", pPlaylistCustomIngame);
+		LoadPlaylist("Savegame/playlist_derby.sav", pPlaylistCustomDerby);
 	}
 
 	void OnTick() {
@@ -198,6 +238,11 @@ namespace NewMusicPlayer {
 		pPlaylistIngame = &aPlaylistsIngame[nIngameSoundtrack];
 		pPlaylistDerby = &aPlaylistsIngame[nIngameDerbySoundtrack];
 		pPlaylistStunt = &aPlaylistsStunt[nIngameStuntSoundtrack];
+
+		// hack for separate chloe trax for derbies
+		if (pPlaylistDerby == pPlaylistCustomIngame) {
+			pPlaylistDerby = pPlaylistCustomDerby;
+		}
 
 		if (pLoadingScreen) {
 			StopPlayback();
@@ -287,6 +332,21 @@ namespace NewMusicPlayer {
 		return !out->aSongs.empty();
 	}
 
+	void BuildCustomPlaylist(tPlaylist* customPlaylist, const std::vector<tPlaylist>& playlists) {
+		for (auto& playlist : playlists) {
+			if (&playlist == customPlaylist) continue;
+
+			for (auto& song : playlist.aSongs) {
+				bool found = false;
+				for (auto& customSong : customPlaylist->aSongs) {
+					if (customSong.sPath == song.sPath) found = true;
+				}
+				if (found) continue;
+				customPlaylist->aSongs.push_back(song);
+			}
+		}
+	}
+
 	void LoadPlaylistConfig() {
 		static auto config = toml::parse_file("Config/Music.toml");
 		int numPlaylists = config["main"]["playlist_count"].value_or(1);
@@ -324,38 +384,20 @@ namespace NewMusicPlayer {
 			aPlaylistsStunt.push_back(playlist);
 		}
 
-		/*tPlaylist custom;
+		tPlaylist custom;
 		custom.wsName = L"CHLOE TRAX";
 		aPlaylistsTitle.push_back(custom);
 		aPlaylistsIngame.push_back(custom);
 
 		pPlaylistCustomTitle = &aPlaylistsTitle[aPlaylistsTitle.size()-1];
 		pPlaylistCustomIngame = &aPlaylistsIngame[aPlaylistsIngame.size()-1];
+		pPlaylistCustomDerby = new tPlaylist;
+		*pPlaylistCustomDerby = custom;
 
-		for (auto& playlist : aPlaylistsTitle) {
-			if (&playlist == pPlaylistCustomTitle) continue;
-
-			for (auto& song : playlist.aSongs) {
-				bool found = false;
-				for (auto& customSong : pPlaylistCustomTitle->aSongs) {
-					if (customSong.sPath == song.sPath) found = true;
-				}
-				if (found) continue;
-				pPlaylistCustomTitle->aSongs.push_back(song);
-			}
-		}
-		for (auto& playlist : aPlaylistsIngame) {
-			if (&playlist == pPlaylistCustomIngame) continue;
-
-			for (auto& song : playlist.aSongs) {
-				bool found = false;
-				for (auto& customSong : pPlaylistCustomIngame->aSongs) {
-					if (customSong.sPath == song.sPath) found = true;
-				}
-				if (found) continue;
-				pPlaylistCustomIngame->aSongs.push_back(song);
-			}
-		}*/
+		BuildCustomPlaylist(pPlaylistCustomTitle, aPlaylistsTitle);
+		BuildCustomPlaylist(pPlaylistCustomIngame, aPlaylistsIngame);
+		BuildCustomPlaylist(pPlaylistCustomDerby, aPlaylistsIngame);
+		LoadCustomPlaylists();
 
 		if (defaultMenu < 0 || defaultMenu >= aPlaylistsTitle.size()) defaultMenu = 0;
 		if (defaultStunt < 0 || defaultStunt >= aPlaylistsStunt.size()) defaultStunt = 0;
@@ -389,6 +431,7 @@ namespace NewMusicPlayer {
 		NyaAudio::Init(ghWnd);
 		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
 		ChloeEvents::RaceRestartEvent.AddHandler(OnRaceRestart);
+		ChloeEvents::SaveCreatedEvent.AddHandler(SaveCustomPlaylists);
 
 		// todo credits song
 
