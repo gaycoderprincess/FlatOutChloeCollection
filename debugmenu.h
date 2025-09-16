@@ -266,7 +266,8 @@ void WriteStartpoints() {
 bool bSectorCapture = false;
 float fSectorLeniency = 0;
 void WriteSectors() {
-	std::ofstream fout((std::string)GetTrackName(pGameFlow->nLevel) + "_sectors.ai", std::ios::out);
+	std::string extension = bIsTrackReversed ? "_sectors_reversed.ai" : "_sectors.ai";
+	std::ofstream fout((std::string)GetTrackName(pGameFlow->nLevel) + extension, std::ios::out);
 	if (!fout.is_open()) return;
 
 	fout << "SectorCount = ";
@@ -509,7 +510,7 @@ void ProcessDebugMenu() {
 		if (DrawMenuOption("Sectors Creator")) {
 			ChloeMenuLib::BeginMenu();
 			if (GetGameState() == GAME_STATE_RACE) {
-				if (DrawMenuOption(std::format("Capture Mode - {}", bSectorCapture))) {
+				if (DrawMenuOption(std::format("Capture Mode - {}", bSectorCapture), "Hold X to set speed limit, C to clear")) {
 					bSectorCapture = !bSectorCapture;
 				}
 				if (DrawMenuOption(std::format("Sector Speed Offset - {}", fSectorLeniency))) {
@@ -639,8 +640,26 @@ void DebugLoop() {
 	if (!ply) return;
 	if (!ply->pCurrentSector) return;
 
-	auto speed = ply->pCar->GetVelocity()->length() * 3.6;
-	if (speed > ply->pCurrentSector->fSpeedLimit) ply->pCurrentSector->fSpeedLimit = speed;
+	tNyaStringData data;
+	data.x = 0.5;
+	data.y = 0.9;
+	data.size = 0.03;
+	data.XCenterAlign = true;
+	DrawString(data, std::format("Sector {}/{}", ply->pCurrentSector - pTrackAI->aSectors, pTrackAI->nNumSectors));
+	data.y += data.size;
+	DrawString(data, std::format("{} KM/H", ply->pCurrentSector->fSpeedLimit));
+
+	// clear sector
+	if (IsKeyPressed('C')) {
+		ply->pCurrentSector->fSpeedLimit = -1;
+		return;
+	}
+
+	// set speed limit
+	if (IsKeyPressed('X')) {
+		auto speed = ply->pCar->GetVelocity()->length() * 3.6;
+		if (speed > ply->pCurrentSector->fSpeedLimit) ply->pCurrentSector->fSpeedLimit = speed;
+	}
 }
 
 void ApplyDebugMenuPatches() {
