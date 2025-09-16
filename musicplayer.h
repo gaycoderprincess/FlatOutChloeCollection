@@ -11,6 +11,7 @@ namespace NewMusicPlayer {
 		return nIngameMusicVolume;
 	}
 
+	bool bCustomPlaylistsEnabled = false;
 	bool bLastSongPlayedInReplay = false;
 	bool bIsFirstIngameSong = false;
 
@@ -195,6 +196,7 @@ namespace NewMusicPlayer {
 		auto file = std::ifstream(path, std::ios::in | std::ios::binary);
 		if (!file.is_open()) return;
 
+		bCustomPlaylistsEnabled = true;
 		for (auto& song : playlist->aSongs) {
 			song.bDisabled = true;
 		}
@@ -209,6 +211,8 @@ namespace NewMusicPlayer {
 	}
 
 	void SaveCustomPlaylists(int saveSlot) {
+		if (!bCustomPlaylistsEnabled) return;
+
 		SavePlaylist("Savegame/playlist_title.sav", pPlaylistCustomTitle);
 		SavePlaylist("Savegame/playlist_ingame.sav", pPlaylistCustomIngame);
 		SavePlaylist("Savegame/playlist_derby.sav", pPlaylistCustomDerby);
@@ -345,6 +349,13 @@ namespace NewMusicPlayer {
 				customPlaylist->aSongs.push_back(song);
 			}
 		}
+
+		std::sort(customPlaylist->aSongs.begin(), customPlaylist->aSongs.end(), [] (const tSong& a, const tSong& b) {
+			if (a.sArtist == b.sArtist) {
+				return a.sTitle < b.sTitle;
+			}
+			return a.sArtist < b.sArtist;
+		});
 	}
 
 	void LoadPlaylistConfig() {
@@ -395,7 +406,10 @@ namespace NewMusicPlayer {
 		*pPlaylistCustomDerby = custom;
 
 		BuildCustomPlaylist(pPlaylistCustomTitle, aPlaylistsTitle);
+		BuildCustomPlaylist(pPlaylistCustomTitle, aPlaylistsIngame);
+		BuildCustomPlaylist(pPlaylistCustomIngame, aPlaylistsTitle);
 		BuildCustomPlaylist(pPlaylistCustomIngame, aPlaylistsIngame);
+		BuildCustomPlaylist(pPlaylistCustomDerby, aPlaylistsTitle);
 		BuildCustomPlaylist(pPlaylistCustomDerby, aPlaylistsIngame);
 		LoadCustomPlaylists();
 

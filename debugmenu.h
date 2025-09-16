@@ -302,6 +302,12 @@ void ProcessDebugMenu() {
 	if (NewMusicPlayer::pPlaylistCustomIngame && DrawMenuOption("Chloe Trax")) {
 		ChloeMenuLib::BeginMenu();
 
+		if (!NewMusicPlayer::bCustomPlaylistsEnabled) {
+			if (DrawMenuOption("Enable Custom Playlists")) {
+				NewMusicPlayer::bCustomPlaylistsEnabled = true;
+			}
+		}
+
 		PlaylistEditorMenu("Menu", NewMusicPlayer::pPlaylistCustomTitle);
 		PlaylistEditorMenu("Race", NewMusicPlayer::pPlaylistCustomIngame);
 		PlaylistEditorMenu("Derby", NewMusicPlayer::pPlaylistCustomDerby);

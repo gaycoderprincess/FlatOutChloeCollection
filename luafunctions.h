@@ -854,12 +854,16 @@ int ChloeOST_GetStuntSoundtrackName(void* a1) {
 }
 
 int ChloeOST_GetNumSoundtracks(void* a1) {
-	lua_pushnumber(a1, NewMusicPlayer::aPlaylistsIngame.size());
+	int count = NewMusicPlayer::aPlaylistsIngame.size();
+	if (!NewMusicPlayer::bCustomPlaylistsEnabled) count--;
+	lua_pushnumber(a1, count);
 	return 1;
 }
 
 int ChloeOST_GetNumMenuSoundtracks(void* a1) {
-	lua_pushnumber(a1, NewMusicPlayer::aPlaylistsTitle.size());
+	int count = NewMusicPlayer::aPlaylistsTitle.size();
+	if (!NewMusicPlayer::bCustomPlaylistsEnabled) count--;
+	lua_pushnumber(a1, count);
 	return 1;
 }
 
