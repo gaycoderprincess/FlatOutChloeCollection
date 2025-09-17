@@ -168,28 +168,10 @@ void __stdcall D3DGameUI(int) {
 	}
 }
 
-const char* __cdecl OnMapLoad(void* a1, int a2) {
+auto OnMapLoad_call = (void(__stdcall*)(void*, void*, void*))0x44AD00;
+void __stdcall OnMapLoad(void* a1, void* a2, void* a3) {
+	OnMapLoad_call(a1, a2, a3);
 	ChloeEvents::MapLoadEvent.OnHit();
-
-	auto path = (const char*)lua_tolstring(a1, a2);
-	HUD_Minimap.pMapTexture = CHUDElement::LoadTextureFromBFS(path);
-
-	std::string pathFO2 = path;
-	pathFO2.pop_back();
-	pathFO2.pop_back();
-	pathFO2.pop_back();
-	pathFO2.pop_back();
-	auto pathFO2DDS = pathFO2;
-	pathFO2 += "_fo2.tga";
-	pathFO2DDS += "_fo2.dds";
-	HUD_Minimap.pMapTextureFO2 = nullptr;
-	if (DoesFileExist(pathFO2.c_str()) || DoesFileExist(pathFO2DDS.c_str())) {
-		HUD_Minimap.pMapTextureFO2 = CHUDElement::LoadTextureFromBFS(pathFO2.c_str());
-	}
-	else if (DoesTrackValueExist(pGameFlow->nLevel, "UseFO2Minimap")) {
-		HUD_Minimap.pMapTextureFO2 = HUD_Minimap.pMapTexture;
-	}
-	return path;
 }
 
 auto OnMapPreLoad_call = (void(__stdcall*)(int, int, int, int, int, int, int, float, char))0x4B9250;
@@ -246,7 +228,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
 			NyaHookLib::Patch<uint16_t>(0x45314F, 0x9090); // enable map drawing in stunt maps
-			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4694E5, &OnMapLoad);
+			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x451CE3, &OnMapLoad);
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
 			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos

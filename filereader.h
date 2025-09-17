@@ -32,12 +32,15 @@ toml::table ReadTOMLFromBfs(const std::string& path) {
 	size_t size = 0;
 	auto file = (char*)ReadFileFromBfs(path.c_str(), size);
 	if (!file || !size) return {};
-	if (file[size-2] == '\r') file[size-2]=0;
-	file[size-1]=0;
+
+	auto nulledFile = new char[size+1];
+	memcpy(nulledFile, file, size);
+	nulledFile[size] = 0;
+	delete[] file;
 
 	std::stringstream ss;
-	ss << file;
-	delete[] file;
+	ss << nulledFile;
+	delete[] nulledFile;
 
 	try {
 		return toml::parse(ss);
@@ -55,16 +58,25 @@ toml::table ReadTOMLFromBfsLUAHack(const std::string& path) {
 	if (!file || !size) return {};
 
 	for (int i = 0; i < size; i++) {
+		// array brackets
 		if (file[i] == '{') file[i] = '[';
 		if (file[i] == '}') file[i] = ']';
+
+		// comments
+		if (i+1 < size && file[i] == '-' && file[i+1] == '-') {
+			file[i] = '#';
+			file[i+1] = '#';
+		}
 	}
 
-	if (file[size-2] == '\r') file[size-2]=0;
-	file[size-1]=0;
+	auto nulledFile = new char[size+1];
+	memcpy(nulledFile, file, size);
+	nulledFile[size] = 0;
+	delete[] file;
 
 	std::stringstream ss;
-	ss << file;
-	delete[] file;
+	ss << nulledFile;
+	delete[] nulledFile;
 
 	try {
 		return toml::parse(ss);

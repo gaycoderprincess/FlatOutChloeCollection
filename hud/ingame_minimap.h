@@ -1,7 +1,7 @@
 class CHUD_Minimap : public CIngameHUDElement {
 public:
-	IDirect3DTexture9* pMapTexture = nullptr;
-	IDirect3DTexture9* pMapTextureFO2 = nullptr;
+	static inline IDirect3DTexture9* pMapTexture = nullptr;
+	static inline IDirect3DTexture9* pMapTextureFO2 = nullptr;
 	static constexpr float fArrowSize = 0.011;
 	static constexpr float fResetSize = 0.015;
 
@@ -127,10 +127,10 @@ public:
 			return NyaVec3(x+(pos.x*fFO2MapSize*GetAspectRatioInv()), y-pos.z*fFO2MapSize, 0);
 		}
 		else {
-			auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
-			auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
-			auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
-			auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
+			auto startX = pEnvironment->pMinimap->fWorldTopLeft[0];
+			auto startY = pEnvironment->pMinimap->fWorldBottomRight[1];
+			auto endX = pEnvironment->pMinimap->fWorldBottomRight[0];
+			auto endY = pEnvironment->pMinimap->fWorldTopLeft[1];
 
 			float left, right, top, bottom;
 			GetMapExtents(&left, &right, &top, &bottom);
@@ -170,11 +170,33 @@ public:
 		DrawRectangle(spritePos.x - (fArrowSize * GetAspectRatioInv()), spritePos.x + (fArrowSize * GetAspectRatioInv()), spritePos.y - fArrowSize, spritePos.y + fArrowSize, {8,200,8,255}, 0, texture);
 	}
 
+	static void LoadMinimaps() {
+		auto config = ReadTOMLFromBfsLUAHack(std::format("{}data/map.bed", pEnvironment->sStagePath.Get()));
+		pMapTexture = LoadTextureFromBFS(config["MapTexture"].value_or(""));
+
+		// load FO2 minimap
+		auto fo2ConfigPath = std::format("{}data/map_fo2.bed", pEnvironment->sStagePath.Get());
+		if (nUseFO2Minimap == 2 && DoesFileExist(fo2ConfigPath.c_str())) {
+			config = ReadTOMLFromBfsLUAHack(fo2ConfigPath);
+			pMapTextureFO2 = LoadTextureFromBFS(config["MapTexture"].value_or(""));
+			pEnvironment->pMinimap->fWorldTopLeft[0] = config["MapTopLeft"][0].value_or(0.0f);
+			pEnvironment->pMinimap->fWorldTopLeft[1] = config["MapTopLeft"][2].value_or(0.0f);
+			pEnvironment->pMinimap->fWorldBottomRight[0] = config["MapBottomRight"][0].value_or(0.0f);
+			pEnvironment->pMinimap->fWorldBottomRight[1] = config["MapBottomRight"][2].value_or(0.0f);
+			//pEnvironment->pMinimap->fScreenPos[0] = config["ScreenPos"][0].value_or(0.0f);
+			//pEnvironment->pMinimap->fScreenPos[1] = config["ScreenPos"][1].value_or(0.0f);
+			//pEnvironment->pMinimap->fScreenSize[0] = config["ScreenSize"][0].value_or(0.0f);
+			//pEnvironment->pMinimap->fScreenSize[1] = config["ScreenSize"][1].value_or(0.0f);
+		}
+	}
+
 	virtual void Init() {
 		PreloadTexture("data/global/overlay/map_playerarrow.png");
 		PreloadTexture("data/global/overlay/map_playerarrow_local.png");
 		PreloadTexture("data/global/overlay/map_resetpoint.png");
 		PreloadTexture("data/global/overlay/map_checkpoint.tga");
+
+		ChloeEvents::MapLoadEvent.AddHandler(LoadMinimaps);
 	}
 
 	virtual void Process() {
@@ -186,7 +208,7 @@ public:
 			bFO2Minimap = pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen();
 		}
 		else {
-			bFO2Minimap = nUseFO2Minimap && pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen() && pMapTextureFO2;
+			bFO2Minimap = nUseFO2Minimap && pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen() && DoesTrackValueExist(pGameFlow->nLevel, "UseFO2Minimap");
 		}
 
 		auto plyMatrix = GetPlayer(0)->pCar->GetMatrix();
@@ -210,10 +232,10 @@ public:
 				auto texture = pMapTextureFO2;
 				if (!texture) texture = pMapTexture;
 
-				auto startX = pEnvironment->pMinimap->fMapTopLeft[0];
-				auto startY = pEnvironment->pMinimap->fMapBottomRight[1];
-				auto endX = pEnvironment->pMinimap->fMapBottomRight[0];
-				auto endY = pEnvironment->pMinimap->fMapTopLeft[1];
+				auto startX = pEnvironment->pMinimap->fWorldTopLeft[0];
+				auto startY = pEnvironment->pMinimap->fWorldBottomRight[1];
+				auto endX = pEnvironment->pMinimap->fWorldBottomRight[0];
+				auto endY = pEnvironment->pMinimap->fWorldTopLeft[1];
 				auto midX = std::lerp(startX, endX, 0.5);
 				auto midY = std::lerp(startY, endY, 0.5);
 				auto sizeX = (endX - startX) * fFO2MapSize;

@@ -7,44 +7,104 @@ namespace InstantAction {
 		bool reversed;
 	};
 
-	std::vector<tTrackEntry> GetTracks(bool unplayedOnly, bool unwonOnly) {
-		std::vector<tTrackEntry> aTracks;
-		for (int i = 1; i < GetNumTracks()+1; i++) {
-			if (unwonOnly && gCustomSave.tracksWon[i]) continue;
-			if (!DoesTrackExist(i)) continue;
-			if (!DoesTrackSupportAI(i)) continue;
-			if (DoesTrackValueExist(i, "StuntMode")) continue;
-
-			// skip derby tracks for the unplayed check
-			if (unplayedOnly && !unwonOnly && (int)GetTrackValueNumber(i, "TrackType") == TRACKTYPE_DERBY) continue;
-
-			bool addRegular = !unplayedOnly || !gCustomSave.bestLaps[i];
-			bool addReversed = !unplayedOnly || !gCustomSave.bestLapsReversed[i];
-			if (unplayedOnly && !unwonOnly && !gCustomSave.tracksWon[i]) {
-				addRegular = true;
-				addReversed = true;
-			}
-
-			if (addRegular) {
-				aTracks.push_back({i, false});
-			}
-			if (DoesTrackSupportReversing(i) && addReversed) {
-				aTracks.push_back({i, true});
-			}
-		}
-		WriteLog(std::format("GetTracks({}, {})", unplayedOnly, unwonOnly));
-		for (auto& track : aTracks) {
-			WriteLog(std::format("{}{}", GetTrackName(track.level), track.reversed ? " REVERSED" : ""));
-		}
-		return aTracks;
+	bool CanTrackBePicked(int i) {
+		if (!DoesTrackExist(i)) return false;
+		if (!DoesTrackSupportAI(i)) return false;
+		if (DoesTrackValueExist(i, "StuntMode")) return false;
+		return true;
 	}
 
 	tTrackEntry GetRandomLevel() {
-		// prioritize entirely unplayed tracks, but if there's too few then do played but unwon tracks, then unplayed but won (reverse) tracks, afterwards all tracks
-		std::vector<tTrackEntry> aTracks = GetTracks(true, true);
-		if (aTracks.size() <= 3) aTracks = GetTracks(false, true);
-		if (aTracks.size() <= 3) aTracks = GetTracks(true, false);
-		if (aTracks.size() <= 3) aTracks = GetTracks(false, false);
+		auto tracks = new bool[GetNumTracks()+1];
+		auto tracksRev = new bool[GetNumTracks()+1];
+		memset(tracks,0,GetNumTracks()+1);
+		memset(tracksRev,0,GetNumTracks()+1);
+
+		std::vector<tTrackEntry> aTracks;
+
+		// first add all entirely unplayed tracks
+		for (int i = 1; i < GetNumTracks()+1; i++) {
+			if (!CanTrackBePicked(i)) continue;
+			if (gCustomSave.tracksWon[i]) continue;
+
+			if (!gCustomSave.bestLaps[i]) {
+				tracks[i] = true;
+				aTracks.push_back({i, false});
+			}
+			if (DoesTrackSupportReversing(i)) {
+				if (!gCustomSave.bestLapsReversed[i]) {
+					tracksRev[i] = true;
+					aTracks.push_back({i, true});
+				}
+			}
+		}
+
+		WriteLogDebug("INSTANTACTION", "InstantAction::GetRandomLevel()");
+		for (auto& track : aTracks) {
+			WriteLogDebug("INSTANTACTION", std::format("{}{}", GetTrackName(track.level), track.reversed ? " REVERSED" : ""));
+		}
+
+		// add played but unwon tracks
+		if (aTracks.size() <= 3) {
+			for (int i = 1; i < GetNumTracks()+1; i++) {
+				if (!CanTrackBePicked(i)) continue;
+				if (gCustomSave.tracksWon[i]) continue;
+
+				if (!tracks[i]) {
+					tracks[i] = true;
+					aTracks.push_back({i, false});
+				}
+				if (DoesTrackSupportReversing(i)) {
+					if (!tracksRev[i]) {
+						tracksRev[i] = true;
+						aTracks.push_back({i, true});
+					}
+				}
+			}
+
+			WriteLogDebug("INSTANTACTION", "not enough tracks, searching unwon tracks");
+			for (auto& track : aTracks) {
+				WriteLogDebug("INSTANTACTION", std::format("{}{}", GetTrackName(track.level), track.reversed ? " REVERSED" : ""));
+			}
+		}
+
+		// add unplayed reverse tracks
+		if (aTracks.size() <= 3) {
+			for (int i = 1; i < GetNumTracks()+1; i++) {
+				if (tracksRev[i]) continue;
+				if (!CanTrackBePicked(i)) continue;
+				if (!DoesTrackSupportReversing(i)) continue;
+				if (gCustomSave.bestLapsReversed[i]) continue;
+
+				tracksRev[i] = true;
+				aTracks.push_back({i, true});
+			}
+
+			WriteLogDebug("INSTANTACTION", "not enough tracks, searching unplayed reverse tracks");
+			for (auto& track : aTracks) {
+				WriteLogDebug("INSTANTACTION", std::format("{}{}", GetTrackName(track.level), track.reversed ? " REVERSED" : ""));
+			}
+		}
+
+		// add all tracks
+		if (aTracks.size() <= 3) {
+			WriteLogDebug("INSTANTACTION", "not enough unplayed tracks, adding all tracks to selection");
+
+			for (int i = 1; i < GetNumTracks()+1; i++) {
+				if (!CanTrackBePicked(i)) continue;
+
+				if (!tracks[i]) {
+					tracks[i] = true;
+					aTracks.push_back({i, false});
+				}
+				if (DoesTrackSupportReversing(i)) {
+					if (!tracksRev[i]) {
+						tracksRev[i] = true;
+						aTracks.push_back({i, true});
+					}
+				}
+			}
+		}
 
 		return aTracks[rand()%aTracks.size()];
 	}

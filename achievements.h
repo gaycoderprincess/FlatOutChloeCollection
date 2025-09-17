@@ -441,7 +441,7 @@ namespace Achievements {
 		for (int i = 1; i < GetNumTracks() + 1; i++) {
 			if (!DoesTrackExist(i)) continue;
 			if (DoesTrackValueExist(i, "StuntMode")) continue;
-			if (DoesTrackValueExist(i, "NoAI")) continue;
+			if (!DoesTrackSupportAI(i)) continue;
 
 			numTracks++;
 			if (gCustomSave.tracksWon[i]) numTracksWon++;
@@ -614,7 +614,7 @@ namespace Achievements {
 					if (gCustomSave.tracksWon[i]) continue;
 					if (!DoesTrackExist(i)) continue;
 					if (DoesTrackValueExist(i, "StuntMode")) continue;
-					if (DoesTrackValueExist(i, "NoAI")) continue;
+					if (!DoesTrackSupportAI(i)) continue;
 
 					if (!achievement->sTrackString.empty()) achievement->sTrackString += ", ";
 					achievement->sTrackString += GetTrackName(i);

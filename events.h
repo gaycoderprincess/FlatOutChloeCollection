@@ -59,6 +59,7 @@ namespace ChloeEvents {
 		}
 	} FilesystemInitEvent;
 
+	// track init - after all AI data is initialized
 	class EventMapLoad : public ChloeEvent<void(*)()> {
 	public:
 		void OnHit() {
@@ -68,6 +69,7 @@ namespace ChloeEvents {
 		}
 	} MapLoadEvent;
 
+	// environment init - before any AI data is loaded, also triggered during menu load
 	class EventMapPreLoad : public ChloeEvent<void(*)()> {
 	public:
 		void OnHit() {
