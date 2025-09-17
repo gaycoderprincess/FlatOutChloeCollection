@@ -64,6 +64,7 @@ bool bAsyncPreload = false;
 bool bIsInMultiplayer = false;
 bool bIsArcadeMode = false;
 bool bIsQuickRace = false;
+bool bIsInstantAction = false;
 bool bIsCareerRace = false;
 bool bIsCarnageRace = false;
 bool bIsSmashyRace = false;

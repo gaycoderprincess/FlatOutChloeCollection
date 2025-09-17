@@ -765,7 +765,7 @@ int ChloeCareerDefs_TallyUsage(void* a1) {
 		if (!DoesTrackExist(i)) continue;
 		if (DoesTrackValueExist(i, "ArenaMode")) continue;
 		if (DoesTrackValueExist(i, "StuntMode")) continue;
-		if ((int)GetTrackValueNumber(i, "TrackType") == CMenu_TrackSelect::TRACKTYPE_DERBY) continue;
+		if ((int)GetTrackValueNumber(i, "TrackType") == TRACKTYPE_DERBY) continue;
 
 		if (nNumNormalTracks[i] != 1) WriteLog(std::format("{} appears {} times", GetTrackName(i), nNumNormalTracks[i]));
 		if (nNumReverseTracks[i] != 1 && DoesTrackSupportReversing(i)) WriteLog(std::format("Reversed {} appears {} times", GetTrackName(i), nNumReverseTracks[i]));
@@ -1099,6 +1099,7 @@ int ChloeArcade_FragDerby_SetTimeLimit(void* a1) {
 
 int ChloeCollection_OnReturnToMenu(void* a1) {
 	bIsQuickRace = false;
+	bIsInstantAction = false;
 	ArcadeMode::SetIsArcadeMode(false);
 	CarnageRace::SetIsCarnageRace(false);
 	SmashyRace::SetIsSmashyRace(false);
@@ -1274,6 +1275,60 @@ int ChloeCollection_SetIsFragDerby(void* a1) {
 int ChloeCollection_SetIsTimeTrial(void* a1) {
 	bIsTimeTrial = luaL_checknumber(a1, 1);
 	return 0;
+}
+
+int ChloeCollection_LaunchInstantAction(void* a1) {
+	bIsInstantAction = true;
+	switch (rand() % 3) {
+		case 0:
+			InstantAction::fUpgradeLevel = 0.0;
+			break;
+		case 1:
+			InstantAction::fUpgradeLevel = 0.5;
+			break;
+		case 2:
+			InstantAction::fUpgradeLevel = 1.0;
+			break;
+	}
+	InstantAction::nNumLaps = (rand() % 4) + 2;
+	pGameFlow->nGameMode = eGameMode::SINGLEPLAYER;
+
+	auto level = InstantAction::GetRandomLevel();
+	auto car = InstantAction::GetRandomCar();
+	if ((int)GetTrackValueNumber(level.level, "TrackType") == TRACKTYPE_DERBY) {
+		pGameFlow->nEventType = eEventType::DERBY;
+		pGameFlow->nSubEventType = eSubEventType::DERBY_LASTMANSTANDING;
+		switch (rand() % 3) {
+			// survivor derby
+			case 0:
+				break;
+			case 1:
+				SetIsWreckingDerby(true);
+				break;
+			case 2:
+				FragDerby::SetIsFragDerby(true);
+				break;
+		}
+	}
+	else {
+		pGameFlow->nEventType = eEventType::RACE;
+		pGameFlow->nSubEventType = eSubEventType::RACE_NORMAL;
+	}
+	pGameFlow->nLevel = level.level;
+	SetTrackReversed(level.reversed);
+	pGameFlow->nCar = car-1;
+	pGameFlow->nCarSkin = (rand()%GetNumSkinsForCar(car))+1;
+	pGameFlow->nClass = GetDealerCar(car)->classId-1;
+	if (pGameFlow->nClass < 0) pGameFlow->nClass = 0;
+	if (pGameFlow->nClass > 2) pGameFlow->nClass = 2;
+
+	pMenuEventManager->PostEvent(MenuEventManager::GAME_RACE);
+	return 0;
+}
+
+int ChloeCollection_WasInstantAction(void* a1) {
+	lua_pushboolean(a1, bIsInstantAction);
+	return 1;
 }
 
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
@@ -1479,6 +1534,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsWreckingDerby, "ChloeCollection_SetIsWreckingDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsFragDerby, "ChloeCollection_SetIsFragDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsTimeTrial, "ChloeCollection_SetIsTimeTrial");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_LaunchInstantAction, "ChloeCollection_LaunchInstantAction");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_WasInstantAction, "ChloeCollection_WasInstantAction");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

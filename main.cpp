@@ -26,6 +26,7 @@
 #include "achievements.h"
 #include "customsettings.h"
 #include "quickrace.h"
+#include "instantaction.h"
 #include "cardamage.h"
 #include "carlimitadjuster.h"
 #include "trackextender.h"

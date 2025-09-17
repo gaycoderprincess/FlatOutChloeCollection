@@ -372,7 +372,7 @@ void ProcessPlayStats() {
 			else if (bIsArcadeMode) {
 				gCustomSave.playtimeNew[PLAYTIME_INGAME_CARNAGE]++;
 			}
-			else if (bIsQuickRace) {
+			else if (bIsQuickRace || bIsInstantAction) {
 				gCustomSave.playtimeNew[PLAYTIME_INGAME_SINGLE]++;
 			}
 

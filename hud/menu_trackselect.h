@@ -2,21 +2,6 @@ class CMenu_TrackSelect : public CMenuHUDElement {
 public:
 	virtual const char* GetName() { return "menu_trackselect"; }
 
-	enum eTrackType {
-		TRACKTYPE_FOREST = 1,
-		TRACKTYPE_FIELDS = 2,
-		TRACKTYPE_PIT = 3,
-		TRACKTYPE_RACING = 4,
-		TRACKTYPE_TOWN = 5,
-		TRACKTYPE_WINTER = 6,
-		TRACKTYPE_DESERT = 7,
-		TRACKTYPE_ARENA = 8,
-		NUM_RACE_TRACKTYPES,
-		TRACKTYPE_DERBY = NUM_RACE_TRACKTYPES,
-		TRACKTYPE_STUNT,
-		NUM_TRACKTYPES
-	};
-
 	static inline const char* aTrackTypeNames[] = {
 		"FOREST",
 		"FIELD",
@@ -201,10 +186,6 @@ public:
 			case GAMETYPE_STUNT:
 				return "STUNT";
 		}
-	}
-
-	bool DoesTrackSupportAI(int level) {
-		return !DoesTrackValueExist(level, "NoAI");
 	}
 
 	bool DoesEventHaveAI() {
