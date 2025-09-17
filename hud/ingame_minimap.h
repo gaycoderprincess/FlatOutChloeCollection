@@ -56,6 +56,8 @@ public:
 
 	static inline float fFO2MapPos[2] = {95, 340};
 	static inline float fFO2MapSize = 0.001;
+	static inline float fFO2MapSizeRace = 0.001;
+	static inline float fFO2MapSizeDerby = 0.001;
 	static inline float fFO2MapClipSize = 128;
 	static void GetMapExtents(float* left, float* right, float* top, float* bottom) {
 		auto posX = pEnvironment->pMinimap->fScreenPos[0];
@@ -204,18 +206,20 @@ public:
 		if (!bIsInMultiplayer && !IsRaceHUDUp()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
 
+		fFO2MapSize = pGameFlow->nEventType == eEventType::DERBY ? fFO2MapSizeDerby : fFO2MapSizeRace;
+
 		if (nUseFO2Minimap == 2) {
-			bFO2Minimap = pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen();
+			bFO2Minimap = !IsInSplitScreen();
 		}
 		else {
-			bFO2Minimap = nUseFO2Minimap && pGameFlow->nEventType != eEventType::DERBY && !IsInSplitScreen() && DoesTrackValueExist(pGameFlow->nLevel, "UseFO2Minimap");
+			bFO2Minimap = nUseFO2Minimap && !IsInSplitScreen() && DoesTrackValueExist(pGameFlow->nLevel, "UseFO2Minimap");
 		}
 
 		auto plyMatrix = GetPlayer(0)->pCar->GetMatrix();
 		fLocalPlayerHeading = bFO2Minimap ? std::atan2(plyMatrix->z.x, plyMatrix->z.z) : 0;
 		vLocalPlayerPosition = bFO2Minimap ? plyMatrix->p : NyaVec3(0, 0, 0);
 
-		if (bFO2Minimap) {
+		if (bFO2Minimap && pGameFlow->nEventType != eEventType::DERBY) {
 			DrawCallback([](const ImDrawList* parent_list, const ImDrawCmd* cmd) {
 				auto pos = GetPositionOnMap(vLocalPlayerPosition);
 				pos.x *= nResX;
@@ -286,7 +290,7 @@ public:
 			DrawPlayerOnMap(ply);
 		}
 
-		if (bFO2Minimap) {
+		if (bFO2Minimap && pGameFlow->nEventType != eEventType::DERBY) {
 			DrawCallback([](const ImDrawList* parent_list, const ImDrawCmd* cmd) { ImGui::GetForegroundDrawList()->PopClipRect(); }, true);
 		}
 	}

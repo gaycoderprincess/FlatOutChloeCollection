@@ -11,6 +11,7 @@ namespace InstantAction {
 		if (!DoesTrackExist(i)) return false;
 		if (!DoesTrackSupportAI(i)) return false;
 		if (DoesTrackValueExist(i, "StuntMode")) return false;
+		if (DoesTrackValueExist(i, "NotInInstantAction")) return false;
 		return true;
 	}
 
