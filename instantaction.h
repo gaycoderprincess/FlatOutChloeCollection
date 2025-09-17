@@ -51,6 +51,9 @@ namespace InstantAction {
 				if (!CanTrackBePicked(i)) continue;
 				if (gCustomSave.tracksWon[i]) continue;
 
+				// derby tracks don't have best laps counted, won't know if they've been played or not
+				if ((int)GetTrackValueNumber(i, "TrackType") == TRACKTYPE_DERBY) continue;
+
 				if (!tracks[i]) {
 					tracks[i] = true;
 					aTracks.push_back({i, false});
