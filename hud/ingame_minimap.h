@@ -199,6 +199,8 @@ public:
 				pos.x *= nResX;
 				pos.y *= nResY;
 				float size = fFO2MapClipSize;
+				size /= 1080.0;
+				size *= nResY;
 				ImGui::GetForegroundDrawList()->PushClipRect(ImVec2(pos.x-size, pos.y-size), ImVec2(pos.x+size, pos.y+size), false);
 			}, true);
 		}
