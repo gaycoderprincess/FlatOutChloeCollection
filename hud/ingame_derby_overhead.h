@@ -16,7 +16,7 @@ public:
 
 		auto mat = *ply->pCar->GetMatrix();
 		auto yUp = mat.y;
-		if (yUp.y < 0) yUp *= -1;
+		if (yUp.y < 0) yUp.y *= -1;
 		mat.p += yUp * fPlayerHealthIconOffset;
 		auto drawPos = Get3DTo2D(mat.p);
 		if (drawPos.z <= 0) return;
@@ -49,7 +49,7 @@ public:
 
 		auto mat = *ply->pCar->GetMatrix();
 		auto yUp = mat.y;
-		if (yUp.y < 0) yUp *= -1;
+		if (yUp.y < 0) yUp.y *= -1;
 		mat.p += yUp * fPlayerHealthIconOffset;
 		mat.p.y += fPlayerIconOffset - fPlayerHealthIconOffset;
 		auto drawPos = Get3DTo2D(mat.p);
