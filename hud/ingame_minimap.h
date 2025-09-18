@@ -175,7 +175,8 @@ public:
 	static void LoadMinimaps() {
 		auto config = ReadTOMLFromBfsLUAHack(std::format("{}data/map.bed", pEnvironment->sStagePath.Get()));
 		pMapTexture = LoadTextureFromBFS(config["MapTexture"].value_or(""));
-
+		pMapTextureFO2 = nullptr;
+		
 		bool useFO2Minimap = nUseFO2Minimap == 2;
 		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN && pGameFlow->nEventType != eEventType::STUNT) {
 			useFO2Minimap = false;
