@@ -139,16 +139,6 @@ void ProcessCarReset() {
 	}
 
 	if (!pLoadingScreen && GetGameState() == GAME_STATE_RACE) {
-		// add all startpoints to resets in derbies
-		if (aNewResetPoints.empty() && pGameFlow->nEventType == eEventType::DERBY) {
-			for (int i = 0; i < 8; i++) {
-				tResetpoint reset;
-				memcpy(&reset.matrix, pEnvironment->aStartpoints[i].fMatrix, sizeof(reset.matrix));
-				reset.split = -1;
-				aNewResetPoints.push_back(reset);
-			}
-		}
-
 		auto ply = GetPlayer(0);
 		if (auto reset = GetClosestResetpoint(ply, ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, ResetpointMaxDist)) {
 			pPlayerResetpoint = reset;

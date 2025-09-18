@@ -16,6 +16,8 @@ namespace InstantAction {
 	}
 
 	tTrackEntry GetRandomLevel() {
+		const int minAmount = 3;
+		
 		auto tracks = new bool[GetNumTracks()+1];
 		auto tracksRev = new bool[GetNumTracks()+1];
 		memset(tracks,0,GetNumTracks()+1);
@@ -27,6 +29,9 @@ namespace InstantAction {
 		for (int i = 1; i < GetNumTracks()+1; i++) {
 			if (!CanTrackBePicked(i)) continue;
 			if (gCustomSave.tracksWon[i]) continue;
+			
+			// derby tracks don't have best laps counted, won't know if they've been played or not
+			if ((int)GetTrackValueNumber(i, "TrackType") == TRACKTYPE_DERBY) continue;
 
 			if (!gCustomSave.bestLaps[i]) {
 				tracks[i] = true;
@@ -46,13 +51,10 @@ namespace InstantAction {
 		}
 
 		// add played but unwon tracks
-		if (aTracks.size() <= 3) {
+		if (aTracks.size() < minAmount) {
 			for (int i = 1; i < GetNumTracks()+1; i++) {
 				if (!CanTrackBePicked(i)) continue;
 				if (gCustomSave.tracksWon[i]) continue;
-
-				// derby tracks don't have best laps counted, won't know if they've been played or not
-				if ((int)GetTrackValueNumber(i, "TrackType") == TRACKTYPE_DERBY) continue;
 
 				if (!tracks[i]) {
 					tracks[i] = true;
@@ -73,7 +75,7 @@ namespace InstantAction {
 		}
 
 		// add unplayed reverse tracks
-		if (aTracks.size() <= 3) {
+		if (aTracks.size() < minAmount) {
 			for (int i = 1; i < GetNumTracks()+1; i++) {
 				if (tracksRev[i]) continue;
 				if (!CanTrackBePicked(i)) continue;
@@ -91,7 +93,7 @@ namespace InstantAction {
 		}
 
 		// add all tracks
-		if (aTracks.size() <= 3) {
+		if (aTracks.size() < minAmount) {
 			WriteLogDebug("INSTANTACTION", "not enough unplayed tracks, adding all tracks to selection");
 
 			for (int i = 1; i < GetNumTracks()+1; i++) {
