@@ -73,14 +73,20 @@ DevTexture* __thiscall CreateTextureFromMemoryNew(DeviceD3d* pThis, DevTexture* 
 }
 
 DevTexture* __thiscall CreateTextureFromFileNew(DeviceD3d* pThis, DevTexture* pTexture, const char* path, uint32_t flags) {
+	size_t dataSize;
+	auto data = ReadTextureDataFromFile(path, &dataSize);
+	if (!data) return nullptr;
+
+	if (IsNativelySupportedDDSFormat(data)) {
+		delete[] data;
+		pTexture = DeviceD3d::CreateTextureFromFile(pDeviceD3d, pTexture, path, flags);
+		return pTexture;
+	}
+
 	if (!pTexture) {
 		// small dummy texture for constructing a DevTexture
 		pTexture = DeviceD3d::CreateTextureFromFile(pThis, pTexture, "data/global/overlay/overlaynitro.dds", flags);
 	}
-
-	size_t dataSize;
-	auto data = ReadTextureDataFromFile(path, &dataSize);
-	if (!data) return nullptr;
 
 	if (CreateCustomTexture(pTexture, data, dataSize, flags)) {
 		delete[] data;
