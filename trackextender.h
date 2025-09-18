@@ -101,6 +101,7 @@ void SetTrackCustomProperties() {
 auto NoFO2WindowProps_call = (void(__stdcall*)(void*, const char*, void*, void*, void*, void*, void*, void*, void*))0x4C95E0;
 void __stdcall NoFO2WindowProps(void* a1, const char* a2, void* a3, void* a4, void* a5, void* a6, void* a7, void* a8, void* a9) {
 	if (!strcmp(a2, "window")) return;
+	if (DoesTrackValueExist(pGameFlow->nLevel, "NoProps")) return;
 	return NoFO2WindowProps_call(a1, a2, a3, a4, a5, a6, a7, a8, a9);
 }
 
