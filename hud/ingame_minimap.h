@@ -176,9 +176,14 @@ public:
 		auto config = ReadTOMLFromBfsLUAHack(std::format("{}data/map.bed", pEnvironment->sStagePath.Get()));
 		pMapTexture = LoadTextureFromBFS(config["MapTexture"].value_or(""));
 
+		bool useFO2Minimap = nUseFO2Minimap == 2;
+		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN && pGameFlow->nEventType != eEventType::STUNT) {
+			useFO2Minimap = false;
+		}
+		
 		// load FO2 minimap
 		auto fo2ConfigPath = std::format("{}data/map_fo2.bed", pEnvironment->sStagePath.Get());
-		if (nUseFO2Minimap == 2 && DoesFileExist(fo2ConfigPath.c_str())) {
+		if (useFO2Minimap && DoesFileExist(fo2ConfigPath.c_str())) {
 			config = ReadTOMLFromBfsLUAHack(fo2ConfigPath);
 			pMapTextureFO2 = LoadTextureFromBFS(config["MapTexture"].value_or(""));
 			pEnvironment->pMinimap->fWorldTopLeft[0] = config["MapTopLeft"][0].value_or(0.0f);

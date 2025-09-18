@@ -263,6 +263,8 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			for (int i = 0; i < nMaxSplitscreenPlayers; i++) {
 				HUD_DamageMeter[i].nPlayerId = i;
 			}
+			
+			NyaHookLib::Patch<uint8_t>(0x47C4FD, 0xEB); // disable splitscreen prop draw distance halving
 		} break;
 		default:
 			break;
