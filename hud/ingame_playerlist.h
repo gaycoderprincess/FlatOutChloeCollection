@@ -26,6 +26,7 @@ public:
 		if (!IsRaceHUDUp()) return;
 		if (IsInSplitScreen()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
+		if (bIsTimeTrial && !CareerMode::IsCareerTimeTrial()) return;
 
 		static CNyaRaceTimer gTimer;
 		static double fPlayerListState = 0;

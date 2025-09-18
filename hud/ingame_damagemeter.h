@@ -238,26 +238,6 @@ public:
 	}
 } HUD_DamageMeter[nMaxSplitscreenPlayers] = {};
 
-const char* GetCrashBonusName(int type) {
-	switch (type) {
-	case CRASHBONUS_CRASHFLYBY:
-		return "CRASH FLY-BY";
-	case CRASHBONUS_SUPERFLIP:
-		return "SUPER FLIP";
-	case CRASHBONUS_SLAM:
-		return "SLAM";
-	case CRASHBONUS_POWERHIT:
-		return "POWER HIT";
-	case CRASHBONUS_BLASTOUT:
-		return "BLAST OUT!";
-	case CRASHBONUS_RAGDOLLED:
-		return "CRASH OUT!";
-	case CRASHBONUS_WRECKED:
-		return "WRECKED!";
-	}
-	return nullptr;
-}
-
 void AddCrashBonus(Player* pPlayer, int type) {
 	auto str = GetCrashBonusName(type);
 	if (!str) return;

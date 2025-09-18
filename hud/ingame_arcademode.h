@@ -5,21 +5,6 @@ public:
 	std::string sEarnPopupString;
 	NyaDrawing::CNyaRGBA32 nEarnPopupRGB;
 
-	static NyaDrawing::CNyaRGBA32 GetMedalRGB(int medal) {
-		switch (medal) {
-			case 1:
-				return {236,221,16, 255};
-			case 2:
-				return {186,186,186, 255};
-			case 3:
-				return {175, 100, 0, 255};
-			case 4:
-				return {30,160,9, 255};
-			default:
-				return {255,255,255,255};
-		}
-	}
-
 	void TriggerEarnPopup(const std::string& str, int medal) {
 		fEarnPopupTime = 4;
 		sEarnPopupString = str;

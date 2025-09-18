@@ -228,3 +228,38 @@ bool DoesTrackSupportReversing(int level) {
 	whattahoo rush hour
 	*/
 }
+
+const char* GetCrashBonusName(int type) {
+	switch (type) {
+	case CRASHBONUS_CRASHFLYBY:
+		return "CRASH FLY-BY";
+	case CRASHBONUS_SUPERFLIP:
+		return "SUPER FLIP";
+	case CRASHBONUS_SLAM:
+		return "SLAM";
+	case CRASHBONUS_POWERHIT:
+		return "POWER HIT";
+	case CRASHBONUS_BLASTOUT:
+		return "BLAST OUT!";
+	case CRASHBONUS_RAGDOLLED:
+		return "CRASH OUT!";
+	case CRASHBONUS_WRECKED:
+		return "WRECKED!";
+	}
+	return nullptr;
+}
+
+NyaDrawing::CNyaRGBA32 GetMedalRGB(int medal) {
+	switch (medal) {
+	case 1:
+		return {236,221,16, 255};
+	case 2:
+		return {186,186,186, 255};
+	case 3:
+		return {175, 100, 0, 255};
+	case 4:
+		return {30,160,9, 255};
+	default:
+		return {255,255,255,255};
+	}
+}

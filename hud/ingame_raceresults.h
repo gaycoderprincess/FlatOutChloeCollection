@@ -77,16 +77,16 @@ public:
 		auto score = ArcadeMode::nCurrentEventScore;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 		if (score >= event->aGoalScores[2]) {
-			data.SetColor(HUD_ArcadeMode.GetMedalRGB(3));
+			data.SetColor(GetMedalRGB(3));
 		}
 		if (score >= event->aGoalScores[1]) {
-			data.SetColor(HUD_ArcadeMode.GetMedalRGB(2));
+			data.SetColor(GetMedalRGB(2));
 		}
 		if (score >= event->aGoalScores[0]) {
-			data.SetColor(HUD_ArcadeMode.GetMedalRGB(1));
+			data.SetColor(GetMedalRGB(1));
 		}
 		if (score >= event->nPlatinumScore) {
-			data.SetColor(HUD_ArcadeMode.GetMedalRGB(4));
+			data.SetColor(GetMedalRGB(4));
 		}
 		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(score), &DrawStringFO2_Small);
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));

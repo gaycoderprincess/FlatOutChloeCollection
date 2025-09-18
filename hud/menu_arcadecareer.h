@@ -223,7 +223,7 @@ public:
 		data.size = gYourScore.fSize;
 		if (unlocked) {
 			auto data2 = data;
-			data2.SetColor(CHUD_ArcadeMode::GetMedalRGB(position));
+			data2.SetColor(GetMedalRGB(position));
 			Draw1080pString(JUSTIFY_LEFT, data2, FormatScore(score), &DrawStringFO2_Small);
 		}
 		else {
