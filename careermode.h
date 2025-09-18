@@ -332,7 +332,7 @@ namespace CareerMode {
 	}
 
 	void OnTick() {
-		if (IsCareerTimeTrial()) {
+		if (IsCareerTimeTrial() || bIsTimeTrial) {
 			if (auto ply = GetPlayer(0)) {
 				ply->nStartPosition = 1;
 			}
