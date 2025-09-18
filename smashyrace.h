@@ -29,7 +29,9 @@ namespace SmashyRace {
 		nPlayerScore = 0;
 		auto ply = GetPlayer(0);
 		for (int i = 0; i < 10; i++) {
-			nPlayerScore += ply->pCar->aObjectsSmashed[i] * fBonusTypePrice[i] * nScoreMultiplier;
+			auto price = fBonusTypePrice[i];
+			if (price <= 0) price = 1;
+			nPlayerScore += ply->pCar->aObjectsSmashed[i] * price * nScoreMultiplier;
 		}
 	}
 
