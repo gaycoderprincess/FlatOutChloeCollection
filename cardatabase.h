@@ -249,8 +249,8 @@ void __fastcall LoadCarBody(Car* car) {
 
 	auto body = &car->Body;
 
-	const char* steerBalanceFactor = GetHandlingMode() == HANDLING_PROFESSIONAL && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL ? "ProSteerBalanceFactor" : "SteerBalanceFactor";
-	const char* steerBalanceRate = GetHandlingMode() == HANDLING_PROFESSIONAL && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL ? "ProSteerBalanceRate" : "SteerBalanceRate";
+	const char* steerBalanceFactor = GetHandlingMode(car->pPlayer) == HANDLING_PROFESSIONAL ? "ProSteerBalanceFactor" : "SteerBalanceFactor";
+	const char* steerBalanceRate = GetHandlingMode(car->pPlayer) == HANDLING_PROFESSIONAL ? "ProSteerBalanceRate" : "SteerBalanceRate";
 	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceFactor, "Body", steerBalanceFactor, 3);
 	CAR_PERFORMANCE_ARRAY(body->fArcadeSteerBalanceRate, "Body", steerBalanceRate, 3);
 	CAR_PERFORMANCE_TUNE(body->fArcadeBrakePower, "Body", "Body_Max", "BrakePower", tuning.fBrakePower);
@@ -346,7 +346,7 @@ void __stdcall LoadCarTires(Car* car) {
 	CAR_PERFORMANCE(fUnderSteer, "TireDynamics", "UnderSteer");
 	CAR_PERFORMANCE(fSlowDown, "TireDynamics", "SlowDown");
 
-	if (GetHandlingMode() == HANDLING_HARDCORE) {
+	if (GetHandlingMode(car->pPlayer) == HANDLING_HARDCORE) {
 		fXFriction[0] = 1;
 		fXFriction[1] = 0;
 		fZFriction[0] = 1;

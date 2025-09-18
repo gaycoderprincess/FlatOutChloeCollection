@@ -99,7 +99,7 @@ void SetEngineDamage() {
 
 void CustomSetterThread() {
 	pGameFlow->nAutoTransmission = !nTransmission;
-	pGameFlow->Profile.nEasyDifficulty = GetHandlingMode() == HANDLING_NORMAL;
+	pGameFlow->Profile.nEasyDifficulty = GetHandlingMode(nullptr) == HANDLING_NORMAL;
 	nRagdoll = 1;
 
 	SetHandlingDamage();
