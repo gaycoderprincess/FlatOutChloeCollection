@@ -173,12 +173,18 @@ public:
 	}
 
 	static void LoadMinimaps() {
+		if (pGameFlow->nEventType == eEventType::STUNT) {
+			pMapTexture = nullptr;
+			pMapTextureFO2 = nullptr;
+			return;
+		}
+		
 		auto config = ReadTOMLFromBfsLUAHack(std::format("{}data/map.bed", pEnvironment->sStagePath.Get()));
 		pMapTexture = LoadTextureFromBFS(config["MapTexture"].value_or(""));
 		pMapTextureFO2 = nullptr;
 		
 		bool useFO2Minimap = nUseFO2Minimap == 2;
-		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN && pGameFlow->nEventType != eEventType::STUNT) {
+		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {
 			useFO2Minimap = false;
 		}
 		
