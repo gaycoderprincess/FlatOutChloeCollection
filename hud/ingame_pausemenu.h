@@ -6,19 +6,19 @@ public:
 		SUBMENU_RESTARTPROMPT,
 		SUBMENU_QUITPROMPT,
 	};
+	
+	static void RestartRace() {
+		nMenuReturnValue = IngameMenu::MENU_ACTION_RESTARTRACE;
+		if (pGameFlow->nEventType == eEventType::STUNT) {
+			GetScoreManager()->nStuntPlayerId = pPlayerHost->GetNumPlayers()-1;
+			GetScoreManager()->nStuntRoundId = GetScoreManager()->nNumLaps-1;
+		}
+	}
 
 	static inline MenuOption* aOptionsMain[] = {
 		new MenuOption("PAUSED"),
 		new MenuOptionSelectable("CONTINUE EVENT", [](){ nMenuReturnValue = 0; }),
 		new MenuOptionSelectable("RETRY EVENT", [](){ EnterSubmenu(SUBMENU_RESTARTPROMPT); }),
-		new MenuOptionSelectable("SOUND OPTIONS", [](){ EnterSubmenu(SUBMENU_SOUNDOPTIONS); }),
-		new MenuOptionSelectable("EXIT TO MENU", [](){ EnterSubmenu(SUBMENU_QUITPROMPT); }),
-		nullptr
-	};
-
-	static inline MenuOption* aOptionsMainNoRestart[] = {
-		new MenuOption("PAUSED"),
-		new MenuOptionSelectable("CONTINUE EVENT", [](){ nMenuReturnValue = 0; }),
 		new MenuOptionSelectable("SOUND OPTIONS", [](){ EnterSubmenu(SUBMENU_SOUNDOPTIONS); }),
 		new MenuOptionSelectable("EXIT TO MENU", [](){ EnterSubmenu(SUBMENU_QUITPROMPT); }),
 		nullptr
@@ -42,7 +42,7 @@ public:
 	static inline MenuOption* aOptionsRestart[] = {
 			new MenuOption("RETRY EVENT"),
 			new MenuOptionSelectable("NO", [](){ EnterSubmenu(SUBMENU_MAIN); }),
-			new MenuOptionSelectable("YES", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_RESTARTRACE; }),
+			new MenuOptionSelectable("YES", [](){ RestartRace(); }),
 			new MenuOption(""),
 			new MenuOption("YOU WILL LOSE YOUR CURRENT PROGRESS!"),
 			nullptr
@@ -61,11 +61,7 @@ public:
 		switch (menu) {
 			case SUBMENU_MAIN:
 			default:
-			{
-				// stunts continue to the next round if you restart them
-				if (pGameFlow->nEventType == eEventType::STUNT || bIsInMultiplayer) return aOptionsMainNoRestart;
 				return aOptionsMain;
-			}
 			case SUBMENU_SOUNDOPTIONS: {
 				if (pGameFlow->nEventType == eEventType::STUNT) return aOptionsSoundStunt;
 				return aOptionsSound;
