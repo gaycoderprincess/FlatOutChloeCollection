@@ -213,30 +213,27 @@ public:
 			case TRACK_BOWLING: return "bowling";
 			case TRACK_DARTS: return "darts";
 			case TRACK_CLOWN: return "clown";
-			case TRACK_DESERT1A:
-			case TRACK_DESERT1B:
-			case TRACK_DESERT1C:
-				return "bg_desert";
-			case TRACK_FIELDS1A:
-			case TRACK_FIELDS1B:
-			case TRACK_FIELDS1C:
-			case TRACK_FIELDS2A:
-			case TRACK_FIELDS2B:
-			case TRACK_FIELDS2C:
-				return "bg_field";
-			case TRACK_FO2FOREST1A:
-			case TRACK_FO2FOREST1B:
-			case TRACK_FO2FOREST1C:
-			case TRACK_FO2FOREST2A:
-			case TRACK_FO2FOREST2B:
-			case TRACK_FO2FOREST2C:
-				return "bg_forest";
-			case TRACK_FO2DERBY1A:
-				return "derby1_bg";
-			case TRACK_FO2DERBY2A:
-				return "derby2_bg";
-			case TRACK_FO2DERBY3A:
-				return "derby3_bg";
+			case TRACK_DESERT1A: return "loading_bg_desert1a";
+			case TRACK_DESERT1B: return "loading_bg_desert1b";
+			case TRACK_DESERT1C: return "loading_bg_desert1c";
+			case TRACK_FIELDS1A: return "loading_bg_fields1a";
+			case TRACK_FIELDS1B: return "loading_bg_fields1b";
+			case TRACK_FIELDS1C: return "loading_bg_fields1c";
+			case TRACK_FIELDS2A: return "loading_bg_fields2a";
+			case TRACK_FIELDS2B: return "loading_bg_fields2b";
+			case TRACK_FIELDS2C: return "loading_bg_fields2c";
+			case TRACK_FO2FOREST1A: return "loading_bg_forest1a";
+			case TRACK_FO2FOREST1B: return "loading_bg_forest1b";
+			case TRACK_FO2FOREST1C: return "loading_bg_forest1c";
+			case TRACK_FO2FOREST2A: return "loading_bg_forest2a";
+			case TRACK_FO2FOREST2B: return "loading_bg_forest2b";
+			case TRACK_FO2FOREST2C: return "loading_bg_forest2c";
+			case TRACK_FO2DERBY1A: return "loading_bg_derby1";
+			case TRACK_FO2DERBY2A: return "loading_bg_derby2";
+			case TRACK_FO2DERBY3A: return "loading_bg_derby3";
+			//case TRACK_FO2ARENA1A: return "loading_bg_arena1";
+			//case TRACK_FO2ARENA2A: return "loading_bg_arena2";
+			//case TRACK_FO2ARENA3A: return "loading_bg_arena3";
 			default:
 				return nullptr;
 		}
