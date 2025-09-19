@@ -38,6 +38,8 @@ public:
 		PreloadTexture("data/menu/carnagebg_selected.png");
 		PreloadTexture("data/menu/track_icons.dds");
 		PreloadTexture("data/menu/track_icons_inactive.dds");
+		PreloadTexture("data/menu/track_icons_2.dds");
+		PreloadTexture("data/menu/track_icons_2_inactive.dds");
 		PreloadTexture("data/menu/common.dds");
 	}
 
@@ -118,9 +120,12 @@ public:
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carnagebg_left.png");
 		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_right.png");
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
-		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
+		static auto textureTracksLocked = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
+		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_2.dds");
+		static auto textureTracks2Locked = LoadTextureFromBFS("data/menu/track_icons_2_inactive.dds");
 		static auto textureCommon = LoadTextureFromBFS("data/menu/common.dds");
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
+		static auto trackIcons2 = LoadHUDData("data/menu/track_icons_2.bed", "track_icons_2");
 		static auto commonData = LoadHUDData("data/menu/common.bed", "common");
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
@@ -158,18 +163,23 @@ public:
 			if (position == 1 || position == 4) {
 				gCustomSave.tracksWon[event->nLevel] = true;
 			}
-
+			
 			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(event->nLevel, "Image"));
+			auto trackIconTexture = unlocked ? textureTracks : textureTracksLocked;
 			if (!trackIcon) {
-				MessageBoxA(0, std::format("Failed to find image for track {}", event->nLevel).c_str(), "Fatal error", MB_ICONERROR);
+				trackIcon = GetHUDData(trackIcons2, GetTrackValueString(event->nLevel, "Image"));
+				trackIconTexture = unlocked ? textureTracks2 : textureTracks2Locked;
+				if (!trackIcon) {
+					MessageBoxA(0, std::format("Failed to find image for track {}", event->nLevel).c_str(), "Fatal error", MB_ICONERROR);
+				}
 			}
-
+			
 			auto data = gEvent;
 			float x1 = data.fPosX + data.fSpacingX * posX;
 			float y1 = data.fPosY + data.fSpacingY * posY;
 			float x2 = x1 + data.fSize * 1.5;
 			float y2 = y1 + data.fSize;
-			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, unlocked ? textureTracks : textureTracks2, 0, trackIcon->min, trackIcon->max);
+			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, trackIconTexture, 0, trackIcon->min, trackIcon->max);
 			if (position >= 1 && position <= 4) {
 				if (position == 4) {
 					Achievements::AwardAchievement(GetAchievement("AUTHOR_MEDAL"));

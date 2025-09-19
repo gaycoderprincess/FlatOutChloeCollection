@@ -399,7 +399,7 @@ public:
 		PreloadTexture("data/menu/trackselectbg_left.png");
 		PreloadTexture("data/menu/trackselectbg_right.png");
 		PreloadTexture("data/menu/track_icons.dds");
-		PreloadTexture("data/menu/track_icons_inactive.dds");
+		PreloadTexture("data/menu/track_icons_2.dds");
 		PreloadTexture("data/menu/track_name_icons.dds");
 		PreloadTexture("data/menu/common.dds");
 	}
@@ -461,10 +461,17 @@ public:
 
 	static void DisplayTrackInfo(int trackId, float fXOffset = 0, int nXOffset = 0) {
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
+		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_2.dds");
 		static auto textureTrackLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
 		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
+		static auto trackIcons2 = LoadHUDData("data/menu/track_icons_2.bed", "track_icons_2");
 		auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(trackId, "Image"));
-
+		auto trackIconImage = textureTracks;
+		if (!trackIcon) {
+			trackIcon = GetHUDData(trackIcons2, GetTrackValueString(trackId, "Image"));
+			trackIconImage = textureTracks2;
+		}
+		
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
 		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/track_name_icons.bed", "track_name_icons");
 
@@ -490,7 +497,7 @@ public:
 		float y2 = data.nPosY + data.fSize;
 		DoJustify(JUSTIFY_RIGHT, x1, y1);
 		DoJustify(JUSTIFY_RIGHT, x2, y2);
-		DrawRectangle(x1, x2, y1, y2, {255,255,255,255}, 0, textureTracks, 0, trackIcon->min, trackIcon->max);
+		DrawRectangle(x1, x2, y1, y2, {255,255,255,255}, 0, trackIconImage, 0, trackIcon->min, trackIcon->max);
 		if (!mapPath.empty()) {
 			auto trackMap = LoadTextureFromBFS(mapPath.c_str());
 
