@@ -231,6 +231,12 @@ public:
 			case TRACK_FO2FOREST2B:
 			case TRACK_FO2FOREST2C:
 				return "bg_forest";
+			case TRACK_FO2DERBY1A:
+				return "derby1_bg";
+			case TRACK_FO2DERBY2A:
+				return "derby2_bg";
+			case TRACK_FO2DERBY3A:
+				return "derby3_bg";
 			default:
 				return nullptr;
 		}

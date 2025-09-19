@@ -162,6 +162,7 @@ void ApplyUltrawidePatches() {
 	NyaHookLib::Patch(0x45B237 + 2, &f43AspectCorrection_inv_flt); // countdown scaling
 	NyaHookLib::Patch(0x454D82 + 2, &f43AspectCorrection_inv_flt); // text justify
 	NyaHookLib::Patch(0x454B2F + 2, &f43AspectCorrection_inv_flt); // total time text
+	NyaHookLib::Patch(0x453923 + 2, &f43AspectCorrection_inv_flt); // music player popup
 	return;
 
 	std::ifstream t("Config/WindowFunctions.bed");
