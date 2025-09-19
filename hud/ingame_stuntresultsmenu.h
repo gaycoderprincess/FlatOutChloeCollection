@@ -1,6 +1,6 @@
 class CHUD_StuntResultsMenu : public CIngameHUDElement {
 public:
-	virtual void Init() {
+	void Init() override {
 		nHUDLayer = eHUDLayer::OVERLAY;
 	}
 
@@ -9,7 +9,7 @@ public:
 
 	static inline bool bMenuUp = false;
 
-	std::string GetPlayerScoreString(PlayerScoreRace* player) {
+	static std::string GetPlayerScoreString(PlayerScoreRace* player) {
 		bool useMeters = pGameFlow->nSubEventType == eSubEventType::STUNT_LONGJUMP || pGameFlow->nSubEventType == eSubEventType::STUNT_HIGHJUMP;
 
 		float score = 0;
@@ -29,11 +29,11 @@ public:
 		}
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bMenuUp) return;
 
-		HUD_PauseMenu.DrawBackground();
-		HUD_PauseMenu.DrawMenuTitle("FINAL SCORES");
+		CHUD_PauseMenu::DrawBackground();
+		CHUD_PauseMenu::DrawMenuTitle("FINAL SCORES");
 
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 			auto ply = GetScoreManager()->aScores[i];

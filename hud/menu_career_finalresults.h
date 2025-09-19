@@ -1,6 +1,6 @@
 class CMenu_CareerFinalResults : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_career_finalresults"; }
+	const char* GetName() override { return "menu_career_finalresults"; }
 
 	static constexpr tDrawPositions1080p gTitle = {1740,230,0.04};
 	static constexpr tDrawPositions1080p gCupName = {1740,275,0.02};
@@ -11,12 +11,12 @@ public:
 	static constexpr int nEventsSpacing = 70;
 	static constexpr int nPointsX = 1380;
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/final_results_screen_bg_left.png");
 		PreloadTexture("data/menu/final_results_screen_bg_right.png");
 	}
 
-	virtual void Process() {
+	void Process() override {
 		static CNyaTimer gTimer;
 		gTimer.Process();
 

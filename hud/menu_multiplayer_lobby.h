@@ -1,6 +1,6 @@
 class CMenu_Multiplayer_Lobby : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_multiplayer_lobby"; }
+	const char* GetName() override { return "menu_multiplayer_lobby"; }
 
 	struct tPlayer {
 		std::string name;
@@ -50,13 +50,13 @@ public:
 
 	int nIcon2X = 141;
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/mpmenubg.png");
 		PreloadTexture("data/menu/flags.tga");
 		PreloadTexture("data/menu/multiplayer.tga");
 	}
 
-	void DrawPlayerInfo(int y, const std::string& ready, const std::string& name, const std::string& car, const std::string& ping) {
+	void DrawPlayerInfo(int y, const std::string& ready, const std::string& name, const std::string& car, const std::string& ping) const {
 		tNyaStringData data;
 		data.y = nPlayerStartY + y * nPlayerListSpacing;
 		data.size = fPlayerListTextSize;
@@ -72,7 +72,7 @@ public:
 		Draw1080pString(JUSTIFY_LEFT, data, ping, &DrawStringFO2_Ingame12);
 	}
 
-	void DrawPlayerFlag(int y, const std::string& flagName) {
+	void DrawPlayerFlag(int y, const std::string& flagName) const {
 		static auto textureFlags = LoadTextureFromBFS("data/menu/flags.tga");
 		static auto dataFlags = LoadHUDData("data/menu/flags.bed", "flags");
 
@@ -85,7 +85,7 @@ public:
 		Draw1080pSprite(JUSTIFY_LEFT, nFlagX - nFlagSize * 2, nFlagX + nFlagSize * 2, posY - nFlagSize, posY + nFlagSize, {255,255,255,255}, textureFlags, data->min, data->max);
 	}
 
-	void DrawPlayerIcon(int y, const std::string& iconName) {
+	void DrawPlayerIcon(int y, const std::string& iconName) const {
 		if (iconName.empty()) return;
 
 		static auto textureFlags = LoadTextureFromBFS("data/menu/multiplayer.tga");
@@ -99,7 +99,7 @@ public:
 		Draw1080pSprite(JUSTIFY_LEFT, nIconX - nIconSize, nIconX + nIconSize, posY - nIconSize, posY + nIconSize, {255,255,255,255}, textureFlags, data->min, data->max);
 	}
 
-	void DrawPlayerIcon2(int y, const std::string& iconName) {
+	void DrawPlayerIcon2(int y, const std::string& iconName) const {
 		if (iconName.empty()) return;
 
 		static auto textureFlags = LoadTextureFromBFS("data/menu/multiplayer.tga");
@@ -113,7 +113,7 @@ public:
 		Draw1080pSprite(JUSTIFY_LEFT, nIcon2X - nIconSize, nIcon2X + nIconSize, posY - nIconSize, posY + nIconSize, {255,255,255,255}, textureFlags, data->min, data->max);
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bEnabled) return;
 		if (!bIsInMultiplayer) return;
 

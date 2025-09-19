@@ -1,6 +1,6 @@
 class CMenu_TrackSelect : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_trackselect"; }
+	const char* GetName() override { return "menu_trackselect"; }
 
 	static inline const char* aTrackTypeNames[] = {
 		"FOREST",
@@ -152,7 +152,7 @@ public:
 			{"*END*", nullptr},
 	};
 
-	bool IsMultiplayerMenu() {
+	bool IsMultiplayerMenu() const {
 		return aOptions == aOptionsMultiplayer || aOptions == aOptionsMultiplayerCreate;
 	}
 
@@ -160,7 +160,7 @@ public:
 	bool bSplitScreen = false;
 	bool bMultiplayerCreateGame = false;
 
-	eEventType GetGameMode() {
+	static eEventType GetGameMode() {
 		switch (nGameType) {
 			case GAMETYPE_RACE:
 			default:
@@ -174,7 +174,7 @@ public:
 		}
 	}
 
-	std::string GetGameModeString() {
+	static std::string GetGameModeString() {
 		switch (nGameType) {
 			case GAMETYPE_RACE:
 			default:
@@ -188,7 +188,7 @@ public:
 		}
 	}
 
-	bool DoesEventHaveAI() {
+	bool DoesEventHaveAI() const {
 		if (aOptions == aOptionsTimeTrial) return false;
 		if (bSplitScreen) return false;
 		if (IsMultiplayerMenu() && nMultiplayerAICount <= 0) return false;
@@ -199,7 +199,7 @@ public:
 		int level;
 		bool reversed;
 	};
-	std::vector<tTrackEntry> GetTrackSelection() {
+	std::vector<tTrackEntry> GetTrackSelection() const {
 		std::vector<tTrackEntry> aTracks;
 		for (int i = 1; i < GetNumTracks()+1; i++) {
 			if (!DoesTrackExist(i)) continue;
@@ -220,7 +220,7 @@ public:
 		return aTracks;
 	}
 
-	int GetTrackId() {
+	int GetTrackId() const {
 		auto aTracks = GetTrackSelection();
 		if (aTracks.empty()) {
 			WriteLog(std::format("No tracks available for category {}!", aTrackTypeNames[nTrackType-1]));
@@ -234,7 +234,7 @@ public:
 		return aTracks[nTrack].level;
 	}
 
-	float GetDamageLevel() {
+	static float GetDamageLevel() {
 		switch (nDamage) {
 			case DAMAGE_0:
 			default:
@@ -252,7 +252,7 @@ public:
 		}
 	}
 
-	float GetUpgradeLevel() {
+	static float GetUpgradeLevel() {
 		switch (nUpgrades) {
 			case UPGRADE_0:
 			default:
@@ -340,7 +340,7 @@ public:
 		if (DoesEventHaveAI() && !DoesTrackSupportReversing(GetTrackId())) nTrackReversed = 0;
 	}
 
-	bool IsOptionValid(int option) {
+	bool IsOptionValid(int option) const {
 		if (aOptions[option].name.empty()) return false;
 		if (DoesEventHaveAI() && aOptions[option].value == &nTrackReversed && !DoesTrackSupportReversing(GetTrackId())) return false;
 		if (nGameType != GAMETYPE_RACE && nGameType != GAMETYPE_DERBY_WRECKING && nGameType != GAMETYPE_DERBY_FRAG) {
@@ -358,7 +358,7 @@ public:
 		return true;
 	}
 
-	int GetNumOptions() {
+	int GetNumOptions() const {
 		int count = 0;
 		while (true) {
 			count++;
@@ -366,19 +366,19 @@ public:
 		};
 	}
 
-	virtual void MoveLeft() {
+	void MoveLeft() override {
 		if (!aOptions[nCursorY].value) return;
 
 		(*aOptions[nCursorY].value)--;
 		CheckOptionBounds(aOptions[nCursorY].value);
 	}
-	virtual void MoveRight() {
+	void MoveRight() override {
 		if (!aOptions[nCursorY].value) return;
 
 		(*aOptions[nCursorY].value)++;
 		CheckOptionBounds(aOptions[nCursorY].value);
 	}
-	virtual void MoveUp() {
+	void MoveUp() override {
 		do {
 			nCursorY--;
 			if (nCursorY < 0) {
@@ -386,7 +386,7 @@ public:
 			}
 		} while (!IsOptionValid(nCursorY));
 	}
-	virtual void MoveDown() {
+	void MoveDown() override {
 		do {
 			nCursorY++;
 			if (aOptions[nCursorY].name == "*END*") {
@@ -395,7 +395,7 @@ public:
 		} while (!IsOptionValid(nCursorY));
 	}
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/trackselectbg_left.png");
 		PreloadTexture("data/menu/trackselectbg_right.png");
 		PreloadTexture("data/menu/track_icons.dds");
@@ -417,7 +417,7 @@ public:
 		mapPath = str;
 	}
 
-	void ApplyOptions() {
+	void ApplyOptions() const {
 		if (aOptions == aOptionsHotSeat) {
 			QuickRace::nNitroLevel = QuickRace::NITRO_100;
 			QuickRace::fUpgradeLevel = GetUpgradeLevel();
@@ -506,7 +506,7 @@ public:
 		gMap = bakMap;
 	}
 
-	virtual void Reset() {
+	void Reset() override {
 		nCursorY = 0;
 		aOptions = aOptionsQuickRace;
 		bSplitScreen = false;
@@ -514,7 +514,7 @@ public:
 
 	std::string sStuntPB;
 
-	virtual void Process() {
+	void Process() override {
 		static CNyaTimer gTimer;
 		gTimer.Process();
 

@@ -198,7 +198,7 @@ public:
 		}
 	}
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/global/overlay/map_playerarrow.png");
 		PreloadTexture("data/global/overlay/map_playerarrow_local.png");
 		PreloadTexture("data/global/overlay/map_resetpoint.png");
@@ -207,7 +207,7 @@ public:
 		ChloeEvents::MapLoadEvent.AddHandler(LoadMinimaps);
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!nIngameMap) return;
 		if (!bIsInMultiplayer && !IsRaceHUDUp()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;

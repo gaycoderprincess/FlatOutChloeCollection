@@ -18,11 +18,11 @@ public:
 		}
 	}
 
-	virtual void Reset() {
+	void Reset() override {
 		bEnabled = nPlayerListDefaultState;
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!IsRaceHUDUp()) return;
 		if (IsInSplitScreen()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;

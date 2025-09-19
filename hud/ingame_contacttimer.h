@@ -8,7 +8,7 @@ public:
 		return std::format("{:02}\'\'{:02}", seconds, milliseconds/10);
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!IsRaceHUDUp()) return;
 		if (IsInSplitScreen()) return;
 		if (pGameFlow->nEventType != eEventType::DERBY) return;

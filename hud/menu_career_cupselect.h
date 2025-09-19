@@ -1,6 +1,6 @@
 class CMenu_CareerCupSelect : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_career_cupselect"; }
+	const char* GetName() override { return "menu_career_cupselect"; }
 
 	static constexpr tDrawPositions gEvent = {0.15, 0.29, 0.1, 0.19, 0.135};
 	static constexpr float fEventHighlightSize = 0.094;
@@ -28,31 +28,31 @@ public:
 	int nClass = 0;
 	int nCursorX = 0;
 	int nCursorY = 0;
-	int GetCursorLimitX() {
+	int GetCursorLimitX() const {
 		if (nCursorY == 2) {
 			return CareerMode::aLUACareerClasses[nClass].aEvents.size();
 		}
 		return CareerMode::aLUACareerClasses[nClass].aCups.size();
 	}
 
-	virtual void MoveLeft() {
+	void MoveLeft() override {
 		if (nCursorY == 1) return;
 		bCursorJustMoved = true;
 		nCursorX--;
 		if (nCursorX < 0) nCursorX = 0;
 	}
-	virtual void MoveRight() {
+	void MoveRight() override {
 		if (nCursorY == 1) return;
 		bCursorJustMoved = true;
 		nCursorX++;
 		if (nCursorX >= GetCursorLimitX()) nCursorX = GetCursorLimitX()-1;
 	}
-	virtual void MoveUp() {
+	void MoveUp() override {
 		bCursorJustMoved = true;
 		nCursorY--;
 		if (nCursorY < 0) nCursorY = 0;
 	}
-	virtual void MoveDown() {
+	void MoveDown() override {
 		bCursorJustMoved = true;
 		nCursorY++;
 		if (nCursorY > 2) nCursorY = 2;
@@ -60,7 +60,7 @@ public:
 
 	static constexpr tDrawPositions gTrackPlacements = {0.263, 0.353, 0.05, 0.19, 0.135};
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/cup_bronze_bg.png");
 		PreloadTexture("data/menu/cup_silver_bg.png");
 		PreloadTexture("data/menu/cup_gold_bg.png");
@@ -70,7 +70,7 @@ public:
 		PreloadTexture("data/menu/common.dds");
 	}
 
-	virtual void Process() {
+	void Process() override {
 		static CNyaTimer gTimer;
 		gTimer.Process();
 

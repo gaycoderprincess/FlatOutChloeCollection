@@ -1,11 +1,11 @@
 class CHUD_ResetFade : public CIngameHUDElement {
 public:
 
-	virtual void Init() {
+	void Init() override {
 		nHUDLayer = eHUDLayer::FADE;
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!IsRaceHUDUp()) return;
 
 		// repeat for all 4 players

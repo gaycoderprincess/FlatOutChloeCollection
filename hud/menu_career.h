@@ -1,6 +1,6 @@
 class CMenu_Career : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_career"; }
+	const char* GetName() override { return "menu_career"; }
 
 	static inline const char* aAIPlayerNames[] = {
 			"FRANK BENTON",
@@ -30,12 +30,12 @@ public:
 		return i == 0 ? GetStringNarrow(pGameFlow->Profile.sPlayerName) : aAIPlayerNames[i-1];
 	}
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/cupresultscreenbg_left.png");
 		PreloadTexture("data/menu/cupresultscreenbg_right.png");
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bEnabled) return;
 		if (!CareerMode::IsCupActive()) return;
 

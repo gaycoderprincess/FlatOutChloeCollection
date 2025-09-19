@@ -1,6 +1,6 @@
 class CMenu_CrashResult : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_crashresult"; }
+	const char* GetName() override { return "menu_crashresult"; }
 
 	static inline tDrawPositions1080p gTitles = {291,350,0.035,524,144};
 	float fNumberOffset = 128;
@@ -11,7 +11,7 @@ public:
 	static inline tDrawPositions1080p gTotalTitle = {960,750,0.03};
 	static inline tDrawPositions1080p gTotalAmount = {960,800,0.03};
 
-	void DrawCrashBonus(int type, int x, int y) {
+	void DrawCrashBonus(int type, int x, int y) const {
 		auto name = GetCrashBonusName(type);
 		if (!name) return;
 
@@ -43,11 +43,11 @@ public:
 		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", price), &DrawStringFO2_Ingame12);
 	}
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/reward_bonus_screen_bg.png");
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bEnabled) return;
 
 		static auto textureBg = LoadTextureFromBFS("data/menu/reward_bonus_screen_bg.png");

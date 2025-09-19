@@ -1,12 +1,12 @@
 class CHUD_TimeTrial : public CIngameHUDElement {
 public:
 
-	virtual void Process() {
+	void Process() override {
 		if (!IsRaceHUDUp()) return;
 		if (!bIsTimeTrial) return;
 		if (CareerMode::IsCareerTimeTrial()) return;
 
-		if (Menu_TrackSelect.nTimeTrial3LapMode) {
+		if (CMenu_TrackSelect::nTimeTrial3LapMode) {
 			auto pb1 = ChloeTimeTrial::GetCurrentRacePBTime(false, false);
 			auto pb2 = ChloeTimeTrial::GetCurrentRacePBTime(false, true);
 			DrawElement(2, "BEST TIME", pb1 == UINT_MAX ? "N /A" : FormatGameTime(pb1));

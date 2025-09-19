@@ -1,7 +1,7 @@
 class CHUD_Derby_Overhead : public CIngameHUDElement {
 public:
 
-	virtual void Init() {
+	void Init() override {
 		nHUDLayer = eHUDLayer::WORLD;
 	}
 
@@ -63,12 +63,12 @@ public:
 	int nStreakerId = -1;
 	int nSurvivorId = -1;
 
-	virtual void Reset() {
+	void Reset() override {
 		nStreakerId = -1;
 		nSurvivorId = -1;
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!IsRaceHUDUp() || pGameFlow->nEventType != eEventType::DERBY || IsInSplitScreen()) {
 			nStreakerId = -1;
 			nSurvivorId = -1;

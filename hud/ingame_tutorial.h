@@ -4,13 +4,13 @@ public:
 	tDrawPositions1080p gGamemodeLabel = {50,124,0.035};
 	tDrawPositions1080p gGamemodeDescription = {50,220,0.04};
 
-	virtual void Init() {
+	void Init() override {
 		nHUDLayer = eHUDLayer::OVERLAY;
 	}
 
 	bool bMenuUpInNormalMode = false;
 
-	virtual void Process() {
+	void Process() override {
 		if (!bIsArcadeMode && !bMenuUpInNormalMode) return;
 		if (pPlayerHost->nRaceTime != -3000) return;
 		bMenuUpInNormalMode = false;

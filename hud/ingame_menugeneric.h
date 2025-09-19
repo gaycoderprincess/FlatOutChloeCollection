@@ -1,7 +1,7 @@
 template<int menuType> // template hack for static variables
 class CHUD_MenuGeneric : public CIngameHUDElement {
 public:
-	virtual void Init() {
+	void Init() override {
 		nHUDLayer = eHUDLayer::OVERLAY;
 		PreloadTexture("data/global/overlay/pausemenubg.png");
 		PreloadTexture("data/global/overlay/pausemenu_bar.png");
@@ -134,13 +134,13 @@ public:
 		Draw1080pSprite(JUSTIFY_CENTER, 0, 1920, 0, 1080, {255,255,255,255}, texture);
 	}
 
-	virtual bool DrawInReplay() { return true; }
+	bool DrawInReplay() override { return true; }
 
-	virtual void Reset() {
+	void Reset() override {
 		bMenuUp = false;
 	}
 
-	virtual void Process() {
+	void Process() override {
 		static CNyaTimer gTimer;
 		gTimer.Process();
 

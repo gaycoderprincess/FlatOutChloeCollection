@@ -1,7 +1,7 @@
 class CHUD_RaceResults : public CIngameHUDElement {
 public:
 
-	virtual void Init() {
+	void Init() override {
 		nHUDLayer = eHUDLayer::OVERLAY;
 	}
 
@@ -263,13 +263,13 @@ public:
 		}
 	}
 
-	std::string GetResultsTitle() {
+	static std::string GetResultsTitle() {
 		if (bIsArcadeMode) return "FINAL SCORES";
 		if (pGameFlow->nEventType == eEventType::DERBY) return "DERBY RESULTS";
 		return "RACE RESULTS";
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bMenuUp) return;
 
 		DrawRectangle(0, 1, 0, 1, {0,0,0,200}); // background box

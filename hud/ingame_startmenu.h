@@ -1,27 +1,27 @@
 class CHUD_StartMenu : public CIngameHUDElement {
 public:
-	virtual void Init() {
+	void Init() override {
 		nHUDLayer = eHUDLayer::OVERLAY;
 	}
 
-	static inline tDrawPositions1080p gMenuText = {(int)HUD_PauseMenu.nBoxCenter,620,0.04};
+	static inline tDrawPositions1080p gMenuText = {(int)CHUD_PauseMenu::nBoxCenter,620,0.04};
 
 	static inline bool bMenuUp = false;
 
-	virtual void Process() {
+	void Process() override {
 		if (!bMenuUp || bIsArcadeMode) return;
 
-		HUD_PauseMenu.DrawBackground();
+		CHUD_PauseMenu::DrawBackground();
 		if (pGameFlow->nEventType == eEventType::STUNT) {
 			if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {
-				HUD_PauseMenu.DrawMenuTitle(std::format("PLAYER {} START", GetScoreManager()->nStuntPlayerId+1));
+				CHUD_PauseMenu::DrawMenuTitle(std::format("PLAYER {} START", GetScoreManager()->nStuntPlayerId+1));
 			}
 			else {
-				HUD_PauseMenu.DrawMenuTitle(std::format("ROUND {} START", GetScoreManager()->nStuntRoundId+1));
+				CHUD_PauseMenu::DrawMenuTitle(std::format("ROUND {} START", GetScoreManager()->nStuntRoundId+1));
 			}
 		}
 		else {
-			HUD_PauseMenu.DrawMenuTitle("EVENT START");
+			CHUD_PauseMenu::DrawMenuTitle("EVENT START");
 		}
 
 		tNyaStringData data;

@@ -17,11 +17,11 @@ public:
 		}
 	}
 
-	virtual void Reset() {
+	void Reset() override {
 		fEarnPopupTime = 0;
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!IsRaceHUDUp()) return;
 		if (!bIsArcadeMode) return;
 

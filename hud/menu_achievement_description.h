@@ -1,6 +1,6 @@
 class CMenu_Achievement_Description : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_achievement_description"; }
+	const char* GetName() override { return "menu_achievement_description"; }
 
 	tDrawPositions1080p gPos = {960,845,0.04};
 	std::string sDescription;
@@ -13,7 +13,7 @@ public:
 		sDescription = achievement->sDescription;
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bEnabled) return;
 
 		tNyaStringData data;

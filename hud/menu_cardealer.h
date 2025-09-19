@@ -1,6 +1,6 @@
 class CMenu_CarDealer : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_cardealer"; }
+	const char* GetName() override { return "menu_cardealer"; }
 
 	bool bSkinSelector = false;
 
@@ -10,7 +10,7 @@ public:
 	static inline std::string sCarName;
 	static inline std::string sCarDescription;
 
-	void SetCarStats(int carId) {
+	static void SetCarStats(int carId) {
 		auto data = GetCarDataTable(carId);
 		auto config = GetCarPerformanceTable(carId);
 
@@ -21,7 +21,7 @@ public:
 		sCarName = GetCarName(carId);
 	}
 
-	void SetCarStatsTuned(int carId) {
+	static void SetCarStatsTuned(int carId) {
 		SetCarStats(carId);
 
 		auto config = GetCarPerformanceTable(carId);
@@ -126,7 +126,7 @@ public:
 		}
 	}
 
-	void DrawCarLogo() {
+	static void DrawCarLogo() {
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/car_logos.dds");
 		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/car_logos.bed", "car_logos");
 
@@ -146,7 +146,7 @@ public:
 		}
 	}
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/carselect_left.png");
 		PreloadTexture("data/menu/car_logos.dds");
 		PreloadTexture("data/menu/carselect_right.png");
@@ -154,7 +154,7 @@ public:
 		PreloadTexture("data/menu/carselect_arrows.png");
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bEnabled) return;
 
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");

@@ -139,7 +139,7 @@ public:
 		}
 	}
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/global/overlay/ai_damage_meter.png");
 		PreloadTexture("data/global/overlay/ai_damage_meter_glow.png");
 		PreloadTexture("data/global/overlay/ai_damage_meter_bg.png");
@@ -151,12 +151,12 @@ public:
 
 		ChloeEvents::CrashBonusEvent.AddHandler(AddCrashBonus);
 	}
-	virtual void Reset() {
+	void Reset() override {
 		memset(fHealthBarAlpha,0,sizeof(fHealthBarAlpha));
 		memset(fHealthBarGlow,0,sizeof(fHealthBarGlow));
 		memset(fHealthBarGlowTimer,0,sizeof(fHealthBarGlowTimer));
 	}
-	virtual void Process() {
+	void Process() override {
 		if (!IsRaceHUDUp()) return;
 		if (pGameFlow->nEventType == eEventType::STUNT) return;
 		auto ply = GetPlayer(nPlayerId);

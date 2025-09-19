@@ -1,12 +1,12 @@
 class CMenu_CareerClassSelect : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_career_classselect"; }
+	const char* GetName() override { return "menu_career_classselect"; }
 
-	virtual void MoveUp() {
+	void MoveUp() override {
 		gCustomSave.nCareerClass--;
 		if (gCustomSave.nCareerClass < 1) gCustomSave.nCareerClass = 3;
 	}
-	virtual void MoveDown() {
+	void MoveDown() override {
 		gCustomSave.nCareerClass++;
 		if (gCustomSave.nCareerClass > 3) gCustomSave.nCareerClass = 1;
 	}
@@ -21,6 +21,7 @@ public:
 	static constexpr tDrawPositions1080p gDescription = {1397, 435, 0.04, 0, 45};
 
 	static std::string GetClassDescription(int classId) {
+		// todo
 		const char* descriptions[] = {
 				"Derby class description",
 				"Race class description",
@@ -46,7 +47,7 @@ public:
 		return str;
 	}
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/classicon_1.png");
 		PreloadTexture("data/menu/classicon_2.png");
 		PreloadTexture("data/menu/classicon_3.png");
@@ -57,7 +58,7 @@ public:
 		PreloadTexture("data/menu/classselect_bg_right.png");
 	}
 
-	virtual void Process() {
+	void Process() override {
 		static CNyaTimer gTimer;
 		gTimer.Process();
 

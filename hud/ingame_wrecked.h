@@ -35,12 +35,12 @@ public:
 		DrawStringFO2_Ingame12(data, aNotifs[0]);
 	}
 
-	virtual void Init() {
+	void Init() override {
 		ChloeEvents::PlayerWreckedEvent.AddHandler(AddWreckedNotif);
 		ChloeEvents::DerbyTimeoutEvent.AddHandler(AddTimeoutNotif);
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!IsRaceHUDUp()) return;
 		if (IsInSplitScreen()) return;
 

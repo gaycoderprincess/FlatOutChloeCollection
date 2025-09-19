@@ -32,7 +32,7 @@ public:
 			nullptr
 	};
 
-	virtual MenuOption** GetOptions(int menu) {
+	MenuOption** GetOptions(int menu) override {
 		switch (menu) {
 			case SUBMENU_MAIN:
 			default:
@@ -40,9 +40,5 @@ public:
 			case SUBMENU_QUITPROMPT:
 				return aOptionsQuit;
 		}
-	}
-
-	virtual void Process() {
-		return CHUD_MenuGeneric::Process();
 	}
 } HUD_StuntEndMenu;

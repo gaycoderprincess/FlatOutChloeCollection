@@ -1,34 +1,34 @@
 class CMenu_ArcadeCareer : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_arcadecareer"; }
+	const char* GetName() override { return "menu_arcadecareer"; }
 
 	int nCursorPos = 0;
 	int nScrollPos = 0;
 	bool bSelected = false;
 
-	virtual void MoveLeft() {
+	void MoveLeft() override {
 		if (bSelected) return;
 		nCursorPos--;
 		if (nCursorPos < 0) nCursorPos = 0;
 	}
-	virtual void MoveRight() {
+	void MoveRight() override {
 		if (bSelected) return;
 		nCursorPos++;
 		if (nCursorPos >= ArcadeMode::aArcadeRaces.size()) nCursorPos = ArcadeMode::aArcadeRaces.size()-1;
 	}
-	virtual void MoveUp() {
+	void MoveUp() override {
 		if (bSelected) return;
 		if (nCursorPos < 3) return;
 		nCursorPos -= 3;
 	}
-	virtual void MoveDown() {
+	void MoveDown() override {
 		if (bSelected) return;
 		int pos = nCursorPos + 3;
 		if (pos >= ArcadeMode::aArcadeRaces.size()) return;
 		nCursorPos = pos;
 	}
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/carnageoverlay_gold.png"),
 		PreloadTexture("data/menu/carnageoverlay_silver.png"),
 		PreloadTexture("data/menu/carnageoverlay_bronze.png"),
@@ -41,7 +41,7 @@ public:
 		PreloadTexture("data/menu/common.dds");
 	}
 
-	virtual void Reset() {
+	void Reset() override {
 		bSelected = false;
 	}
 
@@ -57,15 +57,15 @@ public:
 	tDrawPositions1080p gYourScore = {680, 710, 0.04};
 	tDrawPositions1080p gYourScoreLocked = {680, 710, 0.03};
 
-	int GetTrackId() {
+	int GetTrackId() const {
 		return ArcadeMode::aArcadeRaces[nCursorPos].nLevel;
 	}
 
-	int GetCarId() {
+	int GetCarId() const {
 		return ArcadeMode::aArcadeRaces[nCursorPos].nCar;
 	}
 
-	auto GetHighlight() {
+	auto GetHighlight() const {
 		return &ArcadeMode::aArcadeRaces[nCursorPos];
 	}
 
@@ -77,7 +77,7 @@ public:
 
 	constexpr static inline int nNumEventsOnScreen = (3*5);
 
-	void DrawEventTitle() {
+	void DrawEventTitle() const {
 		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
 		tNyaStringData data;
 		data.x = gLevelName.nPosX;
@@ -91,15 +91,15 @@ public:
 		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsFragDerby ? "FRAG DERBY" : (event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION"), &DrawStringFO2_Small);
 	}
 
-	void ProcessSelected() {
+	void ProcessSelected() const {
 		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_selected.png");
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 		DrawEventTitle();
 
-		Menu_CarDealer.ProcessSkinSelector();
+		CMenu_CarDealer::ProcessSkinSelector();
 	}
 
-	virtual void Process() {
+	void Process() override {
 		ArcadeMode::pCurrentEvent = GetHighlight();
 		ArcadeMode::nCurrentEventId = nCursorPos;
 

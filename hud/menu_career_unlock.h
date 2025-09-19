@@ -1,18 +1,18 @@
 class CMenu_Career_Unlock : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_career_unlock"; }
+	const char* GetName() override { return "menu_career_unlock"; }
 
 	static inline tDrawPositions1080p gUnlockTitle = {1222,195,0.035};
 	static inline tDrawPositions1080p gUnlockSubtitle = {1222,254,0.03};
 
 	static inline tDrawPositions1080p gBottomTitle = {960,800,0.03};
-	static inline tDrawPositions1080p gBottomAmount = {960,850,0.03};
+	//static inline tDrawPositions1080p gBottomAmount = {960,850,0.03};
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/event_unlock_box.png");
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bEnabled) return;
 
 		static auto textureRight = LoadTextureFromBFS("data/menu/event_unlock_box.png");

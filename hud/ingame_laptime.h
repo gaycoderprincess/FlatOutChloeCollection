@@ -11,11 +11,11 @@ public:
 		bNewLapRecord = true;
 	}
 
-	virtual void Init() {
+	void Init() override {
 		ChloeEvents::NewLapRecordEvent.AddHandler(OnLapRecord);
 	}
 
-	virtual void Process() {
+	void Process() override {
 		static CNyaRaceTimer gTimer;
 		gTimer.Process();
 

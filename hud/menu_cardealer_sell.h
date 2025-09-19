@@ -1,12 +1,12 @@
 class CMenu_CarDealer_Sell : public CMenu_CarDealer {
 public:
-	virtual const char* GetName() { return "menu_cardealer_sell"; }
+	const char* GetName() override { return "menu_cardealer_sell"; }
 
-	virtual void Init() {
+	void Init() override {
 		PreloadTexture("data/menu/sellcar_left.png");
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bEnabled) return;
 
 		static auto textureLeft = LoadTextureFromBFS("data/menu/sellcar_left.png");

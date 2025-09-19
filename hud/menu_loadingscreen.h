@@ -1,6 +1,6 @@
 class CMenu_LoadingScreen : public CMenuHUDElement {
 public:
-	virtual const char* GetName() { return "menu_loadingscreen"; }
+	const char* GetName() override { return "menu_loadingscreen"; }
 
 	bool bHasRun = false;
 
@@ -239,7 +239,7 @@ public:
 	tDrawPositions1080p gLoadingTipTitle = {960,700,0.03};
 	tDrawPositions1080p gLoadingTipText = {960,760,0.035};
 	static inline tLoadingScreenTip gLoadingScreenTip;
-	void DrawTip() {
+	void DrawTip() const {
 		if (gLoadingScreenTip.text.empty()) return;
 
 		tNyaStringData data;
@@ -257,7 +257,7 @@ public:
 		Draw1080pString(JUSTIFY_CENTER, data, gLoadingScreenTip.text, &DrawStringFO2_Ingame12);
 	}
 
-	virtual void Process() {
+	void Process() override {
 		if (!bHasRun) {
 			static auto tex = LoadTextureFromBFS("data/menu/copyright_cc.png");
 			if (tex) {
@@ -357,7 +357,7 @@ public:
 		);
 	}
 
-	virtual void InitHooks() {
+	void InitHooks() override {
 		OnLoadToMenuASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x452458, &OnLoadToMenuASM);
 		OnLoadToRaceASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x451CAE, &OnLoadToRaceASM);
 	}
