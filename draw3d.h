@@ -4,29 +4,26 @@ void __thiscall GetProjectionMatrix(float* pThis, float* a2) {
 	FO2MatrixInvert(pThis, a2);
 }
 
-float f3D2DYDivByDistance = 2;
-NyaVec3 Get3DTo2D_WithInvert(NyaVec3 pos, bool invert) {
+NyaVec3 Get3DTo2D(NyaVec3 pos) {
 	if (pLoadingScreen || !pCameraManager) return {0,0,0};
 	auto cam = pCameraManager->pCamera;
 	if (!cam) return {0,0,0};
 	auto mat = *cam->GetMatrix();
 	mat = mat.Invert();
-	auto proj = mProjectionMatrix;
-	if (invert) proj = proj.Invert();
-	auto out = (proj * mat * pos);
-	out.x /= out.z * f3D2DYDivByDistance;
-	out.y /= out.z * f3D2DYDivByDistance;
-	out.y *= -1;
+	auto out = (mProjectionMatrix * mat * NyaVec4(pos, 1));
+
+	out.x /= out.w;
+	out.y /= out.w;
+
+	// add nearclip to fix flickering
+	if (out.z <= 0.05) out.z = -1;
+
+	out.x *= 0.5;
+	out.y *= -0.5;
+
 	out.x += 0.5;
 	out.y += 0.5;
-	return out;
-}
-
-// this is sooo stupid but it works sooo uwu :3
-NyaVec3 Get3DTo2D(NyaVec3 pos) {
-	auto val1 = Get3DTo2D_WithInvert(pos, false);
-	auto val2 = Get3DTo2D_WithInvert(pos, true);
-	return NyaVec3(std::lerp(val1.x, val2.x, 0.5), std::lerp(val1.y, val2.y, 0.5), val1.z);
+	return NyaVec3(out.x, out.y, out.z);
 }
 
 void ApplyDraw3DPatches() {
