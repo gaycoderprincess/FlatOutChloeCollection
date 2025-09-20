@@ -231,9 +231,9 @@ public:
 			case TRACK_FO2DERBY1A: return "loading_bg_derby1";
 			case TRACK_FO2DERBY2A: return "loading_bg_derby2";
 			case TRACK_FO2DERBY3A: return "loading_bg_derby3";
-			//case TRACK_FO2ARENA1A: return "loading_bg_arena1";
-			//case TRACK_FO2ARENA2A: return "loading_bg_arena2";
-			//case TRACK_FO2ARENA3A: return "loading_bg_arena3";
+			case TRACK_FO2ARENA1A: return "loading_bg_arena1";
+			case TRACK_FO2ARENA2A: return "loading_bg_arena2";
+			case TRACK_FO2ARENA3A: return "loading_bg_arena3";
 			default:
 				return nullptr;
 		}
