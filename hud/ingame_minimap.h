@@ -180,8 +180,21 @@ public:
 		}
 		
 		auto config = ReadTOMLFromBfsLUAHack(std::format("{}data/map.bed", pEnvironment->sStagePath.Get()));
-		pMapTexture = LoadTextureFromBFS(config["MapTexture"].value_or(""));
+		std::string mapPath = config["MapTexture"].value_or("");
+		if (mapPath.length() <= 8) {
+			mapPath = std::format("{}textures/{}", pEnvironment->sGFXSetPath.Get(), mapPath);
+		}
+		pMapTexture = LoadTextureFromBFS(mapPath.c_str());
 		pMapTextureFO2 = nullptr;
+		pEnvironment->pMinimap = new Minimap();
+		pEnvironment->pMinimap->fWorldTopLeft[0] = config["WorldTopLeft"][0].value_or(0.0f);
+		pEnvironment->pMinimap->fWorldTopLeft[1] = config["WorldTopLeft"][1].value_or(0.0f);
+		pEnvironment->pMinimap->fWorldBottomRight[0] = config["WorldBottomRight"][0].value_or(0.0f);
+		pEnvironment->pMinimap->fWorldBottomRight[1] = config["WorldBottomRight"][1].value_or(0.0f);
+		pEnvironment->pMinimap->fScreenPos[0] = config["ScreenPos"][0].value_or(0.0f);
+		pEnvironment->pMinimap->fScreenPos[1] = config["ScreenPos"][1].value_or(0.0f);
+		pEnvironment->pMinimap->fScreenSize[0] = config["ScreenSize"][0].value_or(0.0f);
+		pEnvironment->pMinimap->fScreenSize[1] = config["ScreenSize"][1].value_or(0.0f);
 		
 		bool useFO2Minimap = nUseFO2Minimap == 2;
 		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {

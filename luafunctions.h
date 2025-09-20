@@ -151,7 +151,12 @@ int ChloeHUD_TrackSelect_GetTimeTrialMode(void* a1) {
 }
 
 int ChloeHUD_TrackSelect_SetMapPath(void* a1) {
-	Menu_TrackSelect.SetMapPath((const char*)lua_tolstring(a1, 1));
+	int trackId = luaL_checknumber(a1, 1);
+	std::string mapPath = (const char*)lua_tolstring(a1, 2);
+	if (mapPath.length() <= 8) {
+		mapPath = std::format("{}textures/{}", GetTrackValueString(trackId, "GfxSetPath"), mapPath);
+	}
+	Menu_TrackSelect.SetMapPath(mapPath);
 	return 0;
 }
 

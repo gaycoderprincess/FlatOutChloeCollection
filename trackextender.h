@@ -108,4 +108,6 @@ void __stdcall NoFO2WindowProps(void* a1, const char* a2, void* a3, void* a4, vo
 void ApplyTrackExtenderPatches() {
 	ChloeEvents::MapPreLoadEvent.AddHandler(SetTrackCustomProperties);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4CD314, &NoFO2WindowProps);
+
+	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4693DE, 0x4695D6); // never load vanilla minimaps
 }
