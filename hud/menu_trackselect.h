@@ -10,6 +10,7 @@ public:
 		"TOWN",
 		"WINTER",
 		"DESERT",
+		"TOUGH TRUCKS",
 		"BONUS",
 		"DERBY",
 		"STUNT",

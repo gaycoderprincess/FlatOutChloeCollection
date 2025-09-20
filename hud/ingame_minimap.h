@@ -200,20 +200,28 @@ public:
 		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {
 			useFO2Minimap = false;
 		}
-		
-		// load FO2 minimap
-		auto fo2ConfigPath = std::format("{}data/map_fo2.bed", pEnvironment->sStagePath.Get());
-		if (useFO2Minimap && DoesFileExist(fo2ConfigPath.c_str())) {
-			config = ReadTOMLFromBfsLUAHack(fo2ConfigPath);
-			pMapTextureFO2 = LoadTextureFromBFS(config["MapTexture"].value_or(""));
-			pEnvironment->pMinimap->fWorldTopLeft[0] = config["MapTopLeft"][0].value_or(0.0f);
-			pEnvironment->pMinimap->fWorldTopLeft[1] = config["MapTopLeft"][2].value_or(0.0f);
-			pEnvironment->pMinimap->fWorldBottomRight[0] = config["MapBottomRight"][0].value_or(0.0f);
-			pEnvironment->pMinimap->fWorldBottomRight[1] = config["MapBottomRight"][2].value_or(0.0f);
-			//pEnvironment->pMinimap->fScreenPos[0] = config["ScreenPos"][0].value_or(0.0f);
-			//pEnvironment->pMinimap->fScreenPos[1] = config["ScreenPos"][1].value_or(0.0f);
-			//pEnvironment->pMinimap->fScreenSize[0] = config["ScreenSize"][0].value_or(0.0f);
-			//pEnvironment->pMinimap->fScreenSize[1] = config["ScreenSize"][1].value_or(0.0f);
+
+		if (useFO2Minimap) {
+			// hack for tough trucks fo2 minimaps
+			if (pGameFlow->nLevel >= TRACK_TOUGHTRUCKS1 && pGameFlow->nLevel <= TRACK_TOUGHTRUCKS16) {
+				pMapTextureFO2 = LoadTextureFromBFS(std::format("data/global/map/map_toughtrucks{}a.tga", (pGameFlow->nLevel-TRACK_TOUGHTRUCKS1)+1).c_str());
+			}
+			else {
+				// load FO2 minimap
+				auto fo2ConfigPath = std::format("{}data/map_fo2.bed", pEnvironment->sStagePath.Get());
+				if (DoesFileExist(fo2ConfigPath.c_str())) {
+					config = ReadTOMLFromBfsLUAHack(fo2ConfigPath);
+					pMapTextureFO2 = LoadTextureFromBFS(config["MapTexture"].value_or(""));
+					pEnvironment->pMinimap->fWorldTopLeft[0] = config["MapTopLeft"][0].value_or(0.0f);
+					pEnvironment->pMinimap->fWorldTopLeft[1] = config["MapTopLeft"][2].value_or(0.0f);
+					pEnvironment->pMinimap->fWorldBottomRight[0] = config["MapBottomRight"][0].value_or(0.0f);
+					pEnvironment->pMinimap->fWorldBottomRight[1] = config["MapBottomRight"][2].value_or(0.0f);
+					//pEnvironment->pMinimap->fScreenPos[0] = config["ScreenPos"][0].value_or(0.0f);
+					//pEnvironment->pMinimap->fScreenPos[1] = config["ScreenPos"][1].value_or(0.0f);
+					//pEnvironment->pMinimap->fScreenSize[0] = config["ScreenSize"][0].value_or(0.0f);
+					//pEnvironment->pMinimap->fScreenSize[1] = config["ScreenSize"][1].value_or(0.0f);
+				}
+			}
 		}
 	}
 
