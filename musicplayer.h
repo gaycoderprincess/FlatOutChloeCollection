@@ -162,6 +162,7 @@ namespace NewMusicPlayer {
 	std::vector<tPlaylist> aPlaylistsTitle;
 	std::vector<tPlaylist> aPlaylistsIngame;
 	std::vector<tPlaylist> aPlaylistsStunt;
+	tPlaylist gTraxExtraSongs;
 
 	tPlaylist* pPlaylistTitle = nullptr;
 	tPlaylist* pPlaylistIngame = nullptr;
@@ -336,18 +337,29 @@ namespace NewMusicPlayer {
 		return !out->aSongs.empty();
 	}
 
+	void BuildCustomPlaylist(tPlaylist* customPlaylist, const tPlaylist& playlist) {
+		if (&playlist == customPlaylist) return;
+
+		for (auto& song : playlist.aSongs) {
+			bool found = false;
+			for (auto& customSong : customPlaylist->aSongs) {
+				if (customSong.sPath == song.sPath) found = true;
+			}
+			if (found) continue;
+			customPlaylist->aSongs.push_back(song);
+		}
+
+		std::sort(customPlaylist->aSongs.begin(), customPlaylist->aSongs.end(), [] (const tSong& a, const tSong& b) {
+			if (a.sArtist == b.sArtist) {
+				return a.sTitle < b.sTitle;
+			}
+			return a.sArtist < b.sArtist;
+		});
+	}
+
 	void BuildCustomPlaylist(tPlaylist* customPlaylist, const std::vector<tPlaylist>& playlists) {
 		for (auto& playlist : playlists) {
-			if (&playlist == customPlaylist) continue;
-
-			for (auto& song : playlist.aSongs) {
-				bool found = false;
-				for (auto& customSong : customPlaylist->aSongs) {
-					if (customSong.sPath == song.sPath) found = true;
-				}
-				if (found) continue;
-				customPlaylist->aSongs.push_back(song);
-			}
+			BuildCustomPlaylist(customPlaylist, playlist);
 		}
 
 		std::sort(customPlaylist->aSongs.begin(), customPlaylist->aSongs.end(), [] (const tSong& a, const tSong& b) {
@@ -395,6 +407,11 @@ namespace NewMusicPlayer {
 			aPlaylistsStunt.push_back(playlist);
 		}
 
+		tPlaylist playlist;
+		playlist.wsName = L"STANDALONE TRAX SONGS";
+		LoadPlaylist(&gTraxExtraSongs, "playlist_trax");
+		WriteLogDebug("MUSIC", std::format("Adding trax playlist {} with {} songs", GetStringNarrow(playlist.wsName.c_str()), playlist.aSongs.size()));
+
 		tPlaylist custom;
 		custom.wsName = L"CHLOE TRAX";
 		aPlaylistsTitle.push_back(custom);
@@ -407,10 +424,13 @@ namespace NewMusicPlayer {
 
 		BuildCustomPlaylist(pPlaylistCustomTitle, aPlaylistsTitle);
 		BuildCustomPlaylist(pPlaylistCustomTitle, aPlaylistsIngame);
+		BuildCustomPlaylist(pPlaylistCustomTitle, gTraxExtraSongs);
 		BuildCustomPlaylist(pPlaylistCustomIngame, aPlaylistsTitle);
 		BuildCustomPlaylist(pPlaylistCustomIngame, aPlaylistsIngame);
+		BuildCustomPlaylist(pPlaylistCustomIngame, gTraxExtraSongs);
 		BuildCustomPlaylist(pPlaylistCustomDerby, aPlaylistsTitle);
 		BuildCustomPlaylist(pPlaylistCustomDerby, aPlaylistsIngame);
+		BuildCustomPlaylist(pPlaylistCustomDerby, gTraxExtraSongs);
 		LoadCustomPlaylists();
 
 		if (defaultMenu < 0 || defaultMenu >= aPlaylistsTitle.size()) defaultMenu = 0;
@@ -469,6 +489,7 @@ namespace NewMusicPlayer {
 		for (auto& playlist : aPlaylistsTitle) { playlist.Load(); }
 		for (auto& playlist : aPlaylistsIngame) { playlist.Load(); }
 		for (auto& playlist : aPlaylistsStunt) { playlist.Load(); }
+		gTraxExtraSongs.Load();
 		pPlaylistCustomDerby->Load();
 
 		WriteLogDebug("MUSIC", "--- Finished preloading playlists ---");
