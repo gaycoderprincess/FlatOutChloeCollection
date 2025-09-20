@@ -44,36 +44,6 @@ int ChloeSkins_ShowSkinSelector(void* a1) {
 	return 0;
 }
 
-int ChloeHUD_CareerCupSelect_Left(void* a1) {
-	Menu_CareerCupSelect.MoveLeft();
-	return 0;
-}
-
-int ChloeHUD_CareerCupSelect_Right(void* a1) {
-	Menu_CareerCupSelect.MoveRight();
-	return 0;
-}
-
-int ChloeHUD_CareerCupSelect_Up(void* a1) {
-	Menu_CareerCupSelect.MoveUp();
-	return 0;
-}
-
-int ChloeHUD_CareerCupSelect_Down(void* a1) {
-	Menu_CareerCupSelect.MoveDown();
-	return 0;
-}
-
-int ChloeHUD_CareerClassSelect_Up(void* a1) {
-	Menu_CareerClassSelect.MoveUp();
-	return 0;
-}
-
-int ChloeHUD_CareerClassSelect_Down(void* a1) {
-	Menu_CareerClassSelect.MoveDown();
-	return 0;
-}
-
 int ChloeHUD_CareerCupSelect_GetCursorX(void* a1) {
 	lua_pushnumber(a1, Menu_CareerCupSelect.nCursorX+1);
 	return 1;
@@ -1240,7 +1210,6 @@ int ChloeCollection_CheckCheatCode(void* a1) {
 	if (!pMenuEventManager->wsKeyboardInput.Get()) return 0;
 	std::wstring str = pMenuEventManager->wsKeyboardInput.Get();
 	std::transform(str.begin(), str.end(), str.begin(), [](wchar_t c){ return std::tolower(c); });
-	WriteLog(std::format("Cheat entered - {}", GetStringNarrow(str)));
 	if (str == L"givecash") {
 		pGameFlow->Profile.nMoney += 40000;
 	}
