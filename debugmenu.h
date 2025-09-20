@@ -296,8 +296,6 @@ void PlaylistEditorMenu(const std::string& name, NewMusicPlayer::tPlaylist* play
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
-	//QuickValueEditor("fFO2MapSizeDerby", CHUD_Minimap::fFO2MapSizeDerby);
-
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();
 

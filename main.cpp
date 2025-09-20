@@ -265,6 +265,8 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			}
 			
 			NyaHookLib::Patch<uint8_t>(0x47C4FD, 0xEB); // disable splitscreen prop draw distance halving
+
+			//NyaHookLib::Fill(0x506499, 0x90, 5); // remove vanilla culling calls
 		} break;
 		default:
 			break;

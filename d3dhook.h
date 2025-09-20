@@ -1,5 +1,7 @@
 int nDrawingGameUILayer = -1;
 void HookLoop() {
+	//DeviceD3d::nDesiredCullMode = bTrackMirrored ? D3DCULL_NONE : D3DCULL_CCW;
+
 	DrawCallback([](const ImDrawList* parent_list, const ImDrawCmd* cmd) {
 		//g_pd3dDevice->SetRenderState(D3DRS_WRAP0, 0);
 		g_pd3dDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
