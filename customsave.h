@@ -146,6 +146,10 @@ struct tCustomSaveStructure {
 	uint32_t bestLapsReversed[nMaxTracks];
 	uint32_t bestLapCarsReversed[nMaxTracks];
 	uint64_t playtimeNew[NUM_PLAYTIME_TYPES];
+	uint8_t handlingDamage;
+	uint8_t handlingMode;
+	uint8_t highCarCam;
+	uint8_t playerFlag;
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -222,16 +226,25 @@ struct tCustomSaveStructure {
 		aCareerGarage[CAR_PEPPER].bIsUnlocked = true;
 		aCareerGarage[CAR_BLOCKER].bIsUnlocked = true;
 		aCareerGarage[CAR_RETROBEETLE].bIsUnlocked = true;
+		handlingDamage = HANDLINGDAMAGE_REDUCED;
+		handlingMode = HANDLING_NORMAL;
 	}
 	void ApplyPlayerSettings() const {
-
+		nHandlingDamage = handlingDamage;
+		nHandlingMode = handlingMode;
+		nHighCarCam = highCarCam;
+		nPlayerFlag = playerFlag;
 	}
 	void ReadPlayerSettings() {
-
+		handlingDamage = nHandlingDamage;
+		handlingMode = nHandlingMode;
+		highCarCam = nHighCarCam;
+		playerFlag = nPlayerFlag;
 	}
 	void Clear() {
 		memset(this,0,sizeof(*this));
 		SetDefaultPlayerSettings();
+		ApplyPlayerSettings();
 		ChloeEvents::SaveClearedEvent.OnHit();
 	}
 	void Load(int saveSlot = -1, bool loadAll = true) {
@@ -249,12 +262,10 @@ struct tCustomSaveStructure {
 		if (!file.is_open()) return;
 
 		file.read((char*)this, sizeof(*this));
-
-		// force unlock first career bits in case of save corruption
-		SetDefaultPlayerSettings();
 		CheckArcadeVerify();
 
 		if (loadAll) {
+			ApplyPlayerSettings();
 			ChloeEvents::SaveLoadedEvent.OnHit(saveSlot+1);
 		}
 	}
