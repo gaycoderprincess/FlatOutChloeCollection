@@ -96,6 +96,25 @@ void SetExclusiveGeometryFolder(bool apply) {
 
 void SetTrackCustomProperties() {
 	SetExclusiveGeometryFolder(DoesFileExist(std::format("{}geometry/track_geom.w32", pEnvironment->sStagePath.Get()).c_str()));
+
+	bool noVertexColors = false;
+	if (pGameFlow->nLevel >= TRACK_TOUGHTRUCKS1 && pGameFlow->nLevel <= TRACK_TOUGHTRUCKS16) noVertexColors = true;
+	NyaHookLib::Patch<uint8_t>(0x4CB595, noVertexColors ? 0xEB : 0x74);
+}
+
+void FixToughTrucksStartpoints() {
+	if (pGameFlow->nLevel >= TRACK_TOUGHTRUCKS1 && pGameFlow->nLevel <= TRACK_TOUGHTRUCKS16) {
+		for (int i = 0; i < 4; i++) {
+			auto& startSrc = pEnvironment->aStartpoints[i];
+			auto& startDest = pEnvironment->aStartpoints[i+4];
+
+			memcpy(&startDest, &startSrc, sizeof(startDest));
+
+			startDest.fPosition[0] -= startDest.fMatrix[8] * 16;
+			startDest.fPosition[1] -= startDest.fMatrix[9] * 16;
+			startDest.fPosition[2] -= startDest.fMatrix[10] * 16;
+		}
+	}
 }
 
 auto NoFO2WindowProps_call = (void(__stdcall*)(void*, const char*, void*, void*, void*, void*, void*, void*, void*))0x4C95E0;
@@ -107,6 +126,7 @@ void __stdcall NoFO2WindowProps(void* a1, const char* a2, void* a3, void* a4, vo
 
 void ApplyTrackExtenderPatches() {
 	ChloeEvents::MapPreLoadEvent.AddHandler(SetTrackCustomProperties);
+	ChloeEvents::MapLoadEvent.AddHandler(FixToughTrucksStartpoints);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4CD314, &NoFO2WindowProps);
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4693DE, 0x4695D6); // never load vanilla minimaps

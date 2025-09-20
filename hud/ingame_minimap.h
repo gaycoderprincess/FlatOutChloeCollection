@@ -181,7 +181,7 @@ public:
 		
 		auto config = ReadTOMLFromBfsLUAHack(std::format("{}data/map.bed", pEnvironment->sStagePath.Get()));
 		std::string mapPath = config["MapTexture"].value_or("");
-		if (mapPath.length() <= 8) {
+		if (mapPath.find('\\') == std::string::npos && mapPath.find('/') == std::string::npos) {
 			mapPath = std::format("{}textures/{}", pEnvironment->sGFXSetPath.Get(), mapPath);
 		}
 		pMapTexture = LoadTextureFromBFS(mapPath.c_str());
