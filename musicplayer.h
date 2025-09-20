@@ -237,9 +237,9 @@ namespace NewMusicPlayer {
 	void SaveCustomPlaylists(int saveSlot) {
 		if (!bCustomPlaylistsEnabled) return;
 
-		SavePlaylist("Savegame/playlist_title.sav", pPlaylistCustomTitle);
-		SavePlaylist("Savegame/playlist_ingame.sav", pPlaylistCustomIngame);
-		SavePlaylist("Savegame/playlist_derby.sav", pPlaylistCustomDerby);
+		SavePlaylist("Savegame/playlist_title.sav2", pPlaylistCustomTitle);
+		SavePlaylist("Savegame/playlist_ingame.sav2", pPlaylistCustomIngame);
+		SavePlaylist("Savegame/playlist_derby.sav2", pPlaylistCustomDerby);
 	}
 
 	void LoadCustomPlaylists() {
@@ -461,9 +461,7 @@ namespace NewMusicPlayer {
 		BuildCustomPlaylist(pPlaylistCustomIngame, aPlaylistsTitle, false);
 		BuildCustomPlaylist(pPlaylistCustomIngame, aPlaylistsIngame, true);
 		BuildCustomPlaylist(pPlaylistCustomIngame, gTraxExtraSongs, false);
-		BuildCustomPlaylist(pPlaylistCustomDerby, aPlaylistsTitle, false);
-		BuildCustomPlaylist(pPlaylistCustomDerby, aPlaylistsIngame, true);
-		BuildCustomPlaylist(pPlaylistCustomDerby, gTraxExtraSongs, false);
+		pPlaylistCustomDerby->aSongs = pPlaylistCustomIngame->aSongs;
 		LoadCustomPlaylists();
 
 		if (defaultMenu < 0 || defaultMenu >= aPlaylistsTitle.size()) defaultMenu = 0;
