@@ -72,6 +72,56 @@ public:
 		PreloadTexture("data/menu/common.dds");
 	}
 
+	void DrawCupIcon(double totalTime, float x, int y, CareerMode::tLUAClass::tCup* cup, bool unlocked, int position) {
+		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
+		static auto textureTracksLocked = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
+		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_2.dds");
+		static auto textureTracks2Locked = LoadTextureFromBFS("data/menu/track_icons_2_inactive.dds");
+		static auto texturePlacements = LoadTextureFromBFS("data/menu/common.dds");
+		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
+		static auto trackIcons2 = LoadHUDData("data/menu/track_icons_2.bed", "track_icons_2");
+		static auto trackPlacements = LoadHUDData("data/menu/common.bed", "common");
+
+		auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
+		auto trackIconTexture = unlocked ? textureTracks : textureTracksLocked;
+		if (!trackIcon) {
+			trackIcon = GetHUDData(trackIcons2, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
+			trackIconTexture = unlocked ? textureTracks2 : textureTracks2Locked;
+			if (!trackIcon) {
+				MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
+			}
+		}
+		auto data = gEvent;
+		float x1 = data.fPosX + data.fSpacingX * x;
+		float y1 = data.fPosY + data.fSpacingY * y;
+		float x2 = x1 + data.fSize * 1.5;
+		float y2 = y1 + data.fSize;
+		DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, trackIconTexture, 0, trackIcon->min, trackIcon->max);
+		if ((x == nCursorX || y == 1) && nCursorY == y) {
+			auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
+			rgb.a = GetFlashingAlpha(totalTime) * 0.5;
+			x2 = x1 + fEventHighlightSize * 1.5;
+			y2 = y1 + fEventHighlightSize;
+			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
+		}
+
+		if (position >= 1 && position <= 3) {
+			const char* trackPlacementNames[] = {
+					"first",
+					"second",
+					"third",
+			};
+
+			data = gTrackPlacements;
+			auto hud = GetHUDData(trackPlacements, trackPlacementNames[position-1]);
+			x1 = data.fPosX + data.fSpacingX * x;
+			y1 = data.fPosY + data.fSpacingY * y;
+			x2 = x1 + data.fSize;
+			y2 = y1 + data.fSize;
+			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255, 255, 255, 255}, 0, texturePlacements, 0, hud->min, hud->max);
+		}
+	}
+
 	void Process() override {
 		static CNyaTimer gTimer;
 		gTimer.Process();
@@ -84,14 +134,6 @@ public:
 				LoadTextureFromBFS("data/menu/cup_gold_bg.png"),
 		};
 		static auto textureRight = LoadTextureFromBFS("data/menu/cupselect_bg_right.png");
-		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
-		static auto textureTracksLocked = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
-		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_2.dds");
-		static auto textureTracks2Locked = LoadTextureFromBFS("data/menu/track_icons_2_inactive.dds");
-		static auto texturePlacements = LoadTextureFromBFS("data/menu/common.dds");
-		static auto trackIcons = LoadHUDData("data/menu/track_icons.bed", "track_icons");
-		static auto trackIcons2 = LoadHUDData("data/menu/track_icons_2.bed", "track_icons_2");
-		static auto trackPlacements = LoadHUDData("data/menu/common.bed", "common");
 		static std::string sEventDescription;
 
 		if (nCursorX >= GetCursorLimitX()) nCursorX = 0;
@@ -99,152 +141,23 @@ public:
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft[nClass]);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 
-		const char* trackPlacementNames[] = {
-				"first",
-				"second",
-				"third",
-		};
-
 		auto careerClass = &CareerMode::aLUACareerClasses[nClass];
 		auto careerSaveClass = &gCustomSave.aCareerClasses[nClass];
 		for (int i = 0; i < careerClass->aCups.size(); i++) {
-			auto cup = &careerClass->aCups[i];
-			auto cupSave = &careerSaveClass->aCups[i];
-			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
-			auto trackIconTexture = cupSave->bUnlocked ? textureTracks : textureTracksLocked;
-			if (!trackIcon) {
-				trackIcon = GetHUDData(trackIcons2, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
-				trackIconTexture = cupSave->bUnlocked ? textureTracks2 : textureTracks2Locked;
-				if (!trackIcon) {
-					MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
-				}
-			}
-			auto data = gEvent;
-			float x1 = data.fPosX + data.fSpacingX * i;
-			float y1 = data.fPosY;
-			float x2 = x1 + data.fSize * 1.5;
-			float y2 = y1 + data.fSize;
-			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, trackIconTexture, 0, trackIcon->min, trackIcon->max);
-			if (i == nCursorX && nCursorY == 0) {
-				auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
-				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
-				x2 = x1 + fEventHighlightSize * 1.5;
-				y2 = y1 + fEventHighlightSize;
-				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
-			}
-
-			if (cupSave->nPosition >= 1 && cupSave->nPosition <= 3) {
-				data = gTrackPlacements;
-				auto hud = GetHUDData(trackPlacements, trackPlacementNames[cupSave->nPosition-1]);
-				x1 = data.fPosX + data.fSpacingX * i;
-				y1 = data.fPosY;
-				x2 = x1 + data.fSize;
-				y2 = y1 + data.fSize;
-				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255, 255, 255, 255}, 0, texturePlacements, 0, hud->min, hud->max);
-			}
+			DrawCupIcon(gTimer.fTotalTime, i, 0, &careerClass->aCups[i], careerSaveClass->aCups[i].bUnlocked, careerSaveClass->aCups[i].nPosition);
 		}
-		{
-			auto cup = &careerClass->Finals;
-			auto cupSave = &careerSaveClass->Finals;
-			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
-			auto trackIconTexture = cupSave->bUnlocked ? textureTracks : textureTracksLocked;
-			if (!trackIcon) {
-				trackIcon = GetHUDData(trackIcons2, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
-				trackIconTexture = cupSave->bUnlocked ? textureTracks2 : textureTracks2Locked;
-				if (!trackIcon) {
-					MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
-				}
-			}
-			auto data = gEvent;
-			float x1 = data.fPosX + data.fSpacingX * 0.5;
-			float y1 = data.fPosY + data.fSpacingY;
-			float x2 = x1 + data.fSize * 1.5;
-			float y2 = y1 + data.fSize;
-			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, trackIconTexture, 0, trackIcon->min, trackIcon->max);
-			if (nCursorY == 1) {
-				auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
-				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
-				x2 = x1 + fEventHighlightSize * 1.5;
-				y2 = y1 + fEventHighlightSize;
-				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
-			}
-
-			if (cupSave->nPosition >= 1 && cupSave->nPosition <= 3) {
-				data = gTrackPlacements;
-				auto hud = GetHUDData(trackPlacements, trackPlacementNames[cupSave->nPosition-1]);
-				x1 = data.fPosX + data.fSpacingX * 0.5;
-				y1 = data.fPosY + data.fSpacingY * 1;
-				x2 = x1 + data.fSize;
-				y2 = y1 + data.fSize;
-				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255, 255, 255, 255}, 0, texturePlacements, 0, hud->min, hud->max);
-			}
-		}
+		DrawCupIcon(gTimer.fTotalTime, 0.5, 1, &careerClass->Finals, careerSaveClass->Finals.bUnlocked, careerSaveClass->Finals.nPosition);
 		for (int i = 0; i < careerClass->aEvents.size(); i++) {
-			auto cup = &careerClass->aEvents[i];
-			auto cupSave = &careerSaveClass->aEvents[i];
-			bool unlocked = cupSave->bUnlocked;
-			if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) {
-				if (cup->aRaces[0].bIsTimeTrial) unlocked = false; // no time trials in splitscreen
-				if (DoesTrackValueExist(cup->aRaces[0].nLevel, "StuntType")) unlocked = false; // no stunts in splitscreen
-			}
-			auto trackIcon = GetHUDData(trackIcons, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
-			auto trackIconTexture = cupSave->bUnlocked ? textureTracks : textureTracksLocked;
-			if (!trackIcon) {
-				trackIcon = GetHUDData(trackIcons2, GetTrackValueString(cup->aRaces[0].nLevel, "Image"));
-				trackIconTexture = cupSave->bUnlocked ? textureTracks2 : textureTracks2Locked;
-				if (!trackIcon) {
-					MessageBoxA(0, std::format("Failed to find image for track {}", cup->aRaces[0].nLevel).c_str(), "Fatal error", MB_ICONERROR);
-				}
-			}
-			auto data = gEvent;
-			float x1 = data.fPosX + data.fSpacingX * i;
-			float y1 = data.fPosY + data.fSpacingY * 2;
-			float x2 = x1 + data.fSize * 1.5;
-			float y2 = y1 + data.fSize;
-			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, trackIconTexture, 0, trackIcon->min, trackIcon->max);
-			if (i == nCursorX && nCursorY == 2) {
-				auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
-				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
-				x2 = x1 + fEventHighlightSize * 1.5;
-				y2 = y1 + fEventHighlightSize;
-				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, rgb);
-			}
-
-			if (cupSave->nPosition >= 1 && cupSave->nPosition <= 3) {
-				data = gTrackPlacements;
-				auto hud = GetHUDData(trackPlacements, trackPlacementNames[cupSave->nPosition-1]);
-				x1 = data.fPosX + data.fSpacingX * i;
-				y1 = data.fPosY + data.fSpacingY * 2;
-				x2 = x1 + data.fSize;
-				y2 = y1 + data.fSize;
-				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255, 255, 255, 255}, 0, texturePlacements, 0, hud->min, hud->max);
-			}
+			DrawCupIcon(gTimer.fTotalTime, i, 2, &careerClass->aEvents[i], careerSaveClass->aEvents[i].bUnlocked, careerSaveClass->aEvents[i].nPosition);
 		}
 
 		tNyaStringData data;
 		data.x = gCupName.nPosX;
 		data.y = gCupName.nPosY;
 		data.size = gCupName.fSize;
-		if (nCursorY == 0) {
+		if (nCursorY == 0 || nCursorY == 1) {
 			auto cup = &careerClass->aCups[nCursorX];
-			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
-			data.x = nLapsX[cup->aRaces.size()];
-			data.y = nLapsY;
-			data.size = fLapsSize;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
-			auto hud = gEvents;
-			data.x = hud.nPosX;
-			data.y = hud.nPosY;
-			data.size = hud.fSize;
-			for (auto& race : cup->aRaces) {
-				auto name = GetTrackName(race.nLevel);
-				if (race.bReversed) name = "REV " + name;
-				Draw1080pString(JUSTIFY_RIGHT, data, name, &DrawStringFO2_Ingame12);
-				data.y += hud.nSpacingY;
-			}
-		}
-		else if (nCursorY == 1) {
-			auto cup = &careerClass->Finals;
+			if (nCursorY == 1) cup = &careerClass->Finals;
 			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
 			data.x = nLapsX[cup->aRaces.size()];
 			data.y = nLapsY;
