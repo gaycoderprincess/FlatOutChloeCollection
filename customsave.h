@@ -306,7 +306,7 @@ void ProcessPlayStats() {
 
 	if (pLoadingScreen) return;
 
-	if (GetGameState() == GAME_STATE_RACE && GetPlayerScore<PlayerScoreRace>(1)->bHasFinished && pPlayerHost->GetNumPlayers() > 1) {
+	if (GetGameState() == GAME_STATE_RACE && pPlayerHost->GetNumPlayers() > 1) {
 		bool changed = false;
 		int track = pGameFlow->nLevel;
 
@@ -314,7 +314,7 @@ void ProcessPlayStats() {
 			auto ply = GetPlayerScore<PlayerScoreRace>(1);
 			if (ply->bHasFinished || ((bIsWreckingDerby || bIsFragDerby) && ply->bIsDNF)) {
 				bool won = ply->nPosition == 1;
-				if (bIsWreckingDerby || bIsFragDerby) won = GetSortedPlayerScores()[0]->nPlayerId == 0;
+				if (bIsWreckingDerby || bIsFragDerby) won = GetSortedPlayerScores()[0] == ply;
 				if (won && !gCustomSave.tracksWon[track]) {
 					gCustomSave.tracksWon[track] = true;
 					changed = true;
