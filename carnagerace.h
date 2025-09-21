@@ -221,10 +221,16 @@ namespace CarnageRace {
 		}
 		if (GetGameState() != GAME_STATE_RACE) return;
 
-		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
-			auto ply = GetPlayer(i);
-			if (IsPlayerScoreLocallyControlled(ply)) continue;
-			nPlayerScore[i] = ChloeNet::GetReplicatedPlayerArcadeScore(ply);
+		if (!bIsArcadeMode) {
+			nCheckpointInterval = DoesTrackValueExist(pGameFlow->nLevel, "IsFO2Track") ? 2 : 5;
+		}
+
+		if (bIsInMultiplayer) {
+			for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+				auto ply = GetPlayer(i);
+				if (IsPlayerScoreLocallyControlled(ply)) continue;
+				nPlayerScore[i] = ChloeNet::GetReplicatedPlayerArcadeScore(ply);
+			}
 		}
 
 		ArcadeMode::nCurrentEventScore = nPlayerScore[0];

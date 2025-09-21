@@ -1563,6 +1563,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, CMenu_TrackSelect::MULTIPLAYER_NITRO_100_REGEN, "NITRO_100_REGEN");
 
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_RACE, "GAMETYPE_RACE");
+	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_ARCADERACE, "GAMETYPE_ARCADERACE");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_LMS, "GAMETYPE_DERBY_LMS");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_WRECKING, "GAMETYPE_DERBY_WRECKING");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_FRAG, "GAMETYPE_DERBY_FRAG");

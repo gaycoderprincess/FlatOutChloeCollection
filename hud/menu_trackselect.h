@@ -187,6 +187,7 @@ public:
 
 	static int GetGameType() {
 		if (aOptions == aOptionsHotSeat) return GAMETYPE_STUNT;
+		if (aOptions == aOptionsTimeTrial) return GAMETYPE_RACE;
 		if (bSplitScreen) return aGameTypesSplitScreen[nGameType];
 		if (IsMultiplayerMenu()) return aGameTypesMultiplayer[nGameType];
 		return aGameTypesSinglePlayer[nGameType];
@@ -378,6 +379,7 @@ public:
 		if (aOptions[option].name.empty()) return false;
 		if (DoesEventHaveAI() && aOptions[option].value == &nTrackReversed && !DoesTrackSupportReversing(GetTrackId())) return false;
 		auto gameType = GetGameType();
+		if (gameType == GAMETYPE_ARCADERACE && aOptions[option].value == &nLaps) return false;
 		if (gameType != GAMETYPE_RACE && gameType != GAMETYPE_ARCADERACE && gameType != GAMETYPE_DERBY_WRECKING && gameType != GAMETYPE_DERBY_FRAG) {
 			if (aOptions[option].value == &nNitro) return false;
 			if (aOptions[option].value == &nMultiplayerNitro) return false;
@@ -656,7 +658,7 @@ public:
 				if (IsMultiplayerMenu() && nTrackReversed) valueName = "REV " + valueName;
 			}
 			else if (option.value == &nLaps) {
-				if (GetGameMode() != eEventType::RACE) valueName = "N/A";
+				if (GetGameMode() != eEventType::RACE || GetGameType() == GAMETYPE_ARCADERACE) valueName = "N/A";
 			}
 			else if (option.value == &nDamage) {
 				if (GetGameMode() == eEventType::STUNT) valueName = "N/A";
