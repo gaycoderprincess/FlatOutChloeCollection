@@ -52,6 +52,7 @@ public:
 		for (auto& ply : aScores) {
 			auto string1 = std::format("{}.", (&ply - &aScores[0]) + 1);
 			if (bIsFragDerby) string1 = std::format("{}  {}", FragDerby::nPlayerScore[ply->nPlayerId], string1);
+			if (bIsInMultiplayer && bIsCarnageRace) string1 = std::format("{}  {}", CarnageRace::nPlayerScore[ply->nPlayerId], string1);
 			auto string2 = std::format("{}", GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get()));
 			if (!IsInSplitScreen() && ply->nPlayerId == 0) {
 				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));

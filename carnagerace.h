@@ -22,7 +22,6 @@ namespace CarnageRace {
 	std::vector<tScoreEntry> aScoreHUD;
 
 	double fPlayerTimeLeft = 0;
-	int nPlayerScore = 0;
 	int nPlayerPosition = 0;
 
 	double fScoreTimer = 0;
@@ -132,7 +131,7 @@ namespace CarnageRace {
 			pointsAwarded += score.points * RacePositionMultiplier[nPlayerPosition-1];
 			nPlayerScoresByType[score.type] += score.points * RacePositionMultiplier[nPlayerPosition-1];
 		}
-		nPlayerScore += pointsAwarded;
+		nPlayerScore[0] += pointsAwarded;
 		fCashoutNotifTimer = CashoutNotifMaxTime;
 		nCashoutNotifAmount = pointsAwarded;
 		aScoreHUD.clear();
@@ -204,19 +203,31 @@ namespace CarnageRace {
 		last = current;
 	}
 
+	bool IsPlayerScoreLocallyControlled(Player* pPlayer) {
+		if (!bIsInMultiplayer) return true;
+		if (!ChloeNet::IsReplicatedPlayer(pPlayer)) return true;
+		return false;
+	}
+
 	void OnTick() {
 		static CNyaRaceTimer gTimer;
 		gTimer.Process();
 
 		if (pLoadingScreen) return;
 		if (!bIsCarnageRace) {
-			nPlayerScore = 0;
+			memset(nPlayerScore, 0, sizeof(nPlayerScore));
 			memset(nPlayerScoresByType, 0, sizeof(nPlayerScoresByType));
 			return;
 		}
 		if (GetGameState() != GAME_STATE_RACE) return;
 
-		ArcadeMode::nCurrentEventScore = nPlayerScore;
+		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+			auto ply = GetPlayer(i);
+			if (IsPlayerScoreLocallyControlled(ply)) continue;
+			nPlayerScore[i] = ChloeNet::GetReplicatedPlayerArcadeScore(ply);
+		}
+
+		ArcadeMode::nCurrentEventScore = nPlayerScore[0];
 
 		auto ply = GetPlayerScore<PlayerScoreRace>(1);
 		if (!ply->bHasFinished && !ply->bIsDNF) {
@@ -231,7 +242,7 @@ namespace CarnageRace {
 			fCashoutNotifTimer = 0;
 			fCheckpointNotifTimer = 0;
 			aScoreHUD.clear();
-			nPlayerScore = 0;
+			memset(nPlayerScore, 0, sizeof(nPlayerScore));
 			memset(nPlayerScoresByType, 0, sizeof(nPlayerScoresByType));
 			return;
 		}
@@ -276,7 +287,7 @@ namespace CarnageRace {
 
 			DrawElement(0, "TIME LEFT", FormatGameTime(timeLeft), timeLeft <= 4500 ? NyaDrawing::CNyaRGBA32(200,0,0,255) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			//DrawElement(0, "TIME LEFT", timeLeftString, timeLeft <= 4500 ? GetPaletteColor(22) : NyaDrawing::CNyaRGBA32(255,255,255,255));
-			DrawElement(1, "SCORE", FormatScore(nPlayerScore));
+			DrawElement(1, "SCORE", FormatScore(nPlayerScore[0]));
 
 			if (fCheckpointNotifTimer > 0) {
 				tNyaStringData data;

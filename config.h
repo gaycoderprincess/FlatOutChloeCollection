@@ -105,6 +105,10 @@ namespace FragDerby {
 	int GetTopDriverOfType(int type);
 }
 
+namespace CarnageRace {
+	int nPlayerScore[nMaxPlayers] = {};
+}
+
 namespace CareerMode {
 	bool IsCareerTimeTrial();
 }

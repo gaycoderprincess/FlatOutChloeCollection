@@ -124,6 +124,11 @@ int ChloeHUD_TrackSelect_GetTrackId(void* a1) {
 	return 1;
 }
 
+int ChloeHUD_TrackSelect_GetGameType(void* a1) {
+	lua_pushnumber(a1, Menu_TrackSelect.GetGameType());
+	return 1;
+}
+
 int ChloeHUD_TrackSelect_GetEventType(void* a1) {
 	std::string str = Menu_TrackSelect.GetGameModeString();
 	lua_pushlstring(a1, (const wchar_t*)str.c_str(), (str.length() + 1));
@@ -1355,6 +1360,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_SetSelected, "ChloeHUD_ArcadeCareer_SetSelected");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetSelected, "ChloeHUD_ArcadeCareer_GetSelected");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetTrackId, "ChloeHUD_TrackSelect_GetTrackId");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetGameType, "ChloeHUD_TrackSelect_GetGameType");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetEventType, "ChloeHUD_TrackSelect_GetEventType");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetNitroType, "ChloeHUD_TrackSelect_GetNitroType");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetUpgradeLevel, "ChloeHUD_TrackSelect_GetUpgradeLevel");
