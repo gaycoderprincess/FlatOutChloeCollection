@@ -85,6 +85,10 @@ public:
 		}
 	}
 	
+	void Select() override {
+		MoveRight();
+	}
+	
 	void Init() override {
 		PreloadTexture("data/menu/chloetraxmenu1d.png");
 		PreloadTexture("data/menu/chloetraxmenu1s.png");
@@ -100,11 +104,21 @@ public:
 	}
 	
 	tDrawPositions gTopBar = {0.514, 0.227, 0.045};
-	tDrawPositions gSongList = {0.115, 0.335, 0.035, 0.565, 0.1235};
-	float fOnOffYOffset = 0.035;
+	tDrawPositions gSongList = {0.113, 0.3325, 0.04, 0.565, 0.1235};
+	float fOnOffYOffset = 0.021;
+
+	void Reset() override {
+		nPlaylist = 0;
+		nSelected = 0;
+		nScroll = 0;
+	}
 
 	void Process() override {
 		if (!bEnabled) return;
+		
+		nMenuSoundtrack = NewMusicPlayer::aPlaylistsTitle.size()-1;
+		nIngameSoundtrack = NewMusicPlayer::aPlaylistsIngame.size()-1;
+		nIngameDerbySoundtrack = NewMusicPlayer::aPlaylistsIngame.size()-1;
 		
 		static IDirect3DTexture9* textures[] = {
 				LoadTextureFromBFS("data/menu/chloetraxmenutopd.png"),

@@ -39,6 +39,11 @@ int ChloeMenu_MoveDown(void* a1) {
 	return 0;
 }
 
+int ChloeMenu_Select(void* a1) {
+	ChloeMenuHud::OnSelect();
+	return 0;
+}
+
 int ChloeSkins_ShowSkinSelector(void* a1) {
 	Menu_CarDealer.bSkinSelector = luaL_checknumber(a1, 1);
 	return 0;
@@ -1359,6 +1364,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeMenu_MoveRight, "ChloeMenu_MoveRight");
 	RegisterLUAFunction(a1, (void*)&ChloeMenu_MoveUp, "ChloeMenu_MoveUp");
 	RegisterLUAFunction(a1, (void*)&ChloeMenu_MoveDown, "ChloeMenu_MoveDown");
+	RegisterLUAFunction(a1, (void*)&ChloeMenu_Select, "ChloeMenu_Select");
 	RegisterLUAFunction(a1, (void*)&ChloeSkins_ShowSkinSelector, "ChloeSkins_ShowSkinSelector");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorX, "ChloeHUD_CareerCupSelect_GetCursorX");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_CareerCupSelect_GetCursorY, "ChloeHUD_CareerCupSelect_GetCursorY");

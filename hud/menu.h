@@ -11,6 +11,7 @@ public:
 	virtual void MoveRight() {};
 	virtual void MoveUp() {};
 	virtual void MoveDown() {};
+	virtual void Select() {};
 };
 
 namespace ChloeMenuHud {
@@ -76,6 +77,12 @@ namespace ChloeMenuHud {
 	void OnMoveRight() {
 		for (auto& hud : CMenuHUDElement::aMenuHUD) {
 			if (hud->bEnabled) hud->MoveRight();
+		}
+	}
+
+	void OnSelect() {
+		for (auto& hud : CMenuHUDElement::aMenuHUD) {
+			if (hud->bEnabled) hud->Select();
 		}
 	}
 }
