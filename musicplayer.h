@@ -11,7 +11,7 @@ namespace NewMusicPlayer {
 		return nIngameMusicVolume;
 	}
 
-	bool bCustomPlaylistsEnabled = true;
+	bool bCustomPlaylistsEnabled = false;
 	bool bLastSongPlayedInReplay = false;
 	bool bIsFirstIngameSong = false;
 

@@ -116,6 +116,7 @@ public:
 	void Process() override {
 		if (!bEnabled) return;
 		
+		NewMusicPlayer::bCustomPlaylistsEnabled = true;
 		nMenuSoundtrack = NewMusicPlayer::aPlaylistsTitle.size()-1;
 		nIngameSoundtrack = NewMusicPlayer::aPlaylistsIngame.size()-1;
 		nIngameDerbySoundtrack = NewMusicPlayer::aPlaylistsIngame.size()-1;
