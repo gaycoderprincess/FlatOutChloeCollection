@@ -9,7 +9,8 @@ void ProcessNitroGain() {
 	if (pGameFlow->nEventType != eEventType::RACE && !IsNitroEnabledInDerby()) return;
 	if (pPlayerHost->nRaceTime <= 0) return;
 
-	bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode") || bIsCarnageRace || bIsSmashyRace || (bIsInMultiplayer && bMultiplayerNitroRegen);
+	if (bIsInMultiplayer) bNitroRegen = bMultiplayerNitroRegen;
+	else bNitroRegen = DoesTrackValueExist(pGameFlow->nLevel, "ArenaMode") || bIsCarnageRace || bIsSmashyRace;
 
 	static CNyaRaceTimer gTimer;
 	gTimer.Process();
