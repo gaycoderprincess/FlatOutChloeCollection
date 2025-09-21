@@ -295,7 +295,11 @@ void PlaylistEditorMenu(const std::string& name, NewMusicPlayer::tPlaylist* play
 
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
-
+	
+	QuickValueEditor("gTopBar", Menu_ChloeTrax_Config.gTopBar, false);
+	QuickValueEditor("gSongList", Menu_ChloeTrax_Config.gSongList, true);
+	QuickValueEditor("fOnOffYOffset", Menu_ChloeTrax_Config.fOnOffYOffset);
+	
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();
 
