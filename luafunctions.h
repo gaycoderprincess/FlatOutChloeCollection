@@ -153,7 +153,7 @@ int ChloeHUD_TrackSelect_GetTimeTrialMode(void* a1) {
 int ChloeHUD_TrackSelect_SetMapPath(void* a1) {
 	int trackId = luaL_checknumber(a1, 1);
 	std::string mapPath = (const char*)lua_tolstring(a1, 2);
-	if (mapPath.find('\\') == std::string::npos && mapPath.find('/') == std::string::npos) {
+	if (!mapPath.empty() && mapPath.find('\\') == std::string::npos && mapPath.find('/') == std::string::npos) {
 		mapPath = std::format("{}textures/{}", GetTrackValueString(trackId, "GfxSetPath"), mapPath);
 	}
 	Menu_TrackSelect.SetMapPath(mapPath);
@@ -511,6 +511,11 @@ int ChloeSave_ResumeCustomData(void* a1) {
 
 int ChloeSave_ClearCustomData(void* a1) {
 	gCustomSave.Clear();
+	return 0;
+}
+
+int ChloeSave_SetNewSaveHandlingMode(void* a1) {
+	gCustomSave.handlingMode = nHandlingMode = luaL_checknumber(a1, 1);
 	return 0;
 }
 
@@ -1376,6 +1381,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SetCarDescription, "ChloeHUD_SetCarDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SelectAchievement, "ChloeHUD_SelectAchievement");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");
+	RegisterLUAFunction(a1, (void*)&ChloeSave_SetNewSaveHandlingMode, "ChloeSave_SetNewSaveHandlingMode");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_LoadCustomData, "ChloeSave_LoadCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_SaveCustomData, "ChloeSave_SaveCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_DeleteCustomData, "ChloeSave_DeleteCustomData");
@@ -1556,7 +1562,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_FRAG, "GAMETYPE_DERBY_FRAG");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_STUNT, "GAMETYPE_STUNT");
 
-	static auto sVersionString = "Chloe Collection v1.23 - Skyscraper Derby Edition";
+	static auto sVersionString = "Chloe Collection v1.24 - Tough Trucks Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
 	lua_setglobal(a1, sVersionString);
 	lua_settable(a1, LUA_ENVIRONINDEX);
