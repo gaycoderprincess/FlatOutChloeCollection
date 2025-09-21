@@ -186,7 +186,8 @@ public:
 		}
 		pMapTexture = LoadTextureFromBFS(mapPath.c_str());
 		pMapTextureFO2 = nullptr;
-		pEnvironment->pMinimap = new Minimap();
+		pEnvironment->pMinimap = (Minimap*)FO2Malloc(sizeof(Minimap));
+		pEnvironment->pMinimap->ctor();
 		pEnvironment->pMinimap->fWorldTopLeft[0] = config["WorldTopLeft"][0].value_or(0.0f);
 		pEnvironment->pMinimap->fWorldTopLeft[1] = config["WorldTopLeft"][1].value_or(0.0f);
 		pEnvironment->pMinimap->fWorldBottomRight[0] = config["WorldBottomRight"][0].value_or(0.0f);
