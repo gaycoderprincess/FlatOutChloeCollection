@@ -1297,6 +1297,16 @@ int ChloeCollection_LaunchInstantAction(void* a1) {
 	else {
 		pGameFlow->nEventType = eEventType::RACE;
 		pGameFlow->nSubEventType = eSubEventType::RACE_NORMAL;
+		if (gCustomSave.tracksWon[level.level]) {
+			switch (rand() % 2) {
+				// race
+				case 0:
+					break;
+				case 1:
+					CarnageRace::SetIsCarnageRace(true);
+					break;
+			}
+		}
 	}
 	pGameFlow->nLevel = level.level;
 	SetTrackReversed(level.reversed);

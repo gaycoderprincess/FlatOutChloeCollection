@@ -160,7 +160,13 @@ public:
 		data.XCenterAlign = false;
 		data.x = nNameX;
 		Draw1080pString(JUSTIFY_CENTER, data, "DRIVER", &DrawStringFO2_Ingame12);
-		if (bIsFragDerby) {
+		if (bIsCarnageRace) {
+			data.x = nBestLapX;
+			Draw1080pString(JUSTIFY_CENTER, data, "BEST LAP", &DrawStringFO2_Ingame12);
+			data.x = nTotalTimeX;
+			Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Ingame12);
+		}
+		else if (bIsFragDerby) {
 			data.x = nBestLapX;
 			Draw1080pString(JUSTIFY_CENTER, data, "WRECKS", &DrawStringFO2_Ingame12);
 			data.x = nTotalTimeX;
@@ -199,7 +205,20 @@ public:
 
 			auto player = GetPlayer(ply->nPlayerId);
 			data.SetColor(GetPaletteColor(player->nPlayerType == PLAYERTYPE_LOCAL ? COLOR_MENU_YELLOW : COLOR_MENU_WHITE));
-			if (bIsFragDerby) {
+			if (bIsCarnageRace) {
+				std::string bestLap;
+				if (!ply->nCurrentLap) {
+					bestLap = "--'--\"--";
+				} else {
+					bestLap = FormatGameTime(GetBestLap(ply), true);
+				}
+
+				data.x = nBestLapX;
+				Draw1080pString(JUSTIFY_CENTER, data, bestLap, &DrawStringFO2_Ingame12);
+				data.x = nTotalTimeX;
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(CarnageRace::nPlayerScore[ply->nPlayerId]), &DrawStringFO2_Ingame12);
+			}
+			else if (bIsFragDerby) {
 				data.x = nBestLapX;
 				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]), &DrawStringFO2_Ingame12);
 				data.x = nTotalTimeX;
