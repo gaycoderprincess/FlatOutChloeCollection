@@ -167,17 +167,17 @@ bool DoesTrackSupportReversing(int level) {
 	if (level == TRACK_WINTER1A) return true;
 	if (level == TRACK_WINTER1B) return true;
 	if (level == TRACK_WINTER1C) return true;
-	if (level == TRACK_WINTER2A) return true;
+	//if (level == TRACK_WINTER2A) return true; // same as 2c
 	if (level == TRACK_WINTER2B) return true;
-	if (level == TRACK_WINTER2C) return true;
+	//if (level == TRACK_WINTER2C) return true; // same as 2a
 	// chloe collection tracks
 	//if (level == TRACK_DESERT1B) return true; // half broken?
 	if (level == TRACK_DESERT1C) return true;
 	if (level == TRACK_FIELDS1B) return true;
 	if (level == TRACK_FIELDS1C) return true;
-	if (level == TRACK_FIELDS2A) return true; // no ai on these
-	if (level == TRACK_FIELDS2B) return true; // no ai on these
-	if (level == TRACK_FIELDS2C) return true; // no ai on these
+	if (level == TRACK_FIELDS2A) return true;
+	if (level == TRACK_FIELDS2B) return true;
+	if (level == TRACK_FIELDS2C) return true;
 	if (level == TRACK_FO2FOREST1A) return true;
 	if (level == TRACK_RETRODEMO1A) return true;
 	if (level == TRACK_RETRODEMO2A) return true;

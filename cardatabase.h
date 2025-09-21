@@ -286,6 +286,9 @@ void __fastcall LoadCarBody(Car* car) {
 	if (!bIsInMultiplayer && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
 		body->fMass *= PlayerVsAIMassFudgeFactor;
 	}
+	if (bIsCarnageRace && car->pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
+		fCarDurability[car->pPlayer->nPlayerId-1] *= 1.5;
+	}
 
 	body->fTireTurnAngleIn *= 0.017453292;
 	body->fTireTurnAngleOut *= 0.017453292;

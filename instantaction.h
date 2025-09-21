@@ -115,10 +115,16 @@ namespace InstantAction {
 		return aTracks[rand()%aTracks.size()];
 	}
 
+	bool carAlreadyPicked[1024] = {};
 	int GetRandomCar() {
 		std::vector<int> aCars;
 		for (auto& car : aDealerCars) {
-			aCars.push_back(car.carId);
+			int i = car.carId;
+			if (!carAlreadyPicked[i]) aCars.push_back(i);
+		}
+		if (aCars.empty()) {
+			memset(carAlreadyPicked, 0, 1024);
+			return GetRandomCar();
 		}
 		return aCars[rand()%aCars.size()];
 	}

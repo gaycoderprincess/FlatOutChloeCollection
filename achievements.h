@@ -77,7 +77,8 @@ namespace Achievements {
 		new CAchievement("COMPLETE_CARNAGE", "Carnage Master", "Complete Arcade Mode", CAT_CARNAGE),
 		new CAchievement("COMPLETE_CARNAGE_GOLD", "Carnage Wizard", "Complete Arcade Mode with all gold", CAT_CARNAGE),
 		new CAchievement("COMPLETE_CARNAGE_AUTHOR", "Carnage Legend", "Complete Arcade Mode with all author", CAT_CARNAGE, true),
-		new CAchievement("TRACKMASTER", "FlatOut Map Veteran", "Win an event on every track", CAT_GENERAL),
+		new CAchievement("TRACKMASTER", "FlatOut 1 Map Veteran", "Win an event on every FlatOut 1 track", CAT_GENERAL),
+		new CAchievement("TRACKMASTER_FO2", "FlatOut 2 Map Veteran", "Win an event on every FlatOut 2 track", CAT_GENERAL),
 		new CAchievement("WRECK_CAR_RACE", "Takedown", "Wreck an opponent in a race", CAT_GENERAL),
 		new CAchievement("CASH_DESTRUCTION", "Big Earner", "Earn over $4000 from a single career race", CAT_CAREER),
 		new CAchievement("CARNAGE_FILL_BOARD", "Overkill", "Get 10 separate bonuses in a single combo", CAT_CARNAGE),
@@ -435,14 +436,34 @@ namespace Achievements {
 		pThis->nProgress = (pThis->fInternalProgress / 50000.0) * 100;
 		if (pGameFlow->Profile.nMoney >= 50000) AwardAchievement(pThis);
 	}
+
+	bool IsTrackValidForTrackmaster(int i, bool fo2Tracks) {
+		if (!DoesTrackExist(i)) return false;
+		if (DoesTrackValueExist(i, "StuntMode")) return false;
+		if (DoesTrackValueExist(i, "NotInTrackmaster")) return false;
+		if (DoesTrackValueExist(i, "IsFO2Track") != fo2Tracks) return false;
+		if (!DoesTrackSupportAI(i)) return false;
+		return true;
+	}
+
 	void OnTick_Trackmaster(CAchievement* pThis, double delta) {
 		int numTracks = 0;
 		int numTracksWon = 0;
 		for (int i = 1; i < GetNumTracks() + 1; i++) {
-			if (!DoesTrackExist(i)) continue;
-			if (DoesTrackValueExist(i, "StuntMode")) continue;
-			if (DoesTrackValueExist(i, "NotInTrackmaster")) continue;
-			if (!DoesTrackSupportAI(i)) continue;
+			if (!IsTrackValidForTrackmaster(i, false)) continue;
+
+			numTracks++;
+			if (gCustomSave.tracksWon[i]) numTracksWon++;
+		}
+
+		pThis->fInternalProgress = numTracksWon;
+		pThis->fMaxInternalProgress = numTracks;
+	}
+	void OnTick_TrackmasterFO2(CAchievement* pThis, double delta) {
+		int numTracks = 0;
+		int numTracksWon = 0;
+		for (int i = 1; i < GetNumTracks() + 1; i++) {
+			if (!IsTrackValidForTrackmaster(i, true)) continue;
 
 			numTracks++;
 			if (gCustomSave.tracksWon[i]) numTracksWon++;
@@ -607,22 +628,33 @@ namespace Achievements {
 		static double fTrackCheckTimer = 3;
 		fTrackCheckTimer += gTimer.fDeltaTime;
 		if (fTrackCheckTimer > 3) {
-			auto achievement = GetAchievement("TRACKMASTER");
+			if (auto achievement = GetAchievement("TRACKMASTER")) {
+				achievement->sTrackString = "";
+				if (!achievement->bUnlocked) {
+					for (int i = 1; i < GetNumTracks() + 1; i++) {
+						if (gCustomSave.tracksWon[i]) continue;
+						if (!IsTrackValidForTrackmaster(i, false)) continue;
 
-			achievement->sTrackString = "";
-			if (!achievement->bUnlocked) {
-				for (int i = 1; i < GetNumTracks() + 1; i++) {
-					if (gCustomSave.tracksWon[i]) continue;
-					if (!DoesTrackExist(i)) continue;
-					if (DoesTrackValueExist(i, "StuntMode")) continue;
-					if (DoesTrackValueExist(i, "NotInTrackmaster")) continue;
-					if (!DoesTrackSupportAI(i)) continue;
-
-					if (!achievement->sTrackString.empty()) achievement->sTrackString += ", ";
-					achievement->sTrackString += GetTrackName(i);
+						if (!achievement->sTrackString.empty()) achievement->sTrackString += ", ";
+						achievement->sTrackString += GetTrackName(i);
+					}
+					achievement->sTrackString = "Remaining: " + achievement->sTrackString;
+					achievement->pTrackFunction = OnTrack_GenericString;
 				}
-				achievement->sTrackString = "Remaining: " + achievement->sTrackString;
-				achievement->pTrackFunction = OnTrack_GenericString;
+			}
+			if (auto achievement = GetAchievement("TRACKMASTER_FO2")) {
+				achievement->sTrackString = "";
+				if (!achievement->bUnlocked) {
+					for (int i = 1; i < GetNumTracks() + 1; i++) {
+						if (gCustomSave.tracksWon[i]) continue;
+						if (!IsTrackValidForTrackmaster(i, true)) continue;
+
+						if (!achievement->sTrackString.empty()) achievement->sTrackString += ", ";
+						achievement->sTrackString += GetTrackName(i);
+					}
+					achievement->sTrackString = "Remaining: " + achievement->sTrackString;
+					achievement->pTrackFunction = OnTrack_GenericString;
+				}
 			}
 			fTrackCheckTimer = 0;
 		}
@@ -667,6 +699,7 @@ namespace Achievements {
 		GetAchievement("LOW_HP")->pTickFunction = OnTick_LowHP;
 		GetAchievement("CASH_AWARD")->pTickFunction = OnTick_CashAward;
 		GetAchievement("TRACKMASTER")->pTickFunction = OnTick_Trackmaster;
+		GetAchievement("TRACKMASTER_FO2")->pTickFunction = OnTick_TrackmasterFO2;
 		GetAchievement("BUY_CUSTOM_SKIN")->pTickFunction = OnTick_BuyCustomSkin;
 		GetAchievement("ALL_CARS")->pTickFunction = OnTick_AllCars;
 		GetAchievement("CARNAGE_MILLIONAIRE")->pTickFunction = OnTick_CarnageMillionaire;
