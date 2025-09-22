@@ -399,6 +399,13 @@ public:
 
 	bool IsOptionValid(int option) const {
 		if (aOptions[option].name.empty()) return false;
+		if (aOptions == aOptionsInstantAction) {
+			auto& event = InstantAction::gEvent;
+			if (aOptions[option].name == "LAPS") {
+				if (event.bDerbyTrack || event.bArcadeRace) return false;
+			}
+			return true;
+		}
 		if (DoesEventHaveAI() && aOptions[option].value == &nTrackReversed && !DoesTrackSupportReversing(GetTrackId())) return false;
 		auto gameType = GetGameType();
 		if (gameType == GAMETYPE_ARCADERACE && aOptions[option].value == &nLaps) return false;
@@ -599,12 +606,14 @@ public:
 		int trackId = GetTrackId();
 		DisplayTrackInfo(trackId);
 		if (GetGameType() == GAMETYPE_ARCADERACE || GetGameType() == GAMETYPE_DERBY_FRAG) {
-			tNyaStringData data;
-			data.x = gLevelPB.nPosX;
-			data.y = gLevelPB.nPosY;
-			data.size = gLevelPB.fSize;
-			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", gCustomSave.trackArcadeScores[trackId] ? FormatScore(gCustomSave.trackArcadeScores[trackId]) : "N/A"), &DrawStringFO2_Ingame12);
+			if (gCustomSave.trackArcadeScores[trackId]) {
+				tNyaStringData data;
+				data.x = gLevelPB.nPosX;
+				data.y = gLevelPB.nPosY;
+				data.size = gLevelPB.fSize;
+				data.XCenterAlign = true;
+				Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", FormatScore(gCustomSave.trackArcadeScores[trackId])), &DrawStringFO2_Ingame12);
+			}
 		}
 		else if (!sStuntPB.empty()) {
 			tNyaStringData data;
@@ -687,7 +696,7 @@ public:
 					if (event.bLevelReversed) valueName = "REVERSED " + valueName;
 				}
 				if (option.name == "LAPS") {
-					valueName = std::format("{}", event.nNumLaps);
+					valueName = (event.bDerbyTrack || event.bArcadeRace) ? "N/A" : std::format("{}", event.nNumLaps);
 				}
 				if (option.name == "CAR") {
 					valueName = GetCarName(event.nCar);

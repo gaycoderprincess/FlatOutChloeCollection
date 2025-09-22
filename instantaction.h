@@ -123,7 +123,9 @@ namespace InstantAction {
 			memset(carAlreadyPicked, 0, 1024);
 			return GetRandomCar();
 		}
-		return aCars[rand()%aCars.size()];
+		auto car = aCars[rand()%aCars.size()];
+		carAlreadyPicked[car] = true;
+		return car;
 	}
 
 	struct tEvent {

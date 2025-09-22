@@ -160,6 +160,10 @@ public:
 			if (score >= event->aGoalScores[0]) position = 1;
 			if (score >= event->nPlatinumScore) position = 4;
 
+			if (!event->bIsSmashySmash && score > gCustomSave.trackArcadeScores[event->nLevel]) {
+				gCustomSave.trackArcadeScores[event->nLevel] = score;
+			}
+
 			if (position == 1 || position == 4) {
 				gCustomSave.tracksWon[event->nLevel] = true;
 			}

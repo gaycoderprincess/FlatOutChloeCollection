@@ -234,6 +234,28 @@ public:
 			case TRACK_FO2ARENA1A: return "loading_bg_arena1";
 			case TRACK_FO2ARENA2A: return "loading_bg_arena2";
 			case TRACK_FO2ARENA3A: return "loading_bg_arena3";
+			case TRACK_RETRODEMO1A:
+			case TRACK_RETRODEMO1B:
+				return "retrodemo1_bg";
+			case TRACK_RETRODEMO2A:
+			case TRACK_RETRODEMO2B:
+				return "retrodemo2_bg";
+			case TRACK_TOUGHTRUCKS1: return "toughtrucks1_bg";
+			case TRACK_TOUGHTRUCKS2: return "toughtrucks2_bg";
+			case TRACK_TOUGHTRUCKS3: return "toughtrucks3_bg";
+			case TRACK_TOUGHTRUCKS4: return "toughtrucks4_bg";
+			case TRACK_TOUGHTRUCKS5: return "toughtrucks5_bg";
+			case TRACK_TOUGHTRUCKS6: return "toughtrucks6_bg";
+			case TRACK_TOUGHTRUCKS7: return "toughtrucks7_bg";
+			case TRACK_TOUGHTRUCKS8: return "toughtrucks8_bg";
+			case TRACK_TOUGHTRUCKS9: return "toughtrucks9_bg";
+			case TRACK_TOUGHTRUCKS10: return "toughtrucks10_bg";
+			case TRACK_TOUGHTRUCKS11: return "toughtrucks11_bg";
+			case TRACK_TOUGHTRUCKS12: return "toughtrucks12_bg";
+			case TRACK_TOUGHTRUCKS13: return "toughtrucks13_bg";
+			case TRACK_TOUGHTRUCKS14: return "toughtrucks14_bg";
+			case TRACK_TOUGHTRUCKS15: return "toughtrucks15_bg";
+			case TRACK_TOUGHTRUCKS16: return "toughtrucks16_bg";
 			default:
 				return nullptr;
 		}
@@ -284,7 +306,10 @@ public:
 		static std::vector<tHUDData> loadingAnims = LoadHUDData("data/menu/loading_anim.bed", "loading_anim");
 
 		// assuming a size of 640x480
-		float aspectModifier = (GetAspectRatio() / (4.0 / 3.0)) - 1.0;
+		float loadingAspect = 4.0 / 3.0;
+		if (sTextureName.find("retrodemo") != std::string::npos || sTextureName.find("toughtrucks") != std::string::npos) loadingAspect = 16.0 / 9.0;
+
+		float aspectModifier = (GetAspectRatio() / loadingAspect) - 1.0;
 		if (sTextureName == "data/menu/loading.tga") aspectModifier = 0.0;
 		DrawRectangle(0, 1, 0 - (aspectModifier * 0.5), 1 + (aspectModifier * 0.5), {255,255,255,255}, 0, tex);
 
