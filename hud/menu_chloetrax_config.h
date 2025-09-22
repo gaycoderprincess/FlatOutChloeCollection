@@ -19,16 +19,15 @@ public:
 	int nSelected = 0;
 	int nScroll = 0;
 	
-	NewMusicPlayer::tPlaylist* GetSelectedPlaylist() {
+	NewMusicPlayer::tPlaylist* GetSelectedPlaylist() const {
 		switch (nPlaylist) {
 			case PLAYLIST_TITLE:
+			default:
 				return NewMusicPlayer::pPlaylistCustomTitle;
 			case PLAYLIST_INGAME:
 				return NewMusicPlayer::pPlaylistCustomIngame;
 			case PLAYLIST_DERBY:
 				return NewMusicPlayer::pPlaylistCustomDerby;
-			default:
-				return nullptr;
 		}
 	}
 	
@@ -88,7 +87,17 @@ public:
 	}
 	
 	void Select() override {
-		MoveRight();
+		if (nSelected == 0) return MoveRight();
+
+		auto playlist = GetSelectedPlaylist();
+
+		int songId = (nSelected+nScroll)-1;
+		if (songId >= playlist->aSongs.size()) return;
+
+		NewMusicPlayer::StopPlayback();
+		NewMusicPlayer::pCurrentSong = &playlist->aSongs[songId];
+		NewMusicPlayer::pCurrentSong->Play(false);
+		NewMusicPlayer::pLastSong = NewMusicPlayer::pCurrentSong;
 	}
 	
 	void Init() override {

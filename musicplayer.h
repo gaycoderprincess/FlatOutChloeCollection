@@ -55,7 +55,7 @@ namespace NewMusicPlayer {
 			}
 		}
 
-		void Play() {
+		void Play(bool setAsPlayed) {
 			nStreamVolume = GetMusicVolume();
 			bFinished = true;
 
@@ -72,7 +72,7 @@ namespace NewMusicPlayer {
 					NyaAudio::SkipTo(pStream, nStartPos, true);
 				}
 				bIsFirstIngameSong = false;
-				bAlreadyPlayed = true;
+				if (setAsPlayed) bAlreadyPlayed = true;
 
 				if (GetGameState() == GAME_STATE_MENU) {
 					pGameFlow->pMenuInterface->bMusicPopupFinished = false;
@@ -327,7 +327,7 @@ namespace NewMusicPlayer {
 			while (pCurrentPlaylist->GetNumSongsEnabled() > 1 && pCurrentSong == pLastSong) {
 				pCurrentSong = pCurrentPlaylist->GetNextSong();
 			}
-			pCurrentSong->Play();
+			pCurrentSong->Play(true);
 			pLastSong = pCurrentSong;
 		}
 	}
