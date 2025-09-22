@@ -94,6 +94,8 @@ public:
 		int* value;
 	};
 
+	static inline int nDummyValue = 0;
+
 	static inline int nGameType = GAMETYPE_RACE;
 	static inline int nTrackType = TRACKTYPE_FOREST;
 	static inline int nTrack = 0;
@@ -177,6 +179,17 @@ public:
 			{"*END*", nullptr},
 	};
 
+	static inline tOption aOptionsInstantAction[] = {
+			{"GAME TYPE", &nDummyValue},
+			{"TRACK", &nDummyValue},
+			{"LAPS", &nDummyValue},
+			{"CAR", &nDummyValue},
+			{"UPGRADES", &nDummyValue},
+			{"", nullptr},
+			{"GO RACE", nullptr},
+			{"*END*", nullptr},
+	};
+
 	static inline bool IsMultiplayerMenu() {
 		return aOptions == aOptionsMultiplayer || aOptions == aOptionsMultiplayerCreate;
 	}
@@ -186,6 +199,13 @@ public:
 	static inline bool bMultiplayerCreateGame = false;
 
 	static int GetGameType() {
+		if (aOptions == aOptionsInstantAction) {
+			auto& event = InstantAction::gEvent;
+			if (event.bFragDerby) return GAMETYPE_DERBY_FRAG;
+			else if (event.bWreckingDerby) return GAMETYPE_DERBY_WRECKING;
+			else if (event.bArcadeRace) return GAMETYPE_ARCADERACE;
+			return event.bDerbyTrack ? GAMETYPE_DERBY_LMS : GAMETYPE_RACE;
+		}
 		if (aOptions == aOptionsHotSeat) return GAMETYPE_STUNT;
 		if (aOptions == aOptionsTimeTrial) return GAMETYPE_RACE;
 		if (bSplitScreen) return aGameTypesSplitScreen[nGameType];
@@ -263,6 +283,8 @@ public:
 	}
 
 	int GetTrackId() const {
+		if (aOptions == aOptionsInstantAction) return InstantAction::gEvent.nLevel;
+
 		auto aTracks = GetTrackSelection();
 		if (aTracks.empty()) {
 			WriteLog(std::format("No tracks available for category {}!", aTrackTypeNames[nTrackType-1]));
@@ -576,7 +598,15 @@ public:
 
 		int trackId = GetTrackId();
 		DisplayTrackInfo(trackId);
-		if (!sStuntPB.empty()) {
+		if (GetGameType() == GAMETYPE_ARCADERACE || GetGameType() == GAMETYPE_DERBY_FRAG) {
+			tNyaStringData data;
+			data.x = gLevelPB.nPosX;
+			data.y = gLevelPB.nPosY;
+			data.size = gLevelPB.fSize;
+			data.XCenterAlign = true;
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", gCustomSave.trackArcadeScores[trackId] ? FormatScore(gCustomSave.trackArcadeScores[trackId]) : "N/A"), &DrawStringFO2_Ingame12);
+		}
+		else if (!sStuntPB.empty()) {
 			tNyaStringData data;
 			data.x = gLevelPB.nPosX;
 			data.y = gLevelPB.nPosY;
@@ -627,194 +657,235 @@ public:
 
 			int value = *option.value;
 			std::string valueName = std::to_string(value);
-			if (option.value == &nGameType) {
-				switch (gameType) {
-					case GAMETYPE_RACE:
-					default:
-						valueName = "RACE";
-						break;
-					case GAMETYPE_ARCADERACE:
-						valueName = "ARCADE RACE";
-						break;
-					case GAMETYPE_DERBY_LMS:
-						valueName = "SURVIVOR DERBY";
-						break;
-					case GAMETYPE_DERBY_WRECKING:
-						valueName = "WRECKING DERBY";
-						break;
-					case GAMETYPE_DERBY_FRAG:
-						valueName = "FRAG DERBY";
-						break;
-					case GAMETYPE_STUNT:
-						valueName = "STUNT";
-						break;
+			if (aOptions == aOptionsInstantAction) {
+				auto& event = InstantAction::gEvent;
+				if (option.name == "GAME TYPE") {
+					switch (gameType) {
+						case GAMETYPE_RACE:
+						default:
+							valueName = "RACE";
+							break;
+						case GAMETYPE_ARCADERACE:
+							valueName = "ARCADE RACE";
+							break;
+						case GAMETYPE_DERBY_LMS:
+							valueName = "SURVIVOR DERBY";
+							break;
+						case GAMETYPE_DERBY_WRECKING:
+							valueName = "WRECKING DERBY";
+							break;
+						case GAMETYPE_DERBY_FRAG:
+							valueName = "FRAG DERBY";
+							break;
+						case GAMETYPE_STUNT:
+							valueName = "STUNT";
+							break;
+					}
+				}
+				if (option.name == "TRACK") {
+					valueName = GetTrackName(event.nLevel);
+					if (event.bLevelReversed) valueName = "REVERSED " + valueName;
+				}
+				if (option.name == "LAPS") {
+					valueName = std::format("{}", event.nNumLaps);
+				}
+				if (option.name == "CAR") {
+					valueName = GetCarName(event.nCar);
+				}
+				if (option.name == "UPGRADES") {
+					valueName = std::format("{}%", (int)(event.fUpgradeLevel*100));
 				}
 			}
-			else if (option.value == &nTrackType) {
-				valueName = aTrackTypeNames[value-1];
-			}
-			else if (option.value == &nTrack) {
-				valueName = GetTrackValueString(trackId, "Name");
-				if (IsMultiplayerMenu() && nTrackReversed) valueName = "REV " + valueName;
-			}
-			else if (option.value == &nLaps) {
-				if (GetGameMode() != eEventType::RACE || GetGameType() == GAMETYPE_ARCADERACE) valueName = "N/A";
-			}
-			else if (option.value == &nDamage) {
-				if (GetGameMode() == eEventType::STUNT) valueName = "N/A";
-				else switch (value) {
-					case DAMAGE_0:
-					default:
-						valueName = "0x";
-						break;
-					case DAMAGE_50:
-						valueName = "0.5x";
-						break;
-					case DAMAGE_100:
-						valueName = "1x";
-						break;
-					case DAMAGE_200:
-						valueName = "2x";
-						break;
-					case DAMAGE_500:
-						valueName = "5x";
-						break;
-					case DAMAGE_1000:
-						valueName = "10x";
-						break;
+			else {
+				if (option.value == &nGameType) {
+					switch (gameType) {
+						case GAMETYPE_RACE:
+						default:
+							valueName = "RACE";
+							break;
+						case GAMETYPE_ARCADERACE:
+							valueName = "ARCADE RACE";
+							break;
+						case GAMETYPE_DERBY_LMS:
+							valueName = "SURVIVOR DERBY";
+							break;
+						case GAMETYPE_DERBY_WRECKING:
+							valueName = "WRECKING DERBY";
+							break;
+						case GAMETYPE_DERBY_FRAG:
+							valueName = "FRAG DERBY";
+							break;
+						case GAMETYPE_STUNT:
+							valueName = "STUNT";
+							break;
+					}
 				}
-			}
-			else if (option.value == &nNitro) {
-				if (gameType != GAMETYPE_RACE && gameType != GAMETYPE_ARCADERACE && gameType != GAMETYPE_DERBY_WRECKING && gameType != GAMETYPE_DERBY_FRAG) valueName = "N/A";
-				else switch (value) {
-					case QuickRace::NITRO_0:
-					default:
-						valueName = "0x";
-						break;
-					case QuickRace::NITRO_100:
-						valueName = "1x";
-						break;
-					case QuickRace::NITRO_INFINITE:
-						valueName = "INFINITE";
-						break;
+				else if (option.value == &nTrackType) {
+					valueName = aTrackTypeNames[value-1];
 				}
-			}
-			else if (option.value == &nMultiplayerNitro) {
-				if (gameType != GAMETYPE_RACE && gameType != GAMETYPE_ARCADERACE && gameType != GAMETYPE_DERBY_WRECKING && gameType != GAMETYPE_DERBY_FRAG) valueName = "N/A";
-				else switch (value) {
-					case MULTIPLAYER_NITRO_0:
-					default:
-						valueName = "OFF";
-						break;
-					case MULTIPLAYER_NITRO_100:
-						valueName = "ON";
-						break;
-					case MULTIPLAYER_NITRO_100_REGEN:
-						valueName = "ON + REGEN";
-						break;
+				else if (option.value == &nTrack) {
+					valueName = GetTrackValueString(trackId, "Name");
+					if (IsMultiplayerMenu() && nTrackReversed) valueName = "REV " + valueName;
 				}
-			}
-			else if (option.value == &nUpgrades) {
-				switch (value) {
-					case UPGRADE_0:
-					default:
-						valueName = "0%";
-						break;
-					case UPGRADE_50:
-						valueName = "50%";
-						break;
-					case UPGRADE_100:
-						valueName = "100%";
-						break;
+				else if (option.value == &nLaps) {
+					if (GetGameMode() != eEventType::RACE || GetGameType() == GAMETYPE_ARCADERACE) valueName = "N/A";
 				}
-			}
-			else if (option.value == &nTimeTrialProps) {
-				switch (value) {
-					case 0:
-					default:
-						valueName = "OFF";
-						break;
-					case 1:
-						valueName = "ON";
-						break;
+				else if (option.value == &nDamage) {
+					if (GetGameMode() == eEventType::STUNT) valueName = "N/A";
+					else switch (value) {
+						case DAMAGE_0:
+						default:
+							valueName = "0x";
+							break;
+						case DAMAGE_50:
+							valueName = "0.5x";
+							break;
+						case DAMAGE_100:
+							valueName = "1x";
+							break;
+						case DAMAGE_200:
+							valueName = "2x";
+							break;
+						case DAMAGE_500:
+							valueName = "5x";
+							break;
+						case DAMAGE_1000:
+							valueName = "10x";
+							break;
+					}
 				}
-			}
-			else if (option.value == &nTimeTrial3LapMode) {
-				switch (value) {
-					case 0:
-					default:
-						valueName = "HOTLAPS";
-						break;
-					case 1:
-						valueName = "3 LAP RUN";
-						break;
+				else if (option.value == &nNitro) {
+					if (gameType != GAMETYPE_RACE && gameType != GAMETYPE_ARCADERACE && gameType != GAMETYPE_DERBY_WRECKING && gameType != GAMETYPE_DERBY_FRAG) valueName = "N/A";
+					else switch (value) {
+						case QuickRace::NITRO_0:
+						default:
+							valueName = "0x";
+							break;
+						case QuickRace::NITRO_100:
+							valueName = "1x";
+							break;
+						case QuickRace::NITRO_INFINITE:
+							valueName = "INFINITE";
+							break;
+					}
 				}
-			}
-			else if (option.value == &nMultiplayerHandling) {
-				switch (value) {
-					case HANDLING_NORMAL:
-					default:
-						valueName = "NORMAL";
-						break;
-					case HANDLING_PROFESSIONAL:
-						valueName = "PROFESSIONAL";
-						break;
-					case HANDLING_HARDCORE:
-						valueName = "HARDCORE";
-						break;
+				else if (option.value == &nMultiplayerNitro) {
+					if (gameType != GAMETYPE_RACE && gameType != GAMETYPE_ARCADERACE && gameType != GAMETYPE_DERBY_WRECKING && gameType != GAMETYPE_DERBY_FRAG) valueName = "N/A";
+					else switch (value) {
+						case MULTIPLAYER_NITRO_0:
+						default:
+							valueName = "OFF";
+							break;
+						case MULTIPLAYER_NITRO_100:
+							valueName = "ON";
+							break;
+						case MULTIPLAYER_NITRO_100_REGEN:
+							valueName = "ON + REGEN";
+							break;
+					}
 				}
-			}
-			else if (option.value == &nMultiplayerAIClass) {
-				switch (value) {
-					case AI_CLASS_BRONZE:
-					default:
-						valueName = "BRONZE";
-						break;
-					case AI_CLASS_SILVER:
-						valueName = "SILVER";
-						break;
-					case AI_CLASS_GOLD:
-						valueName = "GOLD";
-						break;
-					case AI_CLASS_SAMEASHOST:
-						valueName = "SAME AS HOST";
-						break;
+				else if (option.value == &nUpgrades) {
+					switch (value) {
+						case UPGRADE_0:
+						default:
+							valueName = "0%";
+							break;
+						case UPGRADE_50:
+							valueName = "50%";
+							break;
+						case UPGRADE_100:
+							valueName = "100%";
+							break;
+					}
 				}
-			}
-			else if (option.value == &nMultiplayerCarClass) {
-				switch (value) {
-					case CARCLASS_ANY:
-					default:
-						valueName = "ANY";
-						break;
-					case CARCLASS_BRONZE:
-						valueName = "BRONZE";
-						break;
-					case CARCLASS_SILVER:
-						valueName = "SILVER";
-						break;
-					case CARCLASS_GOLD:
-						valueName = "GOLD";
-						break;
-					case CARCLASS_SAMEASHOST:
-						valueName = "SAME AS HOST";
-						break;
+				else if (option.value == &nTimeTrialProps) {
+					switch (value) {
+						case 0:
+						default:
+							valueName = "OFF";
+							break;
+						case 1:
+							valueName = "ON";
+							break;
+					}
 				}
-			}
-			else if (option.value == &nTrackReversed) {
-				switch (value) {
-					case 0:
-					default:
-						valueName = "OFF";
-						break;
-					case 1:
-						valueName = "ON";
-						break;
+				else if (option.value == &nTimeTrial3LapMode) {
+					switch (value) {
+						case 0:
+						default:
+							valueName = "HOTLAPS";
+							break;
+						case 1:
+							valueName = "3 LAP RUN";
+							break;
+					}
+				}
+				else if (option.value == &nMultiplayerHandling) {
+					switch (value) {
+						case HANDLING_NORMAL:
+						default:
+							valueName = "NORMAL";
+							break;
+						case HANDLING_PROFESSIONAL:
+							valueName = "PROFESSIONAL";
+							break;
+						case HANDLING_HARDCORE:
+							valueName = "HARDCORE";
+							break;
+					}
+				}
+				else if (option.value == &nMultiplayerAIClass) {
+					switch (value) {
+						case AI_CLASS_BRONZE:
+						default:
+							valueName = "BRONZE";
+							break;
+						case AI_CLASS_SILVER:
+							valueName = "SILVER";
+							break;
+						case AI_CLASS_GOLD:
+							valueName = "GOLD";
+							break;
+						case AI_CLASS_SAMEASHOST:
+							valueName = "SAME AS HOST";
+							break;
+					}
+				}
+				else if (option.value == &nMultiplayerCarClass) {
+					switch (value) {
+						case CARCLASS_ANY:
+						default:
+							valueName = "ANY";
+							break;
+						case CARCLASS_BRONZE:
+							valueName = "BRONZE";
+							break;
+						case CARCLASS_SILVER:
+							valueName = "SILVER";
+							break;
+						case CARCLASS_GOLD:
+							valueName = "GOLD";
+							break;
+						case CARCLASS_SAMEASHOST:
+							valueName = "SAME AS HOST";
+							break;
+					}
+				}
+				else if (option.value == &nTrackReversed) {
+					switch (value) {
+						case 0:
+						default:
+							valueName = "OFF";
+							break;
+						case 1:
+							valueName = "ON";
+							break;
+					}
 				}
 			}
 			Draw1080pString(JUSTIFY_LEFT, data, valueName, &DrawStringFO2_Ingame12);
 
-			if (y == nCursorY) {
+			if (y == nCursorY && aOptions != aOptionsInstantAction) {
 				DoJustify(JUSTIFY_LEFT, data.x, data.y);
 
 				static auto arrowLeft = GetHUDData(commonData, "nuolivasen");

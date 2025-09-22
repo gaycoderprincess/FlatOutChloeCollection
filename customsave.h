@@ -150,6 +150,7 @@ struct tCustomSaveStructure {
 	uint8_t handlingMode;
 	uint8_t highCarCam;
 	uint8_t playerFlag;
+	uint32_t trackArcadeScores[nMaxTracks];
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];

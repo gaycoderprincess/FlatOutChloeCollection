@@ -10,6 +10,9 @@ public:
 
 	void Process() override {
 		if (!bMenuUp || bIsArcadeMode) return;
+		if (!bIsInMultiplayer) {
+			if (bIsCarnageRace || bIsSmashyRace) return;
+		}
 
 		CHUD_PauseMenu::DrawBackground();
 		if (pGameFlow->nEventType == eEventType::STUNT) {

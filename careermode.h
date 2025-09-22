@@ -414,7 +414,7 @@ namespace CareerMode {
 			return QuickRace::fUpgradeLevel;
 		}
 		if (bIsInstantAction) {
-			return InstantAction::fUpgradeLevel;
+			return InstantAction::gEvent.fUpgradeLevel;
 		}
 		if (bIsCareerRace) {
 			return GetCurrentCup()->fAIUpgradeLevel;
@@ -452,7 +452,7 @@ namespace CareerMode {
 			return QuickRace::nNumLaps;
 		}
 		if (bIsInstantAction) {
-			return InstantAction::nNumLaps;
+			return InstantAction::gEvent.nNumLaps;
 		}
 		if (bIsCareerRace) {
 			return GetCurrentRace()->nLaps;

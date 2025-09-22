@@ -229,6 +229,11 @@ int ChloeHUD_TrackSelect_SetIsMultiplayerCreate(void* a1) {
 	return 0;
 }
 
+int ChloeHUD_TrackSelect_SetIsInstantAction(void* a1) {
+	Menu_TrackSelect.aOptions = Menu_TrackSelect.aOptionsInstantAction;
+	return 0;
+}
+
 int ChloeHUD_TrackSelect_GetOptionValue(void* a1) {
 	std::string str = (const char*)lua_tolstring(a1, 1);
 	// hack for multiplayer reversed bool
@@ -1266,58 +1271,42 @@ int ChloeCollection_SetIsTimeTrial(void* a1) {
 	return 0;
 }
 
+int ChloeCollection_GenerateInstantAction(void* a1) {
+	InstantAction::GenerateEvent();
+	return 0;
+}
+
+int ChloeCollection_GetInstantActionCar(void* a1) {
+	lua_pushnumber(a1, InstantAction::gEvent.nCar);
+	return 1;
+}
+
+int ChloeCollection_GetInstantActionCarSkin(void* a1) {
+	lua_pushnumber(a1, InstantAction::gEvent.nCarSkin);
+	return 1;
+}
+
 int ChloeCollection_LaunchInstantAction(void* a1) {
 	bIsInstantAction = true;
-	switch (rand() % 3) {
-		case 0:
-			InstantAction::fUpgradeLevel = 0.0;
-			break;
-		case 1:
-			InstantAction::fUpgradeLevel = 0.5;
-			break;
-		case 2:
-			InstantAction::fUpgradeLevel = 1.0;
-			break;
-	}
-	InstantAction::nNumLaps = (rand() % 4) + 2;
 	pGameFlow->nGameMode = eGameMode::SINGLEPLAYER;
 
-	auto level = InstantAction::GetRandomLevel();
-	auto car = InstantAction::GetRandomCar();
-	if ((int)GetTrackValueNumber(level.level, "TrackType") == TRACKTYPE_DERBY) {
+	auto& event = InstantAction::gEvent;
+	if ((int)GetTrackValueNumber(event.nLevel, "TrackType") == TRACKTYPE_DERBY) {
 		pGameFlow->nEventType = eEventType::DERBY;
 		pGameFlow->nSubEventType = eSubEventType::DERBY_LASTMANSTANDING;
-		switch (rand() % 3) {
-			// survivor derby
-			case 0:
-				break;
-			case 1:
-				SetIsWreckingDerby(true);
-				break;
-			case 2:
-				FragDerby::SetIsFragDerby(true);
-				break;
-		}
+		if (event.bWreckingDerby) { SetIsWreckingDerby(true); }
+		if (event.bFragDerby) { FragDerby::SetIsFragDerby(true); }
 	}
 	else {
 		pGameFlow->nEventType = eEventType::RACE;
 		pGameFlow->nSubEventType = eSubEventType::RACE_NORMAL;
-		if (gCustomSave.tracksWon[level.level]) {
-			switch (rand() % 2) {
-				// race
-				case 0:
-					break;
-				case 1:
-					CarnageRace::SetIsCarnageRace(true);
-					break;
-			}
-		}
+		if (event.bArcadeRace) { CarnageRace::SetIsCarnageRace(true); }
 	}
-	pGameFlow->nLevel = level.level;
-	SetTrackReversed(level.reversed);
-	pGameFlow->nCar = car-1;
-	pGameFlow->nCarSkin = (rand()%GetNumSkinsForCar(car))+1;
-	pGameFlow->nClass = GetDealerCar(car)->classId-1;
+	pGameFlow->nLevel = event.nLevel;
+	SetTrackReversed(event.bLevelReversed);
+	pGameFlow->nCar = event.nCar-1;
+	pGameFlow->nCarSkin = event.nCarSkin;
+	pGameFlow->nClass = GetDealerCar(event.nCar)->classId-1;
 	if (pGameFlow->nClass < 0) pGameFlow->nClass = 0;
 	if (pGameFlow->nClass > 2) pGameFlow->nClass = 2;
 
@@ -1389,6 +1378,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsSplitScreen, "ChloeHUD_TrackSelect_SetIsSplitScreen");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsMultiplayer, "ChloeHUD_TrackSelect_SetIsMultiplayer");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsMultiplayerCreate, "ChloeHUD_TrackSelect_SetIsMultiplayerCreate");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetIsInstantAction, "ChloeHUD_TrackSelect_SetIsInstantAction");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetOptionValue, "ChloeHUD_TrackSelect_GetOptionValue");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_SetBestStuntScore, "ChloeHUD_TrackSelect_SetBestStuntScore");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_MultiplayerLobby_SetNumPlayers, "ChloeHUD_MultiplayerLobby_SetNumPlayers");
@@ -1536,6 +1526,9 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsWreckingDerby, "ChloeCollection_SetIsWreckingDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsFragDerby, "ChloeCollection_SetIsFragDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsTimeTrial, "ChloeCollection_SetIsTimeTrial");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_GenerateInstantAction, "ChloeCollection_GenerateInstantAction");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetInstantActionCar, "ChloeCollection_GetInstantActionCar");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetInstantActionCarSkin, "ChloeCollection_GetInstantActionCarSkin");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_LaunchInstantAction, "ChloeCollection_LaunchInstantAction");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_WasInstantAction, "ChloeCollection_WasInstantAction");
 

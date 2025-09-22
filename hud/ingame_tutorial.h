@@ -11,6 +11,9 @@ public:
 	bool bMenuUpInNormalMode = false;
 
 	void Process() override {
+		if (!bIsInMultiplayer) {
+			if (bIsCarnageRace || bIsSmashyRace) bMenuUpInNormalMode = true;
+		}
 		if (!bIsArcadeMode && !bMenuUpInNormalMode) return;
 		if (pPlayerHost->nRaceTime != -3000) return;
 		bMenuUpInNormalMode = false;

@@ -1,7 +1,4 @@
 namespace InstantAction {
-	float fUpgradeLevel = 0.0;
-	int nNumLaps = 3;
-
 	struct tTrackEntry {
 		int level;
 		bool reversed;
@@ -127,5 +124,63 @@ namespace InstantAction {
 			return GetRandomCar();
 		}
 		return aCars[rand()%aCars.size()];
+	}
+
+	struct tEvent {
+		float fUpgradeLevel = 0.0;
+		int nNumLaps = 3;
+		int nLevel = 0;
+		bool bLevelReversed = false;
+		int nCar = 0;
+		int nCarSkin = 1;
+		bool bDerbyTrack = false;
+		bool bWreckingDerby = false;
+		bool bFragDerby = false;
+		bool bArcadeRace = false;
+	} gEvent;
+
+	void GenerateEvent() {
+		gEvent = tEvent();
+
+		switch (rand() % 3) {
+			case 0:
+				gEvent.fUpgradeLevel = 0.0;
+				break;
+			case 1:
+				gEvent.fUpgradeLevel = 0.5;
+				break;
+			case 2:
+				gEvent.fUpgradeLevel = 1.0;
+				break;
+		}
+		gEvent.nNumLaps = (rand() % 4) + 2;
+
+		auto level = InstantAction::GetRandomLevel();
+		auto car = InstantAction::GetRandomCar();
+		gEvent.nLevel = level.level;
+		gEvent.bLevelReversed = level.reversed;
+		gEvent.nCar = car;
+		gEvent.nCarSkin = (rand()%GetNumSkinsForCar(car))+1;
+
+		if ((int)GetTrackValueNumber(level.level, "TrackType") == TRACKTYPE_DERBY) {
+			gEvent.bDerbyTrack = true;
+			switch (rand() % 3) {
+				// survivor derby
+				case 0:
+					break;
+				case 1:
+					gEvent.bWreckingDerby = true;
+					break;
+				case 2:
+					gEvent.bFragDerby = true;
+					break;
+			}
+		}
+		else {
+			if (gCustomSave.tracksWon[gEvent.nLevel]) {
+				// 33% chance of arcade race
+				gEvent.bArcadeRace = rand() % 3 == 0;
+			}
+		}
 	}
 }
