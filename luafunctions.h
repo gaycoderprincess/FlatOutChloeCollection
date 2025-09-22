@@ -1478,7 +1478,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumSoundtracks, "ChloeOST_GetNumSoundtracks");
 	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumMenuSoundtracks, "ChloeOST_GetNumMenuSoundtracks");
 	RegisterLUAFunction(a1, (void*)&ChloeOST_GetNumStuntSoundtracks, "ChloeOST_GetNumStuntSoundtracks");
-	RegisterLUAFunction(a1, (void*)&ChloeCollection_AwardAchievement, "ChloeCollection_AwardAchievement");
+	//RegisterLUAFunction(a1, (void*)&ChloeCollection_AwardAchievement, "ChloeCollection_AwardAchievement");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementName, "ChloeCollection_GetAchievementName");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementDescription, "ChloeCollection_GetAchievementDescription");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetAchievementProgression, "ChloeCollection_GetAchievementProgression");

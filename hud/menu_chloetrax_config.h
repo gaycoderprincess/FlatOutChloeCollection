@@ -43,6 +43,7 @@ public:
 			int songId = (nSelected+nScroll)-1;
 			if (nSelected > 0 && songId >= playlist->aSongs.size()) return;
 			playlist->aSongs[songId].bDisabled = !playlist->aSongs[songId].bDisabled;
+			Achievements::AwardAchievement(GetAchievement("CHANGE_MUSIC_TRAX"));
 		}
 	}
 	
@@ -57,6 +58,7 @@ public:
 			int songId = (nSelected+nScroll)-1;
 			if (nSelected > 0 && songId >= playlist->aSongs.size()) return;
 			playlist->aSongs[songId].bDisabled = !playlist->aSongs[songId].bDisabled;
+			Achievements::AwardAchievement(GetAchievement("CHANGE_MUSIC_TRAX"));
 		}
 	}
 	
@@ -104,7 +106,7 @@ public:
 	}
 	
 	tDrawPositions gTopBar = {0.514, 0.227, 0.045};
-	tDrawPositions gSongList = {0.113, 0.3325, 0.04, 0.565, 0.1235};
+	tDrawPositions gSongList = {0.113, 0.3325, 0.04, 0.57, 0.1235};
 	float fOnOffYOffset = 0.021;
 
 	void Reset() override {

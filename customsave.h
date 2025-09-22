@@ -310,7 +310,7 @@ void ProcessPlayStats() {
 		bool changed = false;
 		int track = pGameFlow->nLevel;
 
-		if (!IsInSplitScreen() && !bIsTimeTrial && !bIsArcadeMode) {
+		if (!IsInSplitScreen() && !bIsTimeTrial && !bIsArcadeMode && !bIsCarnageRace) {
 			auto ply = GetPlayerScore<PlayerScoreRace>(1);
 			if (ply->bHasFinished || ((bIsWreckingDerby || bIsFragDerby) && ply->bIsDNF)) {
 				bool won = ply->nPosition == 1;

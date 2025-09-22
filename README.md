@@ -1,6 +1,6 @@
 # FlatOut 1 Chloe Collection
 
-Companion plugin for my FlatOut 1 modpack, [Chloe Collection](https://gaycoderprincess.github.io/project/chloe-collection-fo1).
+Companion plugin for my FlatOut 1 overhaul, [Chloe Collection](https://gaycoderprincess.github.io/project/chloe-collection-fo1).
 
 ## Building
 
