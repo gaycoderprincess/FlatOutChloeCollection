@@ -100,4 +100,5 @@ namespace ChloeMenuHud {
 #include "menu_multiplayer_lobby.h"
 #include "menu_achievement_description.h"
 #include "menu_chloetrax_config.h"
+#include "menu_controller_layout.h"
 #include "menu_loadingscreen.h"

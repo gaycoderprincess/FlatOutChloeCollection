@@ -1,19 +1,11 @@
-// FOUC layout:
-// LT - Brake/Reverse
-// RT - Accelerate
-// LB - Gear Down
-// RB - Gear Up
-// Select - Skip Music Track
-// Start - Pause
-// LStick - Steering
-// A - Nitro
-// B - Handbrake
-// X - Camera
-// Y - Reset
-// DPad Left - Player List
-// R3 - Look Back
-
 double fTimeSincePaused = 0;
+
+int GetControllerKeyForAction(int action) {
+	for (int i = 0; i < NUM_CONTROLLER_BUTTONS; i++) {
+		if (GetControllerBinding(i) == action) return i;
+	}
+	return NUM_CONTROLLER_BUTTONS;
+}
 
 bool IsControllerSupportEnabled() {
 	if (!nControllerSupport) return false;
@@ -40,11 +32,11 @@ bool __thiscall IsMenuInputJustPressedXInput(Controller* pThis, int input) {
 
 bool __thiscall IsGameInputJustPressedXInput(Controller* pThis, int input) {
 	int padId = IsInSplitScreen() ? GetControllerSplitScreenPlayer(pThis) : -1;
-	if (input == 9) { return IsPadKeyJustPressed(NYA_PAD_KEY_START, padId); } // pause
-	if (input == 3) { return IsPadKeyJustPressed(NYA_PAD_KEY_X, padId); } // camera
-	if (input == 5) { return IsPadKeyJustPressed(NYA_PAD_KEY_Y, padId); } // reset
-	if (input == 18) { return IsPadKeyJustPressed(NYA_PAD_KEY_LB, padId); } // gear down
-	if (input == 19) { return IsPadKeyJustPressed(NYA_PAD_KEY_RB, padId); } // gear up
+	if (input == 9) { return IsPadKeyJustPressed(NYA_PAD_KEY_START, padId); }
+	if (input == 3) { return IsPadKeyJustPressed(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_CAMERA)), padId); }
+	if (input == 5) { return IsPadKeyJustPressed(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_RESET)), padId); }
+	if (input == 18) { return IsPadKeyJustPressed(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_GEARDOWN)), padId); }
+	if (input == 19) { return IsPadKeyJustPressed(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_GEARUP)), padId); }
 	return false;
 }
 
@@ -53,17 +45,17 @@ int __thiscall GetAnalogInputXInput(Controller* pThis, int input, float* out) {
 	int padId = IsInSplitScreen() ? GetControllerSplitScreenPlayer(pThis) : -1;
 	//if (aPressedAnalog[input]) { *out = 1.0; }
 	if (input == 0) { *out = GetPadKeyState(NYA_PAD_KEY_LSTICK_X, padId) / 32767.0; } // steer
-	if (input == 1) { *out = GetPadKeyState(NYA_PAD_KEY_RT, padId) / 255.0; } // accelerate
-	if (input == 2) { *out = GetPadKeyState(NYA_PAD_KEY_LT, padId) / 255.0; } // brake
+	if (input == 1) { *out = GetPadKeyState(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_THROTTLE)), padId) / 255.0; }
+	if (input == 2) { *out = GetPadKeyState(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_BRAKE)), padId) / 255.0; }
 	return *out != 0.0;
 }
 
 int __thiscall GetInputValueXInput(Controller* pThis, int input) {
 	int padId = IsInSplitScreen() ? GetControllerSplitScreenPlayer(pThis) : -1;
 	//if (aPressedDigital[input]) return 255;
-	if (input == 0) return GetPadKeyState(NYA_PAD_KEY_B, padId); // handbrake
-	if (input == 1 && fTimeSincePaused > 0.75) return GetPadKeyState(NYA_PAD_KEY_A, padId); // nitro
-	if (input == 4) return GetPadKeyState(NYA_PAD_KEY_R3, padId); // look back
+	if (input == 0) return GetPadKeyState(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_HANDBRAKE)), padId); // handbrake
+	if (input == 1 && fTimeSincePaused > 0.75) return GetPadKeyState(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_RAGDOLL)), padId); // nitro
+	if (input == 4) return GetPadKeyState(FO2ToNyaControllerKey(GetControllerKeyForAction(CONFIG_LOOK)), padId); // look back
 	return 0;
 }
 

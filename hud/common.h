@@ -212,7 +212,7 @@ public:
 				int x = 0, y = 0, sizex = 0, sizey = 0;
 
 				char varName[64] = "";
-				sscanf(line.c_str(), "%s = {  %d, %d, %d, %d, },", varName, &x, &y, &sizex, &sizey);
+				sscanf(line.c_str(), "%s = { %d, %d, %d, %d, },", varName, &x, &y, &sizex, &sizey);
 				if (!varName[0]) continue;
 				if (x == 0 && y == 0 && sizex == 0 && sizey == 0) continue;
 

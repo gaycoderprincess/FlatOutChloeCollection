@@ -234,6 +234,9 @@ namespace CarnageRace {
 		}
 
 		ArcadeMode::nCurrentEventScore = nPlayerScore[0];
+		if (nPlayerScore[0] > gCustomSave.trackArcadeScores[pGameFlow->nLevel]) {
+			gCustomSave.trackArcadeScores[pGameFlow->nLevel] = nPlayerScore[0];
+		}
 
 		auto ply = GetPlayerScore<PlayerScoreRace>(1);
 		if (!ply->bHasFinished && !ply->bIsDNF) {
@@ -294,10 +297,6 @@ namespace CarnageRace {
 			DrawElement(0, "TIME LEFT", FormatGameTime(timeLeft), timeLeft <= 4500 ? NyaDrawing::CNyaRGBA32(200,0,0,255) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			//DrawElement(0, "TIME LEFT", timeLeftString, timeLeft <= 4500 ? GetPaletteColor(22) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			DrawElement(1, "SCORE", FormatScore(nPlayerScore[0]));
-
-			if (nPlayerScore[0] > gCustomSave.trackArcadeScores[pGameFlow->nLevel]) {
-				gCustomSave.trackArcadeScores[pGameFlow->nLevel] = nPlayerScore[0];
-			}
 
 			if (fCheckpointNotifTimer > 0) {
 				tNyaStringData data;

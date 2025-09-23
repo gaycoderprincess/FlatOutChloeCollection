@@ -55,6 +55,7 @@ uint32_t nSplitScreenController[4] = { SPLITSCREEN_P1_KEYBOARD, SPLITSCREEN_PAD1
 uint32_t nSplitScreenDamageMeter = 1;
 uint32_t nPlayerFlag = 0;
 uint32_t nUseFO2Minimap = 1;
+uint32_t nControllerLayout = 0;
 
 uint32_t nMultiplayerHandlingMode = HANDLING_NORMAL;
 

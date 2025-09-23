@@ -265,6 +265,9 @@ namespace FragDerby {
 		if (GetGameState() != GAME_STATE_RACE) return;
 
 		ArcadeMode::nCurrentEventScore = nPlayerScore[0];
+		if (nPlayerScore[0] > gCustomSave.trackArcadeScores[pGameFlow->nLevel]) {
+			gCustomSave.trackArcadeScores[pGameFlow->nLevel] = nPlayerScore[0];
+		}
 
 		if (pPlayerHost->nRaceTime < 0) {
 			Reset();
@@ -339,10 +342,6 @@ namespace FragDerby {
 
 			DrawElement(0, "TIME LEFT", FormatGameTime(timeLeft), timeLeft <= 4500 ? NyaDrawing::CNyaRGBA32(200,0,0,255) : NyaDrawing::CNyaRGBA32(255,255,255,255));
 			DrawElement(1, "SCORE", FormatScore(nPlayerScore[0]));
-
-			if (nPlayerScore[0] > gCustomSave.trackArcadeScores[pGameFlow->nLevel]) {
-				gCustomSave.trackArcadeScores[pGameFlow->nLevel] = nPlayerScore[0];
-			}
 
 			if (!isStreaker && nStreakerId == 0) {
 				TriggerPopup("STREAKER", "You score 2X points\nfor each frag until wrecked!");

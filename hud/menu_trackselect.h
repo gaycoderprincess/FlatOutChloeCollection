@@ -593,6 +593,10 @@ public:
 
 		if (!bEnabled) return;
 
+		if (aOptions == aOptionsInstantAction) {
+			nCursorY = GetNumOptions()-1;
+		}
+
 		static auto textureLeft = LoadTextureFromBFS("data/menu/trackselectbg_left.png");
 		static auto textureRight = LoadTextureFromBFS("data/menu/trackselectbg_right.png");
 		static auto textureCommon = LoadTextureFromBFS("data/menu/common.dds");

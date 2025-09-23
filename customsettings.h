@@ -26,7 +26,7 @@ tGameSetting aNewGameSettings[] = {
 		//{ "Control", "ControllerSensitivity", (void*)0x6BEE08, 0, 0, 100 },
 		{ "Control", "ControllerDeadzone", (void*)0x6BEE0C, 0, 0, 100 },
 		//{ "Control", "ControllerSaturation", (void*)0x6BEE10, 0, 0, 100 },
-		//{ "Control", "ControllerLayout", (void*)0x6BEE14, 0, 0, 10 },
+		{ "Control", "ControllerLayout", &nControllerLayout, 0, 0, 10 },
 		{ "Control", "DigitalCenteringSpeed", (void*)0x6BEE18, 2, 0, 100 },
 		{ "Control", "DigitalSteeringMaxSpeed", (void*)0x6BEE1C, 2, 0, 100 },
 		{ "Control", "DigitalSteeringMinSpeed", (void*)0x6BEE20, 2, 0, 100 },
