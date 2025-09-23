@@ -13,7 +13,7 @@ public:
 	};
 
 	struct tControllerBinding {
-		int key;
+		std::vector<int> keys;
 		int pos[2];
 		int align;
 		std::string icon;
@@ -21,27 +21,28 @@ public:
 		int iconsize[2] = {};
 	};
 	static inline tControllerBinding aBindings[] = {
-			{CONTROLLER_BUTTON_LEFT_TRIGGER, {206,133}, FONTF_RIGHT, "icon_lt", {210,129}, {24,22}},
-			{CONTROLLER_BUTTON_EXTRA1, {206,153}, FONTF_RIGHT, "icon_lb", {210,153}, {29,16}},
-			{CONTROLLER_BUTTON_SELECT, {206,173}, FONTF_RIGHT, "icon_back", {210,173}, {23,16}},
+			{{CONTROLLER_BUTTON_LEFT_TRIGGER}, {206,133}, FONTF_RIGHT, "icon_lt", {210,129}, {24,22}},
+			{{CONTROLLER_BUTTON_EXTRA1}, {206,153}, FONTF_RIGHT, "icon_lb", {210,153}, {29,16}},
+			{{CONTROLLER_BUTTON_SELECT}, {206,173}, FONTF_RIGHT, "icon_back", {210,173}, {23,16}},
 
-			{CONTROLLER_BUTTON_UP, {136+30,225}, FONTF_RIGHT, "controller_lines", {141,215}, {208,78}},
-			{CONTROLLER_BUTTON_DIGITAL_LEFT, {136+30,244}, FONTF_RIGHT, "", {}, {}},
-			{CONTROLLER_BUTTON_EXTRA4, {136+30,281}, FONTF_RIGHT, "", {}, {}},
+			{{CONTROLLER_BUTTON_UP}, {136+30,225}, FONTF_RIGHT, "controller_lines", {141,215}, {208,78}},
+			{{CONTROLLER_BUTTON_DIGITAL_LEFT, CONTROLLER_BUTTON_DIGITAL_RIGHT, CONTROLLER_BUTTON_DIGITAL_UP, CONTROLLER_BUTTON_DIGITAL_DOWN}, {136+30,244}, FONTF_RIGHT, "", {}, {}},
+			{{CONTROLLER_BUTTON_EXTRA4, CONTROLLER_BUTTON_RIGHT_UP, CONTROLLER_BUTTON_RIGHT_DOWN, CONTROLLER_BUTTON_RIGHT_LEFT, CONTROLLER_BUTTON_RIGHT_RIGHT}, {136+30,281}, FONTF_RIGHT, "", {}, {}},
 
-			{CONTROLLER_BUTTON_RIGHT_TRIGGER, {439,133}, FONTF_LEFT, "icon_rt", {409,129}, {24,22}},
-			{CONTROLLER_BUTTON_EXTRA2, {439,153}, FONTF_LEFT, "icon_rb", {404,153}, {29,16}},
-			{CONTROLLER_BUTTON_START, {439,173}, FONTF_LEFT, "icon_start", {409,173}, {23,16}},
+			{{CONTROLLER_BUTTON_RIGHT_TRIGGER}, {439,133}, FONTF_LEFT, "icon_rt", {409,129}, {24,22}},
+			{{CONTROLLER_BUTTON_EXTRA2}, {439,153}, FONTF_LEFT, "icon_rb", {404,153}, {29,16}},
+			{{CONTROLLER_BUTTON_START}, {439,173}, FONTF_LEFT, "icon_start", {409,173}, {23,16}},
 
-			{CONTROLLER_BUTTON_A, {449,197+20*0}, FONTF_LEFT, "icon_abxy", {428,194}, {17,78}},
-			{CONTROLLER_BUTTON_B, {449,197+20*1}, FONTF_LEFT, "", {}, {}},
-			{CONTROLLER_BUTTON_X, {449,197+20*2}, FONTF_LEFT, "", {}, {}},
-			{CONTROLLER_BUTTON_Y, {449,197+20*3}, FONTF_LEFT, "", {}, {}},
+			{{CONTROLLER_BUTTON_A}, {449,197+20*0}, FONTF_LEFT, "icon_abxy", {428,194}, {17,78}},
+			{{CONTROLLER_BUTTON_B}, {449,197+20*1}, FONTF_LEFT, "", {}, {}},
+			{{CONTROLLER_BUTTON_X}, {449,197+20*2}, FONTF_LEFT, "", {}, {}},
+			{{CONTROLLER_BUTTON_Y}, {449,197+20*3}, FONTF_LEFT, "", {}, {}},
 	};
 
 	static const char* GetControllerBindingName(int bind) {
 		switch (bind) {
 			case CONFIG_HANDBRAKE: return "HANDBRAKE";
+			case CONFIG_HANDBRAKE_ALT: return "HANDBRAKE";
 			case CONFIG_NITRO: return "NITRO";
 			case CONFIG_GEARDOWN: return "GEAR DOWN";
 			case CONFIG_GEARUP: return "GEAR UP";
@@ -50,6 +51,7 @@ public:
 			case CONFIG_CAMERA: return "CAMERA";
 			case CONFIG_RAGDOLL: return "NITRO / DRIVER LAUNCH";
 			case CONFIG_RESET: return "RESET";
+			case CONFIG_RESET_ALT: return "RESET";
 			case CONFIG_BRAKE: return "BRAKE / REVERSE";
 			case CONFIG_THROTTLE: return "ACCELERATION";
 			case CONFIG_LOOK: return "LOOK BACK";
@@ -78,8 +80,14 @@ public:
 		Draw1080pSprite(JUSTIFY_480P_CENTER, pos[0], pos[0] + size[0], pos[1], pos[1] + size[1], {255,255,255,255}, texture, controller->min, controller->max);
 
 		for (auto& bind : aBindings) {
-			auto action = GetControllerBindingName(GetControllerBinding(bind.key));
-			if (!action[0]) continue;
+			std::string action;
+			for (auto& key : bind.keys) {
+				auto newAction = GetControllerBindingName(GetControllerBinding(key));;
+				if (!newAction[0]) continue;
+				if (!action.empty()) action += ", ";
+				action += newAction;
+			}
+			if (action.empty()) action = "N/A";
 
 			tNyaStringData data;
 			data.x = bind.pos[0];

@@ -280,7 +280,15 @@ namespace NewMusicPlayer {
 			return;
 		}
 
-		if (IsKeyJustPressed(VK_END) || IsPadKeyJustPressed(NYA_PAD_KEY_SELECT)) {
+		bool isSkipMusicPressed = IsKeyJustPressed(VK_END);
+		auto skipMusicPadKey = GetNyaControllerKeyForAction(CONFIG_SKIPMUSIC);
+		// prevent overlap with menu navigation if skip music is on dpad
+		if (skipMusicPadKey == NYA_PAD_KEY_DPAD_UP || skipMusicPadKey == NYA_PAD_KEY_DPAD_DOWN || skipMusicPadKey == NYA_PAD_KEY_DPAD_LEFT || skipMusicPadKey == NYA_PAD_KEY_DPAD_RIGHT) {
+			if (GetGameState() == GAME_STATE_RACE && !pGameFlow->nIsPaused && !GetScoreManager()->nHideRaceHUD && IsPadKeyJustPressed(skipMusicPadKey)) isSkipMusicPressed = true;
+		}
+		else if (IsPadKeyJustPressed(skipMusicPadKey)) isSkipMusicPressed = true;
+
+		if (isSkipMusicPressed) {
 			StopPlayback();
 		}
 
