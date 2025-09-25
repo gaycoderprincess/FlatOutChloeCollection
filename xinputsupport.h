@@ -27,7 +27,7 @@ bool __thiscall IsGameInputJustPressedXInput(Controller* pThis, int input) {
 	int padId = IsInSplitScreen() ? GetControllerSplitScreenPlayer(pThis) : -1;
 	if (input == 9) { return IsPadKeyJustPressed(NYA_PAD_KEY_START, padId); }
 	if (input == 3) { return IsPadKeyJustPressed(GetNyaControllerKeyForAction(CONFIG_CAMERA), padId); }
-	if (input == 5) { return IsPadKeyJustPressed(GetNyaControllerKeyForAction(CONFIG_RESET), padId) || IsPadKeyJustPressed(GetNyaControllerKeyForAction(CONFIG_RESET_ALT), padId); }
+	if (input == 5) { return IsPadKeyJustPressed(GetNyaControllerKeyForAction(CONFIG_RESET), padId); }
 	if (input == 18) { return IsPadKeyJustPressed(GetNyaControllerKeyForAction(CONFIG_GEARDOWN), padId); }
 	if (input == 19) { return IsPadKeyJustPressed(GetNyaControllerKeyForAction(CONFIG_GEARUP), padId); }
 	return false;

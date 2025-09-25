@@ -51,7 +51,6 @@ public:
 			case CONFIG_CAMERA: return "CAMERA";
 			case CONFIG_RAGDOLL: return "NITRO / DRIVER LAUNCH";
 			case CONFIG_RESET: return "RESET";
-			case CONFIG_RESET_ALT: return "RESET";
 			case CONFIG_BRAKE: return "BRAKE / REVERSE";
 			case CONFIG_THROTTLE: return "ACCELERATION";
 			case CONFIG_LOOK: return "LOOK BACK";
@@ -68,6 +67,7 @@ public:
 
 	void Process() override {
 		if (!bEnabled) return;
+		if (!nControllerSupport) return;
 
 		static auto texture = LoadTextureFromBFS("data/menu/xbox_controller.tga");
 		static auto texData = LoadHUDData("data/menu/xbox_controller.bed", "xbox_controller");
