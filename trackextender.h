@@ -119,6 +119,7 @@ void SetTrackCustomPropertiesPost() {
 			auto envLevel = pEnvironment->fAmbientBlack[0];
 			if (pEnvironment->fAmbientBlack[1] > envLevel) envLevel = pEnvironment->fAmbientBlack[1];
 			if (pEnvironment->fAmbientBlack[2] > envLevel) envLevel = pEnvironment->fAmbientBlack[2];
+			if (envLevel > 1) envLevel = 1;
 
 			pEnvironment->fAmbientColor[0] = envLevel;
 			pEnvironment->fAmbientColor[1] = envLevel;
