@@ -102,7 +102,48 @@ void SetTrackCustomProperties() {
 	NyaHookLib::Patch<uint8_t>(0x4CB595, noVertexColors ? 0xEB : 0x74);
 }
 
-void FixToughTrucksStartpoints() {
+void SetTrackCustomPropertiesPre() {
+	bool useFO1Weather = false;
+	if (DoesTrackValueExist(pGameFlow->nLevel, "IsFO2Track")) {
+		useFO1Weather = nFO2Weathers == 0;
+	}
+	NyaHookLib::Patch(0x468CD2 + 1, useFO1Weather ? "%sdata/fo1stage%d.ini" : "%sdata/stage%d.ini");
+	NyaHookLib::Patch(0x468E07 + 1, useFO1Weather ? "fo1stage%d" : "stage%d");
+}
+
+void SetTrackCustomPropertiesPost() {
+	if (DoesTrackValueExist(pGameFlow->nLevel, "IsFO2Track")) {
+		pEnvironment->fMaxVisibility *= 2;
+		pEnvironment->fMaxVisibilitySplit *= 2;
+		if (nFO2Weathers == 1) {
+			auto envLevel = pEnvironment->fAmbientBlack[0];
+			if (pEnvironment->fAmbientBlack[1] > envLevel) envLevel = pEnvironment->fAmbientBlack[1];
+			if (pEnvironment->fAmbientBlack[2] > envLevel) envLevel = pEnvironment->fAmbientBlack[2];
+
+			pEnvironment->fAmbientColor[0] = envLevel;
+			pEnvironment->fAmbientColor[1] = envLevel;
+			pEnvironment->fAmbientColor[2] = envLevel;
+			pEnvironment->fAmbientColor[3] = pEnvironment->fAmbientBlack[3];
+			pEnvironment->fAmbientBlack[0] *= 0.6;
+			pEnvironment->fAmbientBlack[1] *= 0.6;
+			pEnvironment->fAmbientBlack[2] *= 0.6;
+			pEnvironment->fAmbientBlack[3] *= 0.6;
+			pEnvironment->fAmbientColor[0] *= 3;
+			pEnvironment->fAmbientColor[1] *= 3;
+			pEnvironment->fAmbientColor[2] *= 3;
+			pEnvironment->fAmbientColor[3] *= 3;
+			pEnvironment->fAmbientBlack[0] *= 3;
+			pEnvironment->fAmbientBlack[1] *= 3;
+			pEnvironment->fAmbientBlack[2] *= 3;
+			pEnvironment->fAmbientBlack[3] *= 3;
+			pEnvironment->fSpecularColor[0] *= 0.8;
+			pEnvironment->fSpecularColor[1] *= 0.8;
+			pEnvironment->fSpecularColor[2] *= 0.8;
+			pEnvironment->fSpecularColor[3] *= 0.8;
+		}
+	}
+
+	// tough trucks startpoints
 	if (pGameFlow->nLevel >= TRACK_TOUGHTRUCKS1 && pGameFlow->nLevel <= TRACK_TOUGHTRUCKS16) {
 		for (int i = 0; i < 4; i++) {
 			auto& startSrc = pEnvironment->aStartpoints[i];
@@ -126,7 +167,8 @@ void __stdcall NoFO2WindowProps(void* a1, const char* a2, void* a3, void* a4, vo
 
 void ApplyTrackExtenderPatches() {
 	ChloeEvents::MapPreLoadEvent.AddHandler(SetTrackCustomProperties);
-	ChloeEvents::MapLoadEvent.AddHandler(FixToughTrucksStartpoints);
+	ChloeEvents::MapLoadEvent.AddHandler(SetTrackCustomPropertiesPost);
+	ChloeEvents::RacePreLoadEvent.AddHandler(SetTrackCustomPropertiesPre);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4CD314, &NoFO2WindowProps);
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4693DE, 0x4695D6); // never load vanilla minimaps

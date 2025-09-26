@@ -170,6 +170,7 @@ void __stdcall D3DGameUI(int) {
 
 auto OnMapLoad_call = (void(__stdcall*)(void*, void*, void*))0x44AD00;
 void __stdcall OnMapLoad(void* a1, void* a2, void* a3) {
+	ChloeEvents::RacePreLoadEvent.OnHit();
 	OnMapLoad_call(a1, a2, a3);
 	ChloeEvents::MapLoadEvent.OnHit();
 }

@@ -79,6 +79,16 @@ namespace ChloeEvents {
 		}
 	} MapPreLoadEvent;
 
+	// race init - before any map data is loaded
+	class EventRacePreLoad : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} RacePreLoadEvent;
+
 	class EventDrawRaceUI : public ChloeEvent<void(*)(int)> {
 	public:
 		void OnHit(int layer) {
