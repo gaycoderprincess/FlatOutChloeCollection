@@ -172,6 +172,7 @@ public:
 		DrawRectangle(spritePos.x - (fArrowSize * GetAspectRatioInv()), spritePos.x + (fArrowSize * GetAspectRatioInv()), spritePos.y - fArrowSize, spritePos.y + fArrowSize, {8,200,8,255}, 0, texture);
 	}
 
+	static inline float fMapOffset = -50;
 	static void LoadMinimaps() {
 		if (pGameFlow->nEventType == eEventType::STUNT) {
 			pMapTexture = nullptr;
@@ -193,7 +194,7 @@ public:
 		pEnvironment->pMinimap->fWorldBottomRight[0] = config["WorldBottomRight"][0].value_or(0.0f);
 		pEnvironment->pMinimap->fWorldBottomRight[1] = config["WorldBottomRight"][1].value_or(0.0f);
 		pEnvironment->pMinimap->fScreenPos[0] = config["ScreenPos"][0].value_or(0.0f);
-		pEnvironment->pMinimap->fScreenPos[1] = config["ScreenPos"][1].value_or(0.0f);
+		pEnvironment->pMinimap->fScreenPos[1] = config["ScreenPos"][1].value_or(0.0f) + fMapOffset;
 		pEnvironment->pMinimap->fScreenSize[0] = config["ScreenSize"][0].value_or(0.0f);
 		pEnvironment->pMinimap->fScreenSize[1] = config["ScreenSize"][1].value_or(0.0f);
 		
