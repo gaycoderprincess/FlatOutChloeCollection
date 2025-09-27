@@ -58,17 +58,17 @@ public:
 		Draw1080pString(JUSTIFY_LEFT, data, "POINTS", &DrawStringFO2_Ingame12);
 		data.y = nListStartY;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
+
+		gCustomSave.CalculateCupPlayersByPosition();
 		for (int i = 0; i < 8; i++) {
-			gCustomSave.CalculateCupPlayersByPosition();
 			int playerId = gCustomSave.aCupPlayersByPosition[i];
 			if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN && i == 7 && playerId == 1) continue;
 			auto player = &gCustomSave.aCareerCupPlayers[playerId];
-			std::string playerName = GetPlayerName(playerId);
 			data.XCenterAlign = false;
 			data.x = nListPositionX;
 			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}.", i+1), &DrawStringFO2_Ingame12);
 			data.x = nListNameX;
-			Draw1080pString(JUSTIFY_LEFT, data, playerName, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_LEFT, data, GetPlayerName(playerId), &DrawStringFO2_Ingame12);
 			data.x = nListPointsX;
 			data.XCenterAlign = true;
 			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(player->points), &DrawStringFO2_Ingame12);

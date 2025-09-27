@@ -176,7 +176,8 @@ struct tCustomSaveStructure {
 		std::vector<tLeaderboardEntry> players;
 
 		for (int i = 0; i < nNumCareerMaxPlayers; i++) {
-			players.push_back({i, aCareerCupPlayers[i].points});
+			// never display extra players for now as it'll crash the game til more ai are added, todo change this after
+			players.push_back({i, i < 8 ? aCareerCupPlayers[i].points : -1});
 		}
 		sort(players.begin(), players.end(), tLeaderboardEntry::compFunction);
 		for (int i = 0; i < nNumCareerMaxPlayers; i++) {
