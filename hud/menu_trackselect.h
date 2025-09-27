@@ -364,18 +364,24 @@ public:
 		if (nTrack < 0) nTrack = tracks.size()-1;
 		if (nTrack >= tracks.size()) nTrack = 0;
 
+		int numWeathers = aTrackWeathers[tracks[nTrack].level].size();
+		if (nWeather < 0) nWeather = numWeathers-1;
+		if (nWeather >= numWeathers) nWeather = 0;
+
 		// reset lap count
 		if (changedValue == &nGameType || changedValue == &nTrackType || changedValue == &nTrack) {
 			nLaps = DoesTrackValueExist(tracks[nTrack].level, "Laps") ? GetTrackValueNumber(tracks[nTrack].level, "Laps") : 3;
-			nWeather = 0;
+
+			if (numWeathers == 3) {
+				nWeather = GetTrackDefaultWeather(tracks[nTrack].level);
+			}
+			else {
+				nWeather = 0;
+			}
 		}
 
 		if (nLaps < 1) nLaps = 1;
 		if (nLaps > 10) nLaps = 10;
-
-		int numWeathers = aTrackWeathers[tracks[nTrack].level].size();
-		if (nWeather < 0) nWeather = numWeathers-1;
-		if (nWeather >= numWeathers) nWeather = 0;
 
 		if (GetGameMode() == eEventType::DERBY) {
 			if (nDamage < DAMAGE_50) nDamage = DAMAGE_50;

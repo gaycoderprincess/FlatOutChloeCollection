@@ -1333,17 +1333,20 @@ int ChloeCollection_AddTrackWeather(void* a1) {
 	int levelId = luaL_checknumber(a1, 1);
 	int weatherId = luaL_checknumber(a1, 2);
 	auto path = GetTrackValueString(levelId, "StagePath");
-	WriteLog(std::format("Registering weather {} for track {} ({})", weatherId, levelId, path));
 	if (!DoesFileExist(std::format("{}lighting/lightmap1_w{}.dds", path, weatherId).c_str())) return 0;
 	if (!DoesFileExist(std::format("{}lighting/vertexcolors_w{}.w32", path, weatherId).c_str())) return 0;
 	if (!DoesFileExist(std::format("{}lighting/plantcolors_w{}.w32", path, weatherId).c_str())) return 0;
-	WriteLog(std::format("Registered weather {} for track {} ({})", weatherId, levelId, path));
 	aTrackWeathers[levelId].push_back({weatherId-1, (const char*)lua_tolstring(a1, 3)});
 	return 0;
 }
 
 int ChloeCollection_SetWeather(void* a1) {
 	nTrackWeather = luaL_checknumber(a1, 1);
+	return 0;
+}
+
+int ChloeCollection_SetDefaultWeather(void* a1) {
+	nTrackWeather = GetTrackDefaultWeather(luaL_checknumber(a1, 1));
 	return 0;
 }
 
@@ -1563,6 +1566,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_ClearTrackWeathers, "ChloeCollection_ClearTrackWeathers");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_AddTrackWeather, "ChloeCollection_AddTrackWeather");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetWeather, "ChloeCollection_SetWeather");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetDefaultWeather, "ChloeCollection_SetDefaultWeather");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

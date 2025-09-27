@@ -511,3 +511,26 @@ struct tWeather {
 	std::string name;
 };
 std::vector<tWeather> aTrackWeathers[nMaxTracks];
+
+int GetTrackDefaultWeather(int levelId) {
+	// standard 3 weathers for each layout
+	if (aTrackWeathers[levelId].size() == 3) {
+		auto path = GetTrackValueString(levelId, "StagePath");
+		if (path.find("/A/") != std::string::npos) {
+			return 0;
+		}
+		if (path.find("/B/") != std::string::npos) {
+			return 1;
+		}
+		if (path.find("/C/") != std::string::npos) {
+			return 2;
+		}
+		return aTrackWeathers[levelId][0].id;
+	}
+	else if (!aTrackWeathers[levelId].empty()) {
+		return aTrackWeathers[levelId][0].id;
+	}
+	else {
+		return 1;
+	}
+}
