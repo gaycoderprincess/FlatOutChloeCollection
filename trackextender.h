@@ -169,7 +169,7 @@ void __stdcall NoFO2WindowProps(void* a1, const char* a2, void* a3, void* a4, vo
 void __cdecl SetWeather(void* a1, int a2) {
 	lua_settop(a1, a2);
 
-	pPlayerHost->nWeatherId = nTrackWeather;
+	pPlayerHost->nWeatherId = bIsInMultiplayer ? GetTrackDefaultWeather(pGameFlow->nLevel) : nTrackWeather;
 }
 
 void ApplyTrackExtenderPatches() {

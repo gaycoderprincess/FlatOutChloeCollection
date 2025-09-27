@@ -1032,21 +1032,6 @@ int ChloeArcade_SetIsArcadeCareer(void* a1) {
 	return 0;
 }
 
-int ChloeArcade_SetIsCarnageRace(void* a1) {
-	CarnageRace::SetIsCarnageRace(true);
-	return 0;
-}
-
-int ChloeArcade_SetIsSmashyRace(void* a1) {
-	SmashyRace::SetIsSmashyRace(true);
-	return 0;
-}
-
-int ChloeArcade_SetIsFragDerby(void* a1) {
-	FragDerby::SetIsFragDerby(true);
-	return 0;
-}
-
 int ChloeArcade_WasArcadeEvent(void* a1) {
 	lua_pushboolean(a1, bIsArcadeMode);
 	return 1;
@@ -1268,6 +1253,16 @@ int ChloeCollection_SetIsWreckingDerby(void* a1) {
 
 int ChloeCollection_SetIsFragDerby(void* a1) {
 	FragDerby::SetIsFragDerby(luaL_checknumber(a1, 1));
+	return 0;
+}
+
+int ChloeCollection_SetIsCarnageRace(void* a1) {
+	CarnageRace::SetIsCarnageRace(luaL_checknumber(a1, 1));
+	return 0;
+}
+
+int ChloeCollection_SetIsSmashyRace(void* a1) {
+	SmashyRace::SetIsSmashyRace(true);
 	return 0;
 }
 
@@ -1518,9 +1513,6 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_OnReturnToMenu, "ChloeCollection_OnReturnToMenu");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsQuickRace, "ChloeCollection_SetIsQuickRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsArcadeCareer, "ChloeArcade_SetIsArcadeCareer");
-	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsCarnageRace, "ChloeArcade_SetIsCarnageRace");
-	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsSmashyRace, "ChloeArcade_SetIsSmashyRace");
-	RegisterLUAFunction(a1, (void*)&ChloeArcade_SetIsFragDerby, "ChloeArcade_SetIsFragDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasArcadeEvent, "ChloeArcade_WasArcadeEvent");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_WasCarnageRace, "ChloeArcade_WasCarnageRace");
 	RegisterLUAFunction(a1, (void*)&ChloeArcade_ProcessResultsFromLastRace, "ChloeArcade_ProcessResultsFromLastRace");
@@ -1557,6 +1549,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_CheckCheatCode, "ChloeCollection_CheckCheatCode");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsWreckingDerby, "ChloeCollection_SetIsWreckingDerby");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsFragDerby, "ChloeCollection_SetIsFragDerby");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsCarnageRace, "ChloeCollection_SetIsCarnageRace");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsSmashyRace, "ChloeCollection_SetIsSmashyRace");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetIsTimeTrial, "ChloeCollection_SetIsTimeTrial");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GenerateInstantAction, "ChloeCollection_GenerateInstantAction");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetInstantActionCar, "ChloeCollection_GetInstantActionCar");
