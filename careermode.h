@@ -33,6 +33,7 @@ namespace CareerMode {
 	tLUAClass::tCup* luaDefs_currentCup = nullptr;
 
 	const int aPointsPerPosition[nNumCareerMaxPlayers] = {
+			0,
 			10,
 			8,
 			6,
@@ -269,7 +270,7 @@ namespace CareerMode {
 					player->eventPosition[eventNumber] += 8;
 				}
 				else {
-					player->eventPoints[eventNumber] += aPointsPerPosition[results->nPosition-1];
+					player->eventPoints[eventNumber] += aPointsPerPosition[results->nPosition];
 				}
 			}
 			// average out the results, this might end up weird
@@ -287,7 +288,7 @@ namespace CareerMode {
 					player->eventPoints[eventNumber] = 0;
 				}
 				else {
-					player->eventPoints[eventNumber] = aPointsPerPosition[results->nPosition-1];
+					player->eventPoints[eventNumber] = aPointsPerPosition[results->nPosition];
 				}
 				player->points += player->eventPoints[eventNumber];
 			}
@@ -301,7 +302,7 @@ namespace CareerMode {
 				player->eventPoints[eventNumber] = 0;
 			}
 			else {
-				player->eventPoints[eventNumber] = aPointsPerPosition[results->nPosition-1];
+				player->eventPoints[eventNumber] = aPointsPerPosition[results->nPosition];
 			}
 			player->points += player->eventPoints[eventNumber];
 		}
