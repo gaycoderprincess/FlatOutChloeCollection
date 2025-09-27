@@ -129,6 +129,11 @@ int ChloeHUD_TrackSelect_GetTrackId(void* a1) {
 	return 1;
 }
 
+int ChloeHUD_TrackSelect_GetWeatherId(void* a1) {
+	lua_pushnumber(a1, Menu_TrackSelect.GetWeatherId());
+	return 1;
+}
+
 int ChloeHUD_TrackSelect_GetGameType(void* a1) {
 	lua_pushnumber(a1, Menu_TrackSelect.GetGameType());
 	return 1;
@@ -1319,6 +1324,29 @@ int ChloeCollection_WasInstantAction(void* a1) {
 	return 1;
 }
 
+int ChloeCollection_ClearTrackWeathers(void* a1) {
+	aTrackWeathers[(int)luaL_checknumber(a1, 1)].clear();
+	return 0;
+}
+
+int ChloeCollection_AddTrackWeather(void* a1) {
+	int levelId = luaL_checknumber(a1, 1);
+	int weatherId = luaL_checknumber(a1, 2);
+	auto path = GetTrackValueString(levelId, "StagePath");
+	WriteLog(std::format("Registering weather {} for track {} ({})", weatherId, levelId, path));
+	if (!DoesFileExist(std::format("{}lighting/lightmap1_w{}.dds", path, weatherId).c_str())) return 0;
+	if (!DoesFileExist(std::format("{}lighting/vertexcolors_w{}.w32", path, weatherId).c_str())) return 0;
+	if (!DoesFileExist(std::format("{}lighting/plantcolors_w{}.w32", path, weatherId).c_str())) return 0;
+	WriteLog(std::format("Registered weather {} for track {} ({})", weatherId, levelId, path));
+	aTrackWeathers[levelId].push_back({weatherId-1, (const char*)lua_tolstring(a1, 3)});
+	return 0;
+}
+
+int ChloeCollection_SetWeather(void* a1) {
+	nTrackWeather = luaL_checknumber(a1, 1);
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -1365,6 +1393,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_SetSelected, "ChloeHUD_ArcadeCareer_SetSelected");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_ArcadeCareer_GetSelected, "ChloeHUD_ArcadeCareer_GetSelected");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetTrackId, "ChloeHUD_TrackSelect_GetTrackId");
+	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetWeatherId, "ChloeHUD_TrackSelect_GetWeatherId");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetGameType, "ChloeHUD_TrackSelect_GetGameType");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetEventType, "ChloeHUD_TrackSelect_GetEventType");
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_TrackSelect_GetNitroType, "ChloeHUD_TrackSelect_GetNitroType");
@@ -1531,6 +1560,9 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_GetInstantActionCarSkin, "ChloeCollection_GetInstantActionCarSkin");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_LaunchInstantAction, "ChloeCollection_LaunchInstantAction");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_WasInstantAction, "ChloeCollection_WasInstantAction");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_ClearTrackWeathers, "ChloeCollection_ClearTrackWeathers");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_AddTrackWeather, "ChloeCollection_AddTrackWeather");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetWeather, "ChloeCollection_SetWeather");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

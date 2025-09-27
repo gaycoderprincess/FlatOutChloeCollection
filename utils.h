@@ -505,3 +505,9 @@ int FO2ToNyaControllerKey(int key) {
 int GetNyaControllerKeyForAction(int action) {
 	return FO2ToNyaControllerKey(GetControllerKeyForAction(action));
 }
+
+struct tWeather {
+	int id;
+	std::string name;
+};
+std::vector<tWeather> aTrackWeathers[nMaxTracks];

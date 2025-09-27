@@ -104,6 +104,7 @@ public:
 	static inline int nDamage = DAMAGE_100;
 	static inline int nNitro = QuickRace::NITRO_100;
 	static inline int nUpgrades = UPGRADE_0;
+	static inline int nWeather = 0;
 
 	static inline int nTimeTrialProps = 1;
 	static inline int nTimeTrial3LapMode = 0;
@@ -118,6 +119,7 @@ public:
 			{"GAME TYPE", &nGameType},
 			{"TRACK TYPE", &nTrackType},
 			{"TRACK", &nTrack},
+			{"WEATHER", &nWeather},
 			{"LAPS", &nLaps},
 			{"REVERSED", &nTrackReversed},
 			{"DAMAGE", &nDamage},
@@ -160,6 +162,7 @@ public:
 
 	static inline tOption aOptionsHotSeat[] = {
 			{"TRACK", &nTrack},
+			{"WEATHER", &nWeather},
 			{"UPGRADES", &nUpgrades},
 			{"", nullptr},
 			{"GO RACE", nullptr},
@@ -169,6 +172,7 @@ public:
 	static inline tOption aOptionsTimeTrial[] = {
 			{"TRACK TYPE", &nTrackType},
 			{"TRACK", &nTrack},
+			{"WEATHER", &nWeather},
 			{"REVERSED", &nTrackReversed},
 			{"NITRO", &nNitro},
 			{"UPGRADES", &nUpgrades},
@@ -182,6 +186,7 @@ public:
 	static inline tOption aOptionsInstantAction[] = {
 			{"GAME TYPE", &nDummyValue},
 			{"TRACK", &nDummyValue},
+			//{"WEATHER", &nDummyValue},
 			{"LAPS", &nDummyValue},
 			{"CAR", &nDummyValue},
 			{"UPGRADES", &nDummyValue},
@@ -298,6 +303,13 @@ public:
 		return aTracks[nTrack].level;
 	}
 
+	int GetWeatherId() const {
+		if (aOptions == aOptionsInstantAction) return 1;
+		if (aTrackWeathers[GetTrackId()].empty()) return 1;
+
+		return aTrackWeathers[GetTrackId()][nWeather].id;
+	}
+
 	static float GetDamageLevel() {
 		switch (nDamage) {
 			case DAMAGE_0:
@@ -355,10 +367,15 @@ public:
 		// reset lap count
 		if (changedValue == &nGameType || changedValue == &nTrackType || changedValue == &nTrack) {
 			nLaps = DoesTrackValueExist(tracks[nTrack].level, "Laps") ? GetTrackValueNumber(tracks[nTrack].level, "Laps") : 3;
+			nWeather = 0;
 		}
 
 		if (nLaps < 1) nLaps = 1;
 		if (nLaps > 10) nLaps = 10;
+
+		int numWeathers = aTrackWeathers[tracks[nTrack].level].size();
+		if (nWeather < 0) nWeather = numWeathers-1;
+		if (nWeather >= numWeathers) nWeather = 0;
 
 		if (GetGameMode() == eEventType::DERBY) {
 			if (nDamage < DAMAGE_50) nDamage = DAMAGE_50;
@@ -420,6 +437,9 @@ public:
 		}
 		if (GetGameMode() == eEventType::STUNT) {
 			if (aOptions[option].value == &nDamage) return false;
+		}
+		if (aOptions[option].value == &nWeather) {
+			return aTrackWeathers[GetTrackId()].size() > 1;
 		}
 		return true;
 	}
@@ -537,7 +557,7 @@ public:
 			trackIcon = GetHUDData(trackIcons2, GetTrackValueString(trackId, "Image"));
 			trackIconImage = textureTracks2;
 		}
-		
+
 		static auto textureCarLogos = LoadTextureFromBFS("data/menu/track_name_icons.dds");
 		static std::vector<tHUDData> gCarLogos = LoadHUDData("data/menu/track_name_icons.bed", "track_name_icons");
 
@@ -739,6 +759,10 @@ public:
 				else if (option.value == &nTrack) {
 					valueName = GetTrackValueString(trackId, "Name");
 					if (IsMultiplayerMenu() && nTrackReversed) valueName = "REV " + valueName;
+				}
+				else if (option.value == &nWeather) {
+					if (aTrackWeathers[trackId].empty()) valueName = "N/A";
+					else valueName = aTrackWeathers[trackId][nWeather].name;
 				}
 				else if (option.value == &nLaps) {
 					if (GetGameMode() != eEventType::RACE || GetGameType() == GAMETYPE_ARCADERACE) valueName = "N/A";

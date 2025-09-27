@@ -100,6 +100,7 @@ float fMultiplayerUpgradeLevel = 0.0;
 float fMultiplayerDamageLevel = 1.0;
 
 bool bIsTrackReversed = false;
+int nTrackWeather = 1;
 
 namespace FragDerby {
 	int nPlayerScore[nMaxPlayers] = {};

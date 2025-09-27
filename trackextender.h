@@ -166,11 +166,18 @@ void __stdcall NoFO2WindowProps(void* a1, const char* a2, void* a3, void* a4, vo
 	return NoFO2WindowProps_call(a1, a2, a3, a4, a5, a6, a7, a8, a9);
 }
 
+void __cdecl SetWeather(void* a1, int a2) {
+	lua_settop(a1, a2);
+
+	pPlayerHost->nWeatherId = nTrackWeather;
+}
+
 void ApplyTrackExtenderPatches() {
 	ChloeEvents::MapPreLoadEvent.AddHandler(SetTrackCustomProperties);
 	ChloeEvents::MapLoadEvent.AddHandler(SetTrackCustomPropertiesPost);
 	ChloeEvents::RacePreLoadEvent.AddHandler(SetTrackCustomPropertiesPre);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4CD314, &NoFO2WindowProps);
+	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x440465, &SetWeather);
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4693DE, 0x4695D6); // never load vanilla minimaps
 }
