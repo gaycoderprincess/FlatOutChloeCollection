@@ -168,3 +168,4 @@ namespace NewGameHud {
 #include "ingame_raceresults.h"
 #include "ingame_derby_overhead.h"
 #include "ingame_timetrial.h"
+#include "ingame_totaltime.h"

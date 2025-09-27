@@ -11,7 +11,6 @@ namespace SmashyRace {
 		nScoreMultiplier = 100;
 
 		// hud changes
-		NyaHookLib::Patch<uint64_t>(0x454AFC, apply ? 0xE0A190000001EEE9 : 0xE0A1000001ED850F); // remove total time
 		NyaHookLib::Patch<uint8_t>(0x4551E9, apply ? 0xEB : 0x74); // remove lap time title
 		NyaHookLib::Patch<uint8_t>(0x45578E, apply ? 0xEB : 0x74); // remove lap time counter
 		NyaHookLib::Patch<uint8_t>(0x454A84, apply ? 0xEB : 0x74); // remove supposedly crashing code that's disabled for time trials

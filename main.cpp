@@ -130,7 +130,14 @@ void CommandlineArgReader(void* a1, const char* a2) {
 	auto str = (std::string)a2;
 	if (str == "-debug") bDebugLog = true;
 	if (str == "-nopreload") bNoPreload = true;
-	if (str == "-asyncpreload") bAsyncPreload = true;
+	if (str == "-asyncpreload") {
+		bAsyncPreload = true;
+
+		// use multithreaded flag for preloading textures
+		NyaHookLib::Patch(0x505EDE + 1, 0x20 | D3DCREATE_MULTITHREADED);
+		NyaHookLib::Patch(0x505EF9 + 1, 0x40 | D3DCREATE_MULTITHREADED);
+		NyaHookLib::Patch(0x505F00 + 1, 0x50 | D3DCREATE_MULTITHREADED);
+	}
 	WriteLogDebug("INIT", std::format("Commandline argument {}", a2));
 
 	return lua_setglobal(a1, a2);
@@ -227,6 +234,8 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
 			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
 
+			NyaHookLib::Patch<uint64_t>(0x454AFC, 0xE0A190000001EEE9); // remove total time from hud
+
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
 			NyaHookLib::Patch<uint16_t>(0x45314F, 0x9090); // enable map drawing in stunt maps
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x451CE3, &OnMapLoad);
@@ -237,11 +246,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::Patch(0x68BDE0, "gamesave"); // change savefile name
 
 			// 004E3CDD disable menu ui
-
-			// use multithreaded flag for preloading textures
-			NyaHookLib::Patch(0x505EDE + 1, 0x20 | D3DCREATE_MULTITHREADED);
-			NyaHookLib::Patch(0x505EF9 + 1, 0x40 | D3DCREATE_MULTITHREADED);
-			NyaHookLib::Patch(0x505F00 + 1, 0x50 | D3DCREATE_MULTITHREADED);
 
 			// swap restart and exit to menu in finish screen
 			NyaHookLib::Patch(0x45A62D + 2, 0x194C);
