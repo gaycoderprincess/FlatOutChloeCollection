@@ -197,7 +197,8 @@ public:
 							FormatGameTime(targets[1], false),
 							FormatGameTime(targets[2], false),
 					};
-					auto pb = ChloeTimeTrial::GetCareerPBTime(cup->aRaces[0].nLevel, cup->aRaces[0].nTimeTrialCar-1);
+					//auto pb = ChloeTimeTrial::GetCareerPBTime(cup->aRaces[0].nLevel, cup->aRaces[0].nTimeTrialCar-1);
+					auto pb = careerSaveClass->aEvents[nCursorX].nTimeOrScore;
 					std::string pbString = pb != UINT_MAX ? FormatGameTime(pb, false) : "N/A";
 					if (targets[3] != UINT_MAX) {
 						if (pb != UINT_MAX && pb <= targets[3]) {
