@@ -10,8 +10,21 @@ Before you begin, clone [nya-common](https://github.com/gaycoderprincess/nya-com
 
 If you haven't used CLion before, you'll need to install the mingw g++ compiler, that can be done in the terminal with:
 ```console
+sudo pacman -S mingw-w64-gcc
+```
+
+If you are on debian-based linux, it's this command
+```console
 sudo apt-get install g++-mingw-w64-i686
 ```
+
+<br>
+
+If CLion does not auto-detect the compiler, go to ```Settings->Build, Execution, Deployment->Toolchains```
+
+Set the C Compiler to ```i686-w64-mingw32-gcc```
+
+and the C++ Compiler to ```i686-w64-mingw32-g++```
 
 <br>
 
