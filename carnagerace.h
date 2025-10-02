@@ -51,7 +51,7 @@ namespace CarnageRace {
 	void AddScore(int type, std::string name, double points) {
 		if (IsPlayerWrecked(GetPlayer(0))) return;
 
-		auto ply = GetPlayerScore<PlayerScoreRace>(1);
+		auto ply = GetPlayerScore(1);
 		if (ply->bHasFinished || ply->bIsDNF) return;
 		if (ply->nPosition < nPlayerPosition || aScoreHUD.empty()) {
 			nPlayerPosition = ply->nPosition;
@@ -237,7 +237,7 @@ namespace CarnageRace {
 			gCustomSave.trackArcadeScores[pGameFlow->nLevel] = nPlayerScore[0];
 		}
 
-		auto ply = GetPlayerScore<PlayerScoreRace>(1);
+		auto ply = GetPlayerScore(1);
 		if (!ply->bHasFinished && !ply->bIsDNF) {
 			ProcessSceneryCrashes();
 			ProcessAirtime();

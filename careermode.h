@@ -348,7 +348,7 @@ namespace CareerMode {
 			for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 				auto results = &aPlayerResults[i];
 				auto player = GetPlayer(i);
-				auto score = GetPlayerScore<PlayerScoreRace>(player->nPlayerId);
+				auto score = GetPlayerScore(player->nPlayerId);
 				results->bFinished = score->bHasFinished;
 				results->bDNF = score->bIsDNF;
 				results->nPosition = score->nPosition;

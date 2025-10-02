@@ -110,7 +110,7 @@ namespace ArcadeMode {
 		if (!bIsArcadeMode) return;
 
 		if (GetGameState() == GAME_STATE_RACE) {
-			auto ply = GetPlayerScore<PlayerScoreRace>(1);
+			auto ply = GetPlayerScore(1);
 			bLastRaceCompleted = ply->bHasFinished || ply->bIsDNF;
 		}
 	}

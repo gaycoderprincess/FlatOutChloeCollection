@@ -36,4 +36,22 @@ namespace ChloeNet {
 		if (!funcPtr) return 0;
 		return funcPtr(player);
 	}
+
+	void SetSpectate(bool on) {
+		static auto funcPtr = GetFuncPtr<void(__cdecl*)(bool)>("ChloeNet_SetSpectate");
+		if (!funcPtr) return;
+		return funcPtr(on);
+	}
+
+	bool IsSpectating() {
+		static auto funcPtr = GetFuncPtr<bool(__cdecl*)()>("ChloeNet_IsSpectating");
+		if (!funcPtr) return false;
+		return funcPtr();
+	}
+
+	bool CanSpectate() {
+		static auto funcPtr = GetFuncPtr<bool(__cdecl*)()>("ChloeNet_CanSpectate");
+		if (!funcPtr) return false;
+		return funcPtr();
+	}
 }

@@ -31,7 +31,7 @@ public:
 
 	static inline bool bMenuUp = false;
 
-	uint32_t GetBestLap(PlayerScoreRace* player) {
+	uint32_t GetBestLap(PlayerScore* player) {
 		uint32_t best = UINT_MAX;
 		for (int i = 0; i < player->nCurrentLap; i++) {
 			auto lap = player->nLapTimes[i];

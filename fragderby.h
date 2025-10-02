@@ -290,7 +290,7 @@ namespace FragDerby {
 
 		ArcadeMode::ProcessTimerTick(fGameTimeLeft*1000);
 
-		auto ply = GetPlayerScore<PlayerScoreRace>(1);
+		auto ply = GetPlayerScore(1);
 		if (fGameTimeLeft <= 0 && !ply->bHasFinished && !ply->bIsDNF) {
 			ply->bHasFinished = true;
 			ply->nFinishTime = pPlayerHost->nRaceTime;

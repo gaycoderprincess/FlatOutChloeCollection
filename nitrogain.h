@@ -17,7 +17,7 @@ void ProcessNitroGain() {
 
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		auto ply = GetPlayer(i);
-		auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+		auto score = GetPlayerScore(ply->nPlayerId);
 		if (score->bHasFinished || score->bIsDNF) continue;
 
 		if (bIsInMultiplayer) {

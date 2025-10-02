@@ -14,7 +14,7 @@ GameRules::KeyValue WorldDamageMultiplier("WorldDamageMultiplier");
 bool IsPlayerWrecked(Player* ply) {
 	if (pGameFlow->nEventType == eEventType::DERBY) return ply->pCar->nIsRagdolled;
 	if (GetCarDamage(ply->pCar) < 1.0) return false;
-	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+	auto score = GetPlayerScore(ply->nPlayerId);
 	if (score->bHasFinished) return ply->pCar->nIsRagdolled;
 	return score->bIsDNF;
 }
@@ -37,7 +37,7 @@ void ProcessDerbyContactTimer() {
 
 		fDerbyContactTimer[i] += gTimer.fDeltaTime;
 		if (fDerbyContactTimer[i] >= DerbyMaxContactTimer) {
-			auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+			auto score = GetPlayerScore(ply->nPlayerId);
 			score->nFinishTime = pPlayerHost->nRaceTime;
 			// ragdoll ai players out if they run out of time
 			if (ply->nPlayerType == PLAYERTYPE_AI) {
@@ -204,7 +204,7 @@ void ProcessCarDamage() {
 
 				if (!ply->pCar->nIsRagdolled) Car::LaunchRagdoll(ply->pCar, ply->pCar->GetVelocity()->length());
 
-				auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+				auto score = GetPlayerScore(ply->nPlayerId);
 				//score->bHasFinished = true;
 				if (!score->bHasFinished) score->bIsDNF = true;
 

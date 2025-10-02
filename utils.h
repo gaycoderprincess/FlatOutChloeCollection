@@ -61,7 +61,7 @@ std::string FormatGameTime(int ms, bool leadingZero = true) {
 int32_t GetPlayerLapTime(Player* ply, int lapId) {
 	if (lapId > ply->nCurrentLap) return 0;
 
-	auto score = GetPlayerScore<PlayerScoreRace>(ply->nPlayerId);
+	auto score = GetPlayerScore(ply->nPlayerId);
 	auto lap = score->nLapTimes[lapId];
 	if (lap <= 0) return 0;
 	if (lapId > 0) lap -= score->nLapTimes[lapId - 1];
@@ -105,24 +105,24 @@ int GetWreckingDerbyTotalScore(int player, int position, bool finished) {
 	return GetWreckingDerbyCrashScore(player) + GetWreckingDerbyWreckScore(player) + GetWreckingDerbyBonusScore(position, finished);
 }
 
-std::vector<PlayerScoreRace*> GetSortedPlayerScores() {
-	std::vector<PlayerScoreRace*> aScores;
+std::vector<PlayerScore*> GetSortedPlayerScores() {
+	std::vector<PlayerScore*> aScores;
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		aScores.push_back(GetScoreManager()->aScores[i]);
 	}
 	if (bIsFragDerby) {
-		std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+		std::sort(aScores.begin(), aScores.end(), [](PlayerScore *a, PlayerScore *b) {
 			return FragDerby::nPlayerScore[a->nPlayerId] > FragDerby::nPlayerScore[b->nPlayerId];
 		});
 	}
 	else if (bIsWreckingDerby) {
-		std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+		std::sort(aScores.begin(), aScores.end(), [](PlayerScore *a, PlayerScore *b) {
 			return GetWreckingDerbyTotalScore(a->nPlayerId, a->nPosition, a->bHasFinished || a->bIsDNF) > GetWreckingDerbyTotalScore(b->nPlayerId, b->nPosition, b->bHasFinished || b->bIsDNF);
 		});
 	}
 	else {
 		if (pGameFlow->nEventType == eEventType::RACE) {
-			std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+			std::sort(aScores.begin(), aScores.end(), [](PlayerScore *a, PlayerScore *b) {
 				if (a->bIsDNF && !b->bIsDNF) { return false; }
 				if (b->bIsDNF && !a->bIsDNF) { return true; }
 				if (a->bHasFinished && !b->bHasFinished) { return true; }
@@ -134,7 +134,7 @@ std::vector<PlayerScoreRace*> GetSortedPlayerScores() {
 			});
 		}
 		else {
-			std::sort(aScores.begin(), aScores.end(), [](PlayerScoreRace *a, PlayerScoreRace *b) {
+			std::sort(aScores.begin(), aScores.end(), [](PlayerScore *a, PlayerScore *b) {
 				if (a->bIsDNF && !b->bIsDNF) { return false; }
 				if (b->bIsDNF && !a->bIsDNF) { return true; }
 				return a->nPosition < b->nPosition;

@@ -419,9 +419,9 @@ namespace Achievements {
 
 		if (GetGameState() == GAME_STATE_RACE) {
 			static bool bLast = false;
-			bool bCurrent = IsRaceMode() && GetPlayerScore<PlayerScoreRace>(1)->bHasFinished;
+			bool bCurrent = IsRaceMode() && GetPlayerScore(1)->bHasFinished;
 			if (bCurrent) {
-				if (!bLast && GetPlayerScore<PlayerScoreRace>(1)->nPosition == 1 && !GetPlayerScore<PlayerScoreRace>(1)->bIsDNF) {
+				if (!bLast && GetPlayerScore(1)->nPosition == 1 && !GetPlayerScore(1)->bIsDNF) {
 					auto damage = GetPlayer(0)->pCar->fDamage;
 					if (damage > pThis->fInternalProgress) pThis->fInternalProgress = damage;
 					if (damage >= 0.75) {
@@ -508,7 +508,7 @@ namespace Achievements {
 		int numPlayers = 1;
 		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) numPlayers = pGameFlow->nNumSplitScreenPlayers;
 		for (int i = 0; i < numPlayers; i++) {
-			auto score = GetPlayerScore<PlayerScoreRace>(i+1);
+			auto score = GetPlayerScore(i+1);
 			if (score->nStuntPointsScore[0] >= 10 || score->nStuntPointsScore[1] >= 10 || score->nStuntPointsScore[2] >= 10) {
 				AwardAchievement(pThis);
 			}
@@ -521,7 +521,7 @@ namespace Achievements {
 		int numPlayers = 1;
 		if (pGameFlow->nGameMode == eGameMode::SPLITSCREEN) numPlayers = pGameFlow->nNumSplitScreenPlayers;
 		for (int i = 0; i < numPlayers; i++) {
-			auto score = GetPlayerScore<PlayerScoreRace>(i+1);
+			auto score = GetPlayerScore(i+1);
 			if (score->nStuntPointsScore[0] >= 10 && score->nStuntPointsScore[1] >= 10 && score->nStuntPointsScore[2] >= 10) {
 				AwardAchievement(pThis);
 			}
@@ -661,7 +661,7 @@ namespace Achievements {
 		}
 
 		if (GetGameState() == GAME_STATE_RACE) {
-			auto ply = GetPlayerScore<PlayerScoreRace>(1);
+			auto ply = GetPlayerScore(1);
 			if (IsRaceMode() && ply->bHasFinished && pPlayerHost->GetNumPlayers() > 1) {
 				if (ply->nPosition == 1) {
 					AwardAchievement(GetAchievement("WIN_RACE"));

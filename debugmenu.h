@@ -612,7 +612,7 @@ void ProcessDebugMenu() {
 	if (auto ply = GetPlayer(0)) {
 		DrawDebugMenuViewerOption(std::format("Player Pointer - {:X}", (uintptr_t)ply));
 		DrawDebugMenuViewerOption(std::format("Player Car Pointer - {:X}", (uintptr_t)ply->pCar));
-		DrawDebugMenuViewerOption(std::format("Player Score Pointer - {:X}", (uintptr_t)GetPlayerScore<PlayerScoreRace>(1)));
+		DrawDebugMenuViewerOption(std::format("Player Score Pointer - {:X}", (uintptr_t)GetPlayerScore(1)));
 		auto plyPos = ply->pCar->GetMatrix()->p;
 		DrawDebugMenuViewerOption(std::format("Player Position - {:.1f} {:.1f} {:.1f}", plyPos.x, plyPos.y, plyPos.z));
 		DrawDebugMenuViewerOption(std::format("Player Health - {:.1f}", 1.0 - ply->pCar->fDamage));

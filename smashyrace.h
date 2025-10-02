@@ -22,7 +22,7 @@ namespace SmashyRace {
 	}
 
 	void ProcessSceneryCrashes() {
-		auto score = GetPlayerScore<PlayerScoreRace>(1);
+		auto score = GetPlayerScore(1);
 		if (score->bHasFinished || score->bIsDNF) return;
 
 		nPlayerScore = 0;
@@ -60,7 +60,7 @@ namespace SmashyRace {
 
 		ArcadeMode::ProcessTimerTick(fPlayerTimeLeft*1000);
 
-		auto ply = GetPlayerScore<PlayerScoreRace>(1);
+		auto ply = GetPlayerScore(1);
 		if (fPlayerTimeLeft <= 0 && !ply->bHasFinished && !ply->bIsDNF) {
 			ply->bHasFinished = true;
 			ply->nFinishTime = pPlayerHost->nRaceTime;

@@ -5,6 +5,8 @@ public:
 		SUBMENU_RESTARTPROMPT,
 	};
 
+	static inline bool bSpectating = false;
+
 	static inline MenuOption* aOptionsMain[] = {
 		new MenuOption("EVENT FINISHED"),
 		new MenuOptionSelectable("EXIT TO MENU", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_QUITRACE; }),
@@ -13,7 +15,14 @@ public:
 	};
 
 	static inline MenuOption* aOptionsMainNoRestart[] = {
+			new MenuOption("EVENT FINISHED"),
+			new MenuOptionSelectable("EXIT TO MENU", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_QUITRACE; }),
+			nullptr
+	};
+
+	static inline MenuOption* aOptionsMainMultiplayer[] = {
 		new MenuOption("EVENT FINISHED"),
+		new MenuOptionSelectable("VIEW RACE", [](){ ChloeNet::SetSpectate(true); bSpectating = true; }),
 		new MenuOptionSelectable("EXIT TO MENU", [](){ nMenuReturnValue = IngameMenu::MENU_ACTION_QUITRACE; }),
 		nullptr
 	};
@@ -32,11 +41,27 @@ public:
 			case SUBMENU_MAIN:
 			default:
 			{
-				if (bIsInMultiplayer) return aOptionsMainNoRestart;
+				if (bIsInMultiplayer) return ChloeNet::CanSpectate() ? aOptionsMainMultiplayer : aOptionsMainNoRestart;
 				return aOptionsMain;
 			}
 			case SUBMENU_RESTARTPROMPT:
 				return aOptionsRetry;
+		}
+	}
+
+	void Process() override {
+		if (!bMenuUp) {
+			bSpectating = false;
+		}
+
+		if (bSpectating) {
+			if (pInputManager->IsKeyJustPressed(CONTROLLER_BUTTON_SELECT) || !ChloeNet::CanSpectate()) {
+				ChloeNet::SetSpectate(false);
+				bSpectating = false;
+			}
+		}
+		else {
+			CHUD_MenuGeneric::Process();
 		}
 	}
 } HUD_RaceEndMenu;

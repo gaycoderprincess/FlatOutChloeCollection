@@ -9,7 +9,7 @@ public:
 
 	static inline bool bMenuUp = false;
 
-	static std::string GetPlayerScoreString(PlayerScoreRace* player) {
+	static std::string GetPlayerScoreString(PlayerScore* player) {
 		bool useMeters = pGameFlow->nSubEventType == eSubEventType::STUNT_LONGJUMP || pGameFlow->nSubEventType == eSubEventType::STUNT_HIGHJUMP;
 
 		float score = 0;

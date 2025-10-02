@@ -316,7 +316,7 @@ void ProcessPlayStats() {
 		int track = pGameFlow->nLevel;
 
 		if (!IsInSplitScreen() && !bIsTimeTrial && !bIsArcadeMode && !bIsCarnageRace) {
-			auto ply = GetPlayerScore<PlayerScoreRace>(1);
+			auto ply = GetPlayerScore(1);
 			if (ply->bHasFinished || ((bIsWreckingDerby || bIsFragDerby) && ply->bIsDNF)) {
 				bool won = ply->nPosition == 1;
 				if (bIsWreckingDerby || bIsFragDerby) won = GetSortedPlayerScores()[0] == ply;
