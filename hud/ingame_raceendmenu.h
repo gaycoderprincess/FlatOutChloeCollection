@@ -41,7 +41,7 @@ public:
 			case SUBMENU_MAIN:
 			default:
 			{
-				if (bIsInMultiplayer) return ChloeNet::CanSpectate() ? aOptionsMainMultiplayer : aOptionsMainNoRestart;
+				if (bIsInMultiplayer) return ChloeNet::CanSpectate() && !bIsFragDerby ? aOptionsMainMultiplayer : aOptionsMainNoRestart;
 				return aOptionsMain;
 			}
 			case SUBMENU_RESTARTPROMPT:

@@ -13,7 +13,7 @@ GameRules::KeyValue WorldDamageMultiplier("WorldDamageMultiplier");
 
 bool IsPlayerWrecked(Player* ply) {
 	if (pGameFlow->nEventType == eEventType::DERBY) return ply->pCar->nIsRagdolled;
-	if (GetCarDamage(ply->pCar) < 1.0) return false;
+	if (!bIsInMultiplayer && GetCarDamage(ply->pCar) < 1.0) return false;
 	auto score = GetPlayerScore(ply->nPlayerId);
 	if (score->bHasFinished) return ply->pCar->nIsRagdolled;
 	return score->bIsDNF;

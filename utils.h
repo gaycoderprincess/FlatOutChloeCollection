@@ -110,7 +110,12 @@ std::vector<PlayerScore*> GetSortedPlayerScores() {
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		aScores.push_back(GetScoreManager()->aScores[i]);
 	}
-	if (bIsFragDerby) {
+	if (bIsCarnageRace && bIsInMultiplayer) {
+		std::sort(aScores.begin(), aScores.end(), [](PlayerScore *a, PlayerScore *b) {
+			return CarnageRace::nPlayerScore[a->nPlayerId] > CarnageRace::nPlayerScore[b->nPlayerId];
+		});
+	}
+	else if (bIsFragDerby) {
 		std::sort(aScores.begin(), aScores.end(), [](PlayerScore *a, PlayerScore *b) {
 			return FragDerby::nPlayerScore[a->nPlayerId] > FragDerby::nPlayerScore[b->nPlayerId];
 		});
@@ -172,7 +177,7 @@ bool DoesTrackSupportReversing(int level) {
 	//if (level == TRACK_WINTER2C) return true; // same as 2a
 	// chloe collection tracks
 	//if (level == TRACK_DESERT1B) return true; // half broken?
-	if (level == TRACK_DESERT1C) return true;
+	//if (level == TRACK_DESERT1C) return true; // randomly crashes
 	if (level == TRACK_FIELDS1B) return true;
 	if (level == TRACK_FIELDS1C) return true;
 	if (level == TRACK_FIELDS2A) return true;
