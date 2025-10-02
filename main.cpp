@@ -102,6 +102,14 @@ void CustomSetterThread() {
 	pGameFlow->Profile.nEasyDifficulty = GetHandlingMode(nullptr) == HANDLING_NORMAL;
 	nRagdoll = 1;
 
+	for (auto& color : aPlayerColorsMultiplayer) {
+		auto& dest = *(NyaDrawing::CNyaRGBA32*)&gPalette[(&color - &aPlayerColorsMultiplayer[0]) + 100];
+		dest.r = color.b;
+		dest.g = color.g;
+		dest.b = color.r;
+		dest.a = 255;
+	}
+
 	SetHandlingDamage();
 	SetHandlingMode();
 	SetEngineDamage();

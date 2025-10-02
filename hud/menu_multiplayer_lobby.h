@@ -10,7 +10,8 @@ public:
 		int ping = 0;
 		std::string carTitle;
 		std::string flagName;
-	} aPlayers[8] = {};
+		int colorId = 0;
+	} aPlayers[nMaxPlayers] = {};
 	int nNumPlayersReady = 0;
 	int nNumPlayers = 0;
 
@@ -56,7 +57,7 @@ public:
 		PreloadTexture("data/menu/multiplayer.tga");
 	}
 
-	void DrawPlayerInfo(int y, const std::string& ready, const std::string& name, const std::string& car, const std::string& ping) const {
+	void DrawPlayerInfo(int y, const std::string& ready, const std::string& name, const std::string& car, const std::string& ping, int colorId = 0) const {
 		tNyaStringData data;
 		data.y = nPlayerStartY + y * nPlayerListSpacing;
 		data.size = fPlayerListTextSize;
@@ -64,12 +65,17 @@ public:
 
 		data.x = nPlayerReadyX;
 		if (!ready.empty()) Draw1080pString(JUSTIFY_LEFT, data, ready, &DrawStringFO2_Ingame12);
-		data.x = nPlayerNameX;
-		Draw1080pString(JUSTIFY_LEFT, data, name, &DrawStringFO2_Ingame12);
 		data.x = nPlayerCarX;
 		Draw1080pString(JUSTIFY_LEFT, data, car, &DrawStringFO2_Ingame12);
 		data.x = nPlayerPingX;
 		Draw1080pString(JUSTIFY_LEFT, data, ping, &DrawStringFO2_Ingame12);
+		data.x = nPlayerNameX;
+		if (y == 0) data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
+		else {
+			data.SetColor(aPlayerColorsMultiplayer[colorId]);
+			data.a = 255;
+		}
+		Draw1080pString(JUSTIFY_LEFT, data, name, &DrawStringFO2_Ingame12);
 	}
 
 	void DrawPlayerFlag(int y, const std::string& flagName) const {
@@ -129,7 +135,7 @@ public:
 			DrawPlayerFlag(y, ply.flagName);
 			DrawPlayerIcon(y, ply.iconName);
 			DrawPlayerIcon2(y, ply.icon2Name);
-			DrawPlayerInfo(y++, "", ply.name, ply.carTitle.empty() ? GetCarName(ply.car) : ply.carTitle, std::to_string(ply.ping));
+			DrawPlayerInfo(y++, "", ply.name, ply.carTitle.empty() ? GetCarName(ply.car) : ply.carTitle, std::to_string(ply.ping), ply.colorId);
 		}
 
 		tNyaStringData data;

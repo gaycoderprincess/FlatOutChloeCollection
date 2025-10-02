@@ -30,4 +30,10 @@ namespace ChloeNet {
 		if (!funcPtr) return 0;
 		return funcPtr(player);
 	}
+
+	int GetReplicatedPlayerColor(Player* player) {
+		static auto funcPtr = GetFuncPtr<int(__cdecl*)(Player*)>("ChloeNet_GetReplicatedPlayerColor");
+		if (!funcPtr) return 0;
+		return funcPtr(player);
+	}
 }

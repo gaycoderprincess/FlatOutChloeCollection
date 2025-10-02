@@ -284,6 +284,7 @@ int ChloeHUD_MultiplayerLobby_ClearPlayerInfo(void* a1) {
 		ply.icon2Name = "";
 		ply.ping = 0;
 		ply.flagName = "";
+		ply.colorId = 0;
 	}
 	return 0;
 }
@@ -312,6 +313,7 @@ int ChloeHUD_MultiplayerLobby_SetPlayerInfo(void* a1) {
 		ply->carTitle = "";
 	}
 	ply->flagName = (const char*)lua_tolstring(a1, 8);
+	ply->colorId = luaL_checknumber(a1, 9);
 	return 0;
 }
 
