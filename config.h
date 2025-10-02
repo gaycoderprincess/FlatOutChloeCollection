@@ -57,6 +57,10 @@ uint32_t nPlayerFlag = 0;
 uint32_t nUseFO2Minimap = 1;
 uint32_t nControllerLayout = 0;
 uint32_t nFO2Weathers = 1;
+uint32_t nMPInterpolation = 1;
+uint32_t nDefaultTickRate = 1;
+uint32_t nAllowCheats = 0;
+uint32_t nJoinNotifs = 0;
 
 uint32_t nMultiplayerHandlingMode = HANDLING_NORMAL;
 
