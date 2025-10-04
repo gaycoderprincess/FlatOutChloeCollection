@@ -2,16 +2,6 @@ class CMenu_Career : public CMenuHUDElement {
 public:
 	const char* GetName() override { return "menu_career"; }
 
-	static inline const char* aAIPlayerNames[] = {
-			"FRANK BENTON",
-			"SUE O'NEILL",
-			"TANIA GRAHAM",
-			"KATIE DAGGERT",
-			"RAY SMITH",
-			"PAUL MCGUIRE",
-			"SETH BELLINGER",
-	};
-
 	static constexpr int nListPositionX = 27;
 	static constexpr int nListNameX = 80;
 	static constexpr int nListPointsX = 760;
@@ -27,7 +17,7 @@ public:
 	static constexpr float fEventDescSize = 0.036;
 
 	static std::string GetPlayerName(int i) {
-		return i == 0 ? GetStringNarrow(pGameFlow->Profile.sPlayerName) : aAIPlayerNames[i-1];
+		return GetStringNarrow(i == 0 ? pGameFlow->Profile.sPlayerName : aCustomPlayerNames[i-1]);
 	}
 
 	void Init() override {
