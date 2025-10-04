@@ -27,8 +27,8 @@ public:
 
 	static inline std::mutex gLoadedTextureMutex;
 
-	static IDirect3DTexture9* LoadTextureFromBFS(const char* path) {
-		if (bNoTextures) return nullptr;
+	static IDirect3DTexture9* LoadTextureFromBFS(const std::string& path) {
+		if (bNoTextures && path.ends_with(".png")) return nullptr;
 
 		gLoadedTextureMutex.lock();
 		for (auto& tex : aLoadedTextures) {
@@ -39,7 +39,7 @@ public:
 		}
 		gLoadedTextureMutex.unlock();
 
-		if (auto tex = pDeviceD3d->_vf_CreateTextureFromFile(nullptr, path, 9)) {
+		if (auto tex = pDeviceD3d->_vf_CreateTextureFromFile(nullptr, path.c_str(), 9)) {
 			gLoadedTextureMutex.lock();
 			aLoadedTextures.push_back({path, tex, tex->pD3DTexture});
 			gLoadedTextureMutex.unlock();
@@ -166,7 +166,7 @@ public:
 	}
 
 	static bool Draw1080pSprite(eJustify justify, float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, TEXTURE_TYPE* texture, ImVec2 uvMin = {0,0}, ImVec2 uvMax = {1,1}) {
-		if (bNoTextures) return false;
+		if (bNoTextures && !texture) return false;
 
 		DoJustify(justify, left, top);
 		DoJustify(justify, right, bottom);

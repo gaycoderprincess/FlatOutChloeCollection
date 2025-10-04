@@ -3,9 +3,9 @@ class CHUD_MenuGeneric : public CIngameHUDElement {
 public:
 	void Init() override {
 		nHUDLayer = eHUDLayer::OVERLAY;
-		PreloadTexture("data/global/overlay/pausemenubg.png");
-		PreloadTexture("data/global/overlay/pausemenu_bar.png");
-		PreloadTexture("data/global/overlay/pausemenu_bar_filled.png");
+		PreloadTexture("data/global/overlay/pausemenubg.tga");
+		PreloadTexture("data/global/overlay/pausemenu_bar.tga");
+		PreloadTexture("data/global/overlay/pausemenu_bar_filled.tga");
 	}
 
 	constexpr static inline bool bCenteredOptions = false;
@@ -130,7 +130,7 @@ public:
 	}
 
 	static void DrawBackground() {
-		static auto texture = LoadTextureFromBFS("data/global/overlay/pausemenubg.png");
+		static auto texture = LoadTextureFromBFS("data/global/overlay/pausemenubg.tga");
 		Draw1080pSprite(JUSTIFY_CENTER, 0, 1920, 0, 1080, {255,255,255,255}, texture);
 	}
 
@@ -152,8 +152,8 @@ public:
 
 		DrawBackground();
 
-		static auto textureBar = LoadTextureFromBFS("data/global/overlay/pausemenu_bar.png");
-		static auto textureBarFill = LoadTextureFromBFS("data/global/overlay/pausemenu_bar_filled.png");
+		static auto textureBar = LoadTextureFromBFS("data/global/overlay/pausemenu_bar.tga");
+		static auto textureBarFill = LoadTextureFromBFS("data/global/overlay/pausemenu_bar_filled.tga");
 
 		auto selectedAlpha = GetFlashingAlpha(gTimer.fTotalTime) / 255.0;
 		if (selectedAlpha < 0) selectedAlpha = 0;

@@ -29,10 +29,10 @@ public:
 	}
 
 	void Init() override {
-		PreloadTexture("data/menu/carnageoverlay_gold.png"),
-		PreloadTexture("data/menu/carnageoverlay_silver.png"),
-		PreloadTexture("data/menu/carnageoverlay_bronze.png"),
-		PreloadTexture("data/menu/carnageoverlay_author.png"),
+		PreloadTexture("data/menu/carnageoverlay_gold.tga"),
+		PreloadTexture("data/menu/carnageoverlay_silver.tga"),
+		PreloadTexture("data/menu/carnageoverlay_bronze.tga"),
+		PreloadTexture("data/menu/carnageoverlay_author.tga"),
 		PreloadTexture("data/menu/carnagebg_left.png");
 		PreloadTexture("data/menu/carnagebg_right.png");
 		PreloadTexture("data/menu/carnagebg_selected.png");
@@ -112,10 +112,10 @@ public:
 		if (bSelected) return ProcessSelected();
 
 		static IDirect3DTexture9* texturePlacement[] = {
-				LoadTextureFromBFS("data/menu/carnageoverlay_gold.png"),
-				LoadTextureFromBFS("data/menu/carnageoverlay_silver.png"),
-				LoadTextureFromBFS("data/menu/carnageoverlay_bronze.png"),
-				LoadTextureFromBFS("data/menu/carnageoverlay_author.png"),
+				LoadTextureFromBFS("data/menu/carnageoverlay_gold.tga"),
+				LoadTextureFromBFS("data/menu/carnageoverlay_silver.tga"),
+				LoadTextureFromBFS("data/menu/carnageoverlay_bronze.tga"),
+				LoadTextureFromBFS("data/menu/carnageoverlay_author.tga"),
 		};
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carnagebg_left.png");
 		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_right.png");
