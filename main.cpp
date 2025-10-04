@@ -204,6 +204,10 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
 			DoFlatOutVersionCheck(FO2Version::FO1_1_1);
+			if ((std::filesystem::exists("filesystem") || std::filesystem::exists("patch")) && (!std::filesystem::exists("common1.bfs") || !std::filesystem::exists("common2.bfs"))) {
+				MessageBoxA(nullptr, "Unsupported game version! Make sure your game is packed!\n\nIf you don't know what this means, you're probably using the GOG version, which is incompatible with this mod.\nGet a version of the game that has common1.bfs and common2.bfs in the game folder.", "nya?!~", MB_ICONERROR);
+				exit(0);
+			}
 
 			srand(time(0));
 
