@@ -13,12 +13,12 @@ Before you begin, clone [nya-common](https://github.com/gaycoderprincess/nya-com
 Required packages: `mingw-w64-gcc vcpkg`
 
 ### Arch
-On arch, both packages can be installed through `pacman`
+On arch, both packages can be installed through pacman
 ```console
 sudo pacman -S mingw-w64-gcc vcpkg
 ```
 
-vcpkg does not include the repo, so you'll have to install it separately with:
+vcpkg does not include the repo, so you'll have to follow it up with:
 ```console
 git clone https://github.com/microsoft/vcpkg ~/.vcpkg/vcpkg
 export VCPKG_ROOT="$HOME/.vcpkg/vcpkg"
@@ -41,7 +41,7 @@ export PATH=$PATH:$HOME/.vcpkg/vcpkg
 source ~/.bashrc
 ```
 
-Which can be done in all in one go with this monstrosity:
+Which can be done all in one go with this monstrosity:
 ```console
 git clone https://github.com/microsoft/vcpkg ~/.vcpkg/vcpkg && cd ~/.vcpkg/vcpkg && ./bootstrap-vcpkg.sh && ./vcpkg integrate install && ./vcpkg integrate bash && export PATH=$PATH:$HOME/.vcpkg/vcpkg && source ~/.bashrc
 ```
