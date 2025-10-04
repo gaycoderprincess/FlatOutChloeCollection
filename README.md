@@ -8,14 +8,42 @@ Building is done on an Arch Linux system with CLion and vcpkg being used for the
 
 Before you begin, clone [nya-common](https://github.com/gaycoderprincess/nya-common), [nya-common-fo1](https://github.com/gaycoderprincess/nya-common-fo1), [nya-common-fouc](https://github.com/gaycoderprincess/nya-common-fouc), [FlatOutUCMenuLib](https://github.com/gaycoderprincess/FlatOutUCMenuLib), and [FlatOutTimeTrialGhosts](https://github.com/gaycoderprincess/FlatOutTimeTrialGhosts) to folders next to this one, so they can be found.
 
-If you haven't used CLion before, you'll need to install the mingw g++ compiler, that can be done in the terminal with:
+<br>
+
+Required packages: `mingw-w64-gcc vcpkg`
+
+### Arch
+On arch, both packages can be installed through `pacman`
 ```console
-sudo pacman -S mingw-w64-gcc
+sudo pacman -S mingw-w64-gcc vcpkg
 ```
 
-If you are on debian-based linux, it's this command
+vcpkg does not include the repo, so you'll have to install it separately with:
+```console
+git clone https://github.com/microsoft/vcpkg ~/.vcpkg/vcpkg
+export VCPKG_ROOT="$HOME/.vcpkg/vcpkg"
+```
+
+### Debian
+If you are on debian-based linux, it's a bit more complicated
 ```console
 sudo apt-get install g++-mingw-w64-i686
+```
+
+apt does not have vcpkg so installing it will have to be done manually:
+```console
+git clone https://github.com/microsoft/vcpkg ~/.vcpkg/vcpkg
+cd ~/.vcpkg/vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+./vcpkg integrate bash
+export PATH=$PATH:$HOME/.vcpkg/vcpkg
+source ~/.bashrc
+```
+
+Which can be done in all in one go with this monstrosity:
+```console
+git clone https://github.com/microsoft/vcpkg ~/.vcpkg/vcpkg && cd ~/.vcpkg/vcpkg && ./bootstrap-vcpkg.sh && ./vcpkg integrate install && ./vcpkg integrate bash && export PATH=$PATH:$HOME/.vcpkg/vcpkg && source ~/.bashrc
 ```
 
 <br>
@@ -28,7 +56,7 @@ and the C++ Compiler to ```i686-w64-mingw32-g++```
 
 <br>
 
-Required packages: `mingw-w64-gcc vcpkg`
+
 
 To install all dependencies, use:
 ```console
