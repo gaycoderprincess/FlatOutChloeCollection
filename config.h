@@ -67,6 +67,7 @@ uint32_t nMultiplayerHandlingMode = HANDLING_NORMAL;
 
 bool bNoPreload = false;
 bool bAsyncPreload = false;
+bool bNoTextures = false;
 
 bool bIsInMultiplayer = false;
 bool bIsArcadeMode = false;

@@ -587,9 +587,7 @@ public:
 		float y1 = data.nPosY - data.fSize;
 		float x2 = data.nPosX + data.fSize * 1.5;
 		float y2 = data.nPosY + data.fSize;
-		DoJustify(JUSTIFY_RIGHT, x1, y1);
-		DoJustify(JUSTIFY_RIGHT, x2, y2);
-		DrawRectangle(x1, x2, y1, y2, {255,255,255,255}, 0, trackIconImage, 0, trackIcon->min, trackIcon->max);
+		Draw1080pSprite(JUSTIFY_RIGHT, x1, x2, y1, y2, {255,255,255,255}, trackIconImage, trackIcon->min, trackIcon->max);
 		if (!mapPath.empty()) {
 			auto trackMap = LoadTextureFromBFS(mapPath.c_str());
 

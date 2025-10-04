@@ -146,6 +146,7 @@ void CommandlineArgReader(void* a1, const char* a2) {
 		NyaHookLib::Patch(0x505EF9 + 1, 0x40 | D3DCREATE_MULTITHREADED);
 		NyaHookLib::Patch(0x505F00 + 1, 0x50 | D3DCREATE_MULTITHREADED);
 	}
+	if (str == "-notextures") bNoTextures = true;
 	WriteLogDebug("INIT", std::format("Commandline argument {}", a2));
 
 	return lua_setglobal(a1, a2);
