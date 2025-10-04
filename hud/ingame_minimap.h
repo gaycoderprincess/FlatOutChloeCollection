@@ -153,8 +153,8 @@ public:
 	}
 
 	static void DrawPlayerOnMap(Player* ply) {
-		static auto arrow = LoadTextureFromBFS("data/global/overlay/map_playerarrow.png");
-		static auto arrowPlayer = LoadTextureFromBFS("data/global/overlay/map_playerarrow_local.png");
+		static auto arrow = LoadTextureFromBFS("data/global/overlay/map_playerarrow.tga");
+		static auto arrowPlayer = LoadTextureFromBFS("data/global/overlay/map_playerarrow_local.tga");
 
 		auto plyMatrix = ply->pCar->GetMatrix();
 		auto plyPos = GetPositionOnMap(plyMatrix->p);
@@ -163,7 +163,7 @@ public:
 	}
 
 	static void DrawPlayerResetOnMap(Player* ply) {
-		static auto arrow = LoadTextureFromBFS("data/global/overlay/map_resetpoint.png");
+		static auto arrow = LoadTextureFromBFS("data/global/overlay/map_resetpoint.tga");
 
 		auto plyPos = GetPositionOnMap(NyaVec3(ply->fLastValidPosition[0], ply->fLastValidPosition[1], ply->fLastValidPosition[2]));
 		DrawRectangle(plyPos.x - (fResetSize * GetAspectRatioInv()), plyPos.x + (fResetSize * GetAspectRatioInv()), plyPos.y - fResetSize, plyPos.y + fResetSize, {255,255,255,255}, 0, arrow);
@@ -233,9 +233,9 @@ public:
 	}
 
 	void Init() override {
-		PreloadTexture("data/global/overlay/map_playerarrow.png");
-		PreloadTexture("data/global/overlay/map_playerarrow_local.png");
-		PreloadTexture("data/global/overlay/map_resetpoint.png");
+		PreloadTexture("data/global/overlay/map_playerarrow.tga");
+		PreloadTexture("data/global/overlay/map_playerarrow_local.tga");
+		PreloadTexture("data/global/overlay/map_resetpoint.tga");
 		PreloadTexture("data/global/overlay/map_checkpoint.tga");
 
 		ChloeEvents::MapLoadEvent.AddHandler(LoadMinimaps);

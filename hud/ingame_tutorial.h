@@ -42,7 +42,7 @@ public:
 
 		DrawRectangle(0, 1, 0, 1, {0,0,0,200}); // background box
 
-		static auto texture = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.png");
+		static auto texture = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.tga");
 		DrawRectangle(0, 1, 99 / 1080.0, (99 + 72) / 1080.0, {255,255,255,255}, 0, texture);
 		tNyaStringData data;
 		data.x = gGamemodeLabel.nPosX;

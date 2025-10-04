@@ -47,10 +47,8 @@ public:
 	tDrawPositions1080p gScoreBreakdown = {960,480,0.025, 16};
 	tDrawPositions1080p gScoreTypes = {952,532,0.03,16, (int)(0.042*1080)};
 	void DrawArcadeResults() {
-		static auto texture1 = LoadTextureFromBFS("data/global/overlay/raceresult_balk1.png");
-		static auto texture2 = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.png");
-		//static auto textureBg = LoadTextureFromBFS("data/global/overlay/arcadefinishbg.png"); // todo remove
-		//DrawRectangle(0, 1, 0, 1, {255,255,255,255}, 0, textureBg);
+		static auto texture1 = LoadTextureFromBFS("data/global/overlay/raceresult_balk1.tga");
+		static auto texture2 = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.tga");
 
 		int numScoreTypes = bIsFragDerby ? 3 : 4;
 
@@ -147,8 +145,8 @@ public:
 	}
 
 	void DrawPlayerList() {
-		static auto texture1 = LoadTextureFromBFS("data/global/overlay/raceresult_balk1.png");
-		static auto texture2 = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.png");
+		static auto texture1 = LoadTextureFromBFS("data/global/overlay/raceresult_balk1.tga");
+		static auto texture2 = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.tga");
 
 		tNyaStringData data;
 		data.size = fPlayerSize;
@@ -293,8 +291,8 @@ public:
 
 		DrawRectangle(0, 1, 0, 1, {0,0,0,200}); // background box
 
-		static auto texture1 = LoadTextureFromBFS("data/global/overlay/raceresult_balk1.png");
-		static auto texture2 = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.png");
+		static auto texture1 = LoadTextureFromBFS("data/global/overlay/raceresult_balk1.tga");
+		static auto texture2 = LoadTextureFromBFS("data/global/overlay/raceresult_balk2.tga");
 		DrawRectangle(0, 1, 99 / 1080.0, (99 + 72) / 1080.0, {255,255,255,255}, 0, texture2);
 		tNyaStringData data;
 		data.x = gGamemodeLabel.nPosX;

@@ -3,6 +3,8 @@ public:
 
 	void Init() override {
 		nHUDLayer = eHUDLayer::WORLD;
+		PreloadTexture("data/global/overlay/derby_health_indicator.tga");
+		PreloadTexture("data/global/overlay/frag_derby_symbols.dds");
 	}
 
 	static inline float fPlayerHealthIconOffset = 1.3;
@@ -12,7 +14,7 @@ public:
 		if (ply->nIsRagdolled) return;
 		if (ply->nPlayerType == PLAYERTYPE_LOCAL) return;
 
-		static auto tex = LoadTextureFromBFS("data/global/overlay/derby_health_indicator.png");
+		static auto tex = LoadTextureFromBFS("data/global/overlay/derby_health_indicator.tga");
 
 		auto mat = *ply->pCar->GetMatrix();
 		auto yUp = mat.y;
@@ -44,7 +46,7 @@ public:
 	static inline float fPlayerIconOffset = 1.7;
 	static inline float fPlayerIconSize = 0.25;
 	static void DrawPlayerIcon(const std::string& icon, Player* ply) {
-		static auto tex = LoadTextureFromBFS("data/global/overlay/frag_derby_symbols.png");
+		static auto tex = LoadTextureFromBFS("data/global/overlay/frag_derby_symbols.dds");
 		static auto texData = LoadHUDData("data/global/overlay/frag_derby_symbols.bed", "frag_derby_symbols");
 
 		auto mat = *ply->pCar->GetMatrix();

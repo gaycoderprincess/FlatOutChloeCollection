@@ -166,7 +166,7 @@ public:
 	}
 
 	static bool Draw1080pSprite(eJustify justify, float left, float right, float top, float bottom, NyaDrawing::CNyaRGBA32 rgb, TEXTURE_TYPE* texture, ImVec2 uvMin = {0,0}, ImVec2 uvMax = {1,1}) {
-		if (bNoTextures && !texture) return false;
+		if (bNoTextures && !texture && rgb.r == 255 && rgb.g == 255 && rgb.b == 255) return false;
 
 		DoJustify(justify, left, top);
 		DoJustify(justify, right, bottom);
