@@ -111,6 +111,7 @@ void ProcessCarReset(int player, float delta) {
 					Car::Reset(ply->pCar, &pPlayerResetpoint->p.x, &pPlayerResetpoint->x.x);
 				}
 				*ply->pCar->GetVelocity() = ply->pCar->GetMatrix()->z * CarResetSpeed;
+				ply->pCar->Performance.Gearbox.ShiftGear(1);
 				ChloeEvents::PlayerResetEvent.OnHit(ply);
 			}
 			bCarResetRequested[player] = false;
