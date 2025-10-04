@@ -152,6 +152,7 @@ struct tCustomSaveStructure {
 	uint8_t playerFlag;
 	uint32_t trackArcadeScores[nMaxTracks];
 	uint8_t transmission;
+	uint8_t playerColor;
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -238,6 +239,7 @@ struct tCustomSaveStructure {
 		nHighCarCam = highCarCam;
 		nPlayerFlag = playerFlag;
 		nTransmission = transmission;
+		nPlayerColor = playerColor;
 	}
 	void ReadPlayerSettings() {
 		handlingDamage = nHandlingDamage;
@@ -245,6 +247,7 @@ struct tCustomSaveStructure {
 		highCarCam = nHighCarCam;
 		playerFlag = nPlayerFlag;
 		transmission = nTransmission;
+		playerColor = nPlayerColor;
 	}
 	void Clear() {
 		memset(this,0,sizeof(*this));
