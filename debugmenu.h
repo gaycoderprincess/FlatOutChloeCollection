@@ -279,20 +279,6 @@ void WriteSectors() {
 	fout << "\n}";
 }
 
-void PlaylistEditorMenu(const std::string& name, NewMusicPlayer::tPlaylist* playlist) {
-	if (DrawMenuOption(name)) {
-		ChloeMenuLib::BeginMenu();
-
-		for (auto& song : playlist->aSongs) {
-			if (DrawMenuOption(std::format("{} - {} - {}", song.sArtist, song.sTitle, !song.bDisabled))) {
-				song.bDisabled = !song.bDisabled;
-			}
-		}
-
-		ChloeMenuLib::EndMenu();
-	}
-}
-
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
@@ -311,22 +297,6 @@ void ProcessDebugMenu() {
 				}
 			}
 		}
-
-		ChloeMenuLib::EndMenu();
-	}
-
-	if (NewMusicPlayer::pPlaylistCustomIngame && DrawMenuOption("Chloe Trax")) {
-		ChloeMenuLib::BeginMenu();
-
-		if (!NewMusicPlayer::bCustomPlaylistsEnabled) {
-			if (DrawMenuOption("Enable Custom Playlists")) {
-				NewMusicPlayer::bCustomPlaylistsEnabled = true;
-			}
-		}
-
-		PlaylistEditorMenu("Menu", NewMusicPlayer::pPlaylistCustomTitle);
-		PlaylistEditorMenu("Race", NewMusicPlayer::pPlaylistCustomIngame);
-		PlaylistEditorMenu("Derby", NewMusicPlayer::pPlaylistCustomDerby);
 
 		ChloeMenuLib::EndMenu();
 	}
