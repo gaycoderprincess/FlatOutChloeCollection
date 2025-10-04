@@ -37,13 +37,13 @@ cd ~/.vcpkg/vcpkg
 ./bootstrap-vcpkg.sh
 ./vcpkg integrate install
 ./vcpkg integrate bash
-export PATH=$PATH:$HOME/.vcpkg/vcpkg
+export PATH="$PATH:$HOME/.vcpkg/vcpkg"
 source ~/.bashrc
 ```
 
 Which can be done all in one go with this monstrosity:
 ```console
-git clone https://github.com/microsoft/vcpkg ~/.vcpkg/vcpkg && cd ~/.vcpkg/vcpkg && ./bootstrap-vcpkg.sh && ./vcpkg integrate install && ./vcpkg integrate bash && export PATH=$PATH:$HOME/.vcpkg/vcpkg && source ~/.bashrc
+git clone https://github.com/microsoft/vcpkg ~/.vcpkg/vcpkg && cd ~/.vcpkg/vcpkg && ./bootstrap-vcpkg.sh && ./vcpkg integrate install && ./vcpkg integrate bash && export PATH="$PATH:$HOME/.vcpkg/vcpkg" && source ~/.bashrc
 ```
 
 <br>
