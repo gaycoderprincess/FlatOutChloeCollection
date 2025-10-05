@@ -123,6 +123,9 @@ void ProcessCarReset(int player, float delta) {
 }
 
 void ProcessCarReset() {
+	if (pLoadingScreen) return;
+	if (GetGameState() != GAME_STATE_RACE) return;
+
 	if (!aNewResetPoints.empty()) NewResetMap::CheckOutOfTrack();
 
 	static CNyaRaceTimer gTimer;
