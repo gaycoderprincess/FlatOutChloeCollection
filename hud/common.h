@@ -73,6 +73,7 @@ public:
 
 		IDirect3DTexture9* tex = nullptr;
 		auto hr = D3DXCreateTextureFromFileInMemory(pDeviceD3d->pD3DDevice, data, dataSize, &tex);
+		delete[] data;
 		if (hr == S_OK) {
 			gLoadedTextureMutex.lock();
 			aLoadedTextures.push_back({path, tex});
