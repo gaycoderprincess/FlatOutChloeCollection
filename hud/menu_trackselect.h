@@ -640,7 +640,7 @@ public:
 				data.y = gLevelPB.nPosY;
 				data.size = gLevelPB.fSize;
 				data.XCenterAlign = true;
-				Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", FormatScore(gCustomSave.trackArcadeScores[trackId])), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", FormatScore(gCustomSave.trackArcadeScores[trackId])), &DrawStringFO2_Condensed12);
 			}
 		}
 		else if (!sStuntPB.empty()) {
@@ -649,7 +649,7 @@ public:
 			data.y = gLevelPB.nPosY;
 			data.size = gLevelPB.fSize;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", sStuntPB), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("PERSONAL BEST: {}", sStuntPB), &DrawStringFO2_Condensed12);
 		}
 		else if (nTrackReversed && gCustomSave.bestLapsReversed[trackId]) {
 			tNyaStringData data;
@@ -657,7 +657,7 @@ public:
 			data.y = gLevelPB.nPosY;
 			data.size = gLevelPB.fSize;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", FormatGameTime(gCustomSave.bestLapsReversed[trackId], false), GetCarName(gCustomSave.bestLapCarsReversed[trackId]+1)), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", FormatGameTime(gCustomSave.bestLapsReversed[trackId], false), GetCarName(gCustomSave.bestLapCarsReversed[trackId]+1)), &DrawStringFO2_Condensed12);
 		}
 		else if (!nTrackReversed && gCustomSave.bestLaps[trackId]) {
 			tNyaStringData data;
@@ -665,7 +665,7 @@ public:
 			data.y = gLevelPB.nPosY;
 			data.size = gLevelPB.fSize;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", FormatGameTime(gCustomSave.bestLaps[trackId], false), GetCarName(gCustomSave.bestLapCars[trackId]+1)), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::format("BEST LAP: {} ({})", FormatGameTime(gCustomSave.bestLaps[trackId], false), GetCarName(gCustomSave.bestLapCars[trackId]+1)), &DrawStringFO2_Condensed12);
 		}
 
 		for (int y = 0; aOptions[y].name != "*END*"; y++) {
@@ -682,7 +682,7 @@ public:
 				data.SetColor(127,127,127,255);
 			}
 			if (valid) data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-			Draw1080pString(JUSTIFY_LEFT, data, option.name == "APPLY SETTINGS" && bMultiplayerCreateGame ? "CREATE GAME" : option.name, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_LEFT, data, option.name == "APPLY SETTINGS" && bMultiplayerCreateGame ? "CREATE GAME" : option.name, &DrawStringFO2_Condensed12);
 			data.x += gOptions.nSpacingX;
 			data.XCenterAlign = true;
 			if (valid) data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
@@ -924,7 +924,7 @@ public:
 					}
 				}
 			}
-			Draw1080pString(JUSTIFY_LEFT, data, valueName, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_LEFT, data, valueName, &DrawStringFO2_Condensed12);
 
 			if (y == nCursorY && aOptions != aOptionsInstantAction) {
 				DoJustify(JUSTIFY_LEFT, data.x, data.y);

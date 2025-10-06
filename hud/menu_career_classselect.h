@@ -113,10 +113,10 @@ public:
 		data.x = gTitle.nPosX;
 		data.y = gTitle.nPosY;
 		data.size = gTitle.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, classNames[Menu_CareerCupSelect.nClass], &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_RIGHT, data, classNames[Menu_CareerCupSelect.nClass], &DrawStringFO2_Italic24);
 		data.x = gDescription.nPosX;
 		data.y = gDescription.nPosY;
 		data.size = gDescription.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, GetClassDescription(Menu_CareerCupSelect.nClass), &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_RIGHT, data, GetClassDescription(Menu_CareerCupSelect.nClass), &DrawStringFO2_Condensed12);
 	}
 } Menu_CareerClassSelect;

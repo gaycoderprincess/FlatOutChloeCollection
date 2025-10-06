@@ -68,10 +68,10 @@ public:
 				data.SetColor(64,64,64,255);
 			}
 			data.XRightAlign = true;
-			DrawStringFO2_Ingame12(data, string1);
+			DrawStringFO2_Condensed12(data, string1);
 			data.x += fSpacingX * GetAspectRatioInv();
 			data.XRightAlign = false;
-			DrawStringFO2_Ingame12(data, string2);
+			DrawStringFO2_Condensed12(data, string2);
 			data.x -= fSpacingX * GetAspectRatioInv();
 			data.y += fSpacing;
 		}

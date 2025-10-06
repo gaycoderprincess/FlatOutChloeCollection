@@ -165,7 +165,7 @@ namespace Achievements {
 
 		// recenter
 		data.x += 0.5;
-		return DrawString(data, text, &DrawStringFO2_Ingame12);
+		return DrawString(data, text, &DrawStringFO2_Condensed12);
 	}
 
 	bool findValidSaveSlot = false;
@@ -596,11 +596,11 @@ namespace Achievements {
 			if (achievement->bUnlocked) continue;
 			auto string = achievement->pTrackFunction(achievement);
 			if (string.empty()) continue;
-			DrawString(data, achievement->sName, &DrawStringFO2_Ingame12);
+			DrawString(data, achievement->sName, &DrawStringFO2_Condensed12);
 			data.y += fTrackSpacing;
-			DrawString(data, achievement->sDescription, &DrawStringFO2_Ingame12);
+			DrawString(data, achievement->sDescription, &DrawStringFO2_Condensed12);
 			data.y += fTrackSpacing;
-			DrawString(data, string, &DrawStringFO2_Ingame12);
+			DrawString(data, string, &DrawStringFO2_Condensed12);
 			data.y += fTrackSpacing * 2;
 		}
 	}

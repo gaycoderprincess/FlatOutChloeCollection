@@ -65,9 +65,9 @@ public:
 		data.size = gTotalEventScore.fSize;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
-		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL EVENT SCORE", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL EVENT SCORE", &DrawStringFO2_Italic24);
 		data.y = gScoreBreakdown.nPosY;
-		Draw1080pString(JUSTIFY_CENTER, data, bIsFragDerby ? "TOP DRIVERS" : "SCORE BREAKDOWN", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, bIsFragDerby ? "TOP DRIVERS" : "SCORE BREAKDOWN", &DrawStringFO2_Italic24);
 		data.x = gEventScore.nPosX;
 		data.y = gEventScore.nPosY;
 		data.size = gEventScore.fSize;
@@ -86,18 +86,18 @@ public:
 		if (score >= event->nPlatinumScore) {
 			data.SetColor(GetMedalRGB(4));
 		}
-		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(score), &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(score), &DrawStringFO2_Italic24);
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		data.x = gHighScore.nPosX;
 		data.y = gHighScore.nPosY;
 		data.size = gHighScore.fSize;
 		data.XRightAlign = true;
 		data.XCenterAlign = false;
-		Draw1080pString(JUSTIFY_CENTER, data, "HIGH SCORE", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, "HIGH SCORE", &DrawStringFO2_Condensed12);
 		data.x += gHighScore.nSpacingX;
 		data.XRightAlign = false;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId]), &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId]), &DrawStringFO2_Condensed12);
 		if (bIsFragDerby) {
 			for (int i = 0; i < 3; i++) {
 				const char* types[] = {
@@ -114,11 +114,11 @@ public:
 				data.size = gScoreTypes.fSize;
 				data.XRightAlign = true;
 				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-				Draw1080pString(JUSTIFY_CENTER, data, types[i], &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, types[i], &DrawStringFO2_Condensed12);
 				data.x += gScoreTypes.nSpacingX;
 				data.XRightAlign = false;
 				data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-				Draw1080pString(JUSTIFY_CENTER, data, topDriverName, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, topDriverName, &DrawStringFO2_Condensed12);
 			}
 		}
 		else if (bIsCarnageRace) {
@@ -135,11 +135,11 @@ public:
 				data.size = gScoreTypes.fSize;
 				data.XRightAlign = true;
 				data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-				Draw1080pString(JUSTIFY_CENTER, data, types[i], &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, types[i], &DrawStringFO2_Condensed12);
 				data.x += gScoreTypes.nSpacingX;
 				data.XRightAlign = false;
 				data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-				Draw1080pString(JUSTIFY_CENTER, data, FormatScore(CarnageRace::nPlayerScoresByType[i]), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, FormatScore(CarnageRace::nPlayerScoresByType[i]), &DrawStringFO2_Condensed12);
 			}
 		}
 	}
@@ -154,42 +154,42 @@ public:
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		data.x = nPositionX;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_CENTER, data, "#", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, "#", &DrawStringFO2_Condensed12);
 		data.XCenterAlign = false;
 		data.x = nNameX;
-		Draw1080pString(JUSTIFY_CENTER, data, "DRIVER", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, "DRIVER", &DrawStringFO2_Condensed12);
 		if (bIsCarnageRace) {
 			data.x = nBestLapX;
-			Draw1080pString(JUSTIFY_CENTER, data, "BEST LAP", &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, "BEST LAP", &DrawStringFO2_Condensed12);
 			data.x = nTotalTimeX;
-			Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Condensed12);
 		}
 		else if (bIsFragDerby) {
 			data.x = nBestLapX;
-			Draw1080pString(JUSTIFY_CENTER, data, "WRECKS", &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, "WRECKS", &DrawStringFO2_Condensed12);
 			data.x = nTotalTimeX;
-			Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Condensed12);
 		}
 		else if (bIsWreckingDerby) {
 			data.x = nWreckingDerbyCrashX;
-			Draw1080pString(JUSTIFY_CENTER, data, "CRASH", &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, "CRASH", &DrawStringFO2_Condensed12);
 			data.x = nWreckingDerbyWreckX;
-			Draw1080pString(JUSTIFY_CENTER, data, "WRECK", &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, "WRECK", &DrawStringFO2_Condensed12);
 			data.x = nWreckingDerbyBonusX;
-			Draw1080pString(JUSTIFY_CENTER, data, "BONUS", &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, "BONUS", &DrawStringFO2_Condensed12);
 			data.x = nWreckingDerbyTotalX;
-			Draw1080pString(JUSTIFY_CENTER, data, "TOTAL", &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, "TOTAL", &DrawStringFO2_Condensed12);
 		}
 		else {
 			if (bIsSmashyRace) {
 				data.x = nTotalTimeX;
-				Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, "SCORE", &DrawStringFO2_Condensed12);
 			}
 			else {
 				data.x = nBestLapX;
-				Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? "WRECKS" : "BEST LAP", &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? "WRECKS" : "BEST LAP", &DrawStringFO2_Condensed12);
 				data.x = nTotalTimeX;
-				Draw1080pString(JUSTIFY_CENTER, data, "TOTAL TIME", &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, "TOTAL TIME", &DrawStringFO2_Condensed12);
 			}
 		}
 
@@ -212,29 +212,29 @@ public:
 				}
 
 				data.x = nBestLapX;
-				Draw1080pString(JUSTIFY_CENTER, data, bestLap, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, bestLap, &DrawStringFO2_Condensed12);
 				data.x = nTotalTimeX;
-				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(CarnageRace::nPlayerScore[ply->nPlayerId]), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(CarnageRace::nPlayerScore[ply->nPlayerId]), &DrawStringFO2_Condensed12);
 			}
 			else if (bIsFragDerby) {
 				data.x = nBestLapX;
-				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]), &DrawStringFO2_Condensed12);
 				data.x = nTotalTimeX;
-				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(FragDerby::nPlayerScore[ply->nPlayerId]), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(FragDerby::nPlayerScore[ply->nPlayerId]), &DrawStringFO2_Condensed12);
 			}
 			else if (bIsWreckingDerby) {
 				data.x = nWreckingDerbyCrashX;
-				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyCrashScore(ply->nPlayerId)), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyCrashScore(ply->nPlayerId)), &DrawStringFO2_Condensed12);
 				data.x = nWreckingDerbyWreckX;
-				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyWreckScore(ply->nPlayerId)), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyWreckScore(ply->nPlayerId)), &DrawStringFO2_Condensed12);
 				data.x = nWreckingDerbyBonusX;
-				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyBonusScore(ply->nPosition, ply->bHasFinished || ply->bIsDNF)), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyBonusScore(ply->nPosition, ply->bHasFinished || ply->bIsDNF)), &DrawStringFO2_Condensed12);
 				data.x = nWreckingDerbyTotalX;
-				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyTotalScore(ply->nPlayerId, ply->nPosition, ply->bHasFinished || ply->bIsDNF)), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(GetWreckingDerbyTotalScore(ply->nPlayerId, ply->nPosition, ply->bHasFinished || ply->bIsDNF)), &DrawStringFO2_Condensed12);
 			}
 			else if (bIsSmashyRace) {
 				data.x = nTotalTimeX;
-				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(ArcadeMode::nCurrentEventScore), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::to_string(ArcadeMode::nCurrentEventScore), &DrawStringFO2_Condensed12);
 			}
 			else {
 				std::string bestLap;
@@ -261,18 +261,18 @@ public:
 					}
 				}
 				data.x = nBestLapX;
-				Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]) : bestLap, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, pGameFlow->nEventType == eEventType::DERBY ? std::to_string(aCrashBonusesReceived[ply->nPlayerId][CRASHBONUS_WRECKED]) : bestLap, &DrawStringFO2_Condensed12);
 				data.x = nTotalTimeX;
-				Draw1080pString(JUSTIFY_CENTER, data, finish, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, finish, &DrawStringFO2_Condensed12);
 			}
 
 			data.x = nNameX;
-			Draw1080pString(JUSTIFY_CENTER, data, GetStringNarrow(player->sPlayerName.Get()), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, GetStringNarrow(player->sPlayerName.Get()), &DrawStringFO2_Condensed12);
 
 			data.x = nPositionX;
 			data.y += nPositionY;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_CENTER, data, std::format("{}.", (&ply - &aScores[0]) + 1), &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_CENTER, data, std::format("{}.", (&ply - &aScores[0]) + 1), &DrawStringFO2_Italic24);
 			data.XCenterAlign = false;
 			data.y -= nPositionY;
 
@@ -299,7 +299,7 @@ public:
 		data.y = gGamemodeLabel.nPosY;
 		data.size = gGamemodeLabel.fSize;
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
-		Draw1080pString(JUSTIFY_CENTER, data, GetResultsTitle(), &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, GetResultsTitle(), &DrawStringFO2_Italic24);
 
 		if (bIsArcadeMode && (bIsCarnageRace || bIsFragDerby)) {
 			DrawArcadeResults();
@@ -313,7 +313,7 @@ public:
 		data.size = 0.035;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_CENTER, data, "Press START button", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, "Press START button", &DrawStringFO2_Italic24);
 
 		bMenuUp = false;
 	}

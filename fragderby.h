@@ -184,6 +184,7 @@ namespace FragDerby {
 		memset(fPlayerHighestTimeAlive,0,sizeof(fPlayerHighestTimeAlive));
 		memset(nPlayerNumDeaths,0,sizeof(nPlayerNumDeaths));
 		nStreakerId = -1;
+		nSurvivorId = -1;
 	}
 
 	void ProcessPlayer(double delta, int player) {
@@ -251,8 +252,6 @@ namespace FragDerby {
 	}
 
 	void OnTick() {
-		static int lastSurvivor = -1;
-
 		static CNyaRaceTimer gTimer;
 		gTimer.Process();
 
@@ -270,7 +269,6 @@ namespace FragDerby {
 
 		if (pPlayerHost->nRaceTime < 0) {
 			Reset();
-			lastSurvivor = -1;
 			return;
 		}
 
@@ -298,7 +296,7 @@ namespace FragDerby {
 		}
 
 		HUD_Derby_Overhead.nStreakerId = nStreakerId;
-		HUD_Derby_Overhead.nSurvivorId = GetSurvivorID();
+		HUD_Derby_Overhead.nSurvivorId = nSurvivorId;
 	}
 
 	class CHUD_FragDerby : public CIngameHUDElement {
@@ -324,10 +322,10 @@ namespace FragDerby {
 			data.XCenterAlign = true;
 			data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 			data.a = rgb.a;
-			DrawStringFO2_Ingame10(data, title);
+			DrawStringFO2_Regular10(data, title);
 			data.y += fPopupSpacing;
 			data.SetColor(rgb);
-			DrawStringFO2_Ingame10(data, value);
+			DrawStringFO2_Regular10(data, value);
 		}
 
 		virtual void Process() {
@@ -346,12 +344,12 @@ namespace FragDerby {
 			if (!isStreaker && nStreakerId == 0) {
 				TriggerPopup("STREAKER", "You score 2X points\nfor each frag until wrecked!");
 			}
-			if (!isSurvivor && GetSurvivorID() == 0) {
+			if (!isSurvivor && nSurvivorId == 0) {
 				TriggerPopup("SURVIVOR", "You score 50 bonus points\nper second until wrecked!");
 			}
 
 			isStreaker = nStreakerId == 0;
-			isSurvivor = GetSurvivorID() == 0;
+			isSurvivor = nSurvivorId == 0;
 
 			static CNyaRaceTimer gTimer;
 			gTimer.Process();

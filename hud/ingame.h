@@ -31,10 +31,10 @@ public:
 		data.size = gElementBase.fSize;
 		data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 		data.a = rgb.a;
-		DrawStringFO2_Ingame12(data, title);
+		DrawStringFO2_Condensed12(data, title);
 		data.y += gElementBase.fSpacingY;
 		data.SetColor(rgb);
-		DrawStringFO2_Ingame24(data, value);
+		DrawStringFO2_Italic24(data, value);
 	}
 
 	static void DrawElementCustomX(eJustify justify, int x, float y, const std::string& title, const std::string& value, const NyaDrawing::CNyaRGBA32 rgb = {255,255,255,255}) {
@@ -47,10 +47,10 @@ public:
 		data.size = gElementBase.fSize;
 		data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 		data.a = rgb.a;
-		DrawStringFO2_Ingame12(data, title);
+		DrawStringFO2_Condensed12(data, title);
 		data.y += gElementBase.fSpacingY;
 		data.SetColor(rgb);
-		DrawStringFO2_Ingame24(data, value);
+		DrawStringFO2_Italic24(data, value);
 	}
 
 	static void DrawElementCenter(float y, const std::string& title, const std::string& value, const NyaDrawing::CNyaRGBA32 rgb = {255,255,255,255}) {
@@ -61,10 +61,10 @@ public:
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 		data.a = rgb.a;
-		DrawStringFO2_Ingame12(data, title);
+		DrawStringFO2_Condensed12(data, title);
 		data.y += gElementBase.fSpacingY;
 		data.SetColor(rgb);
-		DrawStringFO2_Ingame24(data, value);
+		DrawStringFO2_Italic24(data, value);
 	}
 
 	static void DrawElementRight(float y, const std::string& title, const std::string& value, const NyaDrawing::CNyaRGBA32 rgb = {255,255,255,255}) {
@@ -75,10 +75,10 @@ public:
 		data.XRightAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 		data.a = rgb.a;
-		DrawStringFO2_Ingame12(data, title);
+		DrawStringFO2_Condensed12(data, title);
 		data.y += gElementBase.fSpacingY;
 		data.SetColor(rgb);
-		DrawStringFO2_Ingame24(data, value);
+		DrawStringFO2_Italic24(data, value);
 	}
 
 	virtual bool DrawInReplay() { return false; }

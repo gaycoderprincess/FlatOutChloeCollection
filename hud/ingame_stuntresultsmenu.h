@@ -43,11 +43,11 @@ public:
 			data.y = gMenuText.nPosY + (gMenuText.nSpacingY * i);
 			data.size = gMenuText.fSize;
 			data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-			Draw1080pString(JUSTIFY_CENTER, data, std::format("{}. {}", i+1, GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get())), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, std::format("{}. {}", i+1, GetStringNarrow(GetPlayer(ply->nPlayerId)->sPlayerName.Get())), &DrawStringFO2_Condensed12);
 			data.x = nMenuText2;
 			data.XRightAlign = true;
 			data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-			Draw1080pString(JUSTIFY_CENTER, data, GetPlayerScoreString(ply), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_CENTER, data, GetPlayerScoreString(ply), &DrawStringFO2_Condensed12);
 		}
 
 		bMenuUp = false;

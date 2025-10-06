@@ -117,7 +117,7 @@ public:
 		data.y = gMenuTitle.nPosY;
 		data.size = gMenuTitle.fSize;
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
-		Draw1080pString(JUSTIFY_CENTER, data, title, &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, title, &DrawStringFO2_Italic24);
 	}
 
 	int GetNumOptions() {
@@ -207,10 +207,10 @@ public:
 
 			// hack for sliders
 			if (option->IsPlaylist()) {
-				Draw1080pString(JUSTIFY_CENTER, data, std::format("{} < {} >", option->sName, GetStringNarrow(NewMusicPlayer::pCurrentPlaylist->wsName)), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, std::format("{} < {} >", option->sName, GetStringNarrow(NewMusicPlayer::pCurrentPlaylist->wsName)), &DrawStringFO2_Condensed12);
 			}
 			else if (option->IsSlider()) {
-				Draw1080pString(JUSTIFY_CENTER, data, option->sName, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, option->sName, &DrawStringFO2_Condensed12);
 
 				float delta = option->GetValuePercent();
 				Draw1080pSprite(JUSTIFY_CENTER, nSliderLeft, std::lerp(nSliderLeft, nSliderRight, delta), data.y + nSliderTop, data.y + nSliderBottom, {255,255,255,255}, textureBarFill, {0,0}, {delta, 1});
@@ -219,7 +219,7 @@ public:
 				ySpacing += 1;
 			}
 			else {
-				Draw1080pString(JUSTIFY_CENTER, data, option->sName, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_CENTER, data, option->sName, &DrawStringFO2_Condensed12);
 			}
 			ySpacing += 1;
 		}

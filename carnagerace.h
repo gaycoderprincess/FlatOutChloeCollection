@@ -303,7 +303,7 @@ namespace CarnageRace {
 				data.y = gCheckpointBonus.nPosY;
 				data.size = gCheckpointBonus.fSize;
 				data.SetColor(GetPaletteColor(13));
-				Draw1080pString(JUSTIFY_LEFT, data, std::format("+{} SECONDS", nCheckpointNotifAmount), &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_LEFT, data, std::format("+{} SECONDS", nCheckpointNotifAmount), &DrawStringFO2_Condensed12);
 			}
 		}
 	} HUD_ArcadeRace;
@@ -323,11 +323,11 @@ namespace CarnageRace {
 			data.size = gScoreHUD.fSize;
 			data.XRightAlign = true;
 			data.SetColor(GetPaletteColor(color1));
-			Draw1080pString(JUSTIFY_RIGHT, data, left, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, left, &DrawStringFO2_Condensed12);
 			data.x += gScoreHUD.nSpacingX;
 			data.XRightAlign = false;
 			data.SetColor(GetPaletteColor(color2));
-			Draw1080pString(JUSTIFY_RIGHT, data, right, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, right, &DrawStringFO2_Condensed12);
 		}
 
 		std::string GetNthString(int num) {

@@ -26,19 +26,19 @@ public:
 		data.x = nBaseX;
 		data.size = fBaseSize;
 		data.y = nPriceY;
-		Draw1080pString(JUSTIFY_LEFT, data, "TOTAL", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "TOTAL", &DrawStringFO2_Condensed12);
 		data.y = nPowerY;
-		Draw1080pString(JUSTIFY_LEFT, data, "CAR", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "CAR", &DrawStringFO2_Condensed12);
 		data.y = nWeightY;
-		Draw1080pString(JUSTIFY_LEFT, data, "UPGRADES", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "UPGRADES", &DrawStringFO2_Condensed12);
 		data.x = nOffsetX;
 		data.y = nPriceY + nOffsetPriceY;
 		data.size = fOffsetPriceSize;
-		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", price + upgradePrice), &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", price + upgradePrice), &DrawStringFO2_Italic24);
 		data.y = nPowerY + nOffsetY;
 		data.size = fOffsetSize;
-		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", price), &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", price), &DrawStringFO2_Condensed12);
 		data.y = nWeightY + nOffsetY;
-		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", upgradePrice), &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", upgradePrice), &DrawStringFO2_Condensed12);
 	}
 } Menu_CarDealer_Sell;

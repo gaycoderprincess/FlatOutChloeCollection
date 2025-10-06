@@ -33,7 +33,7 @@ public:
 		data.size = gMenuText.fSize;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_CENTER, data, "PRESS START BUTTON", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, "PRESS START BUTTON", &DrawStringFO2_Condensed12);
 
 		bMenuUp = false;
 	}

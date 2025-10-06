@@ -86,7 +86,7 @@ public:
 			data.y = gSkinAuthor.nPosY;
 			data.size = gSkinAuthor.fSize;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_RIGHT, data, author, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, author, &DrawStringFO2_Condensed12);
 		}
 
 		tNyaStringData data;
@@ -94,7 +94,7 @@ public:
 		data.y = gSkinTitle.nPosY;
 		data.size = gSkinTitle.fSize;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Italic24);
 
 		float fPosX = 0.316;
 		float fPosY = 0.372;
@@ -121,7 +121,7 @@ public:
 				data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 			}
 
-			DrawString(data, GetSkinName(car, skinId, skinLoop), &DrawStringFO2_Ingame12);
+			DrawString(data, GetSkinName(car, skinId, skinLoop), &DrawStringFO2_Condensed12);
 			data.y += fSpacing;
 		}
 	}
@@ -142,7 +142,7 @@ public:
 			data.y = gCarNameText.nPosY;
 			data.size = gCarNameText.fSize;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_LEFT, data, sCarName, &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_LEFT, data, sCarName, &DrawStringFO2_Italic24);
 		}
 	}
 
@@ -168,24 +168,24 @@ public:
 		data.x = nBaseX;
 		data.y = nPowerY;
 		data.size = fBaseSize;
-		Draw1080pString(JUSTIFY_LEFT, data, "POWER", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "POWER", &DrawStringFO2_Condensed12);
 		data.y = nWeightY;
-		Draw1080pString(JUSTIFY_LEFT, data, "WEIGHT", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "WEIGHT", &DrawStringFO2_Condensed12);
 		data.y = nPriceY;
-		Draw1080pString(JUSTIFY_LEFT, data, "PRICE", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "PRICE", &DrawStringFO2_Condensed12);
 		data.x = nOffsetX;
 		data.y = nPowerY + nOffsetY;
 		data.size = fOffsetSize;
-		Draw1080pString(JUSTIFY_LEFT, data, std::format("{}hp", nCarHorsepower), &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("{}hp", nCarHorsepower), &DrawStringFO2_Condensed12);
 		data.y = nWeightY + nOffsetY;
-		Draw1080pString(JUSTIFY_LEFT, data, std::format("{}kg", nCarWeight), &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("{}kg", nCarWeight), &DrawStringFO2_Condensed12);
 		data.y = nPriceY + nOffsetPriceY;
 		data.size = fOffsetPriceSize;
-		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", nCarPrice), &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", nCarPrice), &DrawStringFO2_Italic24);
 		data.x = gCarDescription.nPosX;
 		data.y = gCarDescription.nPosY;
 		data.size = gCarDescription.fSize;
-		Draw1080pString(JUSTIFY_LEFT, data, sCarDescription, &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, sCarDescription, &DrawStringFO2_Condensed12);
 		data.x = gCarClass.nPosX;
 		data.y = gCarClass.nPosY;
 		data.size = gCarClass.fSize;
@@ -201,6 +201,6 @@ public:
 				className = "GOLD CLASS";
 				break;
 		}
-		Draw1080pString(JUSTIFY_LEFT, data, className, &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, className, &DrawStringFO2_Condensed12);
 	}
 } Menu_CarDealer;

@@ -175,7 +175,7 @@ public:
 			if (i > 0) data.y += draw.fSpacingY * (i-1);
 			data.size = draw.fSize;
 			data.XCenterAlign = i == 0;
-			DrawString(data, leftStr, &DrawStringFO2_Ingame12);
+			DrawString(data, leftStr, &DrawStringFO2_Condensed12);
 			
 			if (i != 0) {
 				auto song = &playlist->aSongs[songId];
@@ -183,7 +183,7 @@ public:
 				data.x += draw.fSpacingX;
 				data.y += fOnOffYOffset;
 				data.XCenterAlign = true;
-				DrawString(data, song->bDisabled ? "Off" : "On", &DrawStringFO2_Ingame12);
+				DrawString(data, song->bDisabled ? "Off" : "On", &DrawStringFO2_Condensed12);
 			}
 		}
 	}

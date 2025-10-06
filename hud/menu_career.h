@@ -40,12 +40,12 @@ public:
 		data.x = nListPositionX;
 		data.y = nListTopY;
 		data.size = fListSize;
-		Draw1080pString(JUSTIFY_LEFT, data, "#", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "#", &DrawStringFO2_Condensed12);
 		data.x = nListNameX;
-		Draw1080pString(JUSTIFY_LEFT, data, "NAME", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "NAME", &DrawStringFO2_Condensed12);
 		data.x = nListPointsX;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_LEFT, data, "POINTS", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, "POINTS", &DrawStringFO2_Condensed12);
 		data.y = nListStartY;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
 
@@ -56,12 +56,12 @@ public:
 			auto player = &gCustomSave.aCareerCupPlayers[playerId];
 			data.XCenterAlign = false;
 			data.x = nListPositionX;
-			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}.", i+1), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_LEFT, data, std::format("{}.", i+1), &DrawStringFO2_Condensed12);
 			data.x = nListNameX;
-			Draw1080pString(JUSTIFY_LEFT, data, GetPlayerName(playerId), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_LEFT, data, GetPlayerName(playerId), &DrawStringFO2_Condensed12);
 			data.x = nListPointsX;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(player->points), &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_LEFT, data, std::to_string(player->points), &DrawStringFO2_Condensed12);
 			data.y += nListSpacing;
 		}
 
@@ -69,9 +69,9 @@ public:
 		data.y = nEventNameY;
 		data.size = fEventSize;
 		data.XCenterAlign = false;
-		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::GetCurrentCup()->sName, DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::GetCurrentCup()->sName, &DrawStringFO2_Italic24);
 		data.y = nEventDescY;
 		data.size = fEventDescSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, std::format("EVENT {}/{}", gCustomSave.nCareerCupNextEvent+1, CareerMode::GetCurrentCup()->aRaces.size()), DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_RIGHT, data, std::format("EVENT {}/{}", gCustomSave.nCareerCupNextEvent+1, CareerMode::GetCurrentCup()->aRaces.size()), DrawStringFO2_Condensed12);
 	}
 } Menu_Career;

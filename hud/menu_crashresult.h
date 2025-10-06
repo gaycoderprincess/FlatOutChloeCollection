@@ -24,23 +24,23 @@ public:
 		data.size = gTitles.fSize;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-		Draw1080pString(JUSTIFY_CENTER, data, name, &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, name, &DrawStringFO2_Condensed12);
 		data.x = baseX + fNumberOffset;
 		data.y = baseY - fBottomOffset;
 		data.size = fSubSize;
 		data.XCenterAlign = false;
-		Draw1080pString(JUSTIFY_CENTER, data, "#", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, "#", &DrawStringFO2_Condensed12);
 		data.y = baseY + fBottomOffset;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_CENTER, data, std::to_string(count), &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, std::to_string(count), &DrawStringFO2_Condensed12);
 		data.x = baseX + fCashOffset;
 		data.y = baseY - fBottomOffset;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL", &DrawStringFO2_Condensed12);
 		data.y = baseY + fBottomOffset;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", price), &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", price), &DrawStringFO2_Condensed12);
 	}
 
 	void Init() override {
@@ -74,11 +74,11 @@ public:
 		data.size = gTotalTitle.fSize;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-		Draw1080pString(JUSTIFY_CENTER, data, "CRASH BONUS TOTAL", &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, "CRASH BONUS TOTAL", &DrawStringFO2_Italic24);
 		data.x = gTotalAmount.nPosX;
 		data.y = gTotalAmount.nPosY;
 		data.size = gTotalAmount.fSize;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", total), &DrawStringFO2_Small);
+		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", total), &DrawStringFO2_Italic24);
 	}
 } Menu_CrashResult;

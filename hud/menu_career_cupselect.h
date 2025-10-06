@@ -158,11 +158,11 @@ public:
 		if (nCursorY == 0 || nCursorY == 1) {
 			auto cup = &careerClass->aCups[nCursorX];
 			if (nCursorY == 1) cup = &careerClass->Finals;
-			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Italic24);
 			data.x = nLapsX[cup->aRaces.size()];
 			data.y = nLapsY;
 			data.size = fLapsSize;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Italic24);
 			auto hud = gEvents;
 			data.x = hud.nPosX;
 			data.y = hud.nPosY;
@@ -170,18 +170,18 @@ public:
 			for (auto& race : cup->aRaces) {
 				auto name = GetTrackName(race.nLevel);
 				if (race.bReversed) name = "REV " + name;
-				Draw1080pString(JUSTIFY_RIGHT, data, name, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_RIGHT, data, name, &DrawStringFO2_Condensed12);
 				data.y += hud.nSpacingY;
 			}
 		}
 		else if (nCursorY == 2) {
 			if (nCursorX >= careerClass->aEvents.size()) return;
 			auto cup = &careerClass->aEvents[nCursorX];
-			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Italic24);
 			data.x = nLapsX[cup->aRaces.size()];
 			data.y = nLapsY;
 			data.size = fLapsSize;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Small);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Italic24);
 			auto hud = gEvents;
 			data.x = hud.nPosX;
 			data.y = hud.nPosY;
@@ -211,7 +211,7 @@ public:
 						sEventDescription = std::format("TARGETS\nGOLD - {}\nSILVER - {}\nBRONZE - {}\n\nPERSONAL BEST: {}", targetStrings[0], targetStrings[1], targetStrings[2], pbString);
 					}
 				}
-				Draw1080pString(JUSTIFY_RIGHT, data, sEventDescription, &DrawStringFO2_Ingame12);
+				Draw1080pString(JUSTIFY_RIGHT, data, sEventDescription, &DrawStringFO2_Condensed12);
 			}
 			else {
 				int level = cup->aRaces[0].nLevel;
@@ -220,16 +220,16 @@ public:
 				if (targets[0]) {
 					if (level == TRACK_BOWLING) {
 						Draw1080pString(JUSTIFY_RIGHT, data, std::format("TARGETS\n{} - 1st\n{} - 2nd\n{} - 3rd\n\nPERSONAL BEST: {}", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),
-										&DrawStringFO2_Ingame12);
+										&DrawStringFO2_Condensed12);
 					}
 					else {
 						Draw1080pString(JUSTIFY_RIGHT, data, std::format("TARGETS\n{}m - 1st\n{}m - 2nd\n{}m - 3rd\n\nPERSONAL BEST: {}m", targets[0], targets[1], targets[2], careerSaveClass->aEvents[nCursorX].nTimeOrScore),
-										&DrawStringFO2_Ingame12);
+										&DrawStringFO2_Condensed12);
 					}
 				}
 				else {
 					Draw1080pString(JUSTIFY_RIGHT, data, std::format("PRIZES\n1st - ${}\n2nd - ${}\n3rd - ${}", cup->aCupWinnings[0], cup->aCupWinnings[1], cup->aCupWinnings[2]),
-									&DrawStringFO2_Ingame12);
+									&DrawStringFO2_Condensed12);
 				}
 			}
 		}
@@ -237,6 +237,6 @@ public:
 		data.y = gEventsTitle.nPosY;
 		data.size = gEventsTitle.fSize;
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-		Draw1080pString(JUSTIFY_RIGHT, data, "EVENTS", &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_RIGHT, data, "EVENTS", &DrawStringFO2_Condensed12);
 	}
 } Menu_CareerCupSelect;

@@ -64,18 +64,18 @@ public:
 		if (y == 0) data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 
 		data.x = nPlayerReadyX;
-		if (!ready.empty()) Draw1080pString(JUSTIFY_LEFT, data, ready, &DrawStringFO2_Ingame12);
+		if (!ready.empty()) Draw1080pString(JUSTIFY_LEFT, data, ready, &DrawStringFO2_Condensed12);
 		data.x = nPlayerCarX;
-		Draw1080pString(JUSTIFY_LEFT, data, car, &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, car, &DrawStringFO2_Condensed12);
 		data.x = nPlayerPingX;
-		Draw1080pString(JUSTIFY_LEFT, data, ping, &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, ping, &DrawStringFO2_Condensed12);
 		data.x = nPlayerNameX;
 		if (y == 0) data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		else {
 			data.SetColor(aPlayerColorsMultiplayer[colorId]);
 			data.a = 255;
 		}
-		Draw1080pString(JUSTIFY_LEFT, data, name, &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_LEFT, data, name, &DrawStringFO2_Condensed12);
 	}
 
 	void DrawPlayerFlag(int y, const std::string& flagName) const {
@@ -144,10 +144,10 @@ public:
 		data.size = fOptionTextSize;
 		for (auto& option : aOptions) {
 			data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-			Draw1080pString(JUSTIFY_RIGHT, data, option.name, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, option.name, &DrawStringFO2_Condensed12);
 			data.y += nOptionSpacing;
 			data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-			Draw1080pString(JUSTIFY_RIGHT, data, option.value, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_RIGHT, data, option.value, &DrawStringFO2_Condensed12);
 			data.y += nOptionSpacing2;
 		}
 	}

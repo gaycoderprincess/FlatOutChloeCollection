@@ -104,7 +104,7 @@ public:
 					data.XRightAlign = true;
 					break;
 			}
-			Draw1080pString(JUSTIFY_480P_CENTER, data, action, &DrawStringFO2_Ingame12);
+			Draw1080pString(JUSTIFY_480P_CENTER, data, action, &DrawStringFO2_Condensed12);
 
 			if (bind.icon.empty()) continue;
 

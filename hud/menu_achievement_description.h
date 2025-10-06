@@ -21,6 +21,6 @@ public:
 		data.y = gPos.nPosY;
 		data.size = gPos.fSize;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_CENTER, data, sDescription, &DrawStringFO2_Ingame12);
+		Draw1080pString(JUSTIFY_CENTER, data, sDescription, &DrawStringFO2_Condensed12);
 	}
 } Menu_Achievement_Description;

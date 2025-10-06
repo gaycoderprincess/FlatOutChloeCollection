@@ -32,7 +32,7 @@ public:
 			a = fNotifTimer * fNotifFadeoutSpeed * 255;
 		}
 		data.SetColor(255,255,255,a);
-		DrawStringFO2_Ingame12(data, aNotifs[0]);
+		DrawStringFO2_Condensed12(data, aNotifs[0]);
 	}
 
 	void Init() override {
