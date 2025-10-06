@@ -1610,7 +1610,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_DERBY_FRAG, "GAMETYPE_DERBY_FRAG");
 	RegisterLUAEnum(a1, CMenu_TrackSelect::GAMETYPE_STUNT, "GAMETYPE_STUNT");
 
-	static auto sVersionString = "Chloe Collection v1.28 - Multiplayer Overhaul Edition";
+	static auto sVersionString = "Chloe Collection v1.29 - Stability Fix Edition";
 	lua_setglobal(a1, "ChloeCollectionVersion");
 	lua_setglobal(a1, sVersionString);
 	lua_settable(a1, LUA_ENVIRONINDEX);
