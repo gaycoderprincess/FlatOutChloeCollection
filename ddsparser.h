@@ -23,9 +23,12 @@ bool CreateCustomTexture(DevTexture*& pTexture, uint8_t* data, uint32_t dataSize
 		pTexture->pD3DTexture = nullptr;
 	}
 
-	// fix header
-	if (data[0x4C] == 0x18) {
-		data[0x4C] = 0x20;
+	// dds identifier
+	if (data[0] == 0x44 && data[1] == 0x44 && data[2] == 0x53 && data[3] == 0x20) {
+		// fix header
+		if (data[0x4C] == 0x18) {
+			data[0x4C] = 0x20;
+		}
 	}
 
 	auto hr = D3DXCreateTextureFromFileInMemory(pDeviceD3d->pD3DDevice, data, dataSize, &pTexture->pD3DTexture);
