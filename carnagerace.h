@@ -210,7 +210,7 @@ namespace CarnageRace {
 		auto current = GetPlayer(playerId)->nCurrentSplit / nCheckpointInterval;
 		if (current > last[playerId]) {
 			AddScore(SCORE_CHECKPOINT, "CHECKPOINT!", CheckpointScore, playerId+1);
-			OnCheckpointPassed();
+			if (playerId == 0) OnCheckpointPassed();
 		}
 		last[playerId] = current;
 	}
