@@ -8,7 +8,6 @@ tGameSetting aNewGameSettings[] = {
 		{ "Game", "HandlingDamage", &nHandlingDamage, 0, 0, 2 },
 		{ "Game", "HandlingMode", &nHandlingMode, 0, 0, 2 },
 		{ "Game", "PlayerListDefaultState", &nPlayerListDefaultState, 0, 0, 1 },
-		{ "Game", "FO2CarsEnabled", &nFO2CarsEnabled, 1, 0, 0 },
 		{ "Game", "Soundtrack", &nIngameSoundtrack, 0, 0, 1 },
 		{ "Game", "DerbySoundtrack", &nIngameDerbySoundtrack, 0, 0, 1 },
 		{ "Game", "StuntSoundtrack", &nIngameStuntSoundtrack, 0, 0, 1 },

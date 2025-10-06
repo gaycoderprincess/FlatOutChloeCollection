@@ -73,7 +73,6 @@ void ApplyCarDealerPatches() {
 		car.classId = config["Data"]["Class"].value_or(0);
 		car.cameraId = config["Data"]["Camera"].value_or(0);
 		car.performanceId = config["Data"]["PerformanceOverride"].value_or(car.carId);
-		if (!nFO2CarsEnabled && car.carId >= 200 && car.carId <= 250) continue;
 		if (car.classId <= 0) continue;
 		if (car.cameraId <= 0) {
 			car.cameraId = i+1;
