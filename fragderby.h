@@ -1,11 +1,10 @@
 namespace FragDerby {
 	// db values
-	const int RespawnTime = 5000;
-	const int FragScore_Base = 1500;
-	const int FragScore_ResetCost = 1500;
-	const float FragScore_StreakMultiplier = 2;
-	const int FragScore_SurvivorBonusPerSecond = 50;
-	float WreckedMass = 100;
+	GameRules::KeyValue RespawnTime("RespawnTime");
+	GameRules::KeyValue FragScore_Base("FragScore_Base");
+	GameRules::KeyValue FragScore_ResetCost("FragScore_ResetCost");
+	GameRules::KeyValue FragScore_StreakMultiplier("FragScore_StreakMultiplier");
+	GameRules::KeyValue FragScore_SurvivorBonusPerSecond("FragScore_SurvivorBonusPerSecond");
 
 	double fPlayerGivenTime;
 
@@ -14,6 +13,7 @@ namespace FragDerby {
 	double fPlayerTimeDead[nMaxPlayers] = {};
 	double fPlayerSurvivorTick[nMaxPlayers] = {};
 	double fGameTimeLeft = 0;
+	int nSurvivorId = -1;
 	int nStreakerId = -1;
 
 	int nPlayerHighestKillstreak[nMaxPlayers] = {};
@@ -194,10 +194,10 @@ namespace FragDerby {
 
 		auto ply = GetPlayer(player);
 		if (IsPlayerScoreLocallyControlled(ply)) {
-			if (player == GetSurvivorID()) {
+			if (player == nSurvivorId) {
 				fPlayerSurvivorTick[player] += delta;
 				if (fPlayerSurvivorTick[player] >= 1) {
-					nPlayerScore[player] += FragScore_SurvivorBonusPerSecond;
+					nPlayerScore[player] += (int)FragScore_SurvivorBonusPerSecond;
 					fPlayerSurvivorTick[player] -= 1;
 				}
 			} else {
@@ -274,11 +274,12 @@ namespace FragDerby {
 			return;
 		}
 
-		int survivor = GetSurvivorID();
-		if (survivor > 0 && survivor != lastSurvivor) {
-			AddTopBarNotif(std::format("{}\nhas survived the longest!", GetStringNarrow(GetPlayer(survivor)->sPlayerName.Get())));
+		if (nSurvivorId != GetSurvivorID()) {
+			nSurvivorId = GetSurvivorID();
+			if (nSurvivorId > 0) {
+				AddTopBarNotif(std::format("{}\nhas survived the longest!", GetStringNarrow(GetPlayer(nSurvivorId)->sPlayerName.Get())));
+			}
 		}
-		lastSurvivor = GetSurvivorID();
 
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 			ProcessPlayer(gTimer.fDeltaTime, i);
@@ -396,8 +397,8 @@ namespace FragDerby {
 	void OnPlayerReset(Player* pPlayer) {
 		if (!bIsFragDerby) return;
 		if (!IsPlayerScoreLocallyControlled(pPlayer)) return;
-		if (pPlayer->nPlayerId == 1) {
-			HUD_FragDerby.TriggerPopup("", "Reset: -1500 points");
+		if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
+			HUD_FragDerby.TriggerPopup("", std::format("Reset: -{} points", (int)FragScore_ResetCost));
 		}
 		if (nPlayerScore[pPlayer->nPlayerId-1] < FragScore_ResetCost) nPlayerScore[pPlayer->nPlayerId-1] = 0;
 		else nPlayerScore[pPlayer->nPlayerId-1] -= FragScore_ResetCost;

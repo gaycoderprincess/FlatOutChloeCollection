@@ -84,7 +84,7 @@ namespace Achievements {
 		new CAchievement("CARNAGE_FILL_BOARD", "Overkill", "Get 10 separate bonuses in a single combo", CAT_CARNAGE),
 		new CAchievement("CARNAGE_MILLIONAIRE", "Carnage Millionaire", "Earn 1,000,000 points in Arcade Mode", CAT_CARNAGE),
 		new CAchievement("EJECTED_ALL", "Windshield Tester", "Get ejected 25 times", CAT_GENERAL),
-		new CAchievement("SPEEDRUN_CARNAGE", "Speedrunner", "Gold an Arcade Mode event in less than 1:30", CAT_CARNAGE),
+		new CAchievement("SPEEDRUN_CARNAGE", "Speedrunner", "Gold an Arcade Mode event in less than 1:15", CAT_CARNAGE),
 		new CAchievement("AUTHOR_MEDAL", "Trackmaster", "Achieve an author score", CAT_CAREER | CAT_CARNAGE),
 		//new CAchievement("CHANGE_MUSIC", "Your Own Jukebox", "Change a music playlist", CAT_GENERAL),
 		new CAchievement("CHANGE_MUSIC_TRAX", "Your Own Jukebox", "Customize the OST via Chloe Trax", CAT_GENERAL),
@@ -572,7 +572,7 @@ namespace Achievements {
 	}
 	std::string OnTrack_SpeedrunCarnage(CAchievement* pThis) {
 		if (GetGameState() == GAME_STATE_RACE && bIsArcadeMode) {
-			std::string timestr = GetTimeFromMilliseconds(90000 - pPlayerHost->nRaceTime, true);
+			std::string timestr = GetTimeFromMilliseconds(75000 - pPlayerHost->nRaceTime, true);
 			timestr.pop_back(); // remove trailing 0, the game has a tickrate of 100fps
 			return std::format("Time Left: {}", timestr);
 		}
