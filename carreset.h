@@ -126,10 +126,10 @@ void ProcessCarReset(int player, float delta) {
 
 void ProcessCarReset() {
 	if (pLoadingScreen) return;
-	if (GetGameState() == GAME_STATE_MENU) {
-		aNewResetPoints.clear();
+	if (GetGameState() != GAME_STATE_RACE) {
+		pPlayerResetpoint = nullptr;
+		return;
 	}
-	if (GetGameState() != GAME_STATE_RACE) return;
 
 	if (!aNewResetPoints.empty()) NewResetMap::CheckOutOfTrack();
 
@@ -143,20 +143,15 @@ void ProcessCarReset() {
 		ProcessCarReset(i, gTimer.fDeltaTime);
 	}
 
-	if (!pLoadingScreen && GetGameState() == GAME_STATE_RACE) {
-		auto ply = GetPlayer(0);
-		if (auto reset = GetClosestResetpoint(ply, ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, ResetpointMaxDist)) {
-			pPlayerResetpoint = reset;
-		}
-
-		if (NewResetMap::bResetMapValid && pPlayerResetpoint && ply->nIsOutOfTrack) {
-			ply->fLastValidPosition[0] = pPlayerResetpoint->p.x;
-			ply->fLastValidPosition[1] = pPlayerResetpoint->p.y;
-			ply->fLastValidPosition[2] = pPlayerResetpoint->p.z;
-		}
+	auto ply = GetPlayer(0);
+	if (auto reset = GetClosestResetpoint(ply, ply->pCar->GetMatrix()->p, ply->nCurrentSplit % pEnvironment->nNumSplitpoints, ResetpointMaxDist)) {
+		pPlayerResetpoint = reset;
 	}
-	else {
-		pPlayerResetpoint = nullptr;
+
+	if (NewResetMap::bResetMapValid && pPlayerResetpoint && ply->nIsOutOfTrack) {
+		ply->fLastValidPosition[0] = pPlayerResetpoint->p.x;
+		ply->fLastValidPosition[1] = pPlayerResetpoint->p.y;
+		ply->fLastValidPosition[2] = pPlayerResetpoint->p.z;
 	}
 }
 

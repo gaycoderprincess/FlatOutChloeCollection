@@ -142,9 +142,6 @@ bool IsInQuarteredSplitScreen() {
 
 bool IsPVPCarnageRace() {
 	if (!bIsCarnageRace) return false;
-
-	if (bIsQuickRace) return true;
-	if (bIsInstantAction) return true;
-	if (bIsInMultiplayer) return true;
-	return false;
+	if (bIsArcadeMode) return false;
+	return true;
 }
