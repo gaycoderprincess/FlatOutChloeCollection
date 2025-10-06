@@ -24,23 +24,23 @@ public:
 		data.y = gUnlockTitle.nPosY;
 		data.size = gUnlockTitle.fSize;
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-		Draw1080pString(JUSTIFY_RIGHT, data, "Car:", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, "Car:", &DrawStringFO2_Regular18);
 		data.x = gUnlockSubtitle.nPosX;
 		data.y = gUnlockSubtitle.nPosY;
 		data.size = gUnlockSubtitle.fSize;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_RIGHT, data, GetCarName(pGameFlow->pMenuInterface->pMenuScene->nCar), &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, GetCarName(pGameFlow->pMenuInterface->pMenuScene->nCar), &DrawStringFO2_Regular18);
 
 		data.x = gBottomTitle.nPosX;
 		data.y = gBottomTitle.nPosY;
 		data.size = gBottomTitle.fSize;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-		Draw1080pString(JUSTIFY_CENTER, data, "YOU HAVE UNLOCKED A NEW CAR!", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, "YOU HAVE UNLOCKED A NEW CAR!", &DrawStringFO2_Regular18);
 		//data.x = gBottomAmount.nPosX;
 		//data.y = gBottomAmount.nPosY;
 		//data.size = gBottomAmount.fSize;
 		//data.SetColor(GetPaletteColor(17));
-		//Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", total), &DrawStringFO2_Italic24);
+		//Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", total), &DrawStringFO2_Regular18);
 	}
 } Menu_Career_Unlock;

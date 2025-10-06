@@ -69,9 +69,9 @@ public:
 		data.y = nEventNameY;
 		data.size = fEventSize;
 		data.XCenterAlign = false;
-		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::GetCurrentCup()->sName, &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::GetCurrentCup()->sName, &DrawStringFO2_Regular18);
 		data.y = nEventDescY;
 		data.size = fEventDescSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, std::format("EVENT {}/{}", gCustomSave.nCareerCupNextEvent+1, CareerMode::GetCurrentCup()->aRaces.size()), DrawStringFO2_Condensed12);
+		Draw1080pString(JUSTIFY_RIGHT, data, std::format("EVENT {}/{}", gCustomSave.nCareerCupNextEvent+1, CareerMode::GetCurrentCup()->aRaces.size()), &DrawStringFO2_Condensed12);
 	}
 } Menu_Career;

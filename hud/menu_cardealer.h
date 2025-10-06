@@ -94,7 +94,7 @@ public:
 		data.y = gSkinTitle.nPosY;
 		data.size = gSkinTitle.fSize;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, "SKINS", &DrawStringFO2_Regular18);
 
 		float fPosX = 0.316;
 		float fPosY = 0.372;
@@ -142,7 +142,7 @@ public:
 			data.y = gCarNameText.nPosY;
 			data.size = gCarNameText.fSize;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_LEFT, data, sCarName, &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_LEFT, data, sCarName, &DrawStringFO2_Regular18);
 		}
 	}
 
@@ -181,7 +181,7 @@ public:
 		Draw1080pString(JUSTIFY_LEFT, data, std::format("{}kg", nCarWeight), &DrawStringFO2_Condensed12);
 		data.y = nPriceY + nOffsetPriceY;
 		data.size = fOffsetPriceSize;
-		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", nCarPrice), &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", nCarPrice), &DrawStringFO2_Regular18);
 		data.x = gCarDescription.nPosX;
 		data.y = gCarDescription.nPosY;
 		data.size = gCarDescription.fSize;

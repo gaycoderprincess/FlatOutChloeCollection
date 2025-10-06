@@ -81,7 +81,7 @@ public:
 		data.y = gCupName.nPosY;
 		data.size = gCupName.fSize;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::sLastCupName, &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, CareerMode::sLastCupName, &DrawStringFO2_Regular18);
 		const char* placementStrings[] = {
 				"You finished first!",
 				"You finished second!",

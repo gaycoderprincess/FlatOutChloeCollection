@@ -268,13 +268,13 @@ public:
 		if (gLoadingScreenTip.text.empty()) return;
 
 		tNyaStringData data;
-		//Draw1080pString(JUSTIFY_CENTER, data, gLoadingScreenTip.category, &DrawStringFO2_Italic24);
+		//Draw1080pString(JUSTIFY_CENTER, data, gLoadingScreenTip.category, &DrawStringFO2_Regular18);
 		data.x = gLoadingTipTitle.nPosX;
 		data.y = gLoadingTipTitle.nPosY;
 		data.size = gLoadingTipTitle.fSize;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-		Draw1080pString(JUSTIFY_CENTER, data, gLoadingScreenTip.title, &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, gLoadingScreenTip.title, &DrawStringFO2_Regular18);
 		data.x = gLoadingTipText.nPosX;
 		data.y = gLoadingTipText.nPosY;
 		data.size = gLoadingTipText.fSize;
@@ -339,7 +339,7 @@ public:
 		data.y = nLoadingTextY;
 		data.size = fLoadingTextSize;
 		data.XRightAlign = true;
-		Draw1080pString(JUSTIFY_RIGHT, data, "LOADING", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, "LOADING", &DrawStringFO2_Regular18);
 	}
 
 	static void OnLoadToMenu() {

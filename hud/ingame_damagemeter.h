@@ -60,7 +60,7 @@ public:
 			a = fCrashBonusTimer * fCrashBonusFadeoutSpeed * 255;
 		}
 		data.a = a;
-		DrawStringFO2_Italic24(data, aCrashBonuses[0]);
+		DrawStringFO2_Regular18(data, aCrashBonuses[0]);
 	}
 
 	static constexpr float fHealthTextX = 0.027;
@@ -192,7 +192,7 @@ public:
 			data.SetColor(GetPaletteColor(COLOR_INGAME_YELLOW));
 			data.a = alpha;
 			//DrawStringFO2_Condensed12(data, GetStringNarrow(ply->sPlayerName.Get()));
-			DrawStringFO2_Italic24(data, GetStringNarrow(ply->sPlayerName.Get()));
+			DrawStringFO2_Regular18(data, GetStringNarrow(ply->sPlayerName.Get()));
 
 			float aspect = 402.0 / 42.0;
 

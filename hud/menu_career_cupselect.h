@@ -158,11 +158,11 @@ public:
 		if (nCursorY == 0 || nCursorY == 1) {
 			auto cup = &careerClass->aCups[nCursorX];
 			if (nCursorY == 1) cup = &careerClass->Finals;
-			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Regular18);
 			data.x = nLapsX[cup->aRaces.size()];
 			data.y = nLapsY;
 			data.size = fLapsSize;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Regular18);
 			auto hud = gEvents;
 			data.x = hud.nPosX;
 			data.y = hud.nPosY;
@@ -177,11 +177,11 @@ public:
 		else if (nCursorY == 2) {
 			if (nCursorX >= careerClass->aEvents.size()) return;
 			auto cup = &careerClass->aEvents[nCursorX];
-			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_RIGHT, data, cup->sName, &DrawStringFO2_Regular18);
 			data.x = nLapsX[cup->aRaces.size()];
 			data.y = nLapsY;
 			data.size = fLapsSize;
-			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_RIGHT, data, std::to_string(cup->aRaces.size()), &DrawStringFO2_Regular18);
 			auto hud = gEvents;
 			data.x = hud.nPosX;
 			data.y = hud.nPosY;

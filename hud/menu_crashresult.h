@@ -74,11 +74,11 @@ public:
 		data.size = gTotalTitle.fSize;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
-		Draw1080pString(JUSTIFY_CENTER, data, "CRASH BONUS TOTAL", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, "CRASH BONUS TOTAL", &DrawStringFO2_Regular18);
 		data.x = gTotalAmount.nPosX;
 		data.y = gTotalAmount.nPosY;
 		data.size = gTotalAmount.fSize;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", total), &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, std::format("${}", total), &DrawStringFO2_Regular18);
 	}
 } Menu_CrashResult;

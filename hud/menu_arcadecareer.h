@@ -86,11 +86,11 @@ public:
 		data.y = gLevelName.nPosY;
 		data.size = gLevelName.fSize;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_RIGHT, data, event->sName, &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, event->sName, &DrawStringFO2_Regular18);
 		data.x = gLevelType.nPosX;
 		data.y = gLevelType.nPosY;
 		data.size = gLevelType.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsFragDerby ? "FRAG DERBY" : (event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION"), &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, event->bIsFragDerby ? "FRAG DERBY" : (event->bIsArcadeRace ? "ARCADE RACE" : "DEMOLITION"), &DrawStringFO2_Regular18);
 	}
 
 	void ProcessSelected() const {
@@ -219,17 +219,17 @@ public:
 		data.y = gTargetScoresTitle.nPosY;
 		data.size = gTargetScoresTitle.fSize;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_LEFT, data, "TARGET SCORES", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_LEFT, data, "TARGET SCORES", &DrawStringFO2_Regular18);
 		data.x = gYourScoreTitle.nPosX;
 		data.y = gYourScoreTitle.nPosY;
 		data.size = gYourScoreTitle.fSize;
 		if (unlocked) {
-			Draw1080pString(JUSTIFY_LEFT, data, "YOUR SCORE", &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_LEFT, data, "YOUR SCORE", &DrawStringFO2_Regular18);
 		}
 		else {
 			auto data2 = data;
 			data2.SetColor(GetPaletteColor(COLOR_MENU_RED));
-			Draw1080pString(JUSTIFY_LEFT, data2, "LOCKED", &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_LEFT, data2, "LOCKED", &DrawStringFO2_Regular18);
 		}
 
 		data.x = gYourScore.nPosX;
@@ -238,14 +238,14 @@ public:
 		if (unlocked) {
 			auto data2 = data;
 			data2.SetColor(GetMedalRGB(position));
-			Draw1080pString(JUSTIFY_LEFT, data2, FormatScore(score), &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_LEFT, data2, FormatScore(score), &DrawStringFO2_Regular18);
 		}
 		else {
 			auto data2 = data;
 			data2.y -= 16;
 			data2.size = gYourScoreLocked.fSize;
 			data2.SetColor(GetPaletteColor(COLOR_MENU_RED));
-			Draw1080pString(JUSTIFY_LEFT, data2, std::format("{} POINTS\nTO UNLOCK", FormatScore(event->nPointsToUnlock)), &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_LEFT, data2, std::format("{} POINTS\nTO UNLOCK", FormatScore(event->nPointsToUnlock)), &DrawStringFO2_Regular18);
 		}
 
 		for (int i = 0; i < 4; i++) {
@@ -255,7 +255,7 @@ public:
 			data.size = gTargetScores.fSize;
 			data.XCenterAlign = false;
 			data.XRightAlign = true;
-			Draw1080pString(JUSTIFY_LEFT, data, FormatScore(target), &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_LEFT, data, FormatScore(target), &DrawStringFO2_Regular18);
 		}
 
 		DrawEventTitle();
@@ -264,6 +264,6 @@ public:
 		data.size = gTotalScore.fSize;
 		data.XRightAlign = false;
 		data.XCenterAlign = true;
-		Draw1080pString(JUSTIFY_RIGHT, data, std::format("TOTAL SCORE: {}", FormatScore(totalScore)), &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, std::format("TOTAL SCORE: {}", FormatScore(totalScore)), &DrawStringFO2_Regular18);
 	}
 } Menu_ArcadeCareer;

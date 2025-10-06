@@ -34,7 +34,7 @@ public:
 		data.x = nOffsetX;
 		data.y = nPriceY + nOffsetPriceY;
 		data.size = fOffsetPriceSize;
-		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", price + upgradePrice), &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", price + upgradePrice), &DrawStringFO2_Regular18);
 		data.y = nPowerY + nOffsetY;
 		data.size = fOffsetSize;
 		Draw1080pString(JUSTIFY_LEFT, data, std::format("${}", price), &DrawStringFO2_Condensed12);

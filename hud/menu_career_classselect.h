@@ -113,7 +113,7 @@ public:
 		data.x = gTitle.nPosX;
 		data.y = gTitle.nPosY;
 		data.size = gTitle.fSize;
-		Draw1080pString(JUSTIFY_RIGHT, data, classNames[Menu_CareerCupSelect.nClass], &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_RIGHT, data, classNames[Menu_CareerCupSelect.nClass], &DrawStringFO2_Regular18);
 		data.x = gDescription.nPosX;
 		data.y = gDescription.nPosY;
 		data.size = gDescription.fSize;

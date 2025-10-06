@@ -117,7 +117,7 @@ public:
 		data.y = gMenuTitle.nPosY;
 		data.size = gMenuTitle.fSize;
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
-		Draw1080pString(JUSTIFY_CENTER, data, title, &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, title, &DrawStringFO2_Regular18);
 	}
 
 	int GetNumOptions() {

@@ -65,9 +65,9 @@ public:
 		data.size = gTotalEventScore.fSize;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
-		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL EVENT SCORE", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, "TOTAL EVENT SCORE", &DrawStringFO2_Regular18);
 		data.y = gScoreBreakdown.nPosY;
-		Draw1080pString(JUSTIFY_CENTER, data, bIsFragDerby ? "TOP DRIVERS" : "SCORE BREAKDOWN", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, bIsFragDerby ? "TOP DRIVERS" : "SCORE BREAKDOWN", &DrawStringFO2_Regular18);
 		data.x = gEventScore.nPosX;
 		data.y = gEventScore.nPosY;
 		data.size = gEventScore.fSize;
@@ -86,7 +86,7 @@ public:
 		if (score >= event->nPlatinumScore) {
 			data.SetColor(GetMedalRGB(4));
 		}
-		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(score), &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(score), &DrawStringFO2_Regular18);
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		data.x = gHighScore.nPosX;
 		data.y = gHighScore.nPosY;
@@ -272,7 +272,7 @@ public:
 			data.x = nPositionX;
 			data.y += nPositionY;
 			data.XCenterAlign = true;
-			Draw1080pString(JUSTIFY_CENTER, data, std::format("{}.", (&ply - &aScores[0]) + 1), &DrawStringFO2_Italic24);
+			Draw1080pString(JUSTIFY_CENTER, data, std::format("{}.", (&ply - &aScores[0]) + 1), &DrawStringFO2_Regular18);
 			data.XCenterAlign = false;
 			data.y -= nPositionY;
 
@@ -299,7 +299,7 @@ public:
 		data.y = gGamemodeLabel.nPosY;
 		data.size = gGamemodeLabel.fSize;
 		data.SetColor(GetPaletteColor(COLOR_INGAMEMENU_TITLE));
-		Draw1080pString(JUSTIFY_CENTER, data, GetResultsTitle(), &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, GetResultsTitle(), &DrawStringFO2_Regular18);
 
 		if (bIsArcadeMode && (bIsCarnageRace || bIsFragDerby)) {
 			DrawArcadeResults();
@@ -313,7 +313,7 @@ public:
 		data.size = 0.035;
 		data.XCenterAlign = true;
 		data.SetColor(GetPaletteColor(COLOR_MENU_WHITE));
-		Draw1080pString(JUSTIFY_CENTER, data, "Press START button", &DrawStringFO2_Italic24);
+		Draw1080pString(JUSTIFY_CENTER, data, "Press START button", &DrawStringFO2_Regular18);
 
 		bMenuUp = false;
 	}
