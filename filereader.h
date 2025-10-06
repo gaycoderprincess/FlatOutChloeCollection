@@ -1,9 +1,4 @@
 uint8_t* ReadFileFromBfs(const char* _path, size_t& outSize) {
-	if (!pBfsManager) {
-		MessageBoxA(0, std::format("Tried to load {} before filesystem init.\nThis is fatal. You will die.", _path).c_str(), "Fatal error", MB_ICONERROR);
-		exit(0);
-	}
-
 	std::string path = _path;
 	if (!DoesFileExist(path.c_str()) && path.ends_with(".tga")) {
 		path.pop_back();
