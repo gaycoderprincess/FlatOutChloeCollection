@@ -30,6 +30,7 @@ tGameSetting aNewGameSettings[] = {
 		{ "Control", "SplitScreenPad2", &nSplitScreenController[1], 0, 0, SPLITSCREEN_PAD4 },
 		{ "Control", "SplitScreenPad3", &nSplitScreenController[2], 0, 0, SPLITSCREEN_PAD4 },
 		{ "Control", "SplitScreenPad4", &nSplitScreenController[3], 0, 0, SPLITSCREEN_PAD4 },
+		{ "Visual", "Windowed", &nWindowedMode, 1, 0, 0 },
 		{ "Visual", "AlphaBlend", (void*)0x6C02C4, 1, 0, 0 },
 		{ "Visual", "SunFlare", (void*)0x6C02CC, 1, 0, 0 },
 		{ "Visual", "TextureQuality", (void*)0x6C02D0, 0, 0, 4 },
