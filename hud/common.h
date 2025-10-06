@@ -20,7 +20,6 @@ public:
 
 	struct tLoadedTexture {
 		std::string path;
-		DevTexture* devTexture;
 		IDirect3DTexture9* texture;
 	};
 	static inline std::vector<tLoadedTexture> aLoadedTextures;
@@ -28,8 +27,6 @@ public:
 	static inline std::mutex gLoadedTextureMutex;
 
 	static IDirect3DTexture9* LoadTextureFromBFS(const std::string& path) {
-		if (bNoTextures && path.ends_with(".png")) return nullptr;
-
 		gLoadedTextureMutex.lock();
 		for (auto& tex : aLoadedTextures) {
 			if (tex.path == path) {
@@ -39,9 +36,27 @@ public:
 		}
 		gLoadedTextureMutex.unlock();
 
+		if (path.ends_with(".png")) {
+			if (bNoTextures) return nullptr;
+
+			size_t size;
+			auto file = ReadFileFromBfs(path.c_str(), size);
+			if (!file) return nullptr;
+
+			IDirect3DTexture9* tex = nullptr;
+			auto hr = D3DXCreateTextureFromFileInMemory(pDeviceD3d->pD3DDevice, file, size, &tex);
+			if (hr == S_OK) {
+				gLoadedTextureMutex.lock();
+				aLoadedTextures.push_back({path, tex});
+				gLoadedTextureMutex.unlock();
+				return tex;
+			}
+			return nullptr;
+		}
+
 		if (auto tex = pDeviceD3d->_vf_CreateTextureFromFile(nullptr, path.c_str(), 9)) {
 			gLoadedTextureMutex.lock();
-			aLoadedTextures.push_back({path, tex, tex->pD3DTexture});
+			aLoadedTextures.push_back({path, tex->pD3DTexture});
 			gLoadedTextureMutex.unlock();
 			return tex->pD3DTexture;
 		}
@@ -58,7 +73,7 @@ public:
 		auto hr = D3DXCreateTextureFromFileInMemory(pDeviceD3d->pD3DDevice, data, dataSize, &tex);
 		if (hr == S_OK) {
 			gLoadedTextureMutex.lock();
-			aLoadedTextures.push_back({path, nullptr, tex});
+			aLoadedTextures.push_back({path, tex});
 			gLoadedTextureMutex.unlock();
 			return tex;
 		}
