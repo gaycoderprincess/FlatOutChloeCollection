@@ -1,6 +1,7 @@
 class CHUD_Minimap : public CIngameHUDElement {
 public:
 	static inline IDirect3DTexture9* pMapTexture = nullptr;
+	static inline IDirect3DTexture9* pMapTextureAltLayouts[3] = {};
 	static inline IDirect3DTexture9* pMapTextureFO2 = nullptr;
 	static constexpr float fArrowSize = 0.011;
 	static constexpr float fResetSize = 0.015;
@@ -179,16 +180,30 @@ public:
 
 	static inline float fMapOffset = -50;
 	static void LoadMinimaps() {
-		if (pGameFlow->nEventType == eEventType::STUNT) {
-			pMapTexture = nullptr;
-			pMapTextureFO2 = nullptr;
-			return;
-		}
+		pMapTexture = nullptr;
+		pMapTextureFO2 = nullptr;
+		memset(pMapTextureAltLayouts,0,sizeof(pMapTextureAltLayouts));
+		if (pGameFlow->nEventType == eEventType::STUNT) return;
 		
 		auto config = ReadTOMLFromBfsLUAHack(std::format("{}data/map.bed", pEnvironment->sStagePath.Get()));
 		std::string mapPath = config["MapTexture"].value_or("");
 		if (mapPath.find('\\') == std::string::npos && mapPath.find('/') == std::string::npos) {
 			mapPath = std::format("{}textures/{}", pEnvironment->sGFXSetPath.Get(), mapPath);
+		}
+		if (bIsSmashyRace) {
+			auto path = mapPath;
+			for (int i = 0; i < 5; i++) {
+				path.pop_back();
+			}
+			std::string paths[3] = {
+					std::format("{}a.dds", path),
+					std::format("{}b.dds", path),
+					std::format("{}c.dds", path),
+			};
+			for (int i = 0; i < 3; i++) {
+				if (!DoesFileExist(paths[i].c_str())) continue;
+				pMapTextureAltLayouts[i] = LoadTextureFromBFS(paths[i].c_str());
+			}
 		}
 		pMapTexture = LoadTextureFromBFS(mapPath.c_str());
 		pMapTextureFO2 = nullptr;
@@ -289,9 +304,19 @@ public:
 				DrawRectangle(plyPos.x - (sizeX * 0.5 * GetAspectRatioInv()), plyPos.x + (sizeX * 0.5 * GetAspectRatioInv()), plyPos.y - sizeY * 0.5, plyPos.y + sizeY * 0.5, {255,255,255,255}, 0, texture, -fLocalPlayerHeading);
 			}
 			else {
-				float left, right, top, bottom;
-				GetMapExtents(&left, &right, &top, &bottom);
-				DrawRectangle(left, right, top, bottom, {255,255,255,255}, 0, pMapTexture);
+				// display the whole map for smashy race
+				if (bIsSmashyRace && !NewResetMap::bResetMapValid && pMapTextureAltLayouts[0] && pMapTextureAltLayouts[1] && pMapTextureAltLayouts[2]) {
+					for (int i = 0; i < 3; i++) {
+						float left, right, top, bottom;
+						GetMapExtents(&left, &right, &top, &bottom);
+						DrawRectangle(left, right, top, bottom, {255,255,255,255}, 0, pMapTextureAltLayouts[i]);
+					}
+				}
+				else {
+					float left, right, top, bottom;
+					GetMapExtents(&left, &right, &top, &bottom);
+					DrawRectangle(left, right, top, bottom, {255,255,255,255}, 0, pMapTexture);
+				}
 			}
 		}
 
