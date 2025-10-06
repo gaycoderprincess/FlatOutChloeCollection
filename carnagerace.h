@@ -48,11 +48,25 @@ namespace CarnageRace {
 		}
 	}
 
-	void AddScore(int type, std::string name, double points) {
-		if (IsPlayerWrecked(GetPlayer(0))) return;
+	bool IsPlayerScoreLocallyControlled(Player* pPlayer) {
+		if (!bIsInMultiplayer) return true;
+		if (!ChloeNet::IsReplicatedPlayer(pPlayer)) return true;
+		return false;
+	}
 
-		auto ply = GetPlayerScore(1);
+	void AddScore(int type, std::string name, double points, int playerId) {
+		auto plyPtr = GetPlayer(playerId-1);
+		if (!IsPlayerScoreLocallyControlled(plyPtr)) return;
+		if (IsPlayerWrecked(plyPtr)) return;
+
+		auto ply = GetPlayerScore(playerId);
 		if (ply->bHasFinished || ply->bIsDNF) return;
+
+		if (playerId > 1) {
+			nPlayerScore[playerId-1] += points * RacePositionMultiplier[GetPlayerScore(playerId)->nPosition-1];
+			return;
+		}
+
 		if (ply->nPosition < nPlayerPosition || aScoreHUD.empty()) {
 			nPlayerPosition = ply->nPosition;
 		}
@@ -103,8 +117,7 @@ namespace CarnageRace {
 
 	void OnCrashBonus(Player* pPlayer, int type) {
 		if (!bIsCarnageRace) return;
-		if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) return;
-		AddScore(SCORE_CRASH, GetCrashBonusName(type), GetCrashBonusPrice(type));
+		AddScore(SCORE_CRASH, GetCrashBonusName(type), GetCrashBonusPrice(type), pPlayer->nPlayerId);
 	}
 
 	void SetIsCarnageRace(bool apply) {
@@ -136,45 +149,45 @@ namespace CarnageRace {
 		aScoreHUD.clear();
 	}
 
-	void ProcessSceneryCrashes() {
-		static int last = 0;
+	void ProcessSceneryCrashes(int playerId) {
+		static int last[nMaxPlayers] = {};
 		if (pPlayerHost->nRaceTime < 0) {
-			last = 0;
+			memset(last,0,sizeof(last));
 			return;
 		}
 
 		int current = 0;
-		auto ply = GetPlayer(0);
+		auto ply = GetPlayer(playerId);
 		for (int i = 0; i < 10; i++) {
 			current += ply->pCar->aObjectsSmashed[i] * SceneryCrashScore;
 		}
-		if (current > last) {
-			AddScore(SCORE_SCENERY, "SCENERY CRASHES", current - last);
+		if (current > last[playerId]) {
+			AddScore(SCORE_SCENERY, "SCENERY CRASHES", current - last[playerId], ply->nPlayerId);
 		}
 
-		last = current;
+		last[playerId] = current;
 	}
 
-	void ProcessAirtime() {
-		static int last = 0;
+	void ProcessAirtime(int playerId) {
+		static int last[nMaxPlayers] = {};
 		if (pPlayerHost->nRaceTime < 0) {
-			last = 0;
+			memset(last,0,sizeof(last));
 			return;
 		}
 
 		int current = 0;
-		auto ply = GetPlayer(0);
+		auto ply = GetPlayer(playerId);
 		if (ply->pCar->fTimeInAir >= 0.5) {
 			current = ((ply->pCar->fTimeInAir - 0.5) * 10) * AirtimeScore;
 		}
 		else {
 			current = 0;
 		}
-		if (current > last) {
-			AddScore(SCORE_AIRTIME, "AIRTIME", (current - last) * 10);
+		if (current > last[playerId]) {
+			AddScore(SCORE_AIRTIME, "AIRTIME", (current - last[playerId]) * 10, ply->nPlayerId);
 		}
 
-		last = current;
+		last[playerId] = current;
 	}
 
 	NyaVec3 GetCheckpointPosition() {
@@ -185,27 +198,21 @@ namespace CarnageRace {
 		return {splitData.fPosition[0], splitData.fPosition[1], splitData.fPosition[2]};
 	}
 
-	void ProcessCheckpoints() {
+	void ProcessCheckpoints(int playerId) {
 		HUD_Minimap.gArcadeCheckpoint = GetCheckpointPosition();
 
-		static int last = 0;
+		static int last[nMaxPlayers] = {};
 		if (pPlayerHost->nRaceTime < 0) {
-			last = 0;
+			memset(last,0,sizeof(last));
 			return;
 		}
 
-		auto current = GetPlayer(0)->nCurrentSplit / nCheckpointInterval;
-		if (current > last) {
-			AddScore(SCORE_CHECKPOINT, "CHECKPOINT!", CheckpointScore);
+		auto current = GetPlayer(playerId)->nCurrentSplit / nCheckpointInterval;
+		if (current > last[playerId]) {
+			AddScore(SCORE_CHECKPOINT, "CHECKPOINT!", CheckpointScore, playerId+1);
 			OnCheckpointPassed();
 		}
-		last = current;
-	}
-
-	bool IsPlayerScoreLocallyControlled(Player* pPlayer) {
-		if (!bIsInMultiplayer) return true;
-		if (!ChloeNet::IsReplicatedPlayer(pPlayer)) return true;
-		return false;
+		last[playerId] = current;
 	}
 
 	void OnTick() {
@@ -237,11 +244,13 @@ namespace CarnageRace {
 			gCustomSave.trackArcadeScores[pGameFlow->nLevel] = nPlayerScore[0];
 		}
 
-		auto ply = GetPlayerScore(1);
-		if (!ply->bHasFinished && !ply->bIsDNF) {
-			ProcessSceneryCrashes();
-			ProcessAirtime();
-			ProcessCheckpoints();
+		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
+			auto ply = GetPlayerScore(i+1);
+			if (!ply->bHasFinished && !ply->bIsDNF) {
+				ProcessSceneryCrashes(i);
+				ProcessAirtime(i);
+				ProcessCheckpoints(i);
+			}
 		}
 
 		if (pPlayerHost->nRaceTime < 0) {
@@ -264,6 +273,7 @@ namespace CarnageRace {
 
 		ArcadeMode::ProcessTimerTick(fPlayerTimeLeft*1000);
 
+		auto ply = GetPlayerScore(1);
 		if (fPlayerTimeLeft <= 0 && !ply->bHasFinished && !ply->bIsDNF) {
 			ply->bHasFinished = true;
 			ply->nFinishTime = pPlayerHost->nRaceTime;

@@ -126,6 +126,9 @@ void ProcessCarReset(int player, float delta) {
 
 void ProcessCarReset() {
 	if (pLoadingScreen) return;
+	if (GetGameState() == GAME_STATE_MENU) {
+		aNewResetPoints.clear();
+	}
 	if (GetGameState() != GAME_STATE_RACE) return;
 
 	if (!aNewResetPoints.empty()) NewResetMap::CheckOutOfTrack();
@@ -138,10 +141,6 @@ void ProcessCarReset() {
 		if (!ply) continue;
 		if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
 		ProcessCarReset(i, gTimer.fDeltaTime);
-	}
-
-	if (GetGameState() == GAME_STATE_MENU) {
-		aNewResetPoints.clear();
 	}
 
 	if (!pLoadingScreen && GetGameState() == GAME_STATE_RACE) {

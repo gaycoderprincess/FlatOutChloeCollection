@@ -42,7 +42,7 @@ public:
 		if (fPlayerListState < 0.333) fPlayerListState = 0.333;
 		if (fPlayerListState > 1) fPlayerListState = 1;
 
-		bool displayScores = bIsFragDerby || (bIsInMultiplayer && bIsCarnageRace);
+		bool displayScores = bIsFragDerby || IsPVPCarnageRace();
 
 		tNyaStringData data;
 		data.x = std::lerp(-0.5, (displayScores ? fPosXFragDerby : fPosX) * fPlayerListState * GetAspectRatioInv(), easeInOutQuart(fPlayerListState));

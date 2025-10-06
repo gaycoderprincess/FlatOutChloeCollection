@@ -110,7 +110,7 @@ std::vector<PlayerScore*> GetSortedPlayerScores() {
 	for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
 		aScores.push_back(GetScoreManager()->aScores[i]);
 	}
-	if (bIsCarnageRace && bIsInMultiplayer) {
+	if (IsPVPCarnageRace()) {
 		std::sort(aScores.begin(), aScores.end(), [](PlayerScore *a, PlayerScore *b) {
 			return CarnageRace::nPlayerScore[a->nPlayerId] > CarnageRace::nPlayerScore[b->nPlayerId];
 		});
