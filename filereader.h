@@ -1,5 +1,12 @@
 uint8_t* ReadFileFromBfs(const char* _path, size_t& outSize) {
 	std::string path = _path;
+	// prefer tga files if they exist
+	if (path.ends_with(".dds")) {
+		path.pop_back();
+		path.pop_back();
+		path.pop_back();
+		path += "tga";
+	}
 	if (!DoesFileExist(path.c_str()) && path.ends_with(".tga")) {
 		path.pop_back();
 		path.pop_back();

@@ -80,6 +80,7 @@ public:
 			gLoadedTextureMutex.unlock();
 			return tex;
 		}
+		MessageBoxA(0, std::format("Failed to load {} (error code 0x{:X})", path, hr).c_str(), "Fatal error", MB_ICONERROR);
 		return nullptr;
 	}
 

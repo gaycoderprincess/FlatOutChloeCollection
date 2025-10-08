@@ -56,6 +56,10 @@ uint8_t* ReadTextureDataFromFile(const char* _path, size_t* outSize) {
 		path.pop_back();
 		path += "dds";
 	}
+	if (!DoesFileExist(path.c_str())) {
+		MessageBoxA(0, std::format("Failed to find file {}", _path).c_str(), "Fatal error", MB_ICONERROR);
+		return nullptr;
+	}
 
 	File file;
 	file.Load(path.c_str(), 9);
