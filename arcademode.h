@@ -71,13 +71,13 @@ namespace ArcadeMode {
 		int aGoalScores[3];
 		int nPlatinumScore;
 		int nCommunityScore;
+		std::string sCommunityScoreName;
 	};
 	std::vector<tLUARace> aArcadeRaces;
 
 	tLUARace* pCurrentEvent = nullptr;
 	int nCurrentEventId = 0;
 	uint32_t nCurrentEventScore = 0;
-	uint32_t nCurrentEventHighScore = 0;
 
 	tLUARace* luaDefs_currentRace = nullptr;
 

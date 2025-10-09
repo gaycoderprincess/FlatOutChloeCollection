@@ -51,7 +51,7 @@ public:
 				Achievements::AwardAchievement(GetAchievement("AUTHOR_MEDAL"));
 			}
 			if (lastScore < event->nCommunityScore && score >= event->nCommunityScore) {
-				TriggerEarnPopup("SUPER AUTHOR SCORE BEATEN", 5);
+				TriggerEarnPopup("COMMUNITY SCORE BEATEN", 5);
 				//Achievements::AwardAchievement(GetAchievement("SAUTHOR_MEDAL"));
 			}
 		}
@@ -78,6 +78,7 @@ public:
 		if (score >= targetScore && event->nCommunityScore > 0) { // super author
 			targetScore = event->nCommunityScore;
 			rgb = GetMedalRGB(5);
+			if (!event->sCommunityScoreName.empty()) scoreTitle = event->sCommunityScoreName;
 		}
 		if (score >= targetScore && gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId] > targetScore) { // PB
 			targetScore = gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId];
