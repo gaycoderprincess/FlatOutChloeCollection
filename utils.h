@@ -264,6 +264,8 @@ NyaDrawing::CNyaRGBA32 GetMedalRGB(int medal) {
 		return {175, 100, 0, 255};
 	case 4:
 		return {30,160,9, 255};
+	case 5:
+		return {219,100,193,255};
 	default:
 		return {255,255,255,255};
 	}

@@ -50,6 +50,10 @@ public:
 				TriggerEarnPopup("AUTHOR SCORE BEATEN", 4);
 				Achievements::AwardAchievement(GetAchievement("AUTHOR_MEDAL"));
 			}
+			if (lastScore < event->nCommunityScore && score >= event->nCommunityScore) {
+				TriggerEarnPopup("SUPER AUTHOR SCORE BEATEN", 5);
+				//Achievements::AwardAchievement(GetAchievement("SAUTHOR_MEDAL"));
+			}
 		}
 		else {
 			fEarnPopupTime = 0;
@@ -71,7 +75,11 @@ public:
 			targetScore = event->nPlatinumScore;
 			rgb = GetMedalRGB(4);
 		}
-		if (score >= targetScore && gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId] > event->nPlatinumScore) { // PB
+		if (score >= targetScore && event->nCommunityScore > 0) { // super author
+			targetScore = event->nCommunityScore;
+			rgb = GetMedalRGB(5);
+		}
+		if (score >= targetScore && gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId] > targetScore) { // PB
 			targetScore = gCustomSave.aArcadeCareerScores[ArcadeMode::nCurrentEventId];
 			rgb = {255,255,255,255};
 			scoreTitle = "PERSONAL BEST";

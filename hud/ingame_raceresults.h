@@ -86,6 +86,9 @@ public:
 		if (score >= event->nPlatinumScore) {
 			data.SetColor(GetMedalRGB(4));
 		}
+		if (score >= event->nCommunityScore) {
+			data.SetColor(GetMedalRGB(5));
+		}
 		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(score), &DrawStringFO2_Regular18);
 		data.SetColor(GetPaletteColor(COLOR_MENU_YELLOW));
 		data.x = gHighScore.nPosX;

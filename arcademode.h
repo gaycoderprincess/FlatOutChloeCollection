@@ -70,6 +70,7 @@ namespace ArcadeMode {
 		int nAIHandicapLevel;
 		int aGoalScores[3];
 		int nPlatinumScore;
+		int nCommunityScore;
 	};
 	std::vector<tLUARace> aArcadeRaces;
 

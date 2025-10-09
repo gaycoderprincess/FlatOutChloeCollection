@@ -1144,6 +1144,7 @@ int ChloeArcadeDefs_SetEventGoalScores(void* a1) {
 	ArcadeMode::luaDefs_currentRace->aGoalScores[1] = luaL_checknumber(a1, 2);
 	ArcadeMode::luaDefs_currentRace->aGoalScores[2] = luaL_checknumber(a1, 3);
 	ArcadeMode::luaDefs_currentRace->nPlatinumScore = luaL_checknumber(a1, 4);
+	ArcadeMode::luaDefs_currentRace->nCommunityScore = luaL_checknumber(a1, 5);
 	return 0;
 }
 
