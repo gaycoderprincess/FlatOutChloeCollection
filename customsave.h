@@ -1,3 +1,4 @@
+#define OffsetOf(object, property) ((uintptr_t)&object.property - (uintptr_t)&object)
 
 enum ePlaytimeType {
 	PLAYTIME_TOTAL,
@@ -61,6 +62,9 @@ const char* aPlaytimeTypeNames[] = {
 	"Demolition",
 	"Drift",
 };
+
+std::string sCurrentSavePath;
+int nCurrentSaveSlot;
 
 struct tCustomSaveStructure {
 	struct {
@@ -278,31 +282,30 @@ struct tCustomSaveStructure {
 		}
 	}
 
-	std::string currentSavePath;
-	int currentSaveSlot;
-
 	void GetSaveSlotAndPath()
 	{
-		currentSaveSlot = pGameFlow->nSaveSlot;
-		if (currentSaveSlot < 0) {
-			currentSaveSlot = pGameFlow->Profile.nAutosaveSlot;
+		nCurrentSaveSlot = pGameFlow->nSaveSlot;
+		if (nCurrentSaveSlot < 0) {
+			nCurrentSaveSlot = pGameFlow->Profile.nAutosaveSlot;
 		}
 
-		if (currentSaveSlot < 0) {
+		if (nCurrentSaveSlot < 0) {
 			MessageBoxA(0, "Trying to save to slot 0, this is a bug", "nya?!~", MB_ICONWARNING);
 		}
 
-		currentSavePath = GetCustomSavePath(currentSaveSlot+1);
+		sCurrentSavePath = GetCustomSavePath(++nCurrentSaveSlot);
 	}
 
-	void QuickSave()
+	// To save as quickly as possible, it only changes the one section that has actually been updated
+	void QuickSave(void* data, size_t size, size_t offset) const
 	{
-		auto file = std::ofstream(currentSavePath, std::ios::out | std::ios::binary);
+		std::fstream file(sCurrentSavePath, std::ios::out | std::ios::in | std::ios::binary);
 		if (!file.is_open()) return;
 
-		ChloeEvents::SaveCreatedEvent.OnHit(currentSaveSlot+1);
+		file.seekp(offset);
+		file.write((char*)data, size);
 
-		file.write((char*)this, sizeof(*this));
+		file.close();
 	}
 
 	void Save() {
@@ -312,12 +315,14 @@ struct tCustomSaveStructure {
 		ReadPlayerSettings();
 		CreateArcadeVerify();
 
-		auto file = std::ofstream(currentSavePath, std::ios::out | std::ios::binary);
+		auto file = std::ofstream(sCurrentSavePath, std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
 
-		ChloeEvents::SaveCreatedEvent.OnHit(currentSaveSlot+1);
+		ChloeEvents::SaveCreatedEvent.OnHit(nCurrentSaveSlot);
 
 		file.write((char*)this, sizeof(*this));
+
+		file.close();
 	}
 	void Delete(int slot) {
 		auto save = GetCustomSavePath(slot+1);
@@ -327,6 +332,8 @@ struct tCustomSaveStructure {
 		ChloeEvents::SaveDeletedEvent.OnHit(slot+1);
 	}
 } gCustomSave;
+
+constexpr uintptr_t bestLapSize = sizeof(uint32_t) * nMaxTracks;
 
 void ProcessPlayStats() {
 	static CNyaTimer gTimer;
@@ -351,7 +358,7 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			gCustomSave.QuickSave();
+			gCustomSave.QuickSave(&gCustomSave.tracksWon[track], sizeof(bool), OffsetOf(gCustomSave, tracksWon[track]));
 		}
 	}
 
@@ -359,14 +366,15 @@ void ProcessPlayStats() {
 		bool changed = false;
 		int track = pGameFlow->nLevel;
 
+		auto bestLaps = bIsTrackReversed ? gCustomSave.bestLapsReversed : gCustomSave.bestLaps;
+		auto offset = (uintptr_t)bestLaps - (uintptr_t)&gCustomSave;
+		auto bestLapCars = bIsTrackReversed ? gCustomSave.bestLapCarsReversed : gCustomSave.bestLapCars;
+
 		if (pGameFlow->nEventType == eEventType::RACE)
 		{
 			for (int j = 0; j < pPlayerHost->GetNumPlayers(); j++) {
 				auto ply = GetPlayer(j);
 				if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
-
-				auto bestLaps = bIsTrackReversed ? gCustomSave.bestLapsReversed : gCustomSave.bestLaps;
-				auto bestLapCars = bIsTrackReversed ? gCustomSave.bestLapCarsReversed : gCustomSave.bestLapCars;
 
 				for (int i = 0; i < ply->nCurrentLap; i++) {
 					auto lap = GetPlayerLapTime(ply, i);
@@ -382,8 +390,18 @@ void ProcessPlayStats() {
 			}
 		}
 
+
 		if (changed) {
-			gCustomSave.QuickSave();
+			// Since 2 spots need to be updated, and I don't want to open the file twice, I'm doing this manually
+			std::fstream file(sCurrentSavePath, std::ios::out | std::ios::in | std::ios::binary);
+			if (!file.is_open()) return;
+
+			file.seekp(offset);
+			file.write((char*)&bestLaps[track], sizeof(uint32_t));
+			// Since the bestLaps and bestLapCars are next to each other, this works
+			file.seekp(offset + bestLapSize);
+			file.write((char*)&bestLapCars[track], sizeof(uint32_t));
+			file.close();
 		}
 	}
 

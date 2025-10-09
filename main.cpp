@@ -189,7 +189,7 @@ void __stdcall OnMapLoad(void* a1, void* a2, void* a3) {
 	ChloeEvents::RacePreLoadEvent.OnHit();
 	OnMapLoad_call(a1, a2, a3);
 	ChloeEvents::MapLoadEvent.OnHit();
-	gCustomSave.GetSaveSlotAndPath();
+	gCustomSave.Save();
 }
 
 auto OnMapPreLoad_call = (void(__stdcall*)(int, int, int, int, int, int, int, float, char))0x4B9250;
