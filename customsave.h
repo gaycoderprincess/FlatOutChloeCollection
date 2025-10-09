@@ -344,7 +344,7 @@ const std::string savingThreadFilename = "customsaveTEMP.tmp";
 
 void SavingThreadFunc()
 {
-	if (!gCustomSave.bInitialized) return;
+	if (!tCustomSaveStructure::bInitialized) return;
 
 	gCustomSave.GetSaveSlotAndPath();
 	gCustomSave.SaveForReal(savingThreadFilename);
@@ -407,7 +407,6 @@ void ProcessPlayStats() {
 		int track = pGameFlow->nLevel;
 
 		auto bestLaps = bIsTrackReversed ? gCustomSave.bestLapsReversed : gCustomSave.bestLaps;
-		auto offset = (uintptr_t)bestLaps - (uintptr_t)&gCustomSave;
 		auto bestLapCars = bIsTrackReversed ? gCustomSave.bestLapCarsReversed : gCustomSave.bestLapCars;
 
 		if (pGameFlow->nEventType == eEventType::RACE)
