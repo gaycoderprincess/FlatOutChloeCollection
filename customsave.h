@@ -1,3 +1,4 @@
+#define OffsetOf(object, property) ((uintptr_t)&object.property - (uintptr_t)&object)
 
 enum ePlaytimeType {
 	PLAYTIME_TOTAL,
@@ -61,6 +62,9 @@ const char* aPlaytimeTypeNames[] = {
 	"Demolition",
 	"Drift",
 };
+
+std::string sCurrentSavePath;
+int nCurrentSaveSlot;
 
 struct tCustomSaveStructure {
 	struct {
@@ -277,28 +281,55 @@ struct tCustomSaveStructure {
 			ChloeEvents::SaveLoadedEvent.OnHit(saveSlot+1);
 		}
 	}
-	void Save() {
-		if (!bInitialized) return;
 
-		int saveSlot = pGameFlow->nSaveSlot;
-		if (saveSlot < 0) {
-			saveSlot = pGameFlow->Profile.nAutosaveSlot;
+	void GetSaveSlotAndPath()
+	{
+		nCurrentSaveSlot = pGameFlow->nSaveSlot;
+		if (nCurrentSaveSlot < 0) {
+			nCurrentSaveSlot = pGameFlow->Profile.nAutosaveSlot;
 		}
 
-		if (saveSlot < 0) {
+		if (nCurrentSaveSlot < 0) {
 			MessageBoxA(0, "Trying to save to slot 0, this is a bug", "nya?!~", MB_ICONWARNING);
 		}
 
+		sCurrentSavePath = GetCustomSavePath(++nCurrentSaveSlot);
+	}
+
+	// To save as quickly as possible, it only changes the one section that has actually been updated
+	void QuickSave(void* data, size_t size, size_t offset) const
+	{
+		std::fstream file(sCurrentSavePath, std::ios::out | std::ios::in | std::ios::binary);
+		if (!file.is_open()) return;
+
+		file.seekp(offset);
+		file.write((char*)data, size);
+
+		file.close();
+	}
+
+	void Save() {
+		if (!bInitialized) return;
+
+		GetSaveSlotAndPath();
+		SaveForReal(sCurrentSavePath);
+	}
+
+	void SaveForReal(std::string filename)
+	{
 		ReadPlayerSettings();
 		CreateArcadeVerify();
 
-		auto file = std::ofstream(GetCustomSavePath(saveSlot+1), std::ios::out | std::ios::binary);
+		auto file = std::ofstream(filename, std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
 
-		ChloeEvents::SaveCreatedEvent.OnHit(saveSlot+1);
+		ChloeEvents::SaveCreatedEvent.OnHit(nCurrentSaveSlot);
 
 		file.write((char*)this, sizeof(*this));
+
+		file.close();
 	}
+
 	void Delete(int slot) {
 		auto save = GetCustomSavePath(slot+1);
 		if (std::filesystem::exists(save)) {
@@ -307,6 +338,42 @@ struct tCustomSaveStructure {
 		ChloeEvents::SaveDeletedEvent.OnHit(slot+1);
 	}
 } gCustomSave;
+
+std::thread* savingThread = NULL;
+const std::string savingThreadFilename = "customsaveTEMP.tmp";
+
+void SavingThreadFunc()
+{
+	if (!gCustomSave.bInitialized) return;
+
+	gCustomSave.GetSaveSlotAndPath();
+	gCustomSave.SaveForReal(savingThreadFilename);
+
+	// To make save corruption impossible in the event of a crash, it creates a temporary file and then replaces the current one
+	// If you get super unlucky it could crash after deleting the old save but before renaming, but at least the temp file would still be there
+	std::remove(sCurrentSavePath.c_str());
+	std::rename(savingThreadFilename.c_str(), sCurrentSavePath.c_str());
+}
+
+void EndSaveThread()
+{
+	if (savingThread)
+	{
+		savingThread->join();
+		delete savingThread;
+		savingThread = NULL;
+	}
+}
+
+
+void StartSaveThread()
+{
+	EndSaveThread();
+	savingThread = new std::thread(SavingThreadFunc);
+}
+
+
+constexpr uintptr_t bestLapSize = sizeof(uint32_t) * nMaxTracks;
 
 void ProcessPlayStats() {
 	static CNyaTimer gTimer;
@@ -331,7 +398,7 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			gCustomSave.Save();
+			StartSaveThread();
 		}
 	}
 
@@ -339,13 +406,15 @@ void ProcessPlayStats() {
 		bool changed = false;
 		int track = pGameFlow->nLevel;
 
-		if (pGameFlow->nEventType == eEventType::RACE) {
+		auto bestLaps = bIsTrackReversed ? gCustomSave.bestLapsReversed : gCustomSave.bestLaps;
+		auto offset = (uintptr_t)bestLaps - (uintptr_t)&gCustomSave;
+		auto bestLapCars = bIsTrackReversed ? gCustomSave.bestLapCarsReversed : gCustomSave.bestLapCars;
+
+		if (pGameFlow->nEventType == eEventType::RACE)
+		{
 			for (int j = 0; j < pPlayerHost->GetNumPlayers(); j++) {
 				auto ply = GetPlayer(j);
 				if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
-
-				auto bestLaps = bIsTrackReversed ? gCustomSave.bestLapsReversed : gCustomSave.bestLaps;
-				auto bestLapCars = bIsTrackReversed ? gCustomSave.bestLapCarsReversed : gCustomSave.bestLapCars;
 
 				for (int i = 0; i < ply->nCurrentLap; i++) {
 					auto lap = GetPlayerLapTime(ply, i);
@@ -361,8 +430,9 @@ void ProcessPlayStats() {
 			}
 		}
 
+
 		if (changed) {
-			gCustomSave.Save();
+			StartSaveThread();
 		}
 	}
 
@@ -440,6 +510,7 @@ void ProcessPlayStats() {
 
 	static auto lastGameState = GetGameState();
 	if ((lastGameState == GAME_STATE_RACE || lastGameState == GAME_STATE_REPLAY) && GetGameState() == GAME_STATE_MENU) {
+		EndSaveThread();
 		gCustomSave.Save();
 	}
 	lastGameState = GetGameState();
