@@ -312,10 +312,15 @@ struct tCustomSaveStructure {
 		if (!bInitialized) return;
 
 		GetSaveSlotAndPath();
+		SaveForReal(sCurrentSavePath);
+	}
+
+	void SaveForReal(std::string filename)
+	{
 		ReadPlayerSettings();
 		CreateArcadeVerify();
 
-		auto file = std::ofstream(sCurrentSavePath, std::ios::out | std::ios::binary);
+		auto file = std::ofstream(filename, std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
 
 		ChloeEvents::SaveCreatedEvent.OnHit(nCurrentSaveSlot);
@@ -324,6 +329,7 @@ struct tCustomSaveStructure {
 
 		file.close();
 	}
+
 	void Delete(int slot) {
 		auto save = GetCustomSavePath(slot+1);
 		if (std::filesystem::exists(save)) {
@@ -332,6 +338,40 @@ struct tCustomSaveStructure {
 		ChloeEvents::SaveDeletedEvent.OnHit(slot+1);
 	}
 } gCustomSave;
+
+std::thread* savingThread = NULL;
+const std::string savingThreadFilename = "customsaveTEMP.tmp";
+
+void SavingThreadFunc()
+{
+	if (!gCustomSave.bInitialized) return;
+
+	gCustomSave.GetSaveSlotAndPath();
+	gCustomSave.SaveForReal(savingThreadFilename);
+
+	// To make save corruption impossible in the event of a crash, it creates a temporary file and then replaces the current one
+	// If you get super unlucky it could crash after deleting the old save but before renaming, but at least the temp file would still be there
+	std::remove(sCurrentSavePath.c_str());
+	std::rename(savingThreadFilename.c_str(), sCurrentSavePath.c_str());
+}
+
+void EndSaveThread()
+{
+	if (savingThread)
+	{
+		savingThread->join();
+		delete savingThread;
+		savingThread = NULL;
+	}
+}
+
+
+void StartSaveThread()
+{
+	EndSaveThread();
+	savingThread = new std::thread(SavingThreadFunc);
+}
+
 
 constexpr uintptr_t bestLapSize = sizeof(uint32_t) * nMaxTracks;
 
@@ -358,7 +398,7 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			gCustomSave.QuickSave(&gCustomSave.tracksWon[track], sizeof(bool), OffsetOf(gCustomSave, tracksWon[track]));
+			StartSaveThread();
 		}
 	}
 
@@ -392,16 +432,7 @@ void ProcessPlayStats() {
 
 
 		if (changed) {
-			// Since 2 spots need to be updated, and I don't want to open the file twice, I'm doing this manually
-			std::fstream file(sCurrentSavePath, std::ios::out | std::ios::in | std::ios::binary);
-			if (!file.is_open()) return;
-
-			file.seekp(offset);
-			file.write((char*)&bestLaps[track], sizeof(uint32_t));
-			// Since the bestLaps and bestLapCars are next to each other, this works
-			file.seekp(offset + bestLapSize);
-			file.write((char*)&bestLapCars[track], sizeof(uint32_t));
-			file.close();
+			StartSaveThread();
 		}
 	}
 
@@ -479,6 +510,7 @@ void ProcessPlayStats() {
 
 	static auto lastGameState = GetGameState();
 	if ((lastGameState == GAME_STATE_RACE || lastGameState == GAME_STATE_REPLAY) && GetGameState() == GAME_STATE_MENU) {
+		EndSaveThread();
 		gCustomSave.Save();
 	}
 	lastGameState = GetGameState();
