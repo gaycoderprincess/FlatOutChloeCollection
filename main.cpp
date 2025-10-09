@@ -24,6 +24,7 @@
 #include "customsave.h"
 #include "cardealer.h"
 #include "achievements.h"
+#include "windowedmode.h"
 #include "customsettings.h"
 #include "quickrace.h"
 #include "instantaction.h"
@@ -45,7 +46,6 @@
 #include "bfsload.h"
 #include "xinputsupport.h"
 #include "d3dhook.h"
-#include "windowedmode.h"
 #include "profiles.h"
 #include "carnagerace.h"
 #include "smashyrace.h"
@@ -102,6 +102,14 @@ void CustomSetterThread() {
 	pGameFlow->Profile.nEasyDifficulty = GetHandlingMode(nullptr) == HANDLING_NORMAL;
 	nRagdoll = 1;
 
+	for (auto& color : aPlayerColorsMultiplayer) {
+		auto& dest = *(NyaDrawing::CNyaRGBA32*)&gPalette[(&color - &aPlayerColorsMultiplayer[0]) + 100];
+		dest.r = color.b;
+		dest.g = color.g;
+		dest.b = color.r;
+		dest.a = 255;
+	}
+
 	SetHandlingDamage();
 	SetHandlingMode();
 	SetEngineDamage();
@@ -138,6 +146,7 @@ void CommandlineArgReader(void* a1, const char* a2) {
 		NyaHookLib::Patch(0x505EF9 + 1, 0x40 | D3DCREATE_MULTITHREADED);
 		NyaHookLib::Patch(0x505F00 + 1, 0x50 | D3DCREATE_MULTITHREADED);
 	}
+	if (str == "-notextures") bNoTextures = true;
 	WriteLogDebug("INIT", std::format("Commandline argument {}", a2));
 
 	return lua_setglobal(a1, a2);
@@ -180,6 +189,7 @@ void __stdcall OnMapLoad(void* a1, void* a2, void* a3) {
 	ChloeEvents::RacePreLoadEvent.OnHit();
 	OnMapLoad_call(a1, a2, a3);
 	ChloeEvents::MapLoadEvent.OnHit();
+	gCustomSave.GetSaveSlotAndPath();
 }
 
 auto OnMapPreLoad_call = (void(__stdcall*)(int, int, int, int, int, int, int, float, char))0x4B9250;
@@ -196,6 +206,10 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
 			DoFlatOutVersionCheck(FO2Version::FO1_1_1);
+			if ((std::filesystem::exists("filesystem") || std::filesystem::exists("patch")) && (!std::filesystem::exists("common1.bfs") || !std::filesystem::exists("common2.bfs"))) {
+				MessageBoxA(nullptr, "Unsupported game version! Make sure your game is packed!\n\nIf you don't know what this means, you're probably using the GOG version, which is incompatible with this mod.\nGet a version of the game that has common1.bfs and common2.bfs in the game folder.", "nya?!~", MB_ICONERROR);
+				exit(0);
+			}
 
 			srand(time(0));
 

@@ -152,6 +152,7 @@ struct tCustomSaveStructure {
 	uint8_t playerFlag;
 	uint32_t trackArcadeScores[nMaxTracks];
 	uint8_t transmission;
+	uint8_t playerColor;
 
 	static inline bool bInitialized = false;
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
@@ -238,6 +239,7 @@ struct tCustomSaveStructure {
 		nHighCarCam = highCarCam;
 		nPlayerFlag = playerFlag;
 		nTransmission = transmission;
+		nPlayerColor = playerColor;
 	}
 	void ReadPlayerSettings() {
 		handlingDamage = nHandlingDamage;
@@ -245,6 +247,7 @@ struct tCustomSaveStructure {
 		highCarCam = nHighCarCam;
 		playerFlag = nPlayerFlag;
 		transmission = nTransmission;
+		playerColor = nPlayerColor;
 	}
 	void Clear() {
 		memset(this,0,sizeof(*this));
@@ -274,25 +277,45 @@ struct tCustomSaveStructure {
 			ChloeEvents::SaveLoadedEvent.OnHit(saveSlot+1);
 		}
 	}
-	void Save() {
-		if (!bInitialized) return;
 
-		int saveSlot = pGameFlow->nSaveSlot;
-		if (saveSlot < 0) {
-			saveSlot = pGameFlow->Profile.nAutosaveSlot;
+	std::string currentSavePath;
+	int currentSaveSlot;
+
+	void GetSaveSlotAndPath()
+	{
+		currentSaveSlot = pGameFlow->nSaveSlot;
+		if (currentSaveSlot < 0) {
+			currentSaveSlot = pGameFlow->Profile.nAutosaveSlot;
 		}
 
-		if (saveSlot < 0) {
+		if (currentSaveSlot < 0) {
 			MessageBoxA(0, "Trying to save to slot 0, this is a bug", "nya?!~", MB_ICONWARNING);
 		}
 
+		currentSavePath = GetCustomSavePath(currentSaveSlot+1);
+	}
+
+	void QuickSave()
+	{
+		auto file = std::ofstream(currentSavePath, std::ios::out | std::ios::binary);
+		if (!file.is_open()) return;
+
+		ChloeEvents::SaveCreatedEvent.OnHit(currentSaveSlot+1);
+
+		file.write((char*)this, sizeof(*this));
+	}
+
+	void Save() {
+		if (!bInitialized) return;
+
+		GetSaveSlotAndPath();
 		ReadPlayerSettings();
 		CreateArcadeVerify();
 
-		auto file = std::ofstream(GetCustomSavePath(saveSlot+1), std::ios::out | std::ios::binary);
+		auto file = std::ofstream(currentSavePath, std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
 
-		ChloeEvents::SaveCreatedEvent.OnHit(saveSlot+1);
+		ChloeEvents::SaveCreatedEvent.OnHit(currentSaveSlot+1);
 
 		file.write((char*)this, sizeof(*this));
 	}
@@ -316,7 +339,7 @@ void ProcessPlayStats() {
 		int track = pGameFlow->nLevel;
 
 		if (!IsInSplitScreen() && !bIsTimeTrial && !bIsArcadeMode && !bIsCarnageRace) {
-			auto ply = GetPlayerScore<PlayerScoreRace>(1);
+			auto ply = GetPlayerScore(1);
 			if (ply->bHasFinished || ((bIsWreckingDerby || bIsFragDerby) && ply->bIsDNF)) {
 				bool won = ply->nPosition == 1;
 				if (bIsWreckingDerby || bIsFragDerby) won = GetSortedPlayerScores()[0] == ply;
@@ -328,7 +351,7 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			gCustomSave.Save();
+			gCustomSave.QuickSave();
 		}
 	}
 
@@ -336,7 +359,8 @@ void ProcessPlayStats() {
 		bool changed = false;
 		int track = pGameFlow->nLevel;
 
-		if (pGameFlow->nEventType == eEventType::RACE) {
+		if (pGameFlow->nEventType == eEventType::RACE)
+		{
 			for (int j = 0; j < pPlayerHost->GetNumPlayers(); j++) {
 				auto ply = GetPlayer(j);
 				if (ply->nPlayerType != PLAYERTYPE_LOCAL) continue;
@@ -359,7 +383,7 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			gCustomSave.Save();
+			gCustomSave.QuickSave();
 		}
 	}
 
