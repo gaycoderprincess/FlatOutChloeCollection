@@ -53,6 +53,9 @@ int __thiscall GetInputValueXInput(Controller* pThis, int input) {
 	}
 	if (input == 1 && fTimeSincePaused > 0.75) return GetPadKeyState(GetNyaControllerKeyForAction(CONFIG_RAGDOLL), padId);
 	if (input == 4) return GetPadKeyState(GetNyaControllerKeyForAction(CONFIG_LOOK), padId);
+	if (input == 5) { return GetPadKeyState(GetNyaControllerKeyForAction(CONFIG_RESET), padId); }
+	if (input == 18) { return GetPadKeyState(GetNyaControllerKeyForAction(CONFIG_GEARDOWN), padId); }
+	if (input == 19) { return GetPadKeyState(GetNyaControllerKeyForAction(CONFIG_GEARUP), padId); }
 	return 0;
 }
 
