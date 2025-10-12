@@ -453,6 +453,13 @@ int ChloeGarage_GetCarSkin(void* a1) {
 	return 1;
 }
 
+int ChloeGarage_SetCarSkin(void* a1) {
+	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
+	if (car->nSkinId == 0 || car->nSkinId > GetNumSkinsForCar((int)luaL_checknumber(a1, 1))) car->nSkinId = 1;
+	car->nSkinId = luaL_checknumber(a1, 2);
+	return 1;
+}
+
 int ChloeGarage_PurchaseCar(void* a1) {
 	auto car = &gCustomSave.aCareerGarage[(int)luaL_checknumber(a1, 1)];
 	car->Clear();
@@ -1432,6 +1439,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ResumeCustomData, "ChloeSave_ResumeCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_IsCarPurchased, "ChloeGarage_IsCarPurchased");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetCarSkin, "ChloeGarage_GetCarSkin");
+	RegisterLUAFunction(a1, (void*)&ChloeGarage_SetCarSkin, "ChloeGarage_SetCarSkin");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_PurchaseCar, "ChloeGarage_PurchaseCar");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_SellCar, "ChloeGarage_SellCar");
 	RegisterLUAFunction(a1, (void*)&ChloeGarage_GetFirstOwnedCar, "ChloeGarage_GetFirstOwnedCar");

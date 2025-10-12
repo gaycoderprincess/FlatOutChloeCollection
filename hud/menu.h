@@ -94,6 +94,7 @@ namespace ChloeMenuHud {
 #include "menu_career_unlock.h"
 #include "menu_cardealer.h"
 #include "menu_cardealer_sell.h"
+#include "menu_cardealer_repaint.h"
 #include "menu_crashresult.h"
 #include "menu_trackselect.h"
 #include "menu_arcadecareer.h"
