@@ -258,6 +258,10 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 			NyaHookLib::Patch(0x68BDE0, "gamesave"); // change savefile name
 
+			// disable car dummy object memory clear at race start, needed for nitro ptfx code
+			NyaHookLib::Patch<uint8_t>(0x41E39A, 0xEB);
+			NyaHookLib::Fill(0x41E3E0, 0x90, 6);
+
 			// 004E3CDD disable menu ui
 
 			// swap restart and exit to menu in finish screen
