@@ -7,8 +7,13 @@ RECT GetMonitorRect(HWND hwnd) {
 	MONITORINFO mi;
 	memset(&mi, 0, sizeof(mi));
 	mi.cbSize = sizeof(mi);
-	if (monitor && GetMonitorInfoA(monitor, &mi)) rect = mi.rcWork;
-	else SystemParametersInfoA(0x30u, 0, &rect, 0);
+	if (monitor && GetMonitorInfoA(monitor, &mi)) rect = mi.rcMonitor;
+	else {
+		rect.left = 0;
+		rect.right = GetSystemMetrics(SM_CXSCREEN);
+		rect.top = 0;
+		rect.bottom = GetSystemMetrics(SM_CYSCREEN);
+	}
 	return rect;
 }
 
@@ -26,17 +31,22 @@ void SetWindowedMode() {
 
 	if (nLastWindowed != nWindowedMode) {
 		auto hwnd = DeviceD3d::hWnd;
-		auto resX = nGameResolutionX;
-		auto resY = nGameResolutionY;
 		auto rect = GetMonitorRect(hwnd);
-		if (!nWindowedMode && rect.right - rect.left > resX) resX = rect.right - rect.left;
+		if (nWindowedMode) {
+			rect.right = rect.left + nGameResolutionX;
+			rect.bottom = rect.top + nGameResolutionY;
+		}
 
 		auto style = GetWindowLongA(hwnd, GWL_STYLE);
 		uint32_t targetStyle = (WS_CAPTION | WS_SIZEBOX | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
 		if (nWindowedMode) style |= targetStyle;
 		else style &= ~targetStyle;
 		SetWindowLongA(hwnd, GWL_STYLE, style);
-		SetWindowPos(hwnd, nullptr, rect.left, rect.top, resX, resY, SWP_NOZORDER | SWP_FRAMECHANGED);
+
+		if (nWindowedMode) {
+			AdjustWindowRect(&rect, style, false);
+		}
+		SetWindowPos(hwnd, nullptr, rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top, SWP_NOZORDER | SWP_FRAMECHANGED);
 		SetFocus(hwnd);
 		nLastWindowed = nWindowedMode;
 	}
