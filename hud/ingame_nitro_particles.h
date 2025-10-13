@@ -76,7 +76,7 @@ public:
 			ImVec2 uvMax = {(float)((stage * 0.25) + 0.25), 1};
 
 			float fSize = fNitroParticleSize / drawPos.z;
-			DrawRectangle(drawPos.x - fSize * GetAspectRatioInv(), drawPos.x + fSize * GetAspectRatioInv(), drawPos.y - fSize, drawPos.y + fSize, {255,255,255,(uint8_t)(255*ply->pCar->fNitroButton)}, 0, tex, 0, uvMin, uvMax);
+			DrawRectangle(drawPos.x - fSize * GetAspectRatioInv(), drawPos.x + fSize * GetAspectRatioInv(), drawPos.y - fSize, drawPos.y + fSize, {255,255,255,(uint8_t)(255*ply->pCar->fNitroButton*alphaMult)}, 0, tex, 0, uvMin, uvMax);
 		}
 	}
 

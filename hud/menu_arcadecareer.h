@@ -33,6 +33,7 @@ public:
 		PreloadTexture("data/menu/carnageoverlay_silver.tga"),
 		PreloadTexture("data/menu/carnageoverlay_bronze.tga"),
 		PreloadTexture("data/menu/carnageoverlay_author.tga"),
+		PreloadTexture("data/menu/carnageoverlay_sauthor.tga"),
 		PreloadTexture("data/menu/carnagebg_left.tga");
 		PreloadTexture("data/menu/carnagebg_right.tga");
 		PreloadTexture("data/menu/carnagebg_selected.tga");
@@ -116,8 +117,10 @@ public:
 				LoadTextureFromBFS("data/menu/carnageoverlay_silver.tga"),
 				LoadTextureFromBFS("data/menu/carnageoverlay_bronze.tga"),
 				LoadTextureFromBFS("data/menu/carnageoverlay_author.tga"),
+				LoadTextureFromBFS("data/menu/carnageoverlay_sauthor.tga"),
 		};
 		static auto textureLeft = LoadTextureFromBFS("data/menu/carnagebg_left.tga");
+		static auto textureLeft2 = LoadTextureFromBFS("data/menu/carnagebg_left2.tga");
 		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_right.tga");
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
 		static auto textureTracksLocked = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
@@ -128,7 +131,11 @@ public:
 		static auto trackIcons2 = LoadHUDData("data/menu/track_icons_2.bed", "track_icons_2");
 		static auto commonData = LoadHUDData("data/menu/common.bed", "common");
 
-		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
+		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
+		auto score = gCustomSave.aArcadeCareerScores[nCursorPos];
+		bool showSAuthor = score >= event->nPlatinumScore && event->nCommunityScore > 0;
+
+		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, showSAuthor ? textureLeft2 : textureLeft);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 
 		CMenu_TrackSelect::DisplayTrackInfo(GetTrackId());
@@ -159,12 +166,13 @@ public:
 			if (score >= event->aGoalScores[1]) position = 2;
 			if (score >= event->aGoalScores[0]) position = 1;
 			if (score >= event->nPlatinumScore) position = 4;
+			if (event->nCommunityScore > 0 && score >= event->nCommunityScore) position = 5;
 
 			if (!event->bIsSmashySmash && score > gCustomSave.trackArcadeScores[event->nLevel]) {
 				gCustomSave.trackArcadeScores[event->nLevel] = score;
 			}
 
-			if (position == 1 || position == 4) {
+			if (position == 1 || position == 4 || position == 5) {
 				gCustomSave.tracksWon[event->nLevel] = true;
 			}
 			
@@ -184,7 +192,7 @@ public:
 			float x2 = x1 + data.fSize * 1.5;
 			float y2 = y1 + data.fSize;
 			DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, trackIconTexture, 0, trackIcon->min, trackIcon->max);
-			if (position >= 1 && position <= 4) {
+			if (position >= 1 && position <= 5) {
 				if (position == 4) {
 					Achievements::AwardAchievement(GetAchievement("AUTHOR_MEDAL"));
 				}
@@ -205,14 +213,13 @@ public:
 			}
 		}
 
-		auto event = &ArcadeMode::aArcadeRaces[nCursorPos];
-		auto score = gCustomSave.aArcadeCareerScores[nCursorPos];
 		bool unlocked = ArcadeMode::bAllUnlocked || totalScore >= event->nPointsToUnlock;
 		int position = 0;
 		if (score >= event->aGoalScores[2]) position = 3;
 		if (score >= event->aGoalScores[1]) position = 2;
 		if (score >= event->aGoalScores[0]) position = 1;
 		if (score >= event->nPlatinumScore) position = 4;
+		if (event->nCommunityScore > 0 && score >= event->nCommunityScore) position = 5;
 
 		tNyaStringData data;
 		data.x = gTargetScoresTitle.nPosX;
@@ -249,7 +256,20 @@ public:
 		}
 
 		for (int i = 0; i < 4; i++) {
-			int target = i == 0 ? event->nPlatinumScore : event->aGoalScores[i-1];
+			int targets[4] = {
+				event->nPlatinumScore,
+				event->aGoalScores[0],
+				event->aGoalScores[1],
+				event->aGoalScores[2],
+			};
+			int targetsSAuthor[4] = {
+				event->nCommunityScore,
+				event->nPlatinumScore,
+				event->aGoalScores[0],
+				event->aGoalScores[1],
+			};
+
+			int target = showSAuthor ? targetsSAuthor[i] : targets[i];
 			data.x = gTargetScores.nPosX;
 			data.y = gTargetScores.nPosY + gTargetScores.nSpacingY * i;
 			data.size = gTargetScores.fSize;
