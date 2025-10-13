@@ -140,9 +140,9 @@ public:
 	}
 
 	void Init() override {
-		PreloadTexture("data/global/overlay/ai_damage_meter.png");
-		PreloadTexture("data/global/overlay/ai_damage_meter_glow.png");
-		PreloadTexture("data/global/overlay/ai_damage_meter_bg.png");
+		PreloadTexture("data/global/overlay/ai_damage_meter.tga");
+		PreloadTexture("data/global/overlay/ai_damage_meter_glow.tga");
+		PreloadTexture("data/global/overlay/ai_damage_meter_bg.tga");
 
 		// once guard for damagemeter player2
 		static bool bInited = false;
@@ -168,9 +168,9 @@ public:
 		int nXOffset = fXOffset * 1920;
 		int nYOffset = fYOffset * 1080;
 
-		static auto ai_damage_meter = LoadTextureFromBFS("data/global/overlay/ai_damage_meter.png");
-		static auto ai_damage_meter_glow = LoadTextureFromBFS("data/global/overlay/ai_damage_meter_glow.png");
-		static auto ai_damage_meter_bg = LoadTextureFromBFS("data/global/overlay/ai_damage_meter_bg.png");
+		static auto ai_damage_meter = LoadTextureFromBFS("data/global/overlay/ai_damage_meter.tga");
+		static auto ai_damage_meter_glow = LoadTextureFromBFS("data/global/overlay/ai_damage_meter_glow.tga");
+		static auto ai_damage_meter_bg = LoadTextureFromBFS("data/global/overlay/ai_damage_meter_bg.tga");
 
 		ProcessHealthBarAlpha();
 

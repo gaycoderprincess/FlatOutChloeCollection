@@ -44,13 +44,13 @@ public:
 	}
 
 	void Init() override {
-		PreloadTexture("data/menu/reward_bonus_screen_bg.png");
+		PreloadTexture("data/menu/reward_bonus_screen_bg.tga");
 	}
 
 	void Process() override {
 		if (!bEnabled) return;
 
-		static auto textureBg = LoadTextureFromBFS("data/menu/reward_bonus_screen_bg.png");
+		static auto textureBg = LoadTextureFromBFS("data/menu/reward_bonus_screen_bg.tga");
 
 		Draw1080pSprite(JUSTIFY_CENTER, 0, 1920, 0, 1080, {255,255,255,255}, textureBg);
 

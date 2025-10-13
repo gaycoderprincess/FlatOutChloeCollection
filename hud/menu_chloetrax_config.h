@@ -101,17 +101,17 @@ public:
 	}
 	
 	void Init() override {
-		PreloadTexture("data/menu/chloetraxmenu1d.png");
-		PreloadTexture("data/menu/chloetraxmenu1s.png");
-		PreloadTexture("data/menu/chloetraxmenu2d.png");
-		PreloadTexture("data/menu/chloetraxmenu2s.png");
-		PreloadTexture("data/menu/chloetraxmenu3d.png");
-		PreloadTexture("data/menu/chloetraxmenu3s.png");
-		PreloadTexture("data/menu/chloetraxmenu4d.png");
-		PreloadTexture("data/menu/chloetraxmenu4s.png");
-		PreloadTexture("data/menu/chloetraxmenuicon.png");
-		PreloadTexture("data/menu/chloetraxmenutops.png");
-		PreloadTexture("data/menu/chloetraxmenutopd.png");
+		PreloadTexture("data/menu/chloetraxmenu1d.tga");
+		PreloadTexture("data/menu/chloetraxmenu1s.tga");
+		PreloadTexture("data/menu/chloetraxmenu2d.tga");
+		PreloadTexture("data/menu/chloetraxmenu2s.tga");
+		PreloadTexture("data/menu/chloetraxmenu3d.tga");
+		PreloadTexture("data/menu/chloetraxmenu3s.tga");
+		PreloadTexture("data/menu/chloetraxmenu4d.tga");
+		PreloadTexture("data/menu/chloetraxmenu4s.tga");
+		PreloadTexture("data/menu/chloetraxmenuicon.tga");
+		PreloadTexture("data/menu/chloetraxmenutops.tga");
+		PreloadTexture("data/menu/chloetraxmenutopd.tga");
 	}
 	
 	tDrawPositions gTopBar = {0.514, 0.227, 0.045};
@@ -133,21 +133,21 @@ public:
 		nIngameDerbySoundtrack = NewMusicPlayer::aPlaylistsIngame.size()-1;
 		
 		static IDirect3DTexture9* textures[] = {
-				LoadTextureFromBFS("data/menu/chloetraxmenutopd.png"),
-				LoadTextureFromBFS("data/menu/chloetraxmenu1d.png"),
-				LoadTextureFromBFS("data/menu/chloetraxmenu2d.png"),
-				LoadTextureFromBFS("data/menu/chloetraxmenu3d.png"),
-				LoadTextureFromBFS("data/menu/chloetraxmenu4d.png"),
+				LoadTextureFromBFS("data/menu/chloetraxmenutopd.tga"),
+				LoadTextureFromBFS("data/menu/chloetraxmenu1d.tga"),
+				LoadTextureFromBFS("data/menu/chloetraxmenu2d.tga"),
+				LoadTextureFromBFS("data/menu/chloetraxmenu3d.tga"),
+				LoadTextureFromBFS("data/menu/chloetraxmenu4d.tga"),
 		};
 		static IDirect3DTexture9* texturesSelected[] = {
-				LoadTextureFromBFS("data/menu/chloetraxmenutops.png"),
-				LoadTextureFromBFS("data/menu/chloetraxmenu1s.png"),
-				LoadTextureFromBFS("data/menu/chloetraxmenu2s.png"),
-				LoadTextureFromBFS("data/menu/chloetraxmenu3s.png"),
-				LoadTextureFromBFS("data/menu/chloetraxmenu4s.png"),
+				LoadTextureFromBFS("data/menu/chloetraxmenutops.tga"),
+				LoadTextureFromBFS("data/menu/chloetraxmenu1s.tga"),
+				LoadTextureFromBFS("data/menu/chloetraxmenu2s.tga"),
+				LoadTextureFromBFS("data/menu/chloetraxmenu3s.tga"),
+				LoadTextureFromBFS("data/menu/chloetraxmenu4s.tga"),
 		};
 		
-		static auto textureBg = LoadTextureFromBFS("data/menu/chloetraxmenuicon.png");
+		static auto textureBg = LoadTextureFromBFS("data/menu/chloetraxmenuicon.tga");
 		DrawRectangle(0, 1, 0, 1, {255,255,255,255}, 0, textureBg);
 	
 		auto playlist = GetSelectedPlaylist();

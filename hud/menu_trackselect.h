@@ -488,8 +488,8 @@ public:
 	}
 
 	void Init() override {
-		PreloadTexture("data/menu/trackselectbg_left.png");
-		PreloadTexture("data/menu/trackselectbg_right.png");
+		PreloadTexture("data/menu/trackselectbg_left.tga");
+		PreloadTexture("data/menu/trackselectbg_right.tga");
 		PreloadTexture("data/menu/track_icons.dds");
 		PreloadTexture("data/menu/track_icons_2.dds");
 		PreloadTexture("data/menu/track_name_icons.dds");
@@ -621,8 +621,8 @@ public:
 			nCursorY = GetNumOptions()-1;
 		}
 
-		static auto textureLeft = LoadTextureFromBFS("data/menu/trackselectbg_left.png");
-		static auto textureRight = LoadTextureFromBFS("data/menu/trackselectbg_right.png");
+		static auto textureLeft = LoadTextureFromBFS("data/menu/trackselectbg_left.tga");
+		static auto textureRight = LoadTextureFromBFS("data/menu/trackselectbg_right.tga");
 		static auto textureCommon = LoadTextureFromBFS("data/menu/common.dds");
 		static auto commonData = LoadHUDData("data/menu/common.bed", "common");
 

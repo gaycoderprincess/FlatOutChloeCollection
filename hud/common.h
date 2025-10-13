@@ -37,22 +37,7 @@ public:
 		gLoadedTextureMutex.unlock();
 
 		if (path.ends_with(".png")) {
-			if (bNoTextures) return nullptr;
-
-			size_t size;
-			auto file = ReadFileFromBfs(path.c_str(), size);
-			if (!file) return nullptr;
-
-			IDirect3DTexture9* tex = nullptr;
-			auto hr = D3DXCreateTextureFromFileInMemory(pDeviceD3d->pD3DDevice, file, size, &tex);
-			delete[] file;
-			if (hr == S_OK) {
-				gLoadedTextureMutex.lock();
-				aLoadedTextures.push_back({path, tex});
-				gLoadedTextureMutex.unlock();
-				return tex;
-			}
-			MessageBoxA(0, std::format("Failed to load {} (error code 0x{:X})", path, hr).c_str(), "Fatal error", MB_ICONERROR);
+			MessageBoxA(0, std::format("Failed to load {} (loading PNGs is deprecated)", path).c_str(), "Fatal error", MB_ICONERROR);
 			return nullptr;
 		}
 
@@ -94,14 +79,14 @@ public:
 		}
 		aTexturePreloadList.push_back(path);
 
-		size_t dataSize = 0;
-		auto file = ReadTextureDataFromFile(path.c_str(), &dataSize);
-		if (dataSize <= 0x4C) return;
 		if (bAsyncPreload) {
+			size_t dataSize = 0;
+			auto file = ReadTextureDataFromFile(path.c_str(), &dataSize);
+			if (dataSize <= 0x4C) return;
 			std::thread(LoadTextureFromMemory, path, file, dataSize).detach();
 		}
 		else {
-			LoadTextureFromMemory(path, file, dataSize);
+			LoadTextureFromBFS(path);
 		}
 	}
 

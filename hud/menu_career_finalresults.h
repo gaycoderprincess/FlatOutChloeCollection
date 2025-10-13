@@ -12,8 +12,8 @@ public:
 	static constexpr int nPointsX = 1380;
 
 	void Init() override {
-		PreloadTexture("data/menu/final_results_screen_bg_left.png");
-		PreloadTexture("data/menu/final_results_screen_bg_right.png");
+		PreloadTexture("data/menu/final_results_screen_bg_left.tga");
+		PreloadTexture("data/menu/final_results_screen_bg_right.tga");
 	}
 
 	void Process() override {
@@ -22,8 +22,8 @@ public:
 
 		if (!bEnabled) return;
 
-		static auto textureLeft = LoadTextureFromBFS("data/menu/final_results_screen_bg_left.png");
-		static auto textureRight = LoadTextureFromBFS("data/menu/final_results_screen_bg_right.png");
+		static auto textureLeft = LoadTextureFromBFS("data/menu/final_results_screen_bg_left.tga");
+		static auto textureRight = LoadTextureFromBFS("data/menu/final_results_screen_bg_right.tga");
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);

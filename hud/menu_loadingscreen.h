@@ -284,7 +284,7 @@ public:
 
 	void Process() override {
 		if (!bHasRun) {
-			static auto tex = LoadTextureFromBFS("data/menu/copyright_cc.png");
+			static auto tex = LoadTextureFromBFS("data/menu/copyright_cc.tga");
 			if (tex) {
 				DrawRectangle(0, 1, 0, 1, {0,0,0,255});
 				Draw1080pSprite(JUSTIFY_480P_CENTER, 0, 640, 0, 480, {255, 255, 255, 255}, tex);
@@ -302,7 +302,7 @@ public:
 		if (!tex) return;
 
 		static auto loadingAnim = LoadTextureFromBFS("data/menu/loading_anim.tga");
-		static auto gameLogo = LoadTextureFromBFS("data/menu/flatout_logo.png");
+		static auto gameLogo = LoadTextureFromBFS("data/menu/flatout_logo.tga");
 		static std::vector<tHUDData> loadingAnims = LoadHUDData("data/menu/loading_anim.bed", "loading_anim");
 
 		// assuming a size of 640x480

@@ -33,9 +33,9 @@ public:
 		PreloadTexture("data/menu/carnageoverlay_silver.tga"),
 		PreloadTexture("data/menu/carnageoverlay_bronze.tga"),
 		PreloadTexture("data/menu/carnageoverlay_author.tga"),
-		PreloadTexture("data/menu/carnagebg_left.png");
-		PreloadTexture("data/menu/carnagebg_right.png");
-		PreloadTexture("data/menu/carnagebg_selected.png");
+		PreloadTexture("data/menu/carnagebg_left.tga");
+		PreloadTexture("data/menu/carnagebg_right.tga");
+		PreloadTexture("data/menu/carnagebg_selected.tga");
 		PreloadTexture("data/menu/track_icons.dds");
 		PreloadTexture("data/menu/track_icons_inactive.dds");
 		PreloadTexture("data/menu/track_icons_2.dds");
@@ -94,7 +94,7 @@ public:
 	}
 
 	void ProcessSelected() const {
-		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_selected.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_selected.tga");
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 		DrawEventTitle();
 
@@ -117,8 +117,8 @@ public:
 				LoadTextureFromBFS("data/menu/carnageoverlay_bronze.tga"),
 				LoadTextureFromBFS("data/menu/carnageoverlay_author.tga"),
 		};
-		static auto textureLeft = LoadTextureFromBFS("data/menu/carnagebg_left.png");
-		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_right.png");
+		static auto textureLeft = LoadTextureFromBFS("data/menu/carnagebg_left.tga");
+		static auto textureRight = LoadTextureFromBFS("data/menu/carnagebg_right.tga");
 		static auto textureTracks = LoadTextureFromBFS("data/menu/track_icons.dds");
 		static auto textureTracksLocked = LoadTextureFromBFS("data/menu/track_icons_inactive.dds");
 		static auto textureTracks2 = LoadTextureFromBFS("data/menu/track_icons_2.dds");

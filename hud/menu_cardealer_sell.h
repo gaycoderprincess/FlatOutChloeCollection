@@ -3,13 +3,13 @@ public:
 	const char* GetName() override { return "menu_cardealer_sell"; }
 
 	void Init() override {
-		PreloadTexture("data/menu/sellcar_left.png");
+		PreloadTexture("data/menu/sellcar_left.tga");
 	}
 
 	void Process() override {
 		if (!bEnabled) return;
 
-		static auto textureLeft = LoadTextureFromBFS("data/menu/sellcar_left.png");
+		static auto textureLeft = LoadTextureFromBFS("data/menu/sellcar_left.tga");
 		DrawCarLogo();
 
 		Draw1080pSprite(JUSTIFY_LEFT, 0, 1920, 0, 1080, {255,255,255,255}, textureLeft);

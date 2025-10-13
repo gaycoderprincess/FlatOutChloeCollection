@@ -55,9 +55,9 @@ public:
 	static constexpr tDrawPositions1080p gSkinAuthor = {1716,801,0.035};
 
 	static void ProcessSkinSelector() {
-		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.png");
-		static auto textureSkinAuthor = LoadTextureFromBFS("data/menu/carselect_skin.png");
-		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/carselect_right.tga");
+		static auto textureSkinAuthor = LoadTextureFromBFS("data/menu/carselect_skin.tga");
+		static auto textureArrows = LoadTextureFromBFS("data/menu/carselect_arrows.tga");
 
 		auto menu = pGameFlow->pMenuInterface;
 		if (!menu) return;
@@ -147,17 +147,17 @@ public:
 	}
 
 	void Init() override {
-		PreloadTexture("data/menu/carselect_left.png");
+		PreloadTexture("data/menu/carselect_left.tga");
 		PreloadTexture("data/menu/car_logos.dds");
-		PreloadTexture("data/menu/carselect_right.png");
-		PreloadTexture("data/menu/carselect_skin.png");
-		PreloadTexture("data/menu/carselect_arrows.png");
+		PreloadTexture("data/menu/carselect_right.tga");
+		PreloadTexture("data/menu/carselect_skin.tga");
+		PreloadTexture("data/menu/carselect_arrows.tga");
 	}
 
 	void Process() override {
 		if (!bEnabled) return;
 
-		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.png");
+		static auto textureLeft = LoadTextureFromBFS("data/menu/carselect_left.tga");
 
 		DrawCarLogo();
 		if (bSkinSelector) ProcessSkinSelector();

@@ -9,13 +9,13 @@ public:
 	//static inline tDrawPositions1080p gBottomAmount = {960,850,0.03};
 
 	void Init() override {
-		PreloadTexture("data/menu/event_unlock_box.png");
+		PreloadTexture("data/menu/event_unlock_box.tga");
 	}
 
 	void Process() override {
 		if (!bEnabled) return;
 
-		static auto textureRight = LoadTextureFromBFS("data/menu/event_unlock_box.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/event_unlock_box.tga");
 
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 

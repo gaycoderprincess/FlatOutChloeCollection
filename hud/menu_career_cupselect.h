@@ -61,10 +61,10 @@ public:
 	static constexpr tDrawPositions gTrackPlacements = {0.263, 0.353, 0.05, 0.19, 0.135};
 
 	void Init() override {
-		PreloadTexture("data/menu/cup_bronze_bg.png");
-		PreloadTexture("data/menu/cup_silver_bg.png");
-		PreloadTexture("data/menu/cup_gold_bg.png");
-		PreloadTexture("data/menu/cupselect_bg_right.png");
+		PreloadTexture("data/menu/cup_bronze_bg.tga");
+		PreloadTexture("data/menu/cup_silver_bg.tga");
+		PreloadTexture("data/menu/cup_gold_bg.tga");
+		PreloadTexture("data/menu/cupselect_bg_right.tga");
 		PreloadTexture("data/menu/track_icons.dds");
 		PreloadTexture("data/menu/track_icons_inactive.dds");
 		PreloadTexture("data/menu/track_icons_2.dds");
@@ -129,11 +129,11 @@ public:
 		if (!bEnabled) return;
 
 		static IDirect3DTexture9* textureLeft[3] = {
-				LoadTextureFromBFS("data/menu/cup_bronze_bg.png"),
-				LoadTextureFromBFS("data/menu/cup_silver_bg.png"),
-				LoadTextureFromBFS("data/menu/cup_gold_bg.png"),
+				LoadTextureFromBFS("data/menu/cup_bronze_bg.tga"),
+				LoadTextureFromBFS("data/menu/cup_silver_bg.tga"),
+				LoadTextureFromBFS("data/menu/cup_gold_bg.tga"),
 		};
-		static auto textureRight = LoadTextureFromBFS("data/menu/cupselect_bg_right.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/cupselect_bg_right.tga");
 		static std::string sEventDescription;
 
 		if (nCursorX >= GetCursorLimitX()) nCursorX = 0;

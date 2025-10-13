@@ -42,6 +42,7 @@ void ProcessDerbyContactTimer() {
 			// ragdoll ai players out if they run out of time
 			if (ply->nPlayerType == PLAYERTYPE_AI) {
 				if (!ply->pCar->nIsRagdolled) Car::LaunchRagdoll(ply->pCar, ply->pCar->GetVelocity()->length());
+				ply->nIsWreckedDerby = 1;
 			}
 			else {
 				score->bIsDNF = true;
@@ -203,6 +204,7 @@ void ProcessCarDamage() {
 				AwardWreck(i);
 
 				if (!ply->pCar->nIsRagdolled) Car::LaunchRagdoll(ply->pCar, ply->pCar->GetVelocity()->length());
+				ply->nIsWreckedDerby = 1;
 
 				auto score = GetPlayerScore(ply->nPlayerId);
 				//score->bHasFinished = true;

@@ -52,7 +52,7 @@ public:
 	int nIcon2X = 141;
 
 	void Init() override {
-		PreloadTexture("data/menu/mpmenubg.png");
+		PreloadTexture("data/menu/mpmenubg.tga");
 		PreloadTexture("data/menu/flags.tga");
 		PreloadTexture("data/menu/multiplayer.tga");
 	}
@@ -123,7 +123,7 @@ public:
 		if (!bEnabled) return;
 		if (!bIsInMultiplayer) return;
 
-		static auto textureRight = LoadTextureFromBFS("data/menu/mpmenubg.png");
+		static auto textureRight = LoadTextureFromBFS("data/menu/mpmenubg.tga");
 		Draw1080pSprite(JUSTIFY_RIGHT, 0, 1920, 0, 1080, {255,255,255,255}, textureRight);
 
 		CMenu_TrackSelect::DisplayTrackInfo(nTrackId, fTrackPreviewX, nTrackPreviewX);
