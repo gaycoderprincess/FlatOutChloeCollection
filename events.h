@@ -170,3 +170,44 @@ namespace ChloeEvents {
 		}
 	} RaceRestartEvent;
 }
+
+namespace ChloeEventHooks {
+	auto OnMapLoad_call = (void(__stdcall*)(void*, void*, void*))0x44AD00;
+	void __stdcall OnMapLoad(void* a1, void* a2, void* a3) {
+		ChloeEvents::RacePreLoadEvent.OnHit();
+		OnMapLoad_call(a1, a2, a3);
+		ChloeEvents::MapLoadEvent.OnHit();
+	}
+	
+	auto OnMapPreLoad_call = (void(__stdcall*)(int, int, int, int, int, int, int, float, char))0x4B9250;
+	void __stdcall OnMapPreLoad(int a1, int a2, int a3, int a4, int a5, int a6, int a7, float a8, char a9) {
+		ChloeEvents::MapPreLoadEvent.OnHit();
+		return OnMapPreLoad_call(a1, a2, a3, a4, a5, a6, a7, a8, a9);
+	}
+	
+	void OnFilesystemInit() {
+		ChloeEvents::FilesystemInitEvent.OnHit();
+	}
+	
+	uintptr_t OnFilesystemInitASM_jmp = 0x4398C0;
+	void __attribute__((naked)) OnFilesystemInitASM() {
+		__asm__ (
+			"pushad\n\t"
+			"call %1\n\t"
+			"popad\n\t"
+			"jmp %0\n\t"
+				:
+				:  "m" (OnFilesystemInitASM_jmp), "i" (OnFilesystemInit)
+		);
+	}
+	
+	void Init() {
+		NyaHookLib::Patch<uint16_t>(0x45314F, 0x9090); // enable map drawing in stunt maps
+		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x451CE3, &OnMapLoad);
+		
+		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x468DA9, &OnMapPreLoad); // ingame
+		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4655EF, &OnMapPreLoad); // menu
+		
+		OnFilesystemInitASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A7261, &OnFilesystemInitASM);
+	}
+}

@@ -130,10 +130,6 @@ void InitD3D() {
 	NyaFO2Hooks::aD3DResetFuncs.push_back(OnD3DReset);
 }
 
-void OnFilesystemInit() {
-	ChloeEvents::FilesystemInitEvent.OnHit();
-}
-
 void CommandlineArgReader(void* a1, const char* a2) {
 	auto str = (std::string)a2;
 	if (str == "-debug") bDebugLog = true;
@@ -150,18 +146,6 @@ void CommandlineArgReader(void* a1, const char* a2) {
 	WriteLogDebug("INIT", std::format("Commandline argument {}", a2));
 
 	return lua_setglobal(a1, a2);
-}
-
-uintptr_t OnFilesystemInitASM_jmp = 0x4398C0;
-void __attribute__((naked)) OnFilesystemInitASM() {
-	__asm__ (
-		"pushad\n\t"
-		"call %1\n\t"
-		"popad\n\t"
-		"jmp %0\n\t"
-			:
-			:  "m" (OnFilesystemInitASM_jmp), "i" (OnFilesystemInit)
-	);
 }
 
 auto UpdateCameraHooked_call = (void(__thiscall*)(void*, float))0x47F070;
@@ -182,19 +166,6 @@ void __stdcall D3DGameUI(int) {
 		nDrawingGameUILayer = i;
 		D3DHookMain();
 	}
-}
-
-auto OnMapLoad_call = (void(__stdcall*)(void*, void*, void*))0x44AD00;
-void __stdcall OnMapLoad(void* a1, void* a2, void* a3) {
-	ChloeEvents::RacePreLoadEvent.OnHit();
-	OnMapLoad_call(a1, a2, a3);
-	ChloeEvents::MapLoadEvent.OnHit();
-}
-
-auto OnMapPreLoad_call = (void(__stdcall*)(int, int, int, int, int, int, int, float, char))0x4B9250;
-void __stdcall OnMapPreLoad(int a1, int a2, int a3, int a4, int a5, int a6, int a7, float a8, char a9) {
-	ChloeEvents::MapPreLoadEvent.OnHit();
-	return OnMapPreLoad_call(a1, a2, a3, a4, a5, a6, a7, a8, a9);
 }
 
 void ClearD3D() {
@@ -243,6 +214,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NewIngameMenu::Init();
 			GameRules::Init();
 			NewResetMap::Init();
+			ChloeEventHooks::Init();
 			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
 			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
 			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
@@ -250,8 +222,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::Patch<uint64_t>(0x454AFC, 0xE0A190000001EEE9); // remove total time from hud
 
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
-			NyaHookLib::Patch<uint16_t>(0x45314F, 0x9090); // enable map drawing in stunt maps
-			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x451CE3, &OnMapLoad);
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
 			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos
@@ -274,13 +244,9 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4DA47F, 0x4DA5AB); // disable vanilla cheats system
 
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4D9A93, &CommandlineArgReader);
-			OnFilesystemInitASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A7261, &OnFilesystemInitASM);
 
 			UpdateCameraHooked_call = (void(__thiscall*)(void*, float))(*(uintptr_t*)0x662978);
 			NyaHookLib::Patch(0x662978, &UpdateCameraHooked);
-
-			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x468DA9, &OnMapPreLoad); // ingame
-			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4655EF, &OnMapPreLoad); // menu
 
 			for (int i = 0; i < nMaxSplitscreenPlayers; i++) {
 				HUD_DamageMeter[i].nPlayerId = i;
