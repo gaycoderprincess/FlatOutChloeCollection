@@ -284,7 +284,6 @@ void ProcessDebugMenu() {
 
 	QuickValueEditor("fNitroParticleSize", CHUD_Nitro_Particles::fNitroParticleSize);
 	QuickValueEditor("fNitroParticleTimerSpeed", CHUD_Nitro_Particles::fNitroParticleTimerSpeed);
-	QuickValueEditor("fNitroParticleLOSYOffset", CHUD_Nitro_Particles::fNitroParticleLOSYOffset);
 
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();

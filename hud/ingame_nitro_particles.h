@@ -17,16 +17,13 @@ public:
 		"Bullet" // wrong exhaust dummies
 	};
 
-	static inline float fNitroParticleLOSYOffset = 1.5;
-	bool IsBlocked(NyaVec3 pos) {
+	static bool IsBlocked(NyaVec3 pos) {
 		tLineOfSightIn in;
 		tLineOfSightOut out;
 
-		pos.y += fNitroParticleLOSYOffset;
-
 		NyaVec3 dir = pos - pCameraManager->pCamera->GetMatrix()->p;
 		in.fMaxDistance = dir.Normalize();
-		return CheckLineOfSight(&pos, &in, nullptr, &dir, &out, -1, nullptr);
+		return CheckLineOfSight(&pCameraManager->pCamera->GetMatrix()->p, &in, nullptr, &dir, &out, -1, nullptr);
 	}
 
 	static inline float fNitroParticleTimerSpeed = 0.05;
