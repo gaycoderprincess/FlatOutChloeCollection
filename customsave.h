@@ -159,6 +159,7 @@ struct tCustomSaveStructure {
 	static inline uint8_t aCupPlayersByPosition[nNumCareerMaxPlayers];
 	static inline uint8_t aCupPlayerPosition[nNumCareerMaxPlayers];
 	static inline uint8_t aCupLocalPlayerPlacements[nNumCareerMaxPlayers];
+	static inline std::mutex sSaveMutex;
 
 	void CalculateCupPlayersByPosition() {
 		memset(aCupLocalPlayerPlacements,0,sizeof(aCupLocalPlayerPlacements));
@@ -280,7 +281,9 @@ struct tCustomSaveStructure {
 			ChloeEvents::SaveLoadedEvent.OnHit(saveSlot+1);
 		}
 	}
-	void Save() {
+	void Save(bool saveAll = true) {
+		sSaveMutex.lock();
+
 		if (!bInitialized) return;
 
 		int saveSlot = nCurrentSaveSlot;
@@ -292,12 +295,17 @@ struct tCustomSaveStructure {
 		CreateArcadeVerify();
 
 		auto file = std::ofstream(GetCustomSavePath(saveSlot+1), std::ios::out | std::ios::binary);
-		if (!file.is_open()) return;
-
-		ChloeEvents::SaveCreatedEvent.OnHit(saveSlot+1);
+		if (!file.is_open()) {
+			sSaveMutex.unlock();
+			return;
+		}
 
 		file.write((char*)this, sizeof(*this));
 		file.close();
+
+		if (saveAll) ChloeEvents::SaveCreatedEvent.OnHit(saveSlot+1);
+
+		sSaveMutex.unlock();
 	}
 	void Delete(int slot) {
 		auto save = GetCustomSavePath(slot+1);
@@ -362,7 +370,7 @@ void ProcessPlayStats() {
 		}
 
 		if (changed) {
-			gCustomSave.Save();
+			std::thread([]() { gCustomSave.Save(false); }).detach();
 		}
 	}
 
