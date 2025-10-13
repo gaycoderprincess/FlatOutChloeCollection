@@ -1,3 +1,4 @@
+int nCurrentSaveSlot = -1;
 
 enum ePlaytimeType {
 	PLAYTIME_TOTAL,
@@ -257,9 +258,9 @@ struct tCustomSaveStructure {
 	}
 	void Load(int saveSlot = -1, bool loadAll = true) {
 		if (saveSlot < 0) {
-			saveSlot = pGameFlow->nSaveSlot;
+			saveSlot = nCurrentSaveSlot;
 			if (saveSlot < 0) {
-				saveSlot = pGameFlow->Profile.nAutosaveSlot;
+				MessageBoxA(0, "Trying to save to slot 0, this is a bug", "nya?!~", MB_ICONWARNING);
 			}
 		}
 
@@ -270,6 +271,8 @@ struct tCustomSaveStructure {
 		if (!file.is_open()) return;
 
 		file.read((char*)this, sizeof(*this));
+		file.close();
+
 		CheckArcadeVerify();
 
 		if (loadAll) {
@@ -280,11 +283,7 @@ struct tCustomSaveStructure {
 	void Save() {
 		if (!bInitialized) return;
 
-		int saveSlot = pGameFlow->nSaveSlot;
-		if (saveSlot < 0) {
-			saveSlot = pGameFlow->Profile.nAutosaveSlot;
-		}
-
+		int saveSlot = nCurrentSaveSlot;
 		if (saveSlot < 0) {
 			MessageBoxA(0, "Trying to save to slot 0, this is a bug", "nya?!~", MB_ICONWARNING);
 		}
@@ -298,6 +297,7 @@ struct tCustomSaveStructure {
 		ChloeEvents::SaveCreatedEvent.OnHit(saveSlot+1);
 
 		file.write((char*)this, sizeof(*this));
+		file.close();
 	}
 	void Delete(int slot) {
 		auto save = GetCustomSavePath(slot+1);

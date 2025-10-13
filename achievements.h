@@ -17,7 +17,6 @@ namespace Achievements {
 	}
 
 	int nTotalProgression = 0;
-	int nCurrentSaveSlot = 0;
 
 	enum eAchievementCategory {
 		CAT_GENERAL = 1,
@@ -168,13 +167,7 @@ namespace Achievements {
 		return DrawString(data, text, &DrawStringFO2_Condensed12);
 	}
 
-	bool findValidSaveSlot = false;
 	void Save(int saveSlot) {
-		if (findValidSaveSlot) {
-			nCurrentSaveSlot = saveSlot;
-			findValidSaveSlot = false;
-		}
-
 		auto file = std::ofstream(GetAchievementSavePath(saveSlot), std::ios::out | std::ios::binary);
 		if (!file.is_open()) return;
 
@@ -198,7 +191,6 @@ namespace Achievements {
 			achievement->fInternalProgress = 0;
 			achievement->bUnlocked = false;
 		}
-		findValidSaveSlot = true;
 	}
 
 	std::vector<CAchievement*> aUnlockBuffer;
@@ -219,13 +211,12 @@ namespace Achievements {
 
 	void AwardAchievement(CAchievement* achievement) {
 		if (!achievement) return;
+		if (nCurrentSaveSlot < 0) return;
 
 		if (achievement->bUnlocked) return;
 		achievement->bUnlocked = true;
 
-		if (!findValidSaveSlot) {
-			Save(nCurrentSaveSlot);
-		}
+		Save(nCurrentSaveSlot+1);
 
 		aUnlockBuffer.push_back(achievement);
 	}
@@ -236,8 +227,6 @@ namespace Achievements {
 			achievement->fInternalProgress = 0;
 			achievement->bUnlocked = false;
 		}
-
-		nCurrentSaveSlot = saveSlot;
 
 		auto file = std::ifstream(GetAchievementSavePath(saveSlot), std::ios::in | std::ios::binary);
 		if (!file.is_open()) return;

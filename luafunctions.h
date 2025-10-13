@@ -548,6 +548,12 @@ int ChloeSave_SetNewSaveHandlingMode(void* a1) {
 	return 0;
 }
 
+int ChloeSave_SetSaveSlot(void* a1) {
+	nCurrentSaveSlot = luaL_checknumber(a1, 1);
+	WriteLog(std::format("saveslot set to {}", nCurrentSaveSlot));
+	return 0;
+}
+
 int ChloeSave_LoadCustomData(void* a1) {
 	gCustomSave.Load();
 	return 0;
@@ -1432,6 +1438,7 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeHUD_SelectAchievement, "ChloeHUD_SelectAchievement");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_ClearCustomData, "ChloeSave_ClearCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_SetNewSaveHandlingMode, "ChloeSave_SetNewSaveHandlingMode");
+	RegisterLUAFunction(a1, (void*)&ChloeSave_SetSaveSlot, "ChloeSave_SetSaveSlot");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_LoadCustomData, "ChloeSave_LoadCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_SaveCustomData, "ChloeSave_SaveCustomData");
 	RegisterLUAFunction(a1, (void*)&ChloeSave_DeleteCustomData, "ChloeSave_DeleteCustomData");
