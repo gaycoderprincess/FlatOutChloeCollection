@@ -262,7 +262,6 @@ void __fastcall LoadCarBody(Car* car) {
 	CAR_PERFORMANCE(body->fFFFrictionOffset, "Body", "FFFrictionOffset");
 	CAR_PERFORMANCE(body->fFFCenteringNominalLoad, "Body", "FFCenteringNominalLoad");
 	CAR_PERFORMANCE(body->fFFCenteringOffset, "Body", "FFCenteringOffset");
-	CAR_PERFORMANCE(body->fMass, "Body", "Mass");
 	CAR_PERFORMANCE_ARRAY(body->fMomentOfInertia, "Body", "MomentOfInertia", 3);
 	CAR_PERFORMANCE_ARRAY(body->fCenterOfMass, "Body", "CenterOfMass", 3);
 	CAR_PERFORMANCE_ARRAY(body->fAeroDrag, "Body", "AeroDrag", 3);
@@ -282,6 +281,11 @@ void __fastcall LoadCarBody(Car* car) {
 	CAR_PERFORMANCE(body->nFrontTraction, "Body", "FrontTraction");
 	CAR_PERFORMANCE(body->nRearTraction, "Body", "RearTraction");
 	CAR_PERFORMANCE_TUNE(fCarDurability[car->pPlayer->nPlayerId-1], "Body", "Body_Max", "Durability", tuning.fDurability);
+
+	body->fMass = data["Data"]["MassOverride"].value_or(0.0f);
+	if (body->fMass == 0.0f) {
+		CAR_PERFORMANCE(body->fMass, "Body", "Mass");
+	}
 
 	if (!bIsInMultiplayer && car->pPlayer->nPlayerType != PLAYERTYPE_LOCAL) {
 		body->fMass *= PlayerVsAIMassFudgeFactor;

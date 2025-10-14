@@ -158,6 +158,10 @@ public:
 		static auto arrowPlayer = LoadTextureFromBFS("data/global/overlay/map_playerarrow_local.tga");
 
 		auto plyMatrix = ply->pCar->GetMatrix();
+
+		NyaVec3 invalidGhostPos = {500,-25,500};
+		if ((plyMatrix->p - invalidGhostPos).length() < 1) return;
+
 		auto plyPos = GetPositionOnMap(plyMatrix->p);
 		auto plyDir = std::atan2(plyMatrix->z.x, plyMatrix->z.z) - fLocalPlayerHeading;
 		DrawRectangle(plyPos.x - (fArrowSize * GetAspectRatioInv()), plyPos.x + (fArrowSize * GetAspectRatioInv()), plyPos.y - fArrowSize, plyPos.y + fArrowSize, GetPlayerColor(ply), 0, ply->nPlayerType == PLAYERTYPE_LOCAL ? arrowPlayer : arrow, plyDir);

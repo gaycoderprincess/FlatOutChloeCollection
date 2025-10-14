@@ -6,6 +6,10 @@ public:
 
 		PreloadTexture("data/global/particles/nitro.tga");
 		PreloadTexture("data/global/particles/nitro_once.tga");
+
+		// disable car dummy object memory clear at race start, needed for calling GetObjectByName
+		NyaHookLib::Patch<uint8_t>(0x41E39A, 0xEB);
+		NyaHookLib::Fill(0x41E3E0, 0x90, 6);
 	}
 
 	bool DrawInReplay() override { return true; }
@@ -14,7 +18,9 @@ public:
 	int nPlayerNitroParticleStage[nMaxPlayers] = {};
 
 	static inline const char* aDisallowedCars[] = {
-		"Bullet" // wrong exhaust dummies
+		"Bullet", // wrong exhaust dummies
+		"Splitter", // side exhausts not supported
+		"Trasher", // side exhausts not supported
 	};
 
 	static bool IsBlocked(NyaVec3 pos) {
