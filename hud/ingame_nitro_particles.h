@@ -17,10 +17,21 @@ public:
 	double fPlayerNitroParticleTimer[nMaxPlayers] = {};
 	int nPlayerNitroParticleStage[nMaxPlayers] = {};
 
-	static inline const char* aDisallowedCars[] = {
-		"Bullet", // wrong exhaust dummies
-		"Splitter", // side exhausts not supported
-		"Trasher", // side exhausts not supported
+	static inline const char* aSideExhaustCars[] = {
+			"Bullet",
+			"Trasher",
+		"Splitter",
+		"Switchblade",
+		"Venom",
+	};
+
+	static inline const char* aFrontExhaustCars[] = {
+			"Malice",
+			"Roamer",
+	};
+
+	static inline const char* aSkipHeadingCars[] = {
+		"Banger",
 	};
 
 	static bool IsBlocked(NyaVec3 pos) {
@@ -39,8 +50,28 @@ public:
 		if (ply->pCar->fNitroButton <= 0.0) return;
 		if (ply->pCar->GetNitro() <= 0.0) return;
 
-		for (auto& name : aDisallowedCars) {
-			if (!strcmp(ply->pCar->sName.Get(), name)) return;
+		bool sideHeading = false;
+		for (auto& name : aSideExhaustCars) {
+			if (!strcmp(ply->pCar->sName.Get(), name)) {
+				sideHeading = true;
+				break;
+			}
+		}
+
+		bool frontHeading = false;
+		for (auto& name : aFrontExhaustCars) {
+			if (!strcmp(ply->pCar->sName.Get(), name)) {
+				frontHeading = true;
+				break;
+			}
+		}
+
+		bool skipHeading = false;
+		for (auto& name : aSkipHeadingCars) {
+			if (!strcmp(ply->pCar->sName.Get(), name)) {
+				skipHeading = true;
+				break;
+			}
 		}
 
 		auto cam = pCameraManager->pCamera;
@@ -49,7 +80,20 @@ public:
 
 		auto cameraDot = ply->pCar->GetMatrix()->z.Dot(cam->GetMatrix()->z);
 
-		float alphaMult = (cameraDot - 0.5) * 2;
+		float alphaMult = 1.0;
+		if (!skipHeading) {
+			if (sideHeading) {
+				// closest to 0 gets 1.0
+				alphaMult = (1.0 - std::abs(cameraDot)) * 2;
+				if (alphaMult > 1) alphaMult = 1;
+			}
+			else if (frontHeading) {
+				alphaMult = (-cameraDot - 0.5) * 2;
+			}
+			else {
+				alphaMult = (cameraDot - 0.5) * 2;
+			}
+		}
 		if (alphaMult <= 0.0) return;
 
 		auto& timer = fPlayerNitroParticleTimer[ply->nPlayerId-1];
@@ -63,19 +107,33 @@ public:
 
 		static auto tex = LoadTextureFromBFS("data/global/particles/nitro.tga");
 
-		std::vector<Object*> aExhausts;
-		if (auto obj = ply->pCar->GetObjectByName("exhaust_l_dummy_1")) aExhausts.push_back(obj);
-		if (auto obj = ply->pCar->GetObjectByName("exhaust_r_dummy_1")) aExhausts.push_back(obj);
-		if (auto obj = ply->pCar->GetObjectByName("exhaust_1_dummy_1")) aExhausts.push_back(obj);
-		if (auto obj = ply->pCar->GetObjectByName("exhaust_2_dummy_1")) aExhausts.push_back(obj);
-		if (auto obj = ply->pCar->GetObjectByName("exhaust_3_dummy_1")) aExhausts.push_back(obj);
+		const char* exhaustProps[] = {
+				"exhaust_l_dummy_1",
+				"exhaust_r_dummy_1",
+				"exhaust_1_dummy_1",
+				"exhaust_2_dummy_1",
+				"exhaust_3_dummy_1",
+		};
 
-		for (auto& exhaust : aExhausts) {
-			auto mat = *ply->pCar->GetMatrix() * *exhaust->GetMatrix();
+		std::vector<NyaVec3> aExhausts;
+		for (auto& name : exhaustProps) {
+			if (auto obj = ply->pCar->GetObjectByName(name)) {
+				aExhausts.push_back((*ply->pCar->GetMatrix() * *obj->GetMatrix()).p);
+			}
+		}
 
-			if (IsBlocked(mat.p)) continue;
+		// side exhausts should only show the closest dummy
+		if (sideHeading && !aExhausts.empty()) {
+			std::sort(aExhausts.begin(), aExhausts.end(), [](NyaVec3 a, NyaVec3 b) {
+				return Get3DTo2D(a).z < Get3DTo2D(b).z;
+			});
+			aExhausts = {aExhausts[0]};
+		}
 
-			auto drawPos = Get3DTo2D(mat.p);
+		for (auto& pos : aExhausts) {
+			if (IsBlocked(pos)) continue;
+
+			auto drawPos = Get3DTo2D(pos);
 			if (drawPos.z <= 0) continue;
 
 			ImVec2 uvMin = {(float)(stage * 0.25), 0};
