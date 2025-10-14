@@ -402,9 +402,9 @@ namespace FragDerby {
 		else nPlayerScore[pPlayer->nPlayerId-1] -= FragScore_ResetCost;
 	}
 
-	void Init() {
+	ChloeHook Init([]() {
 		ChloeEvents::CrashBonusEvent.AddHandler(OnCrashBonus);
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 		ChloeEvents::PlayerResetEvent.AddHandler(OnPlayerReset);
-	}
+	});
 }

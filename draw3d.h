@@ -26,10 +26,10 @@ NyaVec3 Get3DTo2D(NyaVec3 pos) {
 	return NyaVec3(out.x, out.y, out.z);
 }
 
-void ApplyDraw3DPatches() {
+ChloeHook Hook_GetProjectionMatrix([]() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4C118E, &GetProjectionMatrix);
 
 	//NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x43E9D4, &mallocHooked);
 	//NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x43EBA7, &mallocHooked);
 	//NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x43ECDC, &mallocHooked);
-}
+});

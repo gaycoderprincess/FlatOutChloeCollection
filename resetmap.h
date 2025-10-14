@@ -70,12 +70,12 @@ namespace NewResetMap {
 		}
 	}
 
-	void Init() {
+	ChloeHook Init([]() {
 		DWORD oldProt;
 		static float f256 = 256.0;
 		NyaHookLib::Patch((uintptr_t)(&aGetResetmapValue[0x33]), &f256);
 		VirtualProtect(aGetResetmapValue, sizeof(aGetResetmapValue), PAGE_EXECUTE_READWRITE, &oldProt);
 
 		ChloeEvents::MapLoadEvent.AddHandler(OnMapLoad);
-	}
+	});
 }

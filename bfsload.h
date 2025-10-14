@@ -18,7 +18,7 @@ bool __fastcall NewBFSList2(uint32_t flags) {
 	return false;
 }
 
-void ApplyBFSLoadingPatches() {
+ChloeHook Hook_BFSLoader([]() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A7014, &NewBFSList1);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A70DF, &NewBFSList2);
-}
+});

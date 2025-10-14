@@ -103,7 +103,7 @@ void __stdcall OnLoadAIProfile(AIPlayer* player) {
 	AIPlayer::LoadProfile(player);
 }
 
-void ApplyAIExtenderPatches() {
+ChloeHook Hook_AIExtender([]() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x406482, &OnLoadAIProfile);
 
 	NyaHookLib::Patch(0x43F74E, &aCustomPlayerNames[-1]);
@@ -155,4 +155,4 @@ void ApplyAIExtenderPatches() {
 	//NyaHookLib::Patch(0x491826 + 1, (2560 * 4) / 4);
 
 	// todo sub_44BC20
-}
+});

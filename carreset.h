@@ -212,7 +212,7 @@ void OutOfTrackChecker() {
 	}
 }
 
-void ApplyCarResetPatches() {
+ChloeHook Hook_NewCarReset([]() {
 	NyaHookLib::Patch(0x6605CC, &ResetCarNew);
 
 	// allow resetting immediately upon ragdoll
@@ -226,4 +226,4 @@ void ApplyCarResetPatches() {
 	ChloeEvents::MapLoadEvent.AddHandler(LoadResetPoints);
 	ChloeEvents::FinishFrameEvent.AddHandler(ProcessCarReset);
 	ChloeEvents::FinishFrameEvent.AddHandler(OutOfTrackChecker);
-}
+});

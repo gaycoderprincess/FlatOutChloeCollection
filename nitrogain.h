@@ -68,7 +68,7 @@ void ProcessNitroGain() {
 	}
 }
 
-void ApplyNitroGainPatches() {
+ChloeHook Hook_NitroGain([]() {
 	NyaHookLib::Fill(0x4147B5, 0x90, 6); // AI nitro gain for ragdolling
 	NyaHookLib::Patch<uint16_t>(0x41B9F0, 0x9090); // record prop hits for ai
 	NyaHookLib::Patch<uint16_t>(0x41D915, 0x9090); // register prop hit handler for ai
@@ -78,4 +78,4 @@ void ApplyNitroGainPatches() {
 	NyaHookLib::Patch<uint16_t>(0x41671D, 0x9090);
 
 	ChloeEvents::FinishFrameEvent.AddHandler(ProcessNitroGain);
-}
+});

@@ -169,6 +169,15 @@ namespace ChloeEvents {
 			}
 		}
 	} RaceRestartEvent;
+
+	class EventGameStartup : public ChloeEvent<void(*)()> {
+	public:
+		void OnHit() {
+			for (auto& func : functions) {
+				func();
+			}
+		}
+	} GameStartupEvent;
 }
 
 namespace ChloeEventHooks {
@@ -209,5 +218,16 @@ namespace ChloeEventHooks {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4655EF, &OnMapPreLoad); // menu
 		
 		OnFilesystemInitASM_jmp = NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4A7261, &OnFilesystemInitASM);
+
+		ChloeEvents::GameStartupEvent.OnHit();
 	}
 }
+
+class ChloeHook {
+public:
+	void(*pFunction)();
+
+	ChloeHook(void(*pFunction)()) {
+		ChloeEvents::GameStartupEvent.AddHandler(pFunction);
+	}
+};

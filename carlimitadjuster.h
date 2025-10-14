@@ -77,7 +77,7 @@ DevTexture* __stdcall LoadMenucarTextureNew(void* a1, const char* path, int a3, 
 	return LoadTextureFromFile(a1, str.c_str(), a3, a4);
 }
 
-void ApplyCarLimitAdjusterPatches() {
+ChloeHook Hook_CarLimitAdjuster([]() {
 	// remove hardcoded shared path from lights_damaged
 	static const char lightsDamagedPath[] = "lights_damaged.tga";
 	NyaHookLib::Patch(0x41E483 + 1, lightsDamagedPath);
@@ -110,4 +110,4 @@ void ApplyCarLimitAdjusterPatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x42503D, 0x424F5A); // engine_3
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x425117, 0x4250AA); // coolingfan_2
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x425184, 0x4250AA); // coolingfan_3
-}
+});

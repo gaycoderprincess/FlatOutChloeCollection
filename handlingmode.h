@@ -37,6 +37,6 @@ int __attribute__((naked)) SetHandlingModeASM() {
 	);
 }
 
-void ApplyHandlingModePatches() {
+ChloeHook Hook_CustomHandlingModes([]() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4189D0, &SetHandlingModeASM);
-}
+});

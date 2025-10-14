@@ -16,9 +16,9 @@
 #include "consts.h"
 #include "config.h"
 #include "utils.h"
-#include "draw3d.h"
 #include "mallochook.h"
 #include "events.h"
+#include "draw3d.h"
 #include "filereader.h"
 #include "gamerules.h"
 #include "customsave.h"
@@ -44,6 +44,7 @@
 #include "hud/menu.h"
 #include "hud/ingame.h"
 #include "bfsload.h"
+#include "ultrawide.h"
 #include "xinputsupport.h"
 #include "d3dhook.h"
 #include "profiles.h"
@@ -52,7 +53,6 @@
 #include "fragderby.h"
 #include "luafunctions.h"
 #include "nitrogain.h"
-#include "ultrawide.h"
 #include "newingamemenu.h"
 #include "debugmenu.h"
 
@@ -169,42 +169,12 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaFO2Hooks::aEndSceneFuncs.push_back(CustomSetterThread);
 
 			//HookMalloc();
-			ApplyBFSLoadingPatches();
-			ApplyWindowedModePatches();
-			ApplyLUAPatches();
-			ApplyDDSParserPatches();
-			ApplyDebugMenuPatches();
-			ApplyCustomSettingsPatches();
-			ApplyCarLimitAdjusterPatches();
-			ApplyCarDamagePatches();
-			ApplyCarResetPatches();
-			ApplyCarDatabasePatches();
-			ApplyNitroGainPatches();
-			ApplyUltrawidePatches();
-			ApplyXInputPatches();
-			ApplyAIExtenderPatches();
-			ApplyDraw3DPatches();
-			ApplyTrackExtenderPatches();
-			ApplyHandlingModePatches();
-			ApplyD3DHook();
-			CareerMode::Init();
-			ArcadeMode::Init();
-			CarnageRace::Init();
-			SmashyRace::Init();
-			FragDerby::Init();
-			Achievements::Init();
-			NewIngameMenu::Init();
-			GameRules::Init();
-			NewResetMap::Init();
 			ChloeEventHooks::Init();
-			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
-			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
 			ChloeEvents::FinishFrameEvent.AddHandler(SetGameSettings);
 			ChloeEvents::FinishFrameEvent.AddHandler(SetPlayerColors);
 			ChloeEvents::FinishFrameEvent.AddHandler(SetHandlingDamage);
 			ChloeEvents::FinishFrameEvent.AddHandler(SetHandlingMode);
 			ChloeEvents::FinishFrameEvent.AddHandler(SetEngineDamage);
-			ChloeEvents::FinishFrameEvent.AddHandler(ProcessPlayStats);
 
 			NyaHookLib::Patch<uint64_t>(0x454AFC, 0xE0A190000001EEE9); // remove total time from hud
 

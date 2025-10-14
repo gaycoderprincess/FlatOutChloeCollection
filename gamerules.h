@@ -86,10 +86,10 @@ namespace GameRules {
 		*GameRulesArcadeRace = ReadTOMLFromBfs("data/database/gamerules/arcaderace.toml");
 	}
 
-	void Init() {
+	ChloeHook Init([]() {
 		ChloeEvents::FilesystemInitEvent.AddHandler(Load);
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
-	}
+	});
 }
 
 GameRules::KeyValue WhammoCrashVelocity1("WhammoCrashVelocity1");

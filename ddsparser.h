@@ -103,7 +103,7 @@ DevTexture* __thiscall CreateTextureFromFileNew(DeviceD3d* pThis, DevTexture* pT
 	return nullptr;
 }
 
-void ApplyDDSParserPatches() {
+ChloeHook Hook_DDSParser([]() {
 	NyaHookLib::Patch(0x667A0C, &CreateTextureFromFileNew);
 	NyaHookLib::Patch(0x667A10, &CreateTextureFromMemoryNew);
-}
+});

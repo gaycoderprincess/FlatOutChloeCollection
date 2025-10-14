@@ -88,7 +88,6 @@ int __thiscall GetInputValueNew(Controller* pThis, int input) {
 	return GetInputValueXInput(pThis, input);
 }
 
-void ApplyUltrawidePatches();
 namespace SplitscreenController {
 	void __thiscall dummy_sub_4FADB0(Controller* pThis, char a2) {}
 	void __thiscall dummy_Reset(Controller* pThis) {}
@@ -159,16 +158,16 @@ namespace SplitscreenController {
 	};
 
 	Controller* pControllers[nMaxSplitscreenPlayers] = {};
-	void CopyController(uint8_t* data) {
+	void CopyController(const uint8_t* data) {
 		for (int i = 0; i < nMaxSplitscreenPlayers; i++) {
 			if (pControllers[i]) return;
 			pControllers[i] = (Controller*)malloc(0x79C+16);
 			memcpy(pControllers[i], data, 0x79C);
 			pControllers[i]->_4[-1] = (uint32_t)&pVTable[0];
 			pControllers[i]->_4[0x79C/4] = i; // player id
-		}
 
-		ApplyUltrawidePatches(); // hacky fix here to override the fov from widescreen fix
+			Hook_Ultrawide.pFunction(); // hacky fix here to override the fov from widescreen fix
+		}
 	}
 }
 
@@ -198,7 +197,7 @@ void ProcessXInputSupport() {
 	SetPadDeadzone(((nControllerDeadzone / 100.0) * 8192) + 2048);
 }
 
-void ApplyXInputPatches() {
+ChloeHook Hook_XInputSupport([]() {
 	NyaHookLib::Patch(0x667494, &IsMenuInputJustPressedNew);
 	NyaHookLib::Patch(0x667498, &IsGameInputJustPressedNew);
 	NyaHookLib::Patch(0x66749C, &GetInputValueNew);
@@ -206,4 +205,4 @@ void ApplyXInputPatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4F13D3, 0x4F147D); // never allocate more controllers
 
 	ChloeEvents::FinishFrameEvent.AddHandler(ProcessXInputSupport);
-}
+});

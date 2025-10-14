@@ -478,7 +478,7 @@ void __stdcall LoadCarSounds(Car* car) {
 	Car::LoadSurfaceSounds(4, &car->pSurfaceSounds, "data/sound/surface_sounds.bed");
 }
 
-void ApplyCarDatabasePatches() {
+ChloeHook Hook_CarDatabase([]() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBA2, &LoadCarEngine);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBAE, &LoadCarGearbox);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x41CBBA, &LoadCarDifferential);
@@ -511,4 +511,4 @@ void ApplyCarDatabasePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x43F7C1, 0x43C4FE);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x440066, 0x43C24A);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4401FA, 0x43C24A);
-}
+});

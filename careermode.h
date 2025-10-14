@@ -599,7 +599,7 @@ namespace CareerMode {
 		return "Remaining: " + str;
 	}
 
-	void Init() {
+	ChloeHook Init([]() {
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x440560, &GetAIHandicapLevelNew);
 		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4404A0, &GetNumLapsNew);
 
@@ -611,5 +611,5 @@ namespace CareerMode {
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
 
 		Achievements::GetAchievement("COMPLETE_CAREER_GOLD_WIN")->pTrackFunction = OnTrack_CompleteCareerGoldWin;
-	}
+	});
 }

@@ -286,10 +286,10 @@ namespace CarnageRace {
 		}
 	}
 
-	void Init() {
+	ChloeHook Init([]() {
 		ChloeEvents::CrashBonusEvent.AddHandler(OnCrashBonus);
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
-	}
+	});
 
 	class CHUD_ArcadeRace : public CIngameHUDElement {
 	public:

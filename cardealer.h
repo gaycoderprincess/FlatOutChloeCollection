@@ -92,3 +92,7 @@ void ApplyCarDealerPatches() {
 	});
 	WriteLogDebug("CARDEALER", "--- Finished loading car data ---");
 }
+
+ChloeHook Hook_DynamicCarDealer([]() {
+	ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
+});

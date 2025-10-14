@@ -58,7 +58,7 @@ void WriteSettingsToTestFile() {
 	}
 }
 
-void ApplyCustomSettingsPatches() {
+ChloeHook Hook_CustomSettings([]() {
 	uintptr_t aCategoryAddresses[] = {
 			0x4399E2,
 			0x43A0AF,
@@ -81,4 +81,4 @@ void ApplyCustomSettingsPatches() {
 		NyaHookLib::Patch(addr, &aNewGameSettings[0].name);
 	}
 	NyaHookLib::Patch(0x4399ED, &aNewGameSettings[0].maxValue);
-}
+});

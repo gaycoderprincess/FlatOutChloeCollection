@@ -452,3 +452,7 @@ void ProcessPlayStats() {
 	}
 	lastGameState = GetGameState();
 }
+
+ChloeHook Hook_PlayStats([]() {
+	ChloeEvents::FinishFrameEvent.AddHandler(ProcessPlayStats);
+});

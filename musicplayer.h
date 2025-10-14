@@ -494,7 +494,7 @@ namespace NewMusicPlayer {
 		nMusicPopupTimeOffset -= 3000;
 	}
 
-	void Init() {
+	void InitPlaylists() {
 		static bool bInited = false;
 		if (bInited) {
 			return;
@@ -502,20 +502,6 @@ namespace NewMusicPlayer {
 		bInited = true;
 
 		NyaAudio::Init(ghWnd);
-		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
-		ChloeEvents::RaceRestartEvent.AddHandler(OnRaceRestart);
-		ChloeEvents::SaveCreatedEvent.AddHandler(SaveCustomPlaylists);
-
-		// todo credits song
-
-		// get rid of all vanilla playlist stuff
-		NyaHookLib::Patch<uint8_t>(0x410CB0, 0xC3); // StartMusic
-		NyaHookLib::Patch<uint8_t>(0x4112B0, 0xC3); // PickGameSongAndStartMenuSong
-		NyaHookLib::Patch<uint8_t>(0x411350, 0xC3); // StartSelectedSongFromMusicPlaylist
-		NyaHookLib::Patch<uint8_t>(0x410ED0, 0xC3); // ReadMusicPlaylist
-
-		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);
-		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
 
 		WriteLogDebug("MUSIC", "--- Discovering playlists ---");
 
@@ -533,4 +519,22 @@ namespace NewMusicPlayer {
 
 		WriteLogDebug("MUSIC", "--- Finished preloading playlists ---");
 	}
+
+	ChloeHook Init([]() {
+		ChloeEvents::FilesystemInitEvent.AddHandler(InitPlaylists);
+		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
+		ChloeEvents::RaceRestartEvent.AddHandler(OnRaceRestart);
+		ChloeEvents::SaveCreatedEvent.AddHandler(SaveCustomPlaylists);
+
+		// todo credits song
+
+		// get rid of all vanilla playlist stuff
+		NyaHookLib::Patch<uint8_t>(0x410CB0, 0xC3); // StartMusic
+		NyaHookLib::Patch<uint8_t>(0x4112B0, 0xC3); // PickGameSongAndStartMenuSong
+		NyaHookLib::Patch<uint8_t>(0x411350, 0xC3); // StartSelectedSongFromMusicPlaylist
+		NyaHookLib::Patch<uint8_t>(0x410ED0, 0xC3); // ReadMusicPlaylist
+
+		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411210, &GetArtistName);
+		NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x411260, &GetSongName);
+	});
 }

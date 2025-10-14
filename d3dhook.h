@@ -71,8 +71,8 @@ void ClearD3D() {
 	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);
 }
 
-void ApplyD3DHook() {
+ChloeHook Hook_D3DDraws([]() {
 	NyaFO2Hooks::aPostPresentFuncs.push_back(ClearD3D);
 	ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
-}
+});

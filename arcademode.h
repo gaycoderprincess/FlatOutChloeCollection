@@ -155,10 +155,10 @@ namespace ArcadeMode {
 		}
 	}
 
-	void Init() {
+	ChloeHook Init([]() {
 		ChloeEvents::SaveCreatedEvent.AddHandler(OnSave);
 		ChloeEvents::FinishFrameEvent.AddHandler(OnTick);
-	}
+	});
 }
 
 void tCustomSaveStructure::CreateArcadeVerify() {

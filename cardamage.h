@@ -355,7 +355,7 @@ void __attribute__((naked)) CarDamageMultASM() {
 	);
 }
 
-void ApplyCarDamagePatches() {
+ChloeHook Hook_CarDamage([]() {
 	uintptr_t addresses[] = {
 		0x4078F0,
 		0x40792D,
@@ -385,4 +385,4 @@ void ApplyCarDamagePatches() {
 	NyaHookLib::Patch(0x416748 + 2, -100); // minimum crash bonus interval, default -500
 
 	ChloeEvents::FinishFrameEvent.AddHandler(ProcessCarDamage);
-}
+});

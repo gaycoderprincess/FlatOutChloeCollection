@@ -145,7 +145,7 @@ void __attribute__((naked)) UltrawideFOVSkyASM() {
 	);
 }
 
-void ApplyUltrawidePatches() {
+ChloeHook Hook_Ultrawide([]() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47E155, &UltrawideFOVMenuASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x47C6C7, &UltrawideFOVIngameASM);
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4C8AF0, &UltrawideFOVSkyASM);
@@ -178,4 +178,4 @@ void ApplyUltrawidePatches() {
 		NyaHookLib::Patch(0x4DD6A0 + 1, windowFunctions);
 		NyaHookLib::Patch(0x4DD69B + 1, len-1);
 	}
-}
+});

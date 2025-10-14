@@ -172,7 +172,7 @@ void __cdecl SetWeather(void* a1, int a2) {
 	pPlayerHost->nWeatherId = bIsInMultiplayer ? GetTrackDefaultWeather(pGameFlow->nLevel) : nTrackWeather;
 }
 
-void ApplyTrackExtenderPatches() {
+ChloeHook Hook_TrackExtender([]() {
 	ChloeEvents::MapPreLoadEvent.AddHandler(SetTrackCustomProperties);
 	ChloeEvents::MapLoadEvent.AddHandler(SetTrackCustomPropertiesPost);
 	ChloeEvents::RacePreLoadEvent.AddHandler(SetTrackCustomPropertiesPre);
@@ -180,4 +180,4 @@ void ApplyTrackExtenderPatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x440465, &SetWeather);
 
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4693DE, 0x4695D6); // never load vanilla minimaps
-}
+});

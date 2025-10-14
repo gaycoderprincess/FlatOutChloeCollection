@@ -75,7 +75,7 @@ namespace NewIngameMenu {
 		HUD_Tutorial.bMenuUpInNormalMode = true;
 	}
 
-	void Init() {
+	ChloeHook Init([]() {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459FCF, &DrawPauseMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459F79, &DrawPressStartMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45A00E, &DrawStuntEndOfRoundMenu);
@@ -83,5 +83,5 @@ namespace NewIngameMenu {
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x459FE1, &DrawSplitScreenRaceEndMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45A01D, &DrawRaceResultsMenu);
 		NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45B092, &DrawDerbyTutorialMenu);
-	}
+	});
 }

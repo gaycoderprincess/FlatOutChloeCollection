@@ -63,7 +63,7 @@ void __attribute__((naked)) SetWindowedModeASM() {
 	);
 }
 
-void ApplyWindowedModePatches() {
+ChloeHook gWindowedMode([]() {
 	bForceFullscreen = std::filesystem::exists("fullscreen");
 	if (bForceFullscreen) return;
 
@@ -75,4 +75,4 @@ void ApplyWindowedModePatches() {
 	NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x504EF0, &SetWindowedModeASM);
 
 	ChloeEvents::FinishFrameEvent.AddHandler(SetWindowedMode);
-}
+});

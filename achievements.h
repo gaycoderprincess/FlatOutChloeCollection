@@ -685,7 +685,7 @@ namespace Achievements {
 		DrawUnlockUI();
 	}
 
-	void Init() {
+	ChloeHook Init([]() {
 		GetAchievement("LOW_HP")->pTickFunction = OnTick_LowHP;
 		GetAchievement("CASH_AWARD")->pTickFunction = OnTick_CashAward;
 		GetAchievement("TRACKMASTER")->pTickFunction = OnTick_Trackmaster;
@@ -718,7 +718,7 @@ namespace Achievements {
 		ChloeEvents::SaveDeletedEvent.AddHandler(Delete);
 		ChloeEvents::SaveClearedEvent.AddHandler(Clear);
 		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
-	}
+	});
 }
 
 Achievements::CAchievement* GetAchievement(const std::string& identifier) {

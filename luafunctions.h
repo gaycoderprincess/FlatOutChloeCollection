@@ -1632,10 +1632,10 @@ void CustomLUAFunctions(void* a1) {
 	lua_settable(a1, LUA_ENVIRONINDEX);
 }
 
-void ApplyLUAPatches() {
+ChloeHook Hook_LUAFunctions([]() {
 	NyaFO2Hooks::PlaceScriptHook();
 	NyaFO2Hooks::aScriptFuncs.push_back(CustomLUAFunctions);
-}
+});
 
 extern "C" __declspec(dllexport) int __cdecl ChloeCollection_GetLocalPlayerArcadeScore() {
 	return ArcadeMode::nCurrentEventScore;
