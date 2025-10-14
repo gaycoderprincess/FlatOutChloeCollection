@@ -51,7 +51,7 @@ public:
 		if (CareerMode::IsCareerTimeTrial()) {
 			if (id >= 0 && id <= sizeof(aPlayerColorsTimeTrial) / sizeof(aPlayerColorsTimeTrial[0])) return aPlayerColorsTimeTrial[id];
 		}
-		if ((bIsInMultiplayer && ChloeNet::IsReplicatedPlayer(ply)) || ply->nPlayerId == 1) {
+		if ((bIsInMultiplayer && ChloeNet::IsReplicatedPlayer(ply)) || (!IsInSplitScreen() && ply->nPlayerId == 1)) {
 			id = ply->nPlayerId == 1 ? nPlayerColor : ChloeNet::GetReplicatedPlayerColor(ply);
 			if (id >= 0 && id <= sizeof(aPlayerColorsMultiplayer) / sizeof(aPlayerColorsMultiplayer[0])) return aPlayerColorsMultiplayer[id];
 			return aPlayerColorsMultiplayer[0];
