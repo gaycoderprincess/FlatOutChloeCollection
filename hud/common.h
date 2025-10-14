@@ -41,6 +41,7 @@ public:
 			return nullptr;
 		}
 
+		if (bNoTextures) return nullptr;
 		if (auto tex = pDeviceD3d->_vf_CreateTextureFromFile(nullptr, path.c_str(), 9)) {
 			gLoadedTextureMutex.lock();
 			aLoadedTextures.push_back({path, tex->pD3DTexture});

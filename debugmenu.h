@@ -637,5 +637,5 @@ void DebugLoop() {
 
 void ApplyDebugMenuPatches() {
 	ChloeMenuLib::RegisterMenu("Chloe Collection Debug Menu", &ProcessDebugMenu);
-	ChloeEvents::FinishFrameEvent.AddHandler(DebugLoop);
+	ChloeEvents::DrawAboveUIEvent.AddHandler(DebugLoop);
 }

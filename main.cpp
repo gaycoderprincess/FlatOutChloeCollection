@@ -56,6 +56,22 @@
 #include "newingamemenu.h"
 #include "debugmenu.h"
 
+void SetGameSettings() {
+	pGameFlow->nAutoTransmission = !nTransmission;
+	pGameFlow->Profile.nEasyDifficulty = GetHandlingMode(nullptr) == HANDLING_NORMAL;
+	nRagdoll = 1;
+}
+
+void SetPlayerColors() {
+	for (auto& color : aPlayerColorsMultiplayer) {
+		auto& dest = *(NyaDrawing::CNyaRGBA32*)&gPalette[(&color - &aPlayerColorsMultiplayer[0]) + 100];
+		dest.r = color.b;
+		dest.g = color.g;
+		dest.b = color.r;
+		dest.a = 255;
+	}
+}
+
 void SetHandlingDamage() {
 	int handlingDamage = nHandlingDamage;
 	if (CareerMode::IsCareerTimeTrial()) handlingDamage = HANDLINGDAMAGE_REDUCED;
@@ -98,36 +114,12 @@ void SetEngineDamage() {
 }
 
 void CustomSetterThread() {
-	pGameFlow->nAutoTransmission = !nTransmission;
-	pGameFlow->Profile.nEasyDifficulty = GetHandlingMode(nullptr) == HANDLING_NORMAL;
-	nRagdoll = 1;
-
-	for (auto& color : aPlayerColorsMultiplayer) {
-		auto& dest = *(NyaDrawing::CNyaRGBA32*)&gPalette[(&color - &aPlayerColorsMultiplayer[0]) + 100];
-		dest.r = color.b;
-		dest.g = color.g;
-		dest.b = color.r;
-		dest.a = 255;
-	}
-
-	SetHandlingDamage();
-	SetHandlingMode();
-	SetEngineDamage();
-	ProcessPlayStats();
 	ChloeEvents::FinishFrameEvent.OnHit();
 
 	// rng buffer overrun hack-fix
 	if (RNGGenerator::nNumValuesLeft <= 1) {
 		RNGGenerator::Reset();
 	}
-}
-
-void InitD3D() {
-	// d3d hooks done later so the custommp chat ui has priority
-	NyaFO2Hooks::PlaceD3DHooks();
-	NyaFO2Hooks::aEndSceneFuncs.push_back(CustomSetterThread);
-	NyaFO2Hooks::aEndSceneFuncs.push_back(D3DHookMain);
-	NyaFO2Hooks::aD3DResetFuncs.push_back(OnD3DReset);
 }
 
 void CommandlineArgReader(void* a1, const char* a2) {
@@ -161,17 +153,6 @@ void __fastcall UpdateCameraHooked(void* a1, void*, float a2) {
 	}
 }
 
-void __stdcall D3DGameUI(int) {
-	for (int i = 0; i < (int)eHUDLayer::NUM_LAYERS; i++) {
-		nDrawingGameUILayer = i;
-		D3DHookMain();
-	}
-}
-
-void ClearD3D() {
-	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);
-}
-
 BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 	switch( fdwReason ) {
 		case DLL_PROCESS_ATTACH: {
@@ -185,7 +166,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 
 			NyaFO2Hooks::PlaceWndProcHook();
 			NyaFO2Hooks::aWndProcFuncs.push_back(WndProcHook);
-			NyaFO2Hooks::aPostPresentFuncs.push_back(ClearD3D);
+			NyaFO2Hooks::aEndSceneFuncs.push_back(CustomSetterThread);
 
 			//HookMalloc();
 			ApplyBFSLoadingPatches();
@@ -205,6 +186,7 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ApplyDraw3DPatches();
 			ApplyTrackExtenderPatches();
 			ApplyHandlingModePatches();
+			ApplyD3DHook();
 			CareerMode::Init();
 			ArcadeMode::Init();
 			CarnageRace::Init();
@@ -217,11 +199,14 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			ChloeEventHooks::Init();
 			ChloeEvents::FilesystemInitEvent.AddHandler(NewMusicPlayer::Init);
 			ChloeEvents::FilesystemInitEvent.AddHandler(ApplyCarDealerPatches);
-			ChloeEvents::FilesystemInitEvent.AddHandler(InitD3D);
+			ChloeEvents::FinishFrameEvent.AddHandler(SetGameSettings);
+			ChloeEvents::FinishFrameEvent.AddHandler(SetPlayerColors);
+			ChloeEvents::FinishFrameEvent.AddHandler(SetHandlingDamage);
+			ChloeEvents::FinishFrameEvent.AddHandler(SetHandlingMode);
+			ChloeEvents::FinishFrameEvent.AddHandler(SetEngineDamage);
+			ChloeEvents::FinishFrameEvent.AddHandler(ProcessPlayStats);
 
 			NyaHookLib::Patch<uint64_t>(0x454AFC, 0xE0A190000001EEE9); // remove total time from hud
-
-			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x45315E, &D3DGameUI);
 
 			NyaHookLib::PatchRelative(NyaHookLib::JMP, 0x4A74CA, 0x4A757F); // remove copyright screen
 			NyaHookLib::Patch<uint8_t>(0x4A6E8F, 0xEB); // remove intro videos
@@ -233,13 +218,6 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD fdwReason, LPVOID) {
 			NyaHookLib::Fill(0x41E3E0, 0x90, 6);
 
 			// 004E3CDD disable menu ui
-
-			// swap restart and exit to menu in finish screen
-			NyaHookLib::Patch(0x45A62D + 2, 0x194C);
-			NyaHookLib::Patch(0x45A641 + 2, 0x194C);
-			NyaHookLib::Patch(0x45A667 + 2, 0x18FC);
-			NyaHookLib::Patch<uint8_t>(0x45A70C, 0x75);
-			NyaHookLib::Patch<uint8_t>(0x45A70F, 0x74);
 
 			NyaHookLib::PatchRelative(NyaHookLib::CALL, 0x4DA47F, 0x4DA5AB); // disable vanilla cheats system
 
