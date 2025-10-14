@@ -1361,6 +1361,18 @@ int ChloeCollection_SetDefaultWeather(void* a1) {
 	return 0;
 }
 
+int ChloeCollection_PlayCreditsMusic(void* a1) {
+	if (!NewMusicPlayer::bIsInCredits) NewMusicPlayer::StopPlayback();
+	NewMusicPlayer::bIsInCredits = true;
+	return 0;
+}
+
+int ChloeCollection_StopCreditsMusic(void* a1) {
+	if (NewMusicPlayer::bIsInCredits) NewMusicPlayer::StopPlayback();
+	NewMusicPlayer::bIsInCredits = false;
+	return 0;
+}
+
 void RegisterLUAFunction(void* a1, void* function, const char* name) {
 	lua_setglobal(a1, name);
 	lua_pushcfunction(a1, function, 0);
@@ -1579,6 +1591,8 @@ void CustomLUAFunctions(void* a1) {
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_AddTrackWeather, "ChloeCollection_AddTrackWeather");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetWeather, "ChloeCollection_SetWeather");
 	RegisterLUAFunction(a1, (void*)&ChloeCollection_SetDefaultWeather, "ChloeCollection_SetDefaultWeather");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_PlayCreditsMusic, "ChloeCollection_PlayCreditsMusic");
+	RegisterLUAFunction(a1, (void*)&ChloeCollection_StopCreditsMusic, "ChloeCollection_StopCreditsMusic");
 
 	RegisterLUAEnum(a1, Achievements::CAT_GENERAL, "ACHIEVEMENTS_GENERAL");
 	RegisterLUAEnum(a1, Achievements::CAT_SINGLEPLAYER, "ACHIEVEMENTS_SINGLEPLAYER");

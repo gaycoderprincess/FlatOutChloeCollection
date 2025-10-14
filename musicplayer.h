@@ -14,6 +14,7 @@ namespace NewMusicPlayer {
 	bool bCustomPlaylistsEnabled = false;
 	bool bLastSongPlayedInReplay = false;
 	bool bIsFirstIngameSong = false;
+	bool bIsInCredits = false;
 
 	struct tSong {
 		std::string sPath;
@@ -162,6 +163,7 @@ namespace NewMusicPlayer {
 	std::vector<tPlaylist> aPlaylistsTitle;
 	std::vector<tPlaylist> aPlaylistsIngame;
 	std::vector<tPlaylist> aPlaylistsStunt;
+	tPlaylist gPlaylistCredits;
 	tPlaylist gTraxExtraSongs;
 
 	tPlaylist* pPlaylistTitle = nullptr;
@@ -292,7 +294,8 @@ namespace NewMusicPlayer {
 			StopPlayback();
 		}
 
-		if (GetGameState() == GAME_STATE_MENU) {
+		if (bIsInCredits) pCurrentPlaylist = &gPlaylistCredits;
+		else if (GetGameState() == GAME_STATE_MENU) {
 			pCurrentPlaylist = pPlaylistTitle;
 			bIsFirstIngameSong = true;
 		}
@@ -448,10 +451,13 @@ namespace NewMusicPlayer {
 			aPlaylistsStunt.push_back(playlist);
 		}
 
-		tPlaylist playlist;
-		playlist.wsName = L"STANDALONE TRAX SONGS";
+		gPlaylistCredits.wsName = L"CREDITS";
+		LoadPlaylist(&gPlaylistCredits, "playlist_credits");
+		WriteLogDebug("MUSIC", std::format("Adding playlist {} with {} songs", GetStringNarrow(gPlaylistCredits.wsName.c_str()), gPlaylistCredits.aSongs.size()));
+
+		gTraxExtraSongs.wsName = L"STANDALONE TRAX SONGS";
 		LoadPlaylist(&gTraxExtraSongs, "playlist_trax");
-		WriteLogDebug("MUSIC", std::format("Adding trax playlist {} with {} songs", GetStringNarrow(playlist.wsName.c_str()), playlist.aSongs.size()));
+		WriteLogDebug("MUSIC", std::format("Adding playlist {} with {} songs", GetStringNarrow(gTraxExtraSongs.wsName.c_str()), gTraxExtraSongs.aSongs.size()));
 
 		tPlaylist custom;
 		custom.wsName = L"CHLOE TRAX";
@@ -514,6 +520,7 @@ namespace NewMusicPlayer {
 		for (auto& playlist : aPlaylistsTitle) { playlist.Load(); }
 		for (auto& playlist : aPlaylistsIngame) { playlist.Load(); }
 		for (auto& playlist : aPlaylistsStunt) { playlist.Load(); }
+		gPlaylistCredits.Load();
 		gTraxExtraSongs.Load();
 		pPlaylistCustomDerby->Load();
 
@@ -525,8 +532,6 @@ namespace NewMusicPlayer {
 		ChloeEvents::DrawAboveUIEvent.AddHandler(OnTick);
 		ChloeEvents::RaceRestartEvent.AddHandler(OnRaceRestart);
 		ChloeEvents::SaveCreatedEvent.AddHandler(SaveCustomPlaylists);
-
-		// todo credits song
 
 		// get rid of all vanilla playlist stuff
 		NyaHookLib::Patch<uint8_t>(0x410CB0, 0xC3); // StartMusic
