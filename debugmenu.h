@@ -282,6 +282,11 @@ void WriteSectors() {
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
+	QuickValueEditor("DamageIndicatorScale", CHUD_Derby_Overhead::DamageIndicatorScale);
+	QuickValueEditor("DamageIndicatorYOffset", CHUD_Derby_Overhead::DamageIndicatorYOffset);
+	QuickValueEditor("DamageIndicatorFragScale", CHUD_Derby_Overhead::DamageIndicatorFragScale);
+	QuickValueEditor("DamageIndicatorFragYOffset", CHUD_Derby_Overhead::DamageIndicatorFragYOffset);
+
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();
 

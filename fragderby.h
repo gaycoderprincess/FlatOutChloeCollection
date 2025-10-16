@@ -140,11 +140,11 @@ namespace FragDerby {
 		int id = pPlayer->nPlayerId-1;
 		if (type == CRASHBONUS_WRECKED && !pPlayer->nIsRagdolled) {
 			if (nStreakerId == id) {
-				if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) AddTopBarNotif(std::format("{}\nscores yet another frag! ({} frags)", GetStringNarrow(GetPlayer(id)->sPlayerName.Get()), nPlayerWrecksThisLife[id]+1));
+				if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) AddTopBarNotif(std::format("{}\nscores yet another frag! ({} frags)", GetStringNarrow(GetPlayer(id)->sPlayerName.Get()), nPlayerWrecksThisLife[id]+1), true);
 			}
 			else if (GetHighestKillstreak() < nPlayerWrecksThisLife[id] + 1 && nPlayerWrecksThisLife[id] >= 1) {
 				nStreakerId = id;
-				if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) AddTopBarNotif(std::format("{}\nis on a frag streak! ({} frags)", GetStringNarrow(GetPlayer(id)->sPlayerName.Get()), nPlayerWrecksThisLife[id]+1));
+				if (pPlayer->nPlayerType != PLAYERTYPE_LOCAL) AddTopBarNotif(std::format("{}\nis on a frag streak! ({} frags)", GetStringNarrow(GetPlayer(id)->sPlayerName.Get()), nPlayerWrecksThisLife[id]+1), true);
 			}
 			nPlayerWrecksThisLife[id]++;
 			if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL && nPlayerWrecksThisLife[id] >= 5) {
@@ -220,7 +220,7 @@ namespace FragDerby {
 				nStreakerId = -1;
 
 				if (ply->nPlayerType != PLAYERTYPE_LOCAL) {
-					AddTopBarNotif(std::format("{}\nfrag streak ended! ({} frags)", GetStringNarrow(GetPlayer(player)->sPlayerName.Get()), nPlayerWrecksThisLife[player]));
+					AddTopBarNotif(std::format("{}\nfrag streak ended! ({} frags)", GetStringNarrow(GetPlayer(player)->sPlayerName.Get()), nPlayerWrecksThisLife[player]), true);
 				}
 			}
 
@@ -275,7 +275,7 @@ namespace FragDerby {
 		if (nSurvivorId != GetSurvivorID()) {
 			nSurvivorId = GetSurvivorID();
 			if (nSurvivorId > 0) {
-				AddTopBarNotif(std::format("{}\nhas survived the longest!", GetStringNarrow(GetPlayer(nSurvivorId)->sPlayerName.Get())));
+				AddTopBarNotif(std::format("{}\nhas survived the longest!", GetStringNarrow(GetPlayer(nSurvivorId)->sPlayerName.Get())), true);
 			}
 		}
 

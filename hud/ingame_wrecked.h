@@ -3,7 +3,11 @@ void AddTimeoutNotif(Player* pPlayer);
 
 class CHUD_Wrecked : public CIngameHUDElement {
 public:
-	std::vector<std::string> aNotifs;
+	struct tNotif {
+		std::string string;
+		bool fadeSize;
+	};
+	std::vector<tNotif> aNotifs;
 	double fNotifTimer = 0;
 
 	float fNotifX = 0.5;
@@ -26,13 +30,13 @@ public:
 		int a = 255;
 		if (fNotifTimer >= fNotifFadeinEnd) {
 			a = (fNotifFadeinStart - fNotifTimer) * fNotifFadeinSpeed * 255;
-			data.size = std::lerp(fNotifSize2, fNotifSize, a / 255.0);
+			if (aNotifs[0].fadeSize) data.size = std::lerp(fNotifSize2, fNotifSize, a / 255.0);
 		}
 		if (fNotifTimer <= fNotifFadeoutStart) {
 			a = fNotifTimer * fNotifFadeoutSpeed * 255;
 		}
 		data.SetColor(255,255,255,a);
-		DrawStringFO2_Condensed12(data, aNotifs[0]);
+		DrawStringFO2_Condensed12(data, aNotifs[0].string);
 	}
 
 	void Init() override {
@@ -75,9 +79,9 @@ public:
 		}
 	}
 
-	void AddNotif(const std::string& notif) {
-		if (!aNotifs.empty() && aNotifs[aNotifs.size()-1] == notif) return; // ignore immediate duplicates
-		aNotifs.push_back(notif);
+	void AddNotif(const std::string& notif, bool fadeSize) {
+		if (!aNotifs.empty() && aNotifs[aNotifs.size()-1].string == notif) return; // ignore immediate duplicates
+		aNotifs.push_back({notif, fadeSize});
 	}
 } HUD_Wrecked;
 
@@ -85,22 +89,22 @@ void AddWreckedNotif(Player* pPlayer) {
 	if (bIsFragDerby) return;
 
 	if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
-		HUD_Wrecked.AddNotif("YOU ARE WRECKED!");
+		HUD_Wrecked.AddNotif("YOU ARE WRECKED!", true);
 	}
 	else {
-		HUD_Wrecked.AddNotif(std::format("{}\nIS WRECKED", GetStringNarrow(pPlayer->sPlayerName.Get())));
+		HUD_Wrecked.AddNotif(std::format("{}\nIS WRECKED", GetStringNarrow(pPlayer->sPlayerName.Get())), true);
 	}
 }
 
 void AddTimeoutNotif(Player* pPlayer) {
 	if (pPlayer->nPlayerType == PLAYERTYPE_LOCAL) {
-		HUD_Wrecked.AddNotif("OUT OF TIME!");
+		HUD_Wrecked.AddNotif("OUT OF TIME!", true);
 	}
 	else {
-		HUD_Wrecked.AddNotif(std::format("{}\nRAN OUT OF TIME", GetStringNarrow(pPlayer->sPlayerName.Get())));
+		HUD_Wrecked.AddNotif(std::format("{}\nRAN OUT OF TIME", GetStringNarrow(pPlayer->sPlayerName.Get())), true);
 	}
 }
 
-void AddTopBarNotif(const std::string& str) {
-	HUD_Wrecked.AddNotif(str);
+void AddTopBarNotif(const std::string& str, bool fadeSize) {
+	HUD_Wrecked.AddNotif(str, fadeSize);
 }

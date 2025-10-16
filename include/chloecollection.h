@@ -18,4 +18,10 @@ namespace ChloeCollection {
 		if (!funcPtr) return 0;
 		return funcPtr();
 	}
+
+	void AddTopBarNotif(const char* str, bool fadeSize) {
+		static auto funcPtr = GetFuncPtr<void(__cdecl*)(const char*, bool)>("ChloeCollection_AddTopBarNotif");
+		if (!funcPtr) return;
+		funcPtr(str, fadeSize);
+	}
 }

@@ -1661,3 +1661,7 @@ extern "C" __declspec(dllexport) int __cdecl ChloeCollection_GetPlayerArcadeScor
 	if (bIsFragDerby) return FragDerby::nPlayerScore[pPlayer->nPlayerId-1];
 	return 0;
 }
+
+extern "C" __declspec(dllexport) void __cdecl ChloeCollection_AddTopBarNotif(const char* str, bool fadeSize) {
+	AddTopBarNotif(str, fadeSize);
+}
