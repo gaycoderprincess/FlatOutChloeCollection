@@ -162,9 +162,6 @@ public:
 		for (int i = nScrollPos; i < nScrollPos+nNumEventsOnScreen; i++) {
 			if (i < 0 || i >= ArcadeMode::aArcadeRaces.size()) continue;
 
-			bCanMoveLeft = posX != 0;
-			bCanMoveRight = posX != 2;
-
 			auto event = &ArcadeMode::aArcadeRaces[i];
 			auto score = gCustomSave.aArcadeCareerScores[i];
 			bool unlocked = ArcadeMode::bAllUnlocked || totalScore >= event->nPointsToUnlock;
@@ -206,6 +203,9 @@ public:
 				DrawRectangle(x1 * GetAspectRatioInv(), x2 * GetAspectRatioInv(), y1, y2, {255,255,255,255}, 0, texturePlacement[position-1]);
 			}
 			if (i == nCursorPos) {
+				bCanMoveLeft = posX != 0;
+				bCanMoveRight = posX != 2;
+
 				auto rgb = GetPaletteColor(COLOR_MENU_YELLOW);
 				rgb.a = GetFlashingAlpha(gTimer.fTotalTime) * 0.5;
 				x2 = x1 + fEventHighlightSize * 1.5;

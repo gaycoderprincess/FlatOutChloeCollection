@@ -282,6 +282,9 @@ void WriteSectors() {
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
+	QuickValueEditor("fCheckpointYOffset", CHUD_Arcade_Checkpoint::fCheckpointYOffset);
+	QuickValueEditor("fCheckpointSize", CHUD_Arcade_Checkpoint::fCheckpointSize);
+
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();
 
@@ -586,6 +589,7 @@ void ProcessDebugMenu() {
 		auto plyPos = ply->pCar->GetMatrix()->p;
 		DrawDebugMenuViewerOption(std::format("Player Position - {:.1f} {:.1f} {:.1f}", plyPos.x, plyPos.y, plyPos.z));
 		DrawDebugMenuViewerOption(std::format("Player Health - {:.1f}", 1.0 - ply->pCar->fDamage));
+		DrawDebugMenuViewerOption(std::format("Player Split - {}", ply->nCurrentSplit));
 		DrawDebugMenuViewerOption(std::format("Player Sector - {}", (ply->pCurrentSector - pTrackAI->aSectors) + 1));
 		if (ply->pCurrentSector) {
 			if (DrawMenuOption(std::format("Player Sector Speed Limit - {}", ply->pCurrentSector->fSpeedLimit))) {

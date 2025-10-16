@@ -199,7 +199,7 @@ namespace CarnageRace {
 	}
 
 	void ProcessCheckpoints(int playerId) {
-		HUD_Minimap.gArcadeCheckpoint = GetCheckpointPosition();
+		HUD_Minimap.gArcadeCheckpoint = HUD_Arcade_Checkpoint.gArcadeCheckpoint = GetCheckpointPosition();
 
 		static int last[nMaxPlayers] = {};
 		if (pPlayerHost->nRaceTime < 0) {
