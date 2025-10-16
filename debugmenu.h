@@ -282,11 +282,6 @@ void WriteSectors() {
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
-	QuickValueEditor("fPlayerNameOffset", CHUD_Multiplayer_Overhead::fPlayerNameOffset);
-	QuickValueEditor("fPlayerNameSize", CHUD_Multiplayer_Overhead::fPlayerNameSize);
-	QuickValueEditor("fNitroParticleSize", CHUD_Nitro_Particles::fNitroParticleSize);
-	QuickValueEditor("fNitroParticleTimerSpeed", CHUD_Nitro_Particles::fNitroParticleTimerSpeed);
-
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();
 

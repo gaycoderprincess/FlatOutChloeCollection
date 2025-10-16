@@ -9,6 +9,7 @@ public:
 	static inline float fPlayerNameSize = 0.022;
 	static inline float fPlayerNameFadeStart = 50.0;
 	static inline float fPlayerNameFadeEnd = 150.0;
+	static inline float fPlayerNameAlpha = 200.0;
 	static void DrawPlayerName(Player* ply, NyaVec3 cameraPos) {
 		if (ply->nPlayerType == PLAYERTYPE_LOCAL) return;
 
@@ -34,24 +35,35 @@ public:
 		data.XCenterAlign = true;
 		data.SetColor(GetPlayerColor(ply));
 		if (cameraDist > fPlayerNameFadeStart) {
-			data.a = std::lerp(96, 0, (cameraDist - fPlayerNameFadeStart) / (fPlayerNameFadeEnd - fPlayerNameFadeStart));
+			data.a = std::lerp(fPlayerNameAlpha, 0, (cameraDist - fPlayerNameFadeStart) / (fPlayerNameFadeEnd - fPlayerNameFadeStart));
 		}
 		else {
-			data.a = 96;
+			data.a = fPlayerNameAlpha;
 		}
 		DrawStringFO2_Regular18(data, GetStringNarrow(ply->sPlayerName.Get()));
 	}
 
 	void Process() override {
 		if (!bIsInMultiplayer) return;
-		if (!IsRaceHUDUp()) return;
+		if (!IsRaceHUDUp() && !ChloeNet::IsSpectating()) return;
 
 		auto cam = pCameraManager->pCamera;
 		if (!cam) return;
 		auto mat = *cam->GetMatrix();
 
+		std::vector<Player*> aPlayers;
+
 		for (int i = 0; i < pPlayerHost->GetNumPlayers(); i++) {
-			DrawPlayerName(GetPlayer(i), mat.p);
+			aPlayers.push_back(GetPlayer(i));
+		}
+
+		std::sort(aPlayers.begin(), aPlayers.end(), [](Player *a, Player *b) {
+			auto cameraPos = pCameraManager->pCamera->GetMatrix()->p;
+			return (cameraPos - a->pCar->GetMatrix()->p).length() > (cameraPos - b->pCar->GetMatrix()->p).length();
+		});
+
+		for (auto& ply : aPlayers) {
+			DrawPlayerName(ply, mat.p);
 		}
 	}
 } HUD_Multiplayer_Overhead;
