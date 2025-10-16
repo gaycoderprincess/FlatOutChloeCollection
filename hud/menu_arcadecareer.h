@@ -5,13 +5,17 @@ public:
 	int nCursorPos = 0;
 	int nScrollPos = 0;
 	bool bSelected = false;
+	bool bCanMoveLeft = false;
+	bool bCanMoveRight = true;
 
 	void MoveLeft() override {
+		if (!bCanMoveLeft) return;
 		if (bSelected) return;
 		nCursorPos--;
 		if (nCursorPos < 0) nCursorPos = 0;
 	}
 	void MoveRight() override {
+		if (!bCanMoveRight) return;
 		if (bSelected) return;
 		nCursorPos++;
 		if (nCursorPos >= ArcadeMode::aArcadeRaces.size()) nCursorPos = ArcadeMode::aArcadeRaces.size()-1;
@@ -157,6 +161,9 @@ public:
 		int posY = 0;
 		for (int i = nScrollPos; i < nScrollPos+nNumEventsOnScreen; i++) {
 			if (i < 0 || i >= ArcadeMode::aArcadeRaces.size()) continue;
+
+			bCanMoveLeft = posX != 0;
+			bCanMoveRight = posX != 2;
 
 			auto event = &ArcadeMode::aArcadeRaces[i];
 			auto score = gCustomSave.aArcadeCareerScores[i];

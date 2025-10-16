@@ -98,4 +98,5 @@ GameRules::KeyValue BlastOutCrashVelocity1("BlastOutCrashVelocity1");
 GameRules::KeyValue RagdollPiggybagThreshold("RagdollPiggybagThreshold");
 GameRules::KeyValue WreckPiggybagThreshold("WreckPiggybagThreshold");
 GameRules::KeyValue FlipPiggybagThreshold("FlipPiggybagThreshold");
+GameRules::KeyValue FlipComboThreshold("FlipComboThreshold");
 GameRules::KeyValue CrashVelocityMultiplier("CrashVelocityMultiplier");

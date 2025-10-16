@@ -15,19 +15,19 @@ public:
 		nSurvivorId = -1;
 	}
 
-	static inline float DamageIndicatorMaxDist = 128;
-	static inline float DamageIndicatorScale = 0.025;
-	static inline float DamageIndicatorYOffset = 1.6;
-	static inline float DamageIndicatorFragScale = 1.8;
-	static inline float DamageIndicatorFragYOffset = 2.5;
-	static inline float DamageIndicatorAlpha = 0.85;
+	static inline float fDamageIndicatorMaxDist = 128;
+	static inline float fDamageIndicatorScale = 0.025;
+	static inline float fDamageIndicatorYOffset = 1.6;
+	static inline float fDamageIndicatorFragScale = 1.8;
+	static inline float fDamageIndicatorFragYOffset = 2.5;
+	static inline float fDamageIndicatorAlpha = 0.85;
 
 	static void DrawPlayerIcon(const std::string& icon, float size, NyaVec3 drawPos) {
 		static auto tex = LoadTextureFromBFS("data/global/overlay/frag_derby_symbols.dds");
 		static auto texData = LoadHUDData("data/global/overlay/frag_derby_symbols.bed", "frag_derby_symbols");
 
-		drawPos.y -= DamageIndicatorFragYOffset * size;
-		size *= DamageIndicatorFragScale;
+		drawPos.y -= fDamageIndicatorFragYOffset * size;
+		size *= fDamageIndicatorFragScale;
 
 		auto symbol = GetHUDData(texData, icon);
 		DrawRectangle(drawPos.x - size * GetAspectRatioInv(), drawPos.x + size * GetAspectRatioInv(), drawPos.y - size, drawPos.y + size, {255,255,255,127}, 0, tex, 0, symbol->min, symbol->max);
@@ -40,7 +40,7 @@ public:
 
 		auto mat = *ply->pCar->GetMatrix();
 		auto cameraDist = (cameraPos - mat.p).length();
-		if (cameraDist > DamageIndicatorMaxDist) return;
+		if (cameraDist > fDamageIndicatorMaxDist) return;
 
 		auto yUp = mat.y;
 		if (yUp.y < 0) yUp.y *= -1;
@@ -64,10 +64,10 @@ public:
 			color.g = std::lerp(200, 0, damage - 0.5);
 			color.b = std::lerp(60, 0, damage - 0.5);
 		}
-		color.a = DamageIndicatorAlpha*255;
+		color.a = fDamageIndicatorAlpha * 255;
 
-		auto fSize = (DamageIndicatorMaxDist - cameraDist) / DamageIndicatorMaxDist * DamageIndicatorScale;
-		drawPos.y -= DamageIndicatorYOffset * fSize;
+		auto fSize = (fDamageIndicatorMaxDist - cameraDist) / fDamageIndicatorMaxDist * fDamageIndicatorScale;
+		drawPos.y -= fDamageIndicatorYOffset * fSize;
 		if (ply->nPlayerType != PLAYERTYPE_LOCAL) DrawRectangle(drawPos.x - fSize * GetAspectRatioInv(), drawPos.x + fSize * GetAspectRatioInv(), drawPos.y - fSize, drawPos.y + fSize, color, 0, tex);
 
 		if (bIsFragDerby) {

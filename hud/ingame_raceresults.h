@@ -86,7 +86,7 @@ public:
 		if (score >= event->nPlatinumScore) {
 			data.SetColor(GetMedalRGB(4));
 		}
-		if (score >= event->nCommunityScore) {
+		if (event->nCommunityScore > 0 && score >= event->nCommunityScore) {
 			data.SetColor(GetMedalRGB(5));
 		}
 		Draw1080pString(JUSTIFY_CENTER, data, FormatScore(score), &DrawStringFO2_Regular18);

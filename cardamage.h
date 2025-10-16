@@ -77,7 +77,8 @@ void ProcessCrashBonuses() {
 
 	static int32_t lastHitTimestamps[nMaxPlayers] = {};
 	static bool isRagdolled[nMaxPlayers] = {};
-	static double rotateAmount[nMaxPlayers] = {};
+	static double rotateAmountX[nMaxPlayers] = {};
+	static double rotateAmountZ[nMaxPlayers] = {};
 
 	auto ply = GetPlayer(playerId);
 	if (!ply) return;
@@ -114,7 +115,8 @@ void ProcessCrashBonuses() {
 		}
 
 		if (data.lastHitTimestamp < 0 || data.lastHitTimestamp < pPlayerHost->nRaceTime - FlipPiggybagThreshold) {
-			rotateAmount[i] = 0;
+			rotateAmountX[i] = 0;
+			rotateAmountZ[i] = 0;
 		}
 		else {
 			auto carRotation = *opponent->pCar->GetMatrix();
@@ -122,12 +124,17 @@ void ProcessCrashBonuses() {
 			carRotation = carRotation.Invert();
 
 			auto angVelRelative = carRotation * *opponent->pCar->GetAngVelocity();
-			rotateAmount[i] += angVelRelative.z * gTimer.fDeltaTime;
+			rotateAmountX[i] += angVelRelative.x * gTimer.fDeltaTime;
+			rotateAmountZ[i] += angVelRelative.z * gTimer.fDeltaTime;
 		}
 
-		if (std::abs(rotateAmount[i]) > std::numbers::pi * 0.9) {
+		if (std::abs(rotateAmountX[i]) + std::abs(rotateAmountZ[i]) > std::numbers::pi * 0.9) {
 			ChloeEvents::CrashBonusEvent.OnHit(ply, CRASHBONUS_SUPERFLIP);
-			rotateAmount[i] = 0;
+			rotateAmountX[i] = 0;
+			rotateAmountZ[i] = 0;
+
+			auto newTime = pPlayerHost->nRaceTime - FlipComboThreshold;
+			if (data.lastHitTimestamp < newTime) data.lastHitTimestamp = newTime;
 		}
 
 		lastHitTimestamps[i] = data.lastHitTimestamp;

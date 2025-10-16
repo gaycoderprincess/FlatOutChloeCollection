@@ -13,6 +13,8 @@ public:
 	static void DrawPlayerName(Player* ply, NyaVec3 cameraPos) {
 		if (ply->nPlayerType == PLAYERTYPE_LOCAL) return;
 
+		bool isLapped = std::abs((int)GetPlayer(0)->nCurrentSplit - (int)ply->nCurrentSplit) > pEnvironment->nNumSplitpoints / 2;
+
 		auto mat = *ply->pCar->GetMatrix();
 		auto cameraDist = (cameraPos - mat.p).length();
 		if (cameraDist > fPlayerNameFadeEnd) return;
@@ -40,6 +42,7 @@ public:
 		else {
 			data.a = fPlayerNameAlpha;
 		}
+		if (isLapped) data.a *= 0.5;
 		DrawStringFO2_Regular18(data, GetStringNarrow(ply->sPlayerName.Get()));
 	}
 
