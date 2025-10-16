@@ -10,56 +10,6 @@ public:
 	static inline NyaVec3 vLocalPlayerPosition = {0, 0, 0};
 	static inline float fLocalPlayerHeading = 0;
 
-	static NyaDrawing::CNyaRGBA32 GetPlayerColor(Player* ply) {
-		if (IsPlayerWrecked(ply)) return {0,0,0,127};
-
-		//NyaDrawing::CNyaRGBA32 aPlayerColors[] = {
-		//		{255,255,255,255},
-		//		//{21,34,41,255}, // Frank Benton
-		//		{206,195,33,255}, // Frank Benton
-		//		{148,36,24,255}, // Sue O'Neill
-		//		{137,28,33,255}, // Tania Graham
-		//		{16,29,104,255}, // Katie Daggert
-		//		{49,48,148,255}, // Ray Smith
-		//		{183,64,43,255}, // Paul McGuire
-		//		//{189,174,16,255}, // Seth Bellinger
-		//		{2,8,10,255}, // Seth Bellinger
-		//};
-
-		NyaDrawing::CNyaRGBA32 aPlayerColors[] = {
-				{255,255,255,255},
-				{224,211,14,255}, // Frank Benton
-				{172,22,6,255}, // Sue O'Neill
-				{119,19,24,255}, // Tania Graham
-				{16,29,104,255}, // Katie Daggert
-				{64,64,198,255}, // Ray Smith
-				{213,51,23,255}, // Paul McGuire
-				{2,8,10,255}, // Seth Bellinger
-		};
-
-		NyaDrawing::CNyaRGBA32 aPlayerColorsTimeTrial[] = {
-				{255,255,255,255},
-				{236,221,16,255}, // gold
-				{186,186,186,255}, // silver
-				{175,100,0,255}, // bronze
-				{30,160,0,255}, // author
-				{219,100,193,255}, // super author
-		};
-
-		int id = ply->nPlayerId - 1;
-		if (IsInSplitScreen() && !bIsCareerRace && ply->nPlayerType == PLAYERTYPE_LOCAL) id++; // never use white arrow in splitscreen
-		if (CareerMode::IsCareerTimeTrial()) {
-			if (id >= 0 && id <= sizeof(aPlayerColorsTimeTrial) / sizeof(aPlayerColorsTimeTrial[0])) return aPlayerColorsTimeTrial[id];
-		}
-		if ((bIsInMultiplayer && ChloeNet::IsReplicatedPlayer(ply)) || (!IsInSplitScreen() && ply->nPlayerId == 1)) {
-			id = ply->nPlayerId == 1 ? nPlayerColor : ChloeNet::GetReplicatedPlayerColor(ply);
-			if (id >= 0 && id <= sizeof(aPlayerColorsMultiplayer) / sizeof(aPlayerColorsMultiplayer[0])) return aPlayerColorsMultiplayer[id];
-			return aPlayerColorsMultiplayer[0];
-		}
-		if (id >= 0 && id <= sizeof(aPlayerColors) / sizeof(aPlayerColors[0])) return aPlayerColors[id];
-		return aPlayerColors[0];
-	}
-
 	static inline float fFO2MapPos[2] = {95, 340};
 	static inline float fFO2MapSize = 0.001;
 	static inline float fFO2MapSizeRace = 0.001;
