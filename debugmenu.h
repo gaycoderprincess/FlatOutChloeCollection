@@ -282,9 +282,6 @@ void WriteSectors() {
 void ProcessDebugMenu() {
 	ChloeMenuLib::BeginMenu();
 
-	QuickValueEditor("fCheckpointYOffset", CHUD_Arcade_Checkpoint::fCheckpointYOffset);
-	QuickValueEditor("fCheckpointSize", CHUD_Arcade_Checkpoint::fCheckpointSize);
-
 	if (DrawMenuOption("Game Rules")) {
 		ChloeMenuLib::BeginMenu();
 

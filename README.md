@@ -6,7 +6,7 @@ Companion plugin for my FlatOut 1 overhaul, [Chloe Collection](https://gaycoderp
 
 Building is done on an Arch Linux system with CLion and vcpkg being used for the build process.
 
-Before you begin, clone [nya-common](https://github.com/gaycoderprincess/nya-common), [nya-common-fo1](https://github.com/gaycoderprincess/nya-common-fo1), [nya-common-fouc](https://github.com/gaycoderprincess/nya-common-fouc), [FlatOutUCMenuLib](https://github.com/gaycoderprincess/FlatOutUCMenuLib), and [FlatOutTimeTrialGhosts](https://github.com/gaycoderprincess/FlatOutTimeTrialGhosts) to folders next to this one, so they can be found.
+Before you begin, clone [nya-common](https://github.com/gaycoderprincess/nya-common), [nya-common-fo1](https://github.com/gaycoderprincess/nya-common-fo1), [nya-common-fouc](https://github.com/gaycoderprincess/nya-common-fouc), [CwoeeMenuLib](https://github.com/gaycoderprincess/CwoeeMenuLib), and [FlatOutTimeTrialGhosts](https://github.com/gaycoderprincess/FlatOutTimeTrialGhosts) to folders next to this one, so they can be found.
 
 <br>
 

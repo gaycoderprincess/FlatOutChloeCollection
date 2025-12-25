@@ -282,12 +282,9 @@ struct tCustomSaveStructure {
 		}
 	}
 	void Save(bool saveAll = true) {
-		sSaveMutex.lock();
+		if (!bInitialized) return;
 
-		if (!bInitialized) {
-			sSaveMutex.unlock();
-			return;
-		}
+		sSaveMutex.lock();
 
 		int saveSlot = nCurrentSaveSlot;
 		if (saveSlot < 0) {
