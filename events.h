@@ -227,7 +227,7 @@ class ChloeHook {
 public:
 	void(*pFunction)();
 
-	ChloeHook(void(*pFunction)()) {
-		ChloeEvents::GameStartupEvent.AddHandler(pFunction);
+	ChloeHook(void(*function)()) : pFunction(function) {
+		ChloeEvents::GameStartupEvent.AddHandler(function);
 	}
 };
